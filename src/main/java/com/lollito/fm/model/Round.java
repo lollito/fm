@@ -33,7 +33,7 @@ public class Round implements Serializable{
 	private Long id;
 	private Integer number;
 	
-	@OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Match> matches = new ArrayList<>();
 	
 	@ManyToOne( fetch = FetchType.LAZY  )

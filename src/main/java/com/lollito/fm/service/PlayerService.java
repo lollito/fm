@@ -1,5 +1,7 @@
 package com.lollito.fm.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,5 +93,63 @@ public class PlayerService {
 		player.setSetPieces(RandomUtils.randomValue(40, 99));
 		player.setRole(PlayerRole.FORWARD);
 		return player;
+	}
+	
+	public Player getBestDefensivePlayer(List<Player> players, PlayerRole playerRole){
+		Player best = null;
+		for (Player player : players) {
+			if(player.getRole().getvalue() == playerRole.getvalue()){
+				if(best == null){
+					best = player;
+				} else if(player.getDefenceAverage() > best.getDefenceAverage()){
+					best = player;
+				}
+			}
+		}
+		return best;
+	}
+	
+	public Player getBestOffensivePlayer(List<Player> players, PlayerRole playerRole){
+		Player best = null;
+		for (Player player : players) {
+			if(player.getRole().getvalue() == playerRole.getvalue()){
+				if(best == null){
+					best = player;
+				} else if(player.getOffenceAverage() > best.getOffenceAverage()){
+					best = player;
+				}
+			}
+		}
+		return best;
+	}
+	
+	public Player getBestBalancedPlayer(List<Player> players, PlayerRole playerRole){
+		Player best = null;
+		for (Player player : players) {
+			if(player.getRole().getvalue() == playerRole.getvalue()){
+				if(best == null){
+					best = player;
+				} else if(player.getDefenceAverage() > best.getDefenceAverage() && player.getOffenceAverage() > best.getOffenceAverage()){
+					best = player;
+				}
+			}
+		}
+		return best;
+	}
+	
+	public Integer getOffenceAverage(List<Player> players){
+		int tot = 0;
+		for (Player player : players) {
+			tot += player.getOffenceAverage();
+		}
+		return tot/players.size();
+	}
+	
+	public Integer getDefenceAverage(List<Player> players){
+		int tot = 0;
+		for (Player player : players) {
+			tot += player.getDefenceAverage();
+		}
+		return tot/players.size();
 	}
 }

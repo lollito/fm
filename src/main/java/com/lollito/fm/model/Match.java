@@ -21,6 +21,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "matchh")
 public class Match implements Serializable{
@@ -48,10 +50,12 @@ public class Match implements Serializable{
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "round_id" )
+	@JsonIgnore
 	private Round round;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "game_id" )
+	@JsonIgnore
 	private Game game;
 	
 	public Match() {

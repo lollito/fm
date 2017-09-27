@@ -52,11 +52,11 @@ public class Formation implements Serializable{
 //	private List<Player> forwards = new ArrayList<>();
 	
 	@ManyToMany
-    @JoinTable(name = "formation_player", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
+    @JoinTable(name = "formation_player", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
 	private List<Player> players = new ArrayList<>();
 	
 	@ManyToMany
-    @JoinTable(name = "formation_substitutes", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
+    @JoinTable(name = "formation_substitutes", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
 	private List<Player> substitutes = new ArrayList<>();
 	
 	public Long getId() {

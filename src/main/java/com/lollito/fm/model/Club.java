@@ -2,6 +2,7 @@ package com.lollito.fm.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "club")
@@ -31,20 +34,24 @@ public class Club implements Serializable{
     
     private LocalDate foundation;
     
-    @OneToOne( fetch = FetchType.LAZY  )
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "team_id" )
+    @JsonIgnore
     private Team team;
     
-    @OneToOne( fetch = FetchType.LAZY  )
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "under18_id" )
+    @JsonIgnore
     private Team under18;
     
-    @OneToOne( fetch = FetchType.LAZY  )
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "stadium_id" )
+    @JsonIgnore
     private Stadium stadium;
     
     @ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "game_id" )
+    @JsonIgnore
     private Game game;
     
     public Long getId() {

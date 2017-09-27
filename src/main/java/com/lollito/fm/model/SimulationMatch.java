@@ -2,6 +2,7 @@ package com.lollito.fm.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,11 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "simulation_match")
@@ -26,17 +29,20 @@ public class SimulationMatch implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne( fetch = FetchType.LAZY  )
+	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
 	@JoinColumn( name = "match_id" )
 	private Match match;
 	
-	@ManyToOne( fetch = FetchType.LAZY  )
+	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
 	@JoinColumn( name = "home_formation_id" )
 	private Formation homeFormation;
 	
-	@ManyToOne( fetch = FetchType.LAZY  )
+	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
 	@JoinColumn( name = "away_formation_id" )
 	private Formation awayFormation;
+	
+	@Type(type = "yes_no")
+	private Boolean finish = Boolean.FALSE;
 	
 	public Long getId() {
 		return id;
@@ -70,6 +76,14 @@ public class SimulationMatch implements Serializable{
 		this.awayFormation = awayFormation;
 	}
 	
+	public Boolean getFinish() {
+		return finish;
+	}
+
+	public void setFinish(Boolean finish) {
+		this.finish = finish;
+	}
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

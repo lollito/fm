@@ -71,7 +71,7 @@ public class Game implements Serializable{
 	}
 	
 	public void addDay(){
-		currentDate.plusDays(1);
+		this.currentDate = currentDate.plusDays(1);
 	}
 	
 	public Season getCurrentSeason() {

@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.bean.SessionBean;
-import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
+import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.service.GameService;
 
 @RestController
@@ -20,22 +19,20 @@ public class GameController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired private GameService gameService;
-	@Autowired private SessionBean sessionBean;
 	
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-    public String game(Model model, Club club) {
-		gameService.create();
-        return "ok";
+    public GameResponse game(Model model) {
+		Game game = gameService.create();
+        return new GameResponse(game.getCurrentDate());
     }
    
-	@RequestMapping(value = "/", method = RequestMethod.PUT)
-    public String next(Model model, Club club) {
-		Game game = sessionBean.getGame();
-		if (game == null){
-			//TODO error
-		} else {
-			
-		}
-        return "ok";
+	@RequestMapping(value = "/next", method = RequestMethod.PUT)
+    public GameResponse next(Model model) {
+		return gameService.next();
+    }
+	
+	@RequestMapping(value = "/load", method = RequestMethod.PUT)
+    public GameResponse load(Model model, Long GameId) {
+		return gameService.load(GameId);
     }
 }

@@ -21,10 +21,10 @@ public class NameService {
 	
 	public String generateClubName(){
 		String name = "";
-		List<String> prefix = Arrays.asList("A.S", "F.C", "S.S.", "A.C.");
+		List<String> prefix = Arrays.asList("A.S. ", "F.C. ", "S.S. ", "A.C. ");
 		try {
-			NameGenerator nmg = new NameGenerator("names/custom.txt");
-			name = RandomUtils.randomValueFromList(prefix) + nmg.compose(RandomUtils.randomValue(3, 6));
+			NameGenerator nmg = new NameGenerator("name/custom.txt");
+			name = RandomUtils.randomValueFromList(prefix) + nmg.compose(RandomUtils.randomValue(3, 5));
 		} catch (IOException e) {
 			logger.error("ERROR {}", e.getMessage());
 			throw new RuntimeException(e.getMessage());
@@ -33,11 +33,11 @@ public class NameService {
 	}
 	
 	public List<String> getNames(){
-		return getStrings("names/names.txt");
+		return getStrings("name/name.txt");
 	}
 	
 	public List<String> getSurnames(){
-		return getStrings("names/surnames.txt");
+		return getStrings("name/surname.txt");
 	}
 	
 	private List<String> getStrings(String path){

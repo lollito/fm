@@ -6,6 +6,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import com.lollito.fm.model.SimulationMatch;
 
 @RepositoryRestResource(collectionResourceRel = "simulationMatch", path = "simulationMatch")
-public interface SimulationmatchRepository extends PagingAndSortingRepository<SimulationMatch, Long> {
+public interface SimulationMatchRepository extends PagingAndSortingRepository<SimulationMatch, Long> {
 
 }

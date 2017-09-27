@@ -10,14 +10,14 @@ import com.lollito.fm.model.Game;
 @Scope(value="session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SessionBean {
 
-	private Game game;
+	private Long gameId;
 
-	public Game getGame() {
-		return game;
+	public Long getGameId() {
+		return gameId;
 	}
 
-	public void setGame(Game game) {
-		this.game = game;
+	public void setGameId(Long gameId) {
+		this.gameId = gameId;
 	}
-	
+
 }

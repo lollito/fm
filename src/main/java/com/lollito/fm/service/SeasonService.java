@@ -75,7 +75,7 @@ public class SeasonService {
 		rounds.addAll(roundReturns);
 		int roundNumber = 1;
 		LocalDate date = LocalDate.of( 2017 , Month.AUGUST , 21 );
-		int saturdayMatch = 2;
+		int saturdayMatch = 1;
 		Iterator<Round> iterator = rounds.iterator();
 		while (iterator.hasNext()) {
 			if(date.getDayOfWeek() == DayOfWeek.SATURDAY){
