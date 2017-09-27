@@ -54,6 +54,11 @@ public class Club implements Serializable{
     @JsonIgnore
     private Game game;
     
+    @ManyToOne( fetch = FetchType.LAZY  )
+   	@JoinColumn( name = "user_id" )
+    @JsonIgnore
+    private User user;
+    
     public Long getId() {
 		return id;
 	}
@@ -108,6 +113,14 @@ public class Club implements Serializable{
 
 	public void setGame(Game game) {
 		this.game = game;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override

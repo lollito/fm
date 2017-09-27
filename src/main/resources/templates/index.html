@@ -116,28 +116,29 @@
     <div class="modal fade" id="modalNewGame" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="team-name" class="form-control-label">Nome Squadra:</label>
-                            <input type="text" class="form-control" id="team-name"></input>
-                        </div>
-                        <div class="form-group">
-                            <label for="message-text" class="form-control-label">Message:</label>
-                            <input type="text" class="form-control" id="message-text"></input>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <a href="home.html" class="btn btn-primary">Save changes</a>
-                </div>
+            	<form id="new-game-form" action="game/" method="POST">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                        <span aria-hidden="true">&times;</span>
+	                    </button>
+	                </div>
+	                <div class="modal-body">
+	                        <div class="form-group">
+	                            <label for="game-name" class="form-control-label">Nome Partita:</label>
+	                            <input type="text" class="form-control" name="gameName" id="game-name"></input>
+	                        </div>
+	                        <div class="form-group">
+	                            <label for="club-name" class="form-control-label">Nome Squadra:</label>
+	                            <input type="text" class="form-control" name="clubName" id="club-name"></input>
+	                        </div>
+	                    
+	                </div>
+	                <div class="modal-footer">
+	                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	                    <button type="submit" class="btn btn-primary">Save changes</button>
+	                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -146,7 +147,22 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/popper/popper.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+	<script>
+		function ajaxForm(form, success){
+			form.ajaxForm({url: form.attr("action"), type: form.attr("method"), success: success, clearForm: true, resetForm: true})
+		}
+		
+		$('#new-game-form button[type="submit"]').on('click', function() {
+			console.log("ciaoooooooo");
+			ajaxForm($("#new-game-form"), newGameSuccess);
+		});
+		
+		function newGameSuccess(){
+			console.log("successsss");
+			document.location.href = "/home";
+		}
+	</script>
   </body>
 
 </html>

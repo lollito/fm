@@ -29,10 +29,11 @@ public class GameService {
 	@Autowired private SessionBean sessionBean;
 	@Autowired private SimulationMatchService simulationMatchService;
 	
-	public Game create(){
+	public Game create(String clubName, String gameName){
 		Game game = new Game();
-		game.setName("new");
+		game.setName(gameName);
 		List<Club> clubs = clubService.createClubs(game);
+		clubs.add(clubService.createPlayerClub(clubName, game));
 		game.setClubs(clubs);
 		game.setCurrentSeason(seasonService.create(clubs, game));
 		game.setCurrentDate(LocalDate.of(2017, Month.AUGUST, 24));
@@ -42,19 +43,24 @@ public class GameService {
 	}
 	
 	public GameResponse next(){
-		Game game = gameRepository.findOne(sessionBean.getGameId());
 		GameResponse gameResponse = new GameResponse();
-		if (game == null){
-			//TODO error
+		if (sessionBean.getGameId() == null) {
+			// TODO error
 			logger.error("error - game is null");
 		} else {
-			game.addDay();
-			List<Match> matches = matchRepository.findByGameAndDate(game, game.getCurrentDate());
-			logger.info("matches {}", matches);
-			simulationMatchService.simulate(matches);
-			gameResponse.setCurrentDate(game.getCurrentDate());
-			gameResponse.setDisputatedMatch(matches);
-			game = gameRepository.save(game);
+			Game game = gameRepository.findOne(sessionBean.getGameId());
+			if (game == null) {
+				// TODO error
+				logger.error("error - game is null");
+			} else {
+				game.addDay();
+				List<Match> matches = matchRepository.findByGameAndDate(game, game.getCurrentDate());
+				logger.info("matches {}", matches);
+				gameResponse.setCurrentMatch(simulationMatchService.simulate(matches));
+				gameResponse.setCurrentDate(game.getCurrentDate());
+				gameResponse.setDisputatedMatch(matches);
+				game = gameRepository.save(game);
+			}
 		}
 		return gameResponse;
 	}

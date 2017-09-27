@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -40,6 +41,10 @@ public class Season implements Serializable{
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "game_id" )
     private Game game;
+	
+	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+	@JoinColumn( name = "ranking_id" )
+	private Ranking ranking;
 	
 	public Season() {
 		
@@ -73,6 +78,7 @@ public class Season implements Serializable{
 		this.rounds = rounds;
 	}
 	
+	@Transient
 	public void addRound(Round round) {
 		round.setSeason(this);
 		this.rounds.add(round);
@@ -84,6 +90,14 @@ public class Season implements Serializable{
 
 	public void setGame(Game game) {
 		this.game = game;
+	}
+
+	public Ranking getRanking() {
+		return ranking;
+	}
+
+	public void setRanking(Ranking ranking) {
+		this.ranking = ranking;
 	}
 
 	@Override

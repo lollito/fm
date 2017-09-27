@@ -21,8 +21,8 @@ public class GameController {
 	@Autowired private GameService gameService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-    public GameResponse game(Model model) {
-		Game game = gameService.create();
+    public GameResponse game(Model model, String clubName, String gameName) {
+		Game game = gameService.create(clubName, gameName);
         return new GameResponse(game.getCurrentDate());
     }
    
@@ -31,7 +31,7 @@ public class GameController {
 		return gameService.next();
     }
 	
-	@RequestMapping(value = "/load", method = RequestMethod.PUT)
+	@RequestMapping(value = "/load", method = RequestMethod.GET)
     public GameResponse load(Model model, Long GameId) {
 		return gameService.load(GameId);
     }

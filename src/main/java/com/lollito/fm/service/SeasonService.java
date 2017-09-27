@@ -18,7 +18,6 @@ import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Round;
 import com.lollito.fm.model.Season;
-import com.lollito.fm.model.Team;
 import com.lollito.fm.repository.rest.SeasonRepository;
 
 @Service
@@ -27,12 +26,14 @@ public class SeasonService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired SeasonRepository seasonRepository;
+	@Autowired RankingService rankingService;
 	
 	public Season create(List<Club> clubsList, Game game) {
 		Season season = new Season();
-		
+		season.setRanking(rankingService.create(clubsList));
 		int numClubs = clubsList.size();
 		if (numClubs % 2 != 0) {
+			logger.error("numClubs % 2 exception");
 			throw new RuntimeException("error");
 		}
 
@@ -75,7 +76,7 @@ public class SeasonService {
 		rounds.addAll(roundReturns);
 		int roundNumber = 1;
 		LocalDate date = LocalDate.of( 2017 , Month.AUGUST , 21 );
-		int saturdayMatch = 1;
+		int saturdayMatch = 2;
 		Iterator<Round> iterator = rounds.iterator();
 		while (iterator.hasNext()) {
 			if(date.getDayOfWeek() == DayOfWeek.SATURDAY){

@@ -26,11 +26,18 @@ public class SimulationMatchService {
 	@Autowired PlayerService playerService;
 	@Autowired SimulationMatchRepository simulationMatchRepository;
 	@Autowired MatchRepository matchRepository;
+	@Autowired RankingService rankingService;
 	
-	public void simulate(List<Match> matches){
+	public Match simulate(List<Match> matches){
+		Match userMatch = null;
 		for (Match match : matches) {
-			simulate(match);
+			//if(match.getHome().getUser() == null && match.getAway().getUser() == null){
+				simulate(match);
+//			} else{
+//				userMatch =  match;
+//			}
 		}
+		return userMatch;
 	}
 	
 	public void simulate(Match match){
@@ -155,6 +162,9 @@ public class SimulationMatchService {
 		}
 		simulationMatch.getMatch().setHomeScore(homeScore);
 		simulationMatch.getMatch().setAwayScore(awayScore);
+		
+		rankingService.update(simulationMatch.getMatch());
+		
 		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};
 	}

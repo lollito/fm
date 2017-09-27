@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Stadium;
+import com.lollito.fm.model.User;
 import com.lollito.fm.utils.RandomUtils;
 
 @Service
@@ -21,26 +22,35 @@ public class ClubService {
 	
 	@Autowired TeamService teamService;
 	@Autowired NameService nameService;
+	@Autowired UserService userService;
 	
-	public void createPlayerClub(){
+	public Club createPlayerClub(String clubName, Game game){
+		User user = userService.find();
+		return createClub(clubName, game, user);
 	}
 	
 	public List<Club> createClubs(Game game){
-		int clubNumber = 20;
+		int clubNumber = 19;
 		
 		List<Club> clubs = new ArrayList<>();
 		
 		for(int clubCreated = 0; clubCreated < clubNumber; clubCreated ++){
-			Club club = new Club();
-			club.setName(nameService.generateClubName());
-			club.setGame(game);
-			club.setFoundation(LocalDate.now());
-			club.setTeam(teamService.createTeam());
-			club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
+			Club club = createClub(null, game, null);
 			clubs.add(club);
 		}
 		
 		return clubs;
+	}
+
+	private Club createClub(String clubName, Game game, User user) {
+		Club club = new Club();
+		club.setName(clubName != null ? clubName : nameService.generateClubName());
+		club.setGame(game);
+		club.setUser(user);
+		club.setFoundation(LocalDate.now());
+		club.setTeam(teamService.createTeam());
+		club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
+		return club;
 	}
 	
 }

@@ -80,7 +80,7 @@ public class Player implements Serializable{
 	private Integer setPieces;
 
 	@Column(name = "cndtion")
-	private Integer condition;
+	private Integer condition = 100;
 	
 	@Enumerated(EnumType.ORDINAL)
 	private PlayerRole role;
