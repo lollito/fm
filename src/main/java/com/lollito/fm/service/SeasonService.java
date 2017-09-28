@@ -30,7 +30,7 @@ public class SeasonService {
 	
 	public Season create(List<Club> clubsList, Game game) {
 		Season season = new Season();
-		season.setRanking(rankingService.create(clubsList));
+		rankingService.create(clubsList, season);
 		int numClubs = clubsList.size();
 		if (numClubs % 2 != 0) {
 			logger.error("numClubs % 2 exception");

@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -42,9 +42,9 @@ public class Season implements Serializable{
 	@JoinColumn( name = "game_id" )
     private Game game;
 	
-	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
-	@JoinColumn( name = "ranking_id" )
-	private Ranking ranking;
+	@OneToMany(mappedBy = "season", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+	@OrderBy("points desc")
+	private List<Ranking> rankingLines = new ArrayList<>();
 	
 	public Season() {
 		
@@ -92,12 +92,17 @@ public class Season implements Serializable{
 		this.game = game;
 	}
 
-	public Ranking getRanking() {
-		return ranking;
+	public List<Ranking> getRankingLines() {
+		return rankingLines;
 	}
 
-	public void setRanking(Ranking ranking) {
-		this.ranking = ranking;
+	public void setRankingLines(List<Ranking> rankingLines) {
+		this.rankingLines = rankingLines;
+	}
+
+	public void addRankingLine(Ranking rankingLine) {
+		rankingLine.setSeason(this);
+		this.rankingLines.add(rankingLine);
 	}
 
 	@Override

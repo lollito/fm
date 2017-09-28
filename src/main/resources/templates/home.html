@@ -46,36 +46,7 @@
 </div>
 <!-- /#wrapper -->
 
-<!-- Modal -->
-<div class="modal fade" id="modal-disputated-match" tabindex="-1" role="dialog" aria-labelledby="Disputated Match" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Match disputati</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				
-					<script id="disputated-match-template" type="text/x-handlebars-template">
-						<div class="row">
-							{{#each disputatedMatch}}
-								<div class="col-md-4">{{this.home.name}}</div>
-								<div class="col-md-4">{{this.homeScore}} - {{this.awayScore}}</div>
-								<div class="col-md-4">{{this.away.name}}</div>
-							{{/each}}
-						</div>
-					</script>
-					<div id="disputated-match-template-placeholder" class="col-md-12"></div>
-				
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-			</div>
-		</div>
-	</div>
-</div>
+<div th:replace="common/modal :: modal"></div>
 
 <!-- Bootstrap core JavaScript -->
 <script src="vendor/jquery/jquery.min.js"></script>
@@ -89,56 +60,7 @@
 <!-- Menu Toggle Script -->
 <script>
 
-	function buildTemplateFromGameResponse(data){
-		console.dir(data);
-		var source = $("#entry-template").html();
-		var template = Handlebars.compile(source);
-		currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year
-		var context = {
-			currentDate : currentDate
-		};
-		var html = template(context);
-		$("#entry-template-placeholder").html(html);
-		console.log();
-		if(data.disputatedMatch.length > 0){
-			console.log("entrooooo");
-			var source = $("#disputated-match-template").html();
-			var template = Handlebars.compile(source);
-			var context = {
-				disputatedMatch : data.disputatedMatch
-			};
-			var html = template(context);
-			$("#disputated-match-template-placeholder").html(html);
-			$("#modal-disputated-match").modal("show");
-		} else{
-			console.log("non entrooo");
-		}
-	}
 	
-	$("#menu-toggle").click(function(e) {
-		e.preventDefault();
-		$("#wrapper").toggleClass("toggled");
-	});
-
-	
-	$("#next").click(function(e) {
-		e.preventDefault();
-		console.log("click");
-		$.ajax({
-			method : "PUT",
-			url : "/game/next",
-		}).done(function(data) {
-			buildTemplateFromGameResponse(data);
-		});
-	});
-
-	$(document).ready(function() {
-		console.log("ready");
-		$.get("/game/", function(data) {
-			buildTemplateFromGameResponse(data);
-		}, "json");
-
-	});
 </script>
 
 </body>

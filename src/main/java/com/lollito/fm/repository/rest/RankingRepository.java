@@ -5,10 +5,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Ranking;
-import com.lollito.fm.model.RankingLine;
+import com.lollito.fm.model.Season;
 
 @RepositoryRestResource(collectionResourceRel = "rankingline", path = "rankingline")
-public interface RankingLineRepository extends JpaRepository<RankingLine, Long> {
+public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
-	public RankingLine findByClubAndRanking(Club club, Ranking ranking);
+	public Ranking findByClubAndSeason(Club club, Season season);
 }

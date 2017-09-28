@@ -1,6 +1,4 @@
 package com.lollito.fm.controller;
-import java.util.Map;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -8,12 +6,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WelcomeController {
 
 	@RequestMapping("/")
-	public String welcome(Map<String, Object> model) {
+	public String welcome() {
 		return "index";
 	}
 
 	@RequestMapping("/home")
-	public String home(Map<String, Object> model) {
+	public String home() {
 		return "home";
+	}
+	
+	@RequestMapping("/ranking")
+	public String ranking() {
+		return "ranking";
 	}
 }
