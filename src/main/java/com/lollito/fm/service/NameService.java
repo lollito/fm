@@ -21,7 +21,7 @@ public class NameService {
 	
 	public String generateClubName(){
 		String name = "";
-		List<String> prefix = Arrays.asList("A.S. ", "F.C. ", "S.S. ", "A.C. ");
+		List<String> prefix = Arrays.asList("A.S. ", "F.C. ", "S.S. ", "A.C. ", "", "", "", "");
 		try {
 			NameGenerator nmg = new NameGenerator("name/custom.txt");
 			name = RandomUtils.randomValueFromList(prefix) + nmg.compose(RandomUtils.randomValue(3, 5));

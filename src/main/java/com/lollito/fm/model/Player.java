@@ -22,6 +22,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 //Portieri:
 //Parate, inutile a dirsi, è importante per i portieri. Quest'ultimi tuttavia si avvantaggiano anche dall'avere una buona abilità in difesa, mentre calci piazzati aiuta contro rigori e calci di punizione.
@@ -87,6 +89,7 @@ public class Player implements Serializable{
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "team_id" )
+	@JsonIgnore
     private Team team;
 	
 	public Player() {

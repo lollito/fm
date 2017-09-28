@@ -148,18 +148,14 @@
     <script src="vendor/popper/popper.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+	<script src="js/common.js"></script>
 	<script>
-		function ajaxForm(form, success){
-			form.ajaxForm({url: form.attr("action"), type: form.attr("method"), success: success, clearForm: true, resetForm: true})
-		}
-		
 		$('#new-game-form button[type="submit"]').on('click', function() {
 			console.log("ciaoooooooo");
 			ajaxForm($("#new-game-form"), newGameSuccess);
 		});
 		
 		function newGameSuccess(){
-			console.log("successsss");
 			document.location.href = "/home";
 		}
 	</script>

@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Stadium;
 import com.lollito.fm.model.User;
+import com.lollito.fm.repository.rest.ClubRepository;
 import com.lollito.fm.utils.RandomUtils;
 
 @Service
@@ -23,6 +25,8 @@ public class ClubService {
 	@Autowired TeamService teamService;
 	@Autowired NameService nameService;
 	@Autowired UserService userService;
+	@Autowired ClubRepository clubRepository;
+	@Autowired SessionBean sessionBean;
 	
 	public Club createPlayerClub(String clubName, Game game){
 		User user = userService.find();
@@ -42,6 +46,10 @@ public class ClubService {
 		return clubs;
 	}
 
+	public Club load(){
+		return clubRepository.findByGameAndUser(sessionBean.getGame(), userService.find());
+	}
+	
 	private Club createClub(String clubName, Game game, User user) {
 		Club club = new Club();
 		club.setName(clubName != null ? clubName : nameService.generateClubName());

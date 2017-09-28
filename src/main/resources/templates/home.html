@@ -1,110 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-
-    <meta charset="utf-8"></meta>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
-    <meta name="description" content=""></meta>
-    <meta name="author" content=""></meta>
-
-    <title>Simple Sidebar - Start Bootstrap Template</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
-
-    <!-- Custom styles for this template -->
-    <link href="css/simple-sidebar.css" rel="stylesheet"></link>
-
-</head>
+<head th:replace="common/head :: head"></head>
 
 <body>
 
 <div id="wrapper" class="toggled">
 
     <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <li class="sidebar-brand">
-                <a href="#" class="btn btn-dark">Continua</a>
-            </li>
-            <li>
-                <a href="#">Home</a>
-            </li>
-            <li>
-                <a href="#">Squadra</a>
-            </li>
-            <li>
-                <a href="#">Giovanili</a>
-            </li>
-            <li>
-                <a href="#">Calendario</a>
-            </li>
-            <li>
-                <a href="#">Classifica</a>
-            </li>
-            <li>
-                <a href="#">Stadio</a>
-            </li>
-            <li>
-                <a href="#">Finanze</a>
-            </li>
-        </ul>
-    </div>
-    <!-- /#sidebar-wrapper -->
+    <div th:replace="common/sidebar :: sidebar"></div>
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="#">24/09/2017</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Home
-                                <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <nav th:replace="common/navbar :: navbar"></nav>
+        
         <div class="container-fluid">
-
             <h1>Simple Sidebar</h1>
             <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
             <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
             <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a>
-        </div>
+				<table data-toggle="table"
+					data-url="/player/">
+					<thead>
+						<tr>
+							<th data-field="role">Role</th>
+							<th data-field="name">Name</th>
+							<th data-field="surname">Surname</th>
+							<th data-field="birth">Birth</th>
+							<th data-field="stamina">Stamina</th>
+							<th data-field="playmaking">Playmaking</th>
+							<th data-field="scoring">Scoring</th>
+							<th data-field="winger">Winger</th>
+							<th data-field="goalkeeping">Goalkeeping</th>
+							<th data-field="passing">Passing</th>
+							<th data-field="defending">Defending</th>
+							<th data-field="setPieces">Set Pieces</th>
+							<th data-field="condition">Condition</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
     </div>
     <!-- /#page-content-wrapper -->
 
 </div>
 <!-- /#wrapper -->
 
+<!-- Modal -->
+<div class="modal fade" id="modal-disputated-match" tabindex="-1" role="dialog" aria-labelledby="Disputated Match" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Match disputati</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+					<script id="disputated-match-template" type="text/x-handlebars-template">
+						<div class="row">
+							{{#each disputatedMatch}}
+								<div class="col-md-4">{{this.home.name}}</div>
+								<div class="col-md-4">{{this.homeScore}} - {{this.awayScore}}</div>
+								<div class="col-md-4">{{this.away.name}}</div>
+							{{/each}}
+						</div>
+					</script>
+					<div id="disputated-match-template-placeholder" class="col-md-12"></div>
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- Bootstrap core JavaScript -->
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/popper/popper.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
+<script src="js/common.js"></script>
 
 <!-- Menu Toggle Script -->
 <script>
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
+
+	function buildTemplateFromGameResponse(data){
+		console.dir(data);
+		var source = $("#entry-template").html();
+		var template = Handlebars.compile(source);
+		currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year
+		var context = {
+			currentDate : currentDate
+		};
+		var html = template(context);
+		$("#entry-template-placeholder").html(html);
+		console.log();
+		if(data.disputatedMatch.length > 0){
+			console.log("entrooooo");
+			var source = $("#disputated-match-template").html();
+			var template = Handlebars.compile(source);
+			var context = {
+				disputatedMatch : data.disputatedMatch
+			};
+			var html = template(context);
+			$("#disputated-match-template-placeholder").html(html);
+			$("#modal-disputated-match").modal("show");
+		} else{
+			console.log("non entrooo");
+		}
+	}
+	
+	$("#menu-toggle").click(function(e) {
+		e.preventDefault();
+		$("#wrapper").toggleClass("toggled");
+	});
+
+	
+	$("#next").click(function(e) {
+		e.preventDefault();
+		console.log("click");
+		$.ajax({
+			method : "PUT",
+			url : "/game/next",
+		}).done(function(data) {
+			buildTemplateFromGameResponse(data);
+		});
+	});
+
+	$(document).ready(function() {
+		console.log("ready");
+		$.get("/game/", function(data) {
+			buildTemplateFromGameResponse(data);
+		}, "json");
+
+	});
 </script>
 
 </body>

@@ -44,37 +44,29 @@ public class GameService {
 	
 	public GameResponse next(){
 		GameResponse gameResponse = new GameResponse();
-		if (sessionBean.getGameId() == null) {
-			// TODO error
-			logger.error("error - game is null");
-		} else {
-			Game game = gameRepository.findOne(sessionBean.getGameId());
-			if (game == null) {
-				// TODO error
-				logger.error("error - game is null");
-			} else {
-				game.addDay();
-				List<Match> matches = matchRepository.findByGameAndDate(game, game.getCurrentDate());
-				logger.info("matches {}", matches);
-				gameResponse.setCurrentMatch(simulationMatchService.simulate(matches));
-				gameResponse.setCurrentDate(game.getCurrentDate());
-				gameResponse.setDisputatedMatch(matches);
-				game = gameRepository.save(game);
-			}
-		}
+		Game game = sessionBean.getGame();
+		game.addDay();
+		List<Match> matches = matchRepository.findByGameAndDate(game, game.getCurrentDate());
+		logger.info("matches {}", matches);
+		gameResponse.setCurrentMatch(simulationMatchService.simulate(matches));
+		gameResponse.setCurrentDate(game.getCurrentDate());
+		gameResponse.setDisputatedMatch(matches);
+		game = gameRepository.save(game);
+		return gameResponse;
+	}
+	
+	public GameResponse load(){
+		GameResponse gameResponse = new GameResponse();
+		Game game = sessionBean.getGame();
+		gameResponse.setCurrentDate(game.getCurrentDate());
 		return gameResponse;
 	}
 	
 	public GameResponse load(Long gameId){
-		Game game = gameRepository.findOne(gameId);
+		Game game = sessionBean.getGame();
 		GameResponse gameResponse = new GameResponse();
-		if (game == null){
-			//TODO error
-			logger.error("error - game is null");
-		} else {
-			sessionBean.setGameId(gameId);
-			gameResponse.setCurrentDate(game.getCurrentDate());
-		}
+		sessionBean.setGameId(gameId);
+		gameResponse.setCurrentDate(game.getCurrentDate());
 		return gameResponse;
 	}
 }
