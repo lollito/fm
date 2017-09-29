@@ -6,7 +6,7 @@
 	<groupId>com.lollito</groupId>
 	<artifactId>fm</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>fm</name>
 	<description>Footbal Manager</description>
@@ -93,11 +93,11 @@
 		</dependency>
 
 		<!-- hot swapping, disable cache for template, enable live reload -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 
 	<build>
