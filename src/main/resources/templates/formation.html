@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head"></head>
+
+<body>
+
+<div id="wrapper" class="toggled">
+
+    <!-- Sidebar -->
+    <div th:replace="common/sidebar :: sidebar"></div>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav th:replace="common/navbar :: navbar"></nav>
+        
+        <div class="container-fluid">
+        	<div class="row">
+        		<div class="col-md-6">
+		            <table data-toggle="table" data-url="/player/">
+						<thead>
+							<tr>
+								<th data-field="id" data-formatter="operateFormatter">Id</th>
+								<th data-field="role">Role</th>
+								<th data-field="name">Name</th>
+								<th data-field="surname">Surname</th>
+								<th data-field="condition">Condition</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+				<div class="col-md-6">
+					<div class="formation">
+						<div class="pitch">
+							<h4>4-4-2</h4>
+							<div class="formation-container">
+								<div class="box1">
+									<div class="pen1">
+										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 5px 15px;">1</div>
+									</div>
+								</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 53px">2</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 126px;">3</div>
+								<div class="pos" style="margin: 80px 186px">4</div>
+								<div class="pos" style="margin: 80px 258px">5</div>
+				
+								<div class="pos" style="margin: 215px 53px">6</div>
+								<div class="pos" style="margin: 215px 126px">7</div>
+								<div class="pos" style="margin: 215px 186px">8</div>
+								<div class="pos" style="margin: 215px 258px">9</div>
+				
+								<div class="pos" style="margin: 300px 126px;">10</div>
+								<div class="pos" style="margin: 300px 186px;">11</div>
+				
+								<div class="half"></div>
+								<div class="box2">
+									<div class="pen2"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<div th:replace="common/modal :: modal"></div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/popper/popper.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
+<script src="js/common.js"></script>
+
+<script>
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    console.log(ev.dataTransfer);
+    ev.target.appendChild(document.getElementById(data));
+}
+
+/* $('table').bootstrapTable({
+    onLoadSuccess: function () {
+    	$("tr").attr("draggable", true);
+    	$("tr").attr("ondragstart", "drag(event)");
+    }
+}); */
+
+function operateFormatter(value, row, index) {
+    return [
+        '<div id="' + row.id + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
+        '<i class="fa fa-futbol-o"></i>',
+        '</div>'
+    ].join('');
+}
+</script>
+
+</body>
+
+</html>

@@ -19,4 +19,14 @@ public class WelcomeController {
 	public String ranking() {
 		return "ranking";
 	}
+	
+	@RequestMapping("/schedule")
+	public String schedule() {
+		return "schedule";
+	}
+	
+	@RequestMapping("/formation")
+	public String formation() {
+		return "formation";
+	}
 }

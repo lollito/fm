@@ -50,7 +50,6 @@ public class Match implements Serializable{
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "round_id" )
-	@JsonIgnore
 	private Round round;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
