@@ -4,9 +4,11 @@ A Football Manager online game
 
 ## Getting Started
 
+```
 cd /project-path/fm
 mvn clean package
 java -jar /target/fm.jar
+```
 
 ### Prerequisites
 
