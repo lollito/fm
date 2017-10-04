@@ -1,7 +1,7 @@
 package com.lollito.fm.utils;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.springframework.core.io.ClassPathResource;
@@ -88,13 +88,10 @@ public class NameGenerator {
      */
     public void refresh() throws IOException {
 
-        FileReader input = null;
         BufferedReader bufRead;
         String line;
 
-        input = new FileReader(new ClassPathResource(fileName).getFile());
-
-        bufRead = new BufferedReader(input);
+        bufRead = new BufferedReader(new InputStreamReader(new ClassPathResource(fileName).getInputStream(), "UTF-8"));
         line = "";
 
         while (line != null) {
