@@ -1,11 +1,11 @@
 package com.lollito.fm.repository.rest;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
 import com.lollito.fm.model.User;
 
-@RepositoryRestResource(collectionResourceRel = "user", path = "user")
+@Repository
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
 }

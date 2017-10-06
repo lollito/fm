@@ -1,11 +1,11 @@
 package com.lollito.fm.repository.rest;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
 import com.lollito.fm.model.Round;
 
-@RepositoryRestResource(collectionResourceRel = "round", path = "round")
+@Repository
 public interface RoundRepository extends PagingAndSortingRepository<Round, Long> {
 
 }

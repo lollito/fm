@@ -20,6 +20,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "game")
 public class Game implements Serializable{
@@ -38,12 +40,15 @@ public class Game implements Serializable{
     
     @OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	@JoinColumn( name = "season_id" )
+    @JsonIgnore
     private Season currentSeason;
     
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Season> seasonHistory = new ArrayList<>();
     
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Club> clubs = new ArrayList<>();
     
     public Long getId() {

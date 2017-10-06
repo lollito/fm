@@ -63,10 +63,19 @@ public class GameService {
 	}
 	
 	public GameResponse load(Long gameId){
-		Game game = sessionBean.getGame();
+		Game game = gameRepository.findOne(gameId);
 		GameResponse gameResponse = new GameResponse();
-		sessionBean.setGameId(gameId);
-		gameResponse.setCurrentDate(game.getCurrentDate());
+		if (game == null){
+			//TODO error
+			logger.error("error - game is null");
+		} else {
+			sessionBean.setGameId(gameId);
+			gameResponse.setCurrentDate(game.getCurrentDate());
+		}
 		return gameResponse;
+	}
+	
+	public List<Game> findAll(){
+		return gameRepository.findAll();
 	}
 }

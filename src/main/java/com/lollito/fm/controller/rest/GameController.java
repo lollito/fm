@@ -1,5 +1,7 @@
 package com.lollito.fm.controller.rest;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +33,18 @@ public class GameController {
 		return gameService.load();
     }
 	
+	@RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    public List<Game> findAll() {
+		return gameService.findAll();
+    }
+	
 	@RequestMapping(value = "/next", method = RequestMethod.PUT)
     public GameResponse next() {
 		return gameService.next();
     }
 	
 	@RequestMapping(value = "/load", method = RequestMethod.GET)
-    public GameResponse load(Long GameId) {
-		return gameService.load(GameId);
+    public GameResponse load(Long gameId) {
+		return gameService.load(gameId);
     }
 }

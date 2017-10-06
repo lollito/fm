@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
     <meta name="description" content=""></meta>
     <meta name="author" content=""></meta>
-
-    <title>Full - Start Bootstrap Template</title>
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon/if_footbal_994000.ico" />
+    <title>FM - A Football Manager Game</title>
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
@@ -73,7 +73,7 @@
             <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></img></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a href="#">Carica Partita</a>
+                <a href="#" data-toggle="modal" data-target="#modal-load-game">Carica Partita</a>
               </h4>
             </div>
           </div>
@@ -83,7 +83,7 @@
             <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></img></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a href="#">Impostazioni</a>
+                <a href="#">Impostazioni (Cooming Soon)</a>
               </h4>
             </div>
           </div>
@@ -93,7 +93,7 @@
             <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></img></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a href="#">Cristo</a>
+                <a href="#">Multiplayer (Cooming Soon)</a>
               </h4>
             </div>
           </div>
@@ -118,7 +118,7 @@
             <div class="modal-content">
             	<form id="new-game-form" action="game/" method="POST">
 	                <div class="modal-header">
-	                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+	                    <h5 class="modal-title">New Game</h5>
 	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	                        <span aria-hidden="true">&times;</span>
 	                    </button>
@@ -143,16 +143,54 @@
         </div>
     </div>
 
+	<!-- Modal -->
+    <div class="modal fade" id="modal-load-game" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Load Game</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <table id="game-table" data-toggle="table" data-url="/game/findAll">
+					<thead>
+						<tr>
+							<th data-field="id">Id</th>
+							<th data-field="name">Name</th>
+						</tr>
+					</thead>
+				</table>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/popper/popper.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
 	<script src="js/common.js"></script>
 	<script>
 		$('#new-game-form button[type="submit"]').on('click', function() {
-			console.log("ciaoooooooo");
 			ajaxForm($("#new-game-form"), newGameSuccess);
+		});
+		
+		$('#game-table').bootstrapTable({
+			onClickRow: function (row, $element, field) {
+				bootbox.confirm("Sei sicuro?", function(){
+					$.get("/game/load", { gameId: row.id }, function(data) {
+						newGameSuccess();
+					}, "json");
+				});
+		    }
 		});
 		
 		function newGameSuccess(){
