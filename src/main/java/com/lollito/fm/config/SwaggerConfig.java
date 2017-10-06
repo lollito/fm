@@ -1,4 +1,4 @@
-package com.lollito.fm;
+package com.lollito.fm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "module")
@@ -115,5 +118,13 @@ public class Module implements Serializable{
 			Module other = (Module) obj;
 			return new EqualsBuilder().append(id, other.id).isEquals();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("name", name)
+				.toString();
 	}
 }
