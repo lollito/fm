@@ -36,21 +36,21 @@
 							<div class="formation-container">
 								<div class="box1">
 									<div class="pen1">
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 5px 15px;">1</div>
+										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 5px 15px">1</div>
 									</div>
 								</div>
 								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 53px">2</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 126px;">3</div>
-								<div class="pos" style="margin: 80px 186px">4</div>
-								<div class="pos" style="margin: 80px 258px">5</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 126px">3</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 186px">4</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 258px">5</div>
 				
-								<div class="pos" style="margin: 215px 53px">6</div>
-								<div class="pos" style="margin: 215px 126px">7</div>
-								<div class="pos" style="margin: 215px 186px">8</div>
-								<div class="pos" style="margin: 215px 258px">9</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 53px">6</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 126px">7</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 186px">8</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 258px">9</div>
 				
-								<div class="pos" style="margin: 300px 126px;">10</div>
-								<div class="pos" style="margin: 300px 186px;">11</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 126px;">10</div>
+								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 186px;">11</div>
 				
 								<div class="half"></div>
 								<div class="box2">
@@ -70,16 +70,10 @@
 
 <div th:replace="common/modal :: modal"></div>
 
-<!-- Bootstrap core JavaScript -->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/popper/popper.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
-<script src="js/common.js"></script>
+<div th:replace="common/scripts :: scripts"></div>
 
-<script>
+<script th:inline="javascript">
+/*<![CDATA[*/
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -91,8 +85,11 @@ function drag(ev) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
-    console.log(ev.dataTransfer);
-    ev.target.appendChild(document.getElementById(data));
+    if(ev.target.childElementCount < 1){
+    	var element = $("#" + data).html($("#" + data).data("name"));
+    	ev.target.appendChild(document.getElementById(data));
+    }
+    
 }
 
 /* $('table').bootstrapTable({
@@ -103,12 +100,14 @@ function drop(ev) {
 }); */
 
 function operateFormatter(value, row, index) {
+	var name = row.name.charAt(0) + "." + row.surname;
     return [
-        '<div id="' + row.id + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
+        '<div id="' + row.id + '" data-name="' + name + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
         '<i class="fa fa-futbol-o"></i>',
         '</div>'
     ].join('');
 }
+/*]]>*/
 </script>
 
 </body>

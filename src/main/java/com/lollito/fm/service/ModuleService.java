@@ -28,6 +28,10 @@ public class ModuleService {
 		return modules;
 	}
 	
+	public List<Module> findAll() {
+		return moduleRepository.findAll();
+	}
+	
 	public Module randomModule(){
 		return RandomUtils.randomValueFromList(moduleRepository.findAll());
 	}

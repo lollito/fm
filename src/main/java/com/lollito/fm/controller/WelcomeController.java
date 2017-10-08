@@ -15,14 +15,19 @@ public class WelcomeController {
 		return "home";
 	}
 	
-	@RequestMapping("/ranking")
-	public String ranking() {
-		return "ranking";
+	@RequestMapping("/team")
+	public String team() {
+		return "team";
 	}
 	
 	@RequestMapping("/schedule")
 	public String schedule() {
 		return "schedule";
+	}
+	
+	@RequestMapping("/ranking")
+	public String ranking() {
+		return "ranking";
 	}
 	
 	@RequestMapping("/formation")

@@ -17,14 +17,14 @@
         <div class="container-fluid">
             <div id="toolbar">
 			</div>
-            <table data-toggle="table" data-url="/match/" data-toolbar="#toolbar" data-show-refresh="true">
+            <table data-toggle="table" data-url="/match/" data-toolbar="#toolbar" data-show-refresh="true" data-group-by="true" data-group-by-field="number">
 				<thead>
 					<tr>
 						<th data-field="id">Id</th>
 						<th data-field="home.name">Casa</th>
 						<th data-field="away.name">Trasferta</th>
 						<th data-field="date">Data</th>
-						<th data-field="round.number">Number</th>
+						<th data-field="number" data-visible="false">Number</th>
 					</tr>
 				</thead>
 			</table>
@@ -37,14 +37,7 @@
 
 <div th:replace="common/modal :: modal"></div>
 
-<!-- Bootstrap core JavaScript -->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/popper/popper.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
-<script src="js/common.js"></script>
+<div th:replace="common/scripts :: scripts"></div>
 
 </body>
 

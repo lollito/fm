@@ -15,19 +15,22 @@
         <nav th:replace="common/navbar :: navbar"></nav>
         
         <div class="container-fluid">
-        	<div id="toolbar">
-			</div>
-            <table data-toggle="table" data-url="/ranking/" data-toolbar="#toolbar" data-show-refresh="true">
+            <table data-toggle="table" data-url="/player/">
 				<thead>
 					<tr>
-						<th data-field="club.name">Club</th>
-						<th data-field="played">Played</th>
-						<th data-field="points">Points</th>
-						<th data-field="won">Won</th>
-						<th data-field="drawn">Drawn</th>
-						<th data-field="lost">Lost</th>
-						<th data-field="goalsFor">Goals For</th>
-						<th data-field="goalAgainst">Goal Against</th>
+						<th data-field="role">Role</th>
+						<th data-field="name">Name</th>
+						<th data-field="surname">Surname</th>
+						<th data-field="birth">Birth</th>
+						<th data-field="stamina">Stamina</th>
+						<th data-field="playmaking">Playmaking</th>
+						<th data-field="scoring">Scoring</th>
+						<th data-field="winger">Winger</th>
+						<th data-field="goalkeeping">Goalkeeping</th>
+						<th data-field="passing">Passing</th>
+						<th data-field="defending">Defending</th>
+						<th data-field="setPieces">Set Pieces</th>
+						<th data-field="condition">Condition</th>
 					</tr>
 				</thead>
 			</table>

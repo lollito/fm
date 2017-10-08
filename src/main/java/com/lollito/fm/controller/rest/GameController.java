@@ -47,4 +47,10 @@ public class GameController {
     public GameResponse load(Long gameId) {
 		return gameService.load(gameId);
     }
+	
+	@RequestMapping(value = "/", method = RequestMethod.DELETE)
+    public String delete(Long gameId) {
+		gameService.delete(gameId);
+		return "ok";
+    }
 }

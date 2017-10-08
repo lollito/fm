@@ -78,4 +78,9 @@ public class GameService {
 	public List<Game> findAll(){
 		return gameRepository.findAll();
 	}
+	
+	public void delete(Long gameId){
+		//TODO security
+		gameRepository.delete(gameId);
+	}
 }

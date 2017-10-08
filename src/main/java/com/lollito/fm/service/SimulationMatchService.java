@@ -31,11 +31,11 @@ public class SimulationMatchService {
 	public Match simulate(List<Match> matches){
 		Match userMatch = null;
 		for (Match match : matches) {
-			//if(match.getHome().getUser() == null && match.getAway().getUser() == null){
+			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
 				simulate(match);
-//			} else{
-//				userMatch =  match;
-//			}
+			} else{
+				userMatch =  match;
+			}
 		}
 		return userMatch;
 	}
@@ -45,17 +45,12 @@ public class SimulationMatchService {
 		simulationMatch.setHomeFormation(formationService.createFormation(match.getHome().getTeam().getPlayers()));
 		simulationMatch.setAwayFormation(formationService.createFormation(match.getAway().getTeam().getPlayers()));
 		simulationMatch.setMatch(match);
-		logger.info("start create simulation match");
 		simulationMatchRepository.save(simulationMatch);
-		logger.info("finish create simulation match");
 		int[] score = playMatch(simulationMatch);
 		simulationMatch.setFinish(true);
-		logger.info("{} vs {}", simulationMatch.getMatch().getHomeScore(), simulationMatch.getMatch().getAwayScore());
 //		matchRepository.save(simulationMatch.getMatch());
 //		matchRepository.save(simulationMatch.getMatch());
-		logger.info("start update simulation match");
 		simulationMatchRepository.save(simulationMatch);
-		logger.info("finish update simulation match");
 //		if(score[0] > score[1]){
 //			ranking.put(match.getHome().getName(), ranking.get(match.getHome().getName()) +3);
 //		} else if(score[0] < score[1]){

@@ -1,12 +1,3 @@
-function ajaxForm(form, success) {
-	form.ajaxForm({
-		url : form.attr("action"),
-		type : form.attr("method"),
-		success : success,
-		clearForm : true
-	})
-}
-
 function buildTemplateFromGameResponse(data){
 	var source = $("#entry-template").html();
 	var template = Handlebars.compile(source);
@@ -16,7 +7,9 @@ function buildTemplateFromGameResponse(data){
 	};
 	var html = template(context);
 	$("#entry-template-placeholder").html(html);
-	if(data.disputatedMatch.length > 0){
+	if(data.currentMatch != null){
+		document.location.href = "/formation";
+	} else if(data.disputatedMatch.length > 0){
 		var source = $("#disputated-match-template").html();
 		var template = Handlebars.compile(source);
 		var context = {
@@ -25,8 +18,6 @@ function buildTemplateFromGameResponse(data){
 		var html = template(context);
 		$("#disputated-match-template-placeholder").html(html);
 		$("#modal-disputated-match").modal("show");
-	} else{
-		
 	}
 }
 
