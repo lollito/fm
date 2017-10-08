@@ -108,6 +108,7 @@ body {
 
 .formation {
 	padding: 0px 50px;
+	position: fixed;
 }
 
 .formation select{

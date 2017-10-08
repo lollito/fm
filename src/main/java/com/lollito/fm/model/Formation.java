@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -22,6 +25,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
+
 
 @Entity
 @Table(name = "formation")
@@ -41,6 +45,12 @@ public class Formation implements Serializable{
 	@Column(name="have_ball")
 	@Type(type = "yes_no")
 	private Boolean haveBall = Boolean.FALSE;
+	
+	@OneToOne( mappedBy= "homeFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+	private SimulationMatch simulationMatch;
+	
+	@OneToOne( mappedBy= "awayFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+	private SimulationMatch simulationMatchAway;
 	
 //	private Player goalKeeper;
 //	

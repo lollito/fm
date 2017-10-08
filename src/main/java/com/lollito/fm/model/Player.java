@@ -2,8 +2,11 @@ package com.lollito.fm.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -91,6 +95,9 @@ public class Player implements Serializable{
 	@JoinColumn( name = "team_id" )
 	@JsonIgnore
     private Team team;
+	
+	@ManyToMany(mappedBy = "players", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<Formation> formations = new ArrayList<>();
 	
 	public Player() {
 		

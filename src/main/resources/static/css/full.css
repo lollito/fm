@@ -5,7 +5,7 @@
  */
 
 body {
-    background: url('http://placehold.it/1920x1080') no-repeat center center fixed;
+    background: url('../img/back.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -25,6 +25,16 @@ body {
 
 .portfolio-item {
     margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.portfolio-item .card {
+    background-color: rgba(255, 255, 255, .6);
+    border: 1px solid rgba(0, 0, 0, .6);
+}
+
+.portfolio-item .card a{
+    color: #000;
 }
 
 .pagination {
