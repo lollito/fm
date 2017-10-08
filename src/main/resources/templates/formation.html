@@ -30,35 +30,40 @@
 					</table>
 				</div>
 				<div class="col-md-6">
-					<div class="formation">
-						<div class="pitch">
-							<h4>4-4-2</h4>
-							<div class="formation-container">
-								<div class="box1">
-									<div class="pen1">
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 5px 15px">1</div>
+					<form id="formation-form" action="/game/play" method="POST">
+						<div class="formation">
+							<select name="moduleId">
+								<option value="1" >4-4-2</option>
+							</select>
+							<div class="pitch">
+								<!-- <h4>4-4-2</h4> -->
+								<div class="formation-container">
+									<div class="box1">
+										<div class="pen1">
+											<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 5px 15px">1<input type="hidden" name="playersId" /></div>
+										</div>
 									</div>
-								</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 53px">2</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 126px">3</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 186px">4</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 258px">5</div>
-				
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 53px">6</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 126px">7</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 186px">8</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 258px">9</div>
-				
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 126px;">10</div>
-								<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 186px;">11</div>
-				
-								<div class="half"></div>
-								<div class="box2">
-									<div class="pen2"></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 40px">2<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 120px">3<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 190px">4<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 270px">5<input type="hidden" name="playersId" /></div>
+					
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 53px">6<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 126px">7<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 186px">8<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 258px">9<input type="hidden" name="playersId" /></div>
+					
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 126px;">10<input type="hidden" name="playersId" /></div>
+									<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 186px;">11<input type="hidden" name="playersId" /></div>
+					
+									<div class="half"></div>
+									<div class="box2">
+										<div class="pen2"></div>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -85,7 +90,8 @@ function drag(ev) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
-    if(ev.target.childElementCount < 1){
+    if(ev.target.childElementCount < 2){
+    	ev.target.firstElementChild.value = data;
     	var element = $("#" + data).html($("#" + data).data("name"));
     	ev.target.appendChild(document.getElementById(data));
     }
@@ -107,6 +113,7 @@ function operateFormatter(value, row, index) {
         '</div>'
     ].join('');
 }
+
 /*]]>*/
 </script>
 

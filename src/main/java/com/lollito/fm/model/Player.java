@@ -271,14 +271,11 @@ public class Player implements Serializable{
 	
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat();
-	    String dataStr = sdf.format(birth);
-	    
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
 				.append("id", id)
 				.append("name", name)
 //				.append("surname", surname)
-				.append("birth", dataStr)
+				.append("birth", birth)
 				.append("stamina", stamina)
 				.append("playmaking", playmaking)
 				.append("scoring", scoring)

@@ -11,5 +11,5 @@ import com.lollito.fm.model.Match;
 
 @Repository
 public interface MatchRepository extends PagingAndSortingRepository<Match, Long> {
-	public List<Match> findByGameAndDate(Game game, LocalDate date);
+	public List<Match> findByGameAndDateAndFinish(Game game, LocalDate date, Boolean finish);
 }

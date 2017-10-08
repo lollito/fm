@@ -170,6 +170,7 @@ public class Formation implements Serializable{
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
 				.append("players", players)
+				.append("module", module)
 				.toString();
 	}
 }

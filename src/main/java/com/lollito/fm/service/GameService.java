@@ -13,6 +13,7 @@ import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Match;
+import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
@@ -42,13 +43,16 @@ public class GameService {
 		return game;
 	}
 	
-	public GameResponse next(){
+	public GameResponse next(FormationRequest formationRequest){
 		GameResponse gameResponse = new GameResponse();
 		Game game = sessionBean.getGame();
-		game.addDay();
-		List<Match> matches = matchRepository.findByGameAndDate(game, game.getCurrentDate());
+		List<Match> matches = matchRepository.findByGameAndDateAndFinish(game, game.getCurrentDate().plusDays(1), Boolean.FALSE);
 		logger.info("matches {}", matches);
-		gameResponse.setCurrentMatch(simulationMatchService.simulate(matches));
+		Match currentMatch = simulationMatchService.simulate(matches, formationRequest);
+		gameResponse.setCurrentMatch(currentMatch);
+		if(currentMatch == null) {
+			game.addDay();
+		}
 		gameResponse.setCurrentDate(game.getCurrentDate());
 		gameResponse.setDisputatedMatch(matches);
 		game = gameRepository.save(game);

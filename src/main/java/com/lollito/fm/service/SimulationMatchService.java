@@ -9,11 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
+import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
 import com.lollito.fm.model.SimulationMatch;
+import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.repository.rest.MatchRepository;
+import com.lollito.fm.repository.rest.ModuleRepository;
+import com.lollito.fm.repository.rest.PlayerRepository;
 import com.lollito.fm.repository.rest.SimulationMatchRepository;
 import com.lollito.fm.utils.RandomUtils;
 
@@ -26,28 +31,53 @@ public class SimulationMatchService {
 	@Autowired PlayerService playerService;
 	@Autowired SimulationMatchRepository simulationMatchRepository;
 	@Autowired MatchRepository matchRepository;
+	@Autowired ModuleRepository moduleRepository;
 	@Autowired RankingService rankingService;
+	@Autowired PlayerRepository playerRepository;
 	
-	public Match simulate(List<Match> matches){
+	public Match simulate(List<Match> matches, FormationRequest formationRequest){
 		Match userMatch = null;
 		for (Match match : matches) {
 			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
-				simulate(match);
-			} else{
-				userMatch =  match;
+				simulate(match, null);
+			} else {
+				if(formationRequest != null && formationRequest.getModuleId() != null && formationRequest.getPlayersId() != null) {
+					//TODO valida formation
+					Formation formation = new Formation();
+					Module module = moduleRepository.findOne(formationRequest.getModuleId());
+					formation.setModule(module);
+					for (Long id : formationRequest.getPlayersId()) {
+						formation.addPlayer(playerRepository.findOne(id));
+					}
+					simulate(match, formation);
+				}else {
+					userMatch =  match;
+				}
+				
 			}
 		}
 		return userMatch;
 	}
 	
-	public void simulate(Match match){
+	public void simulate(Match match, Formation formation){
 		SimulationMatch simulationMatch = new SimulationMatch();
-		simulationMatch.setHomeFormation(formationService.createFormation(match.getHome().getTeam().getPlayers()));
-		simulationMatch.setAwayFormation(formationService.createFormation(match.getAway().getTeam().getPlayers()));
+		if(formation == null || match.getHome().getUser() == null) {
+			simulationMatch.setHomeFormation(formationService.createFormation(match.getHome().getTeam().getPlayers()));
+			
+		} else {
+			simulationMatch.setHomeFormation(formation);
+		}
+		if(formation == null || match.getAway().getUser() == null) {
+			simulationMatch.setAwayFormation(formationService.createFormation(match.getAway().getTeam().getPlayers()));
+			
+		} else {
+			simulationMatch.setAwayFormation(formation);
+		}
+		
 		simulationMatch.setMatch(match);
 		simulationMatchRepository.save(simulationMatch);
 		int[] score = playMatch(simulationMatch);
-		simulationMatch.setFinish(true);
+		match.setFinish(true);
 //		matchRepository.save(simulationMatch.getMatch());
 //		matchRepository.save(simulationMatch.getMatch());
 		simulationMatchRepository.save(simulationMatch);

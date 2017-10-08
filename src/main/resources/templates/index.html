@@ -13,6 +13,7 @@
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
 
+	<link href="vendor/cookie-alert/css/cookiealert.css" rel="stylesheet"/>
     <!-- Custom styles for this template -->
     <link href="css/full.css" rel="stylesheet"></link>
 
@@ -104,13 +105,23 @@
     </div>
     <!-- /.container -->
 
-    <!-- Footer -->
-    <footer class="py-5 bg-dark">
+	<!-- COOKIES -->
+	<div class="alert alert-dismissible text-center cookiealert" role="alert">
+	    <div class="cookiealert-container">
+	        <b>Do you like cookies?</b> &#x1F36A; We use cookies to ensure you get the best experience on our website. <a href="http://cookiesandyou.com/" target="_blank">Learn more</a>
+	
+	        <button type="button" class="btn btn-primary btn-sm acceptcookies" aria-label="Close">
+	            I agree
+	        </button>
+	    </div>
+	</div>
+	<!-- /COOKIES -->
+    
+    <!-- <footer class="py-5 bg-dark">
       <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
       </div>
-      <!-- /.container -->
-    </footer>
+    </footer> -->
 
     <!-- Modal -->
     <div class="modal fade" id="modalNewGame" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -177,8 +188,11 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+	<script src="vendor/cookie-alert/js/cookiealert-standalone.js"></script>
 	<script src="js/ajax-form-utils.js"></script>
-	<script>
+	
+	<script th:inline="javascript">
+		/*<![CDATA[*/
 		$('#new-game-form button[type="submit"]').on('click', function() {
 			ajaxForm($("#new-game-form"), newGameSuccess);
 		});
@@ -196,6 +210,8 @@
 		function newGameSuccess(){
 			document.location.href = "/home";
 		}
+		
+		/*]]>*/
 	</script>
   </body>
 

@@ -41,9 +41,6 @@ public class SimulationMatch implements Serializable{
 	@JoinColumn( name = "away_formation_id" )
 	private Formation awayFormation;
 	
-	@Type(type = "yes_no")
-	private Boolean finish = Boolean.FALSE;
-	
 	public Long getId() {
 		return id;
 	}
@@ -76,14 +73,6 @@ public class SimulationMatch implements Serializable{
 		this.awayFormation = awayFormation;
 	}
 	
-	public Boolean getFinish() {
-		return finish;
-	}
-
-	public void setFinish(Boolean finish) {
-		this.finish = finish;
-	}
-
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

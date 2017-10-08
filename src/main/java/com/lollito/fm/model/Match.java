@@ -20,6 +20,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -57,6 +58,9 @@ public class Match implements Serializable{
 	@JoinColumn( name = "game_id" )
 	@JsonIgnore
 	private Game game;
+	
+	@Type(type = "yes_no")
+	private Boolean finish = Boolean.FALSE;
 	
 	public Match() {
 		
@@ -135,6 +139,14 @@ public class Match implements Serializable{
 
 	public void setGame(Game game) {
 		this.game = game;
+	}
+
+	public Boolean getFinish() {
+		return finish;
+	}
+
+	public void setFinish(Boolean finish) {
+		this.finish = finish;
 	}
 
 	@Override

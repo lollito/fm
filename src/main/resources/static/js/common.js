@@ -29,9 +29,14 @@ $("#menu-toggle").click(function(e) {
 
 $("#next").click(function(e) {
 	e.preventDefault();
+	var data = {}
+	if($('#formation-form').length){
+		data = $('#formation-form').serialize();
+	}
 	$.ajax({
-		method : "PUT",
+		method : "POST",
 		url : "/game/next",
+		data: data
 	}).done(function(data) {
 		buildTemplateFromGameResponse(data);
 	});

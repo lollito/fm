@@ -56,6 +56,7 @@ body {
     top: 0;
     right: 0;
     left: 0;
+    z-index: 999;
 }
 
 /* Sidebar Styles */
@@ -106,14 +107,18 @@ body {
 }
 
 .formation {
-	padding: 40px 50px;
+	padding: 0px 50px;
+}
+
+.formation select{
+	margin-left: 15px;	
 }
 
 .pitch {
 	background: #26A65B;
 	border-radius: 5px;
 	padding: 20px;
-	margin: 0 16px;
+	margin: 5px 16px;
 	display: inline-block;
 }
 
@@ -197,6 +202,11 @@ body {
 .pos:hover {
 	color: #BDC3C7;
 	background: #34495e;
+}
+
+.pos div{
+	font-size: 16px;
+	font-weight: 100;
 }
 
 @media (min-width: 992px) {
