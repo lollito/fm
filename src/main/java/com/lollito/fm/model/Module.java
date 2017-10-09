@@ -1,7 +1,6 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

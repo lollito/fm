@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.Team;
 import com.lollito.fm.repository.rest.TeamRepository;

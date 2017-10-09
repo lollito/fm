@@ -1,7 +1,6 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -281,7 +280,7 @@ public class Player implements Serializable{
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
 				.append("id", id)
 				.append("name", name)
-//				.append("surname", surname)
+				.append("surname", surname)
 				.append("birth", birth)
 				.append("stamina", stamina)
 				.append("playmaking", playmaking)

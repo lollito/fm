@@ -18,6 +18,25 @@ function buildTemplateFromGameResponse(data){
 		var html = template(context);
 		$("#disputated-match-template-placeholder").html(html);
 		$("#modal-disputated-match").modal("show");
+	} else {
+		toastr.options = {
+				  "closeButton": true,
+				  "debug": false,
+				  "newestOnTop": false,
+				  "progressBar": true,
+				  "positionClass": "toast-top-center",
+				  "preventDuplicates": false,
+				  "onclick": null,
+				  "showDuration": "300",
+				  "hideDuration": "1000",
+				  "timeOut": "4000",
+				  "extendedTimeOut": "1000",
+				  "showEasing": "swing",
+				  "hideEasing": "linear",
+				  "showMethod": "slideDown",
+				  "hideMethod": "fadeOut"
+				}
+        toastr.info('No match today');
 	}
 }
 

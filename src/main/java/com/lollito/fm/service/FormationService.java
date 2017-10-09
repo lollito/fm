@@ -12,7 +12,6 @@ import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
-import com.lollito.fm.utils.RandomUtils;
 
 @Service
 public class FormationService {
