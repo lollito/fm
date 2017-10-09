@@ -49,6 +49,7 @@ public class SimulationMatchService {
 					for (Long id : formationRequest.getPlayersId()) {
 						formation.addPlayer(playerRepository.findOne(id));
 					}
+					formationService.validate(formation);
 					simulate(match, formation);
 				}else {
 					userMatch =  match;

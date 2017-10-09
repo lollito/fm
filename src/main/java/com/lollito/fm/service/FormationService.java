@@ -85,4 +85,25 @@ public class FormationService {
 		players.addAll(formation.getForwards());
 		return players;
 	}
+	
+	public void validate(Formation formation) {
+		if(formation.getPlayers().size() != 11) {
+			throw new RuntimeException("formation validation error");
+		}
+		if(!formation.getModule().getCd().equals(formation.getCentralDefenders().size())) {
+			throw new RuntimeException("formation validation error");
+		}
+		if(!formation.getModule().getWb().equals(formation.getWingBacks().size())) {
+			throw new RuntimeException("formation validation error");
+		}
+		if(!formation.getModule().getMf().equals(formation.getMidfielders().size())) {
+			throw new RuntimeException("formation validation error");
+		}
+		if(!formation.getModule().getWng().equals(formation.getWings().size())) {
+			throw new RuntimeException("formation validation error");
+		}
+		if(!formation.getModule().getFw().equals(formation.getForwards().size())) {
+			throw new RuntimeException("formation validation error");
+		}
+	}
 }
