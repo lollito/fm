@@ -5,37 +5,70 @@
 
 <body>
 
-<div id="wrapper" class="toggled">
+	<div id="wrapper" class="toggled">
 
-    <!-- Sidebar -->
-    <div th:replace="common/sidebar :: sidebar"></div>
+		<!-- Sidebar -->
+		<div th:replace="common/sidebar :: sidebar"></div>
 
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-        <nav th:replace="common/navbar :: navbar"></nav>
-        
-        <div class="container-fluid">
-            <h1>Simple Sidebar</h1>
-            <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
-            <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
-            <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a>
-				
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+			<nav th:replace="common/navbar :: navbar"></nav>
+
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="card text-white bg-dark mb-3">
+							<div class="card-header">Next Round</div>
+							<div class="card-body">
+								<h4 class="card-title">Coming Soon</h4>
+								<p class="card-text">Coming Soon</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="card text-white bg-dark mb-3">
+							<div class="card-header">Ranking</div>
+							<div class="card-body">
+								<h4 class="card-title">Coming Soon</h4>
+								<p class="card-text">Coming Soon</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="card text-white bg-dark mb-3">
+							<div class="card-header">Risultati</div>
+							<div class="card-body">
+								<h4 class="card-title">Coming Soon</h4>
+								<p class="card-text">Coming Soon</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="card text-white bg-dark mb-3">
+							<div class="card-header">Coming Soon</div>
+							<div class="card-body">
+								<h4 class="card-title">Coming Soon</h4>
+								<p class="card-text">Coming Soon</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
-    </div>
-    <!-- /#page-content-wrapper -->
+		</div>
+		<!-- /#page-content-wrapper -->
 
-</div>
-<!-- /#wrapper -->
+	</div>
+	<!-- /#wrapper -->
 
-<div th:replace="common/modal :: modal"></div>
+	<div th:replace="common/modal :: modal"></div>
 
-<div th:replace="common/scripts :: scripts"></div>
+	<div th:replace="common/scripts :: scripts"></div>
 
-<!-- Menu Toggle Script -->
-<script>
-
-	
-</script>
+	<!-- Menu Toggle Script -->
+	<script>
+		
+	</script>
 
 </body>
 
