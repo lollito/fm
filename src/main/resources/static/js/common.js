@@ -18,6 +18,10 @@ function buildTemplateFromGameResponse(data){
 		var html = template(context);
 		$("#disputated-match-template-placeholder").html(html);
 		$("#modal-disputated-match").modal("show");
+		if($('#ranking-table').length){
+			$('#ranking-table').bootstrapTable('refresh');
+		}
+		
 	} else {
 		toastr.options = {
 				  "closeButton": true,
@@ -29,7 +33,7 @@ function buildTemplateFromGameResponse(data){
 				  "onclick": null,
 				  "showDuration": "300",
 				  "hideDuration": "1000",
-				  "timeOut": "3000",
+				  "timeOut": "2000",
 				  "extendedTimeOut": "1000",
 				  "showEasing": "swing",
 				  "hideEasing": "linear",

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Player;
 import com.lollito.fm.service.ClubService;
+import com.lollito.fm.utils.RandomUtils;
 
 @RestController
 @RequestMapping(value="/player")
@@ -22,8 +23,23 @@ public class PlayerController {
 	@Autowired private ClubService clubService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<Player> game(Model model) {
+    public List<Player> players() {
         return clubService.load().getTeam().getPlayers();
     }
    
+	@RequestMapping(value = "/condition", method = RequestMethod.GET)
+    public String condition(Model model) {
+		int azioni = RandomUtils.randomValue(10,20);
+		List<Player> players =  clubService.load().getTeam().getPlayers();
+		for (int i = 0; i < azioni; i++) {
+			for(Player player : players) {
+	        	double d = -((10 * player.getStamina())/99) + (1000/99);
+	        	player.decrementCondition(d/azioni);
+	        }
+		}
+		for(Player player : players) {
+        	logger.info("condition - {}", player.getCondition());
+        }
+        return "ok";
+    }
 }

@@ -85,7 +85,7 @@ public class Player implements Serializable{
 	private Integer setPieces;
 
 	@Column(name = "cndtion")
-	private Integer condition = 100;
+	private Double condition = 100.0;
 	
 	@Enumerated(EnumType.ORDINAL)
 	private PlayerRole role;
@@ -205,14 +205,24 @@ public class Player implements Serializable{
 		this.setPieces = setPieces;
 	}
 
-	public Integer getCondition() {
+	public Double getCondition() {
 		return condition;
 	}
 
-	public void setCondition(Integer condition) {
+	public void setCondition(Double condition) {
 		this.condition = condition;
 	}
 
+	@Transient
+	public void decrementCondition(Double decrement) {
+		this.condition -= decrement;
+	}
+	
+	@Transient
+	public void incrementCondition(Double decrement) {
+		this.condition += decrement;
+	}
+	
 	public PlayerRole getRole() {
 		return role;
 	}

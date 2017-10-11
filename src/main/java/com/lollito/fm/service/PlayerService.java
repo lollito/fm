@@ -16,7 +16,7 @@ public class PlayerService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public Player createGk(Player player){
-		player.setStamina(RandomUtils.randomValue(1, 99));
+		player.setStamina(RandomUtils.randomValue(20, 90));
 		player.setPlaymaking(RandomUtils.randomValue(1, 50));
 		player.setScoring(RandomUtils.randomValue(1, 20));
 		player.setWinger(RandomUtils.randomValue(1, 20));
@@ -29,7 +29,7 @@ public class PlayerService {
 	}
 	
 	public Player createCd(Player player){
-		player.setStamina(RandomUtils.randomValue(1, 99));
+		player.setStamina(RandomUtils.randomValue(20, 90));
 		player.setPlaymaking(RandomUtils.randomValue(20, 70));
 		player.setScoring(RandomUtils.randomValue(20, 50));
 		player.setWinger(RandomUtils.randomValue(1, 20));
@@ -42,7 +42,7 @@ public class PlayerService {
 	}
 	
 	public Player createWb(Player player){
-		player.setStamina(RandomUtils.randomValue(1, 99));
+		player.setStamina(RandomUtils.randomValue(20, 90));
 		player.setPlaymaking(RandomUtils.randomValue(30, 70));
 		player.setScoring(RandomUtils.randomValue(20, 60));
 		player.setWinger(RandomUtils.randomValue(30, 60));
@@ -55,7 +55,7 @@ public class PlayerService {
 	}
 	
 	public Player createMf(Player player){
-		player.setStamina(RandomUtils.randomValue(1, 99));
+		player.setStamina(RandomUtils.randomValue(20, 90));
 		player.setPlaymaking(RandomUtils.randomValue(40, 99));
 		player.setScoring(RandomUtils.randomValue(30, 70));
 		player.setWinger(RandomUtils.randomValue(20, 50));
@@ -68,7 +68,7 @@ public class PlayerService {
 	}
 	
 	public Player createWng(Player player){
-		player.setStamina(RandomUtils.randomValue(1, 99));
+		player.setStamina(RandomUtils.randomValue(20, 90));
 		player.setPlaymaking(RandomUtils.randomValue(40, 80));
 		player.setScoring(RandomUtils.randomValue(30, 80));
 		player.setWinger(RandomUtils.randomValue(40, 99));
@@ -81,7 +81,7 @@ public class PlayerService {
 	}
 	
 	public Player createFw(Player player){
-		player.setStamina(RandomUtils.randomValue(1, 99));
+		player.setStamina(RandomUtils.randomValue(20, 90));
 		player.setPlaymaking(RandomUtils.randomValue(20, 30));
 		player.setScoring(RandomUtils.randomValue(50, 99));
 		player.setWinger(RandomUtils.randomValue(20, 60));

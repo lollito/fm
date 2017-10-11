@@ -79,7 +79,7 @@
           <div class="card h-100">
             <div class="card-body">
               <h4 class="card-title">
-                <a href="#" data-toggle="modal" data-target="#modal-load-game">Carica Partita</a>
+                <a id="load-game" href="#" data-toggle="modal" data-target="#modal-load-game">Carica Partita</a>
               </h4>
             </div>
           </div>
@@ -168,7 +168,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                        <table id="game-table" data-toggle="table" data-url="/game/findAll">
+                        <table id="game-table">
 					<thead>
 						<tr>
 							<th data-field="id">Id</th>
@@ -203,15 +203,19 @@
 			ajaxForm($("#new-game-form"), newGameSuccess);
 		});
 		
-		$('#game-table').bootstrapTable({
-			onClickRow: function (row, $element, field) {
-				bootbox.confirm("Sei sicuro?", function(){
-					$.get("/game/load", { gameId: row.id }, function(data) {
-						newGameSuccess();
-					}, "json");
-				});
-		    }
+		$( "#modal-load-game" ).on('show.bs.modal', function(e){
+			$('#game-table').bootstrapTable({
+				url: '/game/findAll',
+				onClickRow: function (row, $element, field) {
+					bootbox.confirm("Sei sicuro?", function(){
+						$.get("/game/load", { gameId: row.id }, function(data) {
+							newGameSuccess();
+						}, "json");
+					});
+			    }
+			});
 		});
+		
 		
 		function newGameSuccess(){
 			document.location.href = "/home";

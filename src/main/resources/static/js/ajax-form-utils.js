@@ -9,7 +9,6 @@ function ajaxForm(form, success) {
 
 var $loading = $('#loading').hide();
 $(document).ajaxStart(function() {
-	console.log("entrooooo");
 	$loading.show();
 }).ajaxStop(function() {
 	$loading.hide();
