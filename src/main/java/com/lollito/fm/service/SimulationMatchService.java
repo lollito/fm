@@ -38,26 +38,26 @@ public class SimulationMatchService {
 	public Match simulate(List<Match> matches, FormationRequest formationRequest){
 		Match userMatch = null;
 		for (Match match : matches) {
-			//if(match.getHome().getUser() == null && match.getAway().getUser() == null){
+			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
 				simulate(match, null);
-//			} else {
-//				if(formationRequest != null && formationRequest.getModuleId() != null && formationRequest.getPlayersId() != null) {
-//					//TODO valida formation
-//					Formation formation = new Formation();
-//					Module module = moduleRepository.findOne(formationRequest.getModuleId());
-//					formation.setModule(module);
-//					for (Long id : formationRequest.getPlayersId()) {
-//						if(id != null) {
-//							formation.addPlayer(playerRepository.findOne(id));
-//						}
-//					}
-//					formationService.validate(formation);
-//					simulate(match, formation);
-//				}else {
-//					userMatch =  match;
-//				}
-//				
-//			}
+			} else {
+				if(formationRequest != null && formationRequest.getModuleId() != null && formationRequest.getPlayersId() != null) {
+					//TODO valida formation
+					Formation formation = new Formation();
+					Module module = moduleRepository.findOne(formationRequest.getModuleId());
+					formation.setModule(module);
+					for (Long id : formationRequest.getPlayersId()) {
+						if(id != null) {
+							formation.addPlayer(playerRepository.findOne(id));
+						}
+					}
+					formationService.validate(formation);
+					simulate(match, formation);
+				}else {
+					userMatch =  match;
+				}
+				
+			}
 		}
 		return userMatch;
 	}
