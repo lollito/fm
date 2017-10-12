@@ -45,11 +45,14 @@ public class Formation implements Serializable{
 	@Type(type = "yes_no")
 	private Boolean haveBall = Boolean.FALSE;
 	
-	@OneToOne( mappedBy= "homeFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-	private SimulationMatch simulationMatch;
+//	@OneToOne( mappedBy= "homeFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+//	private SimulationMatch simulationMatch;
+//	
+//	@OneToOne( mappedBy= "awayFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+//	private SimulationMatch simulationMatchAway;
 	
-	@OneToOne( mappedBy= "awayFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-	private SimulationMatch simulationMatchAway;
+	@OneToOne( mappedBy= "formation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+	private Team team;
 	
 //	private Player goalKeeper;
 //	

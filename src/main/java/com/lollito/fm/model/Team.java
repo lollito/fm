@@ -10,7 +10,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -33,6 +35,10 @@ public class Team implements Serializable{
 	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	private List<Player> players = new ArrayList<>();
 	
+	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+	@JoinColumn( name = "formation_id" )
+	private Formation formation;
+	
 	public Team(){
 		
 	}
@@ -53,11 +59,21 @@ public class Team implements Serializable{
 		this.players = players;
 	}
 	
+	@Transient
 	public void addPlayer(Player player){
 		player.setTeam(this);
 		this.players.add(player);
 	}
 	
+	
+	public Formation getFormation() {
+		return formation;
+	}
+
+	public void setFormation(Formation formation) {
+		this.formation = formation;
+	}
+
 	@Transient
 	public Integer getAverage(){
 		int tot = 0;

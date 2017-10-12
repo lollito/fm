@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Formation;
+import com.lollito.fm.model.Team;
 import com.lollito.fm.service.ClubService;
 import com.lollito.fm.service.FormationService;
 
@@ -24,7 +25,8 @@ public class FormationController {
 	
 	@RequestMapping(value = "/auto", method = RequestMethod.GET)
     public Formation auto(Model model) {
-        return formationService.createFormation(clubService.load().getTeam().getPlayers());
+		Team team = clubService.load().getTeam();
+        return formationService.createFormation(team.getPlayers(), team.getFormation());
     }
    
 }

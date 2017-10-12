@@ -51,7 +51,9 @@ public class NameService {
 			line = "";
 	        while (line != null) {
 	            line = bufRead.readLine();
-	            ret.add(line);
+	            if(line != null) {
+	            	ret.add(line);
+	            }
 	        }
 	        bufRead.close();
 		} catch (IOException e) {
