@@ -31,13 +31,13 @@ public class SimulationMatch implements Serializable{
 	@JoinColumn( name = "match_id" )
 	private Match match;
 	
-	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-	@JoinColumn( name = "home_formation_id" )
-	private Formation homeFormation;
-	
-	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-	@JoinColumn( name = "away_formation_id" )
-	private Formation awayFormation;
+//	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+//	@JoinColumn( name = "home_formation_id" )
+//	private Formation homeFormation;
+//	
+//	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+//	@JoinColumn( name = "away_formation_id" )
+//	private Formation awayFormation;
 	
 	public Long getId() {
 		return id;
@@ -55,22 +55,6 @@ public class SimulationMatch implements Serializable{
 		this.match = match;
 	}
 
-	public Formation getHomeFormation() {
-		return homeFormation;
-	}
-
-	public void setHomeFormation(Formation homeFormation) {
-		this.homeFormation = homeFormation;
-	}
-
-	public Formation getAwayFormation() {
-		return awayFormation;
-	}
-
-	public void setAwayFormation(Formation awayFormation) {
-		this.awayFormation = awayFormation;
-	}
-	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

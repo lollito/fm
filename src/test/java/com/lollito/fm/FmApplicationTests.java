@@ -44,7 +44,7 @@ public class FmApplicationTests {
 		logger.info("#####test#####");
 		Game game = gameService.create("test", "test");
 		sessionBean.setGameId(game.getId());
-		LocalDate endDate = LocalDate.of( 2018 , Month.AUGUST , 21 );
+		LocalDate endDate = LocalDate.of( 2017 , Month.AUGUST , 26 );
 //		Hibernate.initialize(game.getClubs());
 		for (LocalDate date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
 		    gameService.next(null);

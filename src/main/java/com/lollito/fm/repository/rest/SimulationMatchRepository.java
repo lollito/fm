@@ -11,5 +11,5 @@ import com.lollito.fm.model.SimulationMatch;
 @Repository
 public interface SimulationMatchRepository extends PagingAndSortingRepository<SimulationMatch, Long> {
 
-	public List<SimulationMatch> findByHomeFormationOrAwayFormation(Formation homeFormation, Formation awayFormation);
+//	public List<SimulationMatch> findByHomeFormationOrAwayFormation(Formation homeFormation, Formation awayFormation);
 }

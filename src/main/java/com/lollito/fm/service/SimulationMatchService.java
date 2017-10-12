@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,26 +39,27 @@ public class SimulationMatchService {
 	public Match simulate(List<Match> matches, FormationRequest formationRequest){
 		Match userMatch = null;
 		for (Match match : matches) {
-			//if(match.getHome().getUser() == null && match.getAway().getUser() == null){
+			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
 				simulate(match, null);
-//			} else {
-//				if(formationRequest != null && formationRequest.getModuleId() != null && formationRequest.getPlayersId() != null) {
-//					//TODO valida formation
-//					Formation formation = new Formation();
-//					Module module = moduleRepository.findOne(formationRequest.getModuleId());
-//					formation.setModule(module);
-//					for (Long id : formationRequest.getPlayersId()) {
-//						if(id != null) {
-//							formation.addPlayer(playerRepository.findOne(id));
-//						}
-//					}
-//					formationService.validate(formation);
-//					simulate(match, formation);
-//				}else {
-//					userMatch =  match;
-//				}
-//				
-//			}
+			} else {
+				if(formationRequest != null && formationRequest.getModuleId() != null && formationRequest.getPlayersId() != null) {
+					//TODO valida formation
+					Formation formation = new Formation();
+					Module module = moduleRepository.findOne(formationRequest.getModuleId());
+					formation.setModule(module);
+					formation.setPlayers(new ArrayList<>());
+					for (Long id : formationRequest.getPlayersId()) {
+						if(id != null) {
+							formation.addPlayer(playerRepository.findOne(id));
+						}
+					}
+					formationService.validate(formation);
+					simulate(match, formation);
+				}else {
+					userMatch =  match;
+				}
+				
+			}
 		}
 		return userMatch;
 	}
@@ -65,16 +67,16 @@ public class SimulationMatchService {
 	public void simulate(Match match, Formation formation){
 		SimulationMatch simulationMatch = new SimulationMatch();
 		if(formation == null || match.getHome().getUser() == null) {
-			simulationMatch.setHomeFormation(formationService.createFormation(match.getHome().getTeam().getPlayers()));
+			match.getHome().getTeam().setFormation(formationService.createFormation(match.getHome().getTeam().getPlayers(), match.getHome().getTeam().getFormation()));
 			
 		} else {
-			simulationMatch.setHomeFormation(formation);
+			match.getHome().getTeam().setFormation((formation));
 		}
 		if(formation == null || match.getAway().getUser() == null) {
-			simulationMatch.setAwayFormation(formationService.createFormation(match.getAway().getTeam().getPlayers()));
+			match.getAway().getTeam().setFormation((formationService.createFormation(match.getAway().getTeam().getPlayers(), match.getAway().getTeam().getFormation())));
 			
 		} else {
-			simulationMatch.setAwayFormation(formation);
+			match.getAway().getTeam().setFormation((formation));
 		}
 		
 		simulationMatch.setMatch(match);
@@ -104,23 +106,23 @@ public class SimulationMatchService {
 		
 		int coin = RandomUtils.randomValue(0, 1);
 		if (coin == 0){
-			simulationMatch.getHomeFormation().setHaveBall(true);
+			simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(true);
 			//logger.info("home have ball");
 		} else {
-			simulationMatch.getAwayFormation().setHaveBall(true);
+			simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
 			//logger.info("away have ball");
 		}
 		
 		PlayerPosition playerPosition = PlayerPosition.MIDFIELD;
 		Map<PlayerPosition, List<Player>> homePlayers = new HashMap<>();
 		Map<PlayerPosition, List<Player>> awayPlayers = new HashMap<>();
-		homePlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(simulationMatch.getHomeFormation()));
-		homePlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(simulationMatch.getHomeFormation()));
-		homePlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(simulationMatch.getHomeFormation()));
+		homePlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(simulationMatch.getMatch().getHome().getTeam().getFormation()));
+		homePlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(simulationMatch.getMatch().getHome().getTeam().getFormation()));
+		homePlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(simulationMatch.getMatch().getHome().getTeam().getFormation()));
 		
-		awayPlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(simulationMatch.getAwayFormation()));
-		awayPlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(simulationMatch.getAwayFormation()));
-		awayPlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(simulationMatch.getAwayFormation()));
+		awayPlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(simulationMatch.getMatch().getAway().getTeam().getFormation()));
+		awayPlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(simulationMatch.getMatch().getAway().getTeam().getFormation()));
+		awayPlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(simulationMatch.getMatch().getAway().getTeam().getFormation()));
 		
 		Map<PlayerPosition, PlayerPosition> inversePosition = new HashMap<>();
 		inversePosition.put(PlayerPosition.DEFENCE, PlayerPosition.OFFENCE);
@@ -130,7 +132,7 @@ public class SimulationMatchService {
 		int luckAway = 30;
 		for (int i = 0; i <= numberOfActions; i++) {
 			//logger.info("rndm {}", rndm);
-			if(simulationMatch.getHomeFormation().getHaveBall()){
+			if(simulationMatch.getMatch().getHome().getTeam().getFormation().getHaveBall()){
 				int rndm = RandomUtils.randomValue(0, luckHome);
 				if(rndm > (luckHome/2)){
 					luckHome-=RandomUtils.randomValue(0, 5);
@@ -149,14 +151,14 @@ public class SimulationMatchService {
 					}else {
 						homeScore++;
 						playerPosition = PlayerPosition.MIDFIELD;
-						simulationMatch.getHomeFormation().setHaveBall(false);
-						simulationMatch.getAwayFormation().setHaveBall(true);
+						simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(false);
+						simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
 						//logger.info("home gol");
 					}
 				}else{
 					//logger.info("home lost ball");
-					simulationMatch.getHomeFormation().setHaveBall(false);
-					simulationMatch.getAwayFormation().setHaveBall(true);
+					simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(false);
+					simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
 				}
 			} else {
 				int rndm = RandomUtils.randomValue(0, luckAway);
@@ -177,14 +179,14 @@ public class SimulationMatchService {
 					}else {
 						awayScore++;
 						playerPosition = PlayerPosition.MIDFIELD;
-						simulationMatch.getHomeFormation().setHaveBall(true);
-						simulationMatch.getAwayFormation().setHaveBall(false);
+						simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(true);
+						simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(false);
 						//logger.info("away gol");
 					}
 				}else{
 					//logger.info("away lost ball");
-					simulationMatch.getHomeFormation().setHaveBall(true);
-					simulationMatch.getAwayFormation().setHaveBall(false);
+					simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(true);
+					simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(false);
 				}
 			}
 		}

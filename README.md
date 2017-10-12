@@ -1,4 +1,7 @@
 # Football Manager
+[![Build Status](https://api.travis-ci.org/lollito/fm.svg?branch=master)](https://travis-ci.org/lollito/fm/branches)
+[![codecov.io](https://codecov.io/gh/lollito/fm/branch/master/graphs/badge.svg)](https://codecov.io/gh/lollito/fm/branch/master)
+[![License](https://img.shields.io/github/license/lollito/fm.svg)](LICENSE.md)
 
 A Football Manager online game
 

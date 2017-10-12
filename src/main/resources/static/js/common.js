@@ -1,4 +1,4 @@
-function buildTemplateFromGameResponse(data){
+function buildTemplateFromGameResponse(data, showToastr){
 	var source = $("#entry-template").html();
 	var template = Handlebars.compile(source);
 	currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year
@@ -22,7 +22,7 @@ function buildTemplateFromGameResponse(data){
 			$('#ranking-table').bootstrapTable('refresh');
 		}
 		
-	} else {
+	} else if(showToastr) {
 		toastr.options = {
 				  "closeButton": true,
 				  "debug": false,
@@ -61,13 +61,13 @@ $("#next").click(function(e) {
 		url : "/game/next",
 		data: data
 	}).done(function(data) {
-		buildTemplateFromGameResponse(data);
+		buildTemplateFromGameResponse(data, true);
 	});
 });
 
 $(document).ready(function() {
 	$.get("/game/", function(data) {
-		buildTemplateFromGameResponse(data);
+		buildTemplateFromGameResponse(data, false);
 	}, "json");
 
 });

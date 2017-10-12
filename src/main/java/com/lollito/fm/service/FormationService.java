@@ -21,13 +21,16 @@ public class FormationService {
 	@Autowired ModuleService moduleService;
 	@Autowired PlayerService playerService;
 	
-	public Formation createFormation(List<Player> players){
+	public Formation createFormation(List<Player> players, Formation formation){
 		//logger.info("players {}", players.size());
 		List<Player> playersCopy = new ArrayList<>();
 		playersCopy.addAll(players);
 		Module module = moduleService.randomModule();
-		Formation formation = new Formation();
+		if (formation == null) {
+			formation = new Formation();
+		}
 		formation.setModule(module);
+		formation.setPlayers(new ArrayList<>());
 		Player goalKeeper = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.GOALKEEPER);
 		formation.addPlayer(goalKeeper);
 		playersCopy.remove(goalKeeper);
