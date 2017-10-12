@@ -39,6 +39,7 @@ public class FmApplicationTests {
 	@Autowired FormationService formationService;
 	
 	@Test
+	@Ignore
 	public void contextLoads() {
 		logger.info("#####test#####");
 		Game game = gameService.create("test", "test");

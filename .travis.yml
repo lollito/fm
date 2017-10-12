@@ -4,6 +4,10 @@ jdk:
 branches:
   only:
   - master
+before_install:
+ - pip install --user codecov
+after_success:
+ - codecov
 deploy:
  provider: heroku
  api-key: 
