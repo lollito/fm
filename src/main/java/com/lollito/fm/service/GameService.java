@@ -47,10 +47,13 @@ public class GameService {
 		GameResponse gameResponse = new GameResponse();
 		Game game = sessionBean.getGame();
 		List<Match> matches = matchRepository.findByGameAndDateAndFinish(game, game.getCurrentDate().plusDays(1), Boolean.FALSE);
-		logger.info("matches {}", matches);
-		Match currentMatch = simulationMatchService.simulate(matches, formationRequest);
-		gameResponse.setCurrentMatch(currentMatch);
+		logger.debug("matches {}", matches);
+		Match currentMatch = null;
+		if(!matches.isEmpty()){
+			currentMatch = simulationMatchService.simulate(matches, formationRequest);
+		}
 		if(currentMatch == null) {
+			gameResponse.setCurrentMatch(currentMatch);
 			game.addDay();
 		}
 		gameResponse.setCurrentDate(game.getCurrentDate());

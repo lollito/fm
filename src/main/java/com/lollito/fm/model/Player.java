@@ -215,12 +215,18 @@ public class Player implements Serializable{
 
 	@Transient
 	public void decrementCondition(Double decrement) {
+		if(this.condition - decrement < 0){
+			this.condition = 0.0;
+		}
 		this.condition -= decrement;
 	}
 	
 	@Transient
-	public void incrementCondition(Double decrement) {
-		this.condition += decrement;
+	public void incrementCondition(Double increment) {
+		if(this.condition + increment > 100){
+			this.condition = 100.0;
+		}
+		this.condition += increment;
 	}
 	
 	public PlayerRole getRole() {
@@ -248,7 +254,8 @@ public class Player implements Serializable{
 				this.goalkeeping +
 				this.passing +
 				this.defending +
-				this.setPieces) / 8;
+				this.setPieces +
+				this.condition.intValue()) / 9;
 	}
 	
 	@Transient
@@ -257,7 +264,8 @@ public class Player implements Serializable{
 				this.scoring + 
 				this.winger +
 				this.passing +
-				this.setPieces) / 5;
+				this.setPieces +
+				this.condition.intValue()) / 6;
 	}
 	
 	@Transient
@@ -265,7 +273,8 @@ public class Player implements Serializable{
 		return (this.playmaking	+ 
 				this.goalkeeping +
 				this.defending +
-				this.setPieces) / 4;
+				this.setPieces +
+				this.condition.intValue()) / 5;
 	}
 	
 	@Override

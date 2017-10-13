@@ -128,8 +128,8 @@ public class SimulationMatchService {
 		inversePosition.put(PlayerPosition.DEFENCE, PlayerPosition.OFFENCE);
 		inversePosition.put(PlayerPosition.MIDFIELD, PlayerPosition.MIDFIELD);
 		inversePosition.put(PlayerPosition.OFFENCE, PlayerPosition.DEFENCE);
-		int luckHome = 30;
-		int luckAway = 30;
+		int luckHome = 20;
+		int luckAway = 20;
 		for (int i = 0; i <= numberOfActions; i++) {
 			//logger.info("rndm {}", rndm);
 			if(simulationMatch.getMatch().getHome().getTeam().getFormation().getHaveBall()){
@@ -137,14 +137,16 @@ public class SimulationMatchService {
 				if(rndm > (luckHome/2)){
 					luckHome-=RandomUtils.randomValue(0, 5);
 					if(luckHome < 0){
-						luckHome = 10;
+						luckHome = 8;
 					}
 				} else{
 					luckHome+=RandomUtils.randomValue(0, 5);
 				}
 				//logger.info("getOffenceAverage Home {}", getOffenceAverage(homePlayers.get(playerPosition)));
 				//logger.info("getDefenceAverage Away {}", getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition))));
-				if((playerService.getOffenceAverage(homePlayers.get(playerPosition)) - playerService.getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition)))) * rndm > 100){
+//				logger.info("homePlayers.get(playerPosition).size() {}", homePlayers.get(playerPosition).size());
+//				logger.info("awayPlayers.get(inversePosition.get(playerPosition)).size() {}", awayPlayers.get(inversePosition.get(playerPosition)).size());
+				if((playerService.getOffenceAverage(homePlayers.get(playerPosition)) + homePlayers.get(playerPosition).size() - playerService.getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition))) + awayPlayers.get(inversePosition.get(playerPosition)).size()) * rndm > 100){
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
 						//logger.info("home ball -> {}", playerPosition.getvalue());
@@ -165,14 +167,16 @@ public class SimulationMatchService {
 				if(rndm > (luckAway/2)){
 					luckAway-=RandomUtils.randomValue(0, 5);
 					if(luckAway < 0){
-						luckAway = 10;
+						luckAway = 8;
 					}
 				} else{
 					luckAway+=RandomUtils.randomValue(0, 5);
 				}
 				//logger.info("getOffenceAverage Away {}", getOffenceAverage(awayPlayers.get(playerPosition)));
 				//logger.info("getDefenceAverage Home {}", getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))));
-				if((playerService.getOffenceAverage(awayPlayers.get(playerPosition)) - playerService.getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition)))) * rndm > 100){
+//				logger.info("awayPlayers.get(playerPosition).size() {}", awayPlayers.get(playerPosition).size());
+//				logger.info("homePlayers.get(inversePosition.get(playerPosition)).size() {}", homePlayers.get(inversePosition.get(playerPosition)).size());
+				if((playerService.getOffenceAverage(awayPlayers.get(playerPosition)) + awayPlayers.get(playerPosition).size() - playerService.getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))) + homePlayers.get(inversePosition.get(playerPosition)).size()) * rndm > 100){
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
 						//logger.info("away ball -> {}", playerPosition.getvalue());
@@ -189,6 +193,14 @@ public class SimulationMatchService {
 					simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(false);
 				}
 			}
+			for(Player player : simulationMatch.getMatch().getHome().getTeam().getFormation().getPlayers()) {
+	        	double d = -((10 * player.getStamina())/99) + (1000/99);
+	        	player.decrementCondition(d/numberOfActions);
+	        }
+			for(Player player : simulationMatch.getMatch().getAway().getTeam().getFormation().getPlayers()) {
+	        	double d = -((10 * player.getStamina())/99) + (1000/99);
+	        	player.decrementCondition(d/numberOfActions);
+	        }
 		}
 		simulationMatch.getMatch().setHomeScore(homeScore);
 		simulationMatch.getMatch().setAwayScore(awayScore);

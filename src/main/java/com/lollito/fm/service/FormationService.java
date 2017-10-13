@@ -12,14 +12,22 @@ import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
+import com.lollito.fm.model.Team;
 
 @Service
 public class FormationService {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired ModuleService moduleService;
-	@Autowired PlayerService playerService;
+	@Autowired private ModuleService moduleService;
+	@Autowired private PlayerService playerService;
+	@Autowired private ClubService clubService;
+	@Autowired private MentalityService mentalityService;
+	
+	public Formation createPlayerFormation() {
+		Team team = clubService.load().getTeam();
+        return createFormation(team.getPlayers(), team.getFormation());
+	}
 	
 	public Formation createFormation(List<Player> players, Formation formation){
 		//logger.info("players {}", players.size());
@@ -30,6 +38,7 @@ public class FormationService {
 			formation = new Formation();
 		}
 		formation.setModule(module);
+		formation.setMentality(mentalityService.random());
 		formation.setPlayers(new ArrayList<>());
 		Player goalKeeper = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.GOALKEEPER);
 		formation.addPlayer(goalKeeper);
@@ -68,7 +77,12 @@ public class FormationService {
 		players.add(formation.getGoalKeeper());
 		players.addAll(formation.getCentralDefenders());
 		players.addAll(formation.getWingBacks());
-		players.addAll(formation.getMidfielders());
+		if(formation.getMentality().getvalue() < 2){
+			players.addAll(formation.getMidfielders());
+		}
+		if(formation.getMentality().getvalue() < 1){
+			players.addAll(formation.getWings());
+		}
 		return players;
 	}
 	
@@ -77,15 +91,25 @@ public class FormationService {
 		players.addAll(formation.getCentralDefenders());
 		players.addAll(formation.getWingBacks());
 		players.addAll(formation.getMidfielders());
-		players.addAll(formation.getWings());
+		if(formation.getMentality().getvalue() < 2){
+			players.addAll(formation.getWings());
+		}
+		if(formation.getMentality().getvalue() < 1){
+			players.addAll(formation.getForwards());
+		}
 		return players;
 	}
 	
 	public List<Player> getOffender(Formation formation){
 		List<Player> players = new ArrayList<>();
-		players.addAll(formation.getMidfielders());
 		players.addAll(formation.getWings());
 		players.addAll(formation.getForwards());
+		if(formation.getMentality().getvalue() > 0){
+			players.addAll(formation.getMidfielders());
+		}
+		if(formation.getMentality().getvalue() > 1){
+			players.addAll(formation.getWingBacks());
+		}
 		return players;
 	}
 	
