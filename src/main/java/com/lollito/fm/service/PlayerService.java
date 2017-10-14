@@ -37,7 +37,7 @@ public class PlayerService {
 		player.setPassing(RandomUtils.randomValue(20, 70));
 		player.setDefending(RandomUtils.randomValue(40, 99));
 		player.setSetPieces(RandomUtils.randomValue(20, 80));
-		player.setRole(PlayerRole.CENTRALDEFENDER);
+		player.setRole(PlayerRole.DEFENDER);
 		return player;
 	}
 	

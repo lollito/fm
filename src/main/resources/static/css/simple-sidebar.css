@@ -210,6 +210,10 @@ body {
 	font-weight: 100;
 }
 
+.table{
+	font-size: 14px	
+}
+
 @media (min-width: 992px) {
     body {
         padding-top: 56px;

@@ -44,7 +44,7 @@ public class FormationService {
 		formation.addPlayer(goalKeeper);
 		playersCopy.remove(goalKeeper);
 		for (int i = 0; i < module.getCd(); i++) {
-			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.CENTRALDEFENDER);
+			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.DEFENDER);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}

@@ -140,7 +140,7 @@ public class Formation implements Serializable{
 	
 	@Transient
 	public List<Player> getCentralDefenders() {
-		return getPlayersByRole(PlayerRole.CENTRALDEFENDER);
+		return getPlayersByRole(PlayerRole.DEFENDER);
 	}
 	
 	@Transient

@@ -217,16 +217,18 @@ public class Player implements Serializable{
 	public void decrementCondition(Double decrement) {
 		if(this.condition - decrement < 0){
 			this.condition = 0.0;
+		} else {
+			this.condition -= decrement;
 		}
-		this.condition -= decrement;
 	}
 	
 	@Transient
 	public void incrementCondition(Double increment) {
 		if(this.condition + increment > 100){
 			this.condition = 100.0;
+		} else {
+			this.condition += increment;
 		}
-		this.condition += increment;
 	}
 	
 	public PlayerRole getRole() {
@@ -309,6 +311,7 @@ public class Player implements Serializable{
 				.append("passing", passing)
 				.append("defending", defending)
 				.append("setPieces", setPieces)
+				.append("condition", condition)
 				.toString();
 	}
 	

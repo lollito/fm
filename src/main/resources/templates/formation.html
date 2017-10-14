@@ -24,10 +24,10 @@
 								<th data-field="role">Role</th>
 								<!-- <th data-field="name">Name</th> -->
 								<th data-field="surname">Surname</th>
-								<th data-field="defenceAverage">D. Avg</th>
-								<th data-field="offenceAverage">O. Avg</th>
+								<th data-field="defenceAverage">Df. Avg</th>
+								<th data-field="offenceAverage">Off. Avg</th>
 								<th data-field="average">Avg</th>
-								<!-- <th data-field="condition">Condition</th> -->
+								<th data-field="condition">Condition</th>
 							</tr>
 						</thead>
 					</table>
@@ -35,14 +35,20 @@
 				<div class="col-md-6">
 					<form id="formation-form" action="/game/play" method="POST">
 						<div class="formation">
-							<select name="moduleId">
-								<option value="1" >4-4-2</option>
-							</select>
-							<select name="mentality">
-								<option value="0" >Defensive</option>
-								<option value="1" selected="selected">Normal</option>
-								<option value="2" >Offensive</option>
-							</select>
+							<script id="module-template" type="text/x-handlebars-template">
+									{{#each modules}}
+										<option value="{{this.id}}" >{{this.name}}</option>
+									{{/each}}
+							</script>
+							<select name="moduleId" id="module-template-placeholder" class="col-md-4"></select>
+							
+							<script id="mentality-template" type="text/x-handlebars-template">
+									{{#each mentalities}}
+										<option value="{{this}}" >{{this}}</option>
+									{{/each}}
+							</script>
+							<select name="mentalityId" id="mentality-template-placeholder" class="col-md-4"></select>
+							
 							<div class="pitch">
 								<!-- <h4>4-4-2</h4> -->
 								<div class="formation-container">
@@ -70,6 +76,7 @@
 									</div>
 								</div>
 							</div>
+							<button class="btn btn-dark">Save</button>
 						</div>
 					</form>
 				</div>
@@ -121,6 +128,26 @@ function operateFormatter(value, row, index) {
         '</div>'
     ].join('');
 }
+$(document).ready(function() {
+	$.get("/module/", function(data) {
+		var source = $("#module-template").html();
+		var template = Handlebars.compile(source);
+		var context = {
+			modules : data
+		};
+		var html = template(context);
+		$("#module-template-placeholder").html(html);
+	}, "json");
+	$.get("/mentality/", function(data) {
+		var source = $("#mentality-template").html();
+		var template = Handlebars.compile(source);
+		var context = {
+			mentalities : data
+		};
+		var html = template(context);
+		$("#mentality-template-placeholder").html(html);
+	}, "json");
+});
 
 /*]]>*/
 </script>

@@ -14,7 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.lollito.fm.bean.SessionBean;
+import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
+import com.lollito.fm.model.Player;
 import com.lollito.fm.service.FormationService;
 import com.lollito.fm.service.GameService;
 
