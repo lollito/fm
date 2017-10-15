@@ -33,7 +33,7 @@
 					</table>
 				</div>
 				<div class="col-md-6">
-					<form id="formation-form" action="/game/play" method="POST">
+					<form id="formation-form">
 						<div class="formation">
 							<script id="module-template" type="text/x-handlebars-template">
 									{{#each modules}}
@@ -47,10 +47,9 @@
 										<option value="{{this}}" >{{this}}</option>
 									{{/each}}
 							</script>
-							<select name="mentalityId" id="mentality-template-placeholder" class="col-md-4"></select>
+							<select name="mentality" id="mentality-template-placeholder" class="col-md-4"></select>
 							
 							<div class="pitch">
-								<!-- <h4>4-4-2</h4> -->
 								<div class="formation-container">
 									<div class="box1">
 										<div class="pen1">
@@ -76,7 +75,8 @@
 									</div>
 								</div>
 							</div>
-							<button class="btn btn-dark">Save</button>
+							<button id="auto" type="button" class="btn btn-warn">Auto</button>
+							<button id="save" type="button" class="btn btn-dark">Save</button>
 						</div>
 					</form>
 				</div>
@@ -128,6 +128,29 @@ function operateFormatter(value, row, index) {
         '</div>'
     ].join('');
 }
+
+$('#formation-form #save').on('click', function(ev) {
+	ev.preventDefault();
+	var data = $('#formation-form').serialize();
+	$.ajax({
+		method : "POST",
+		url : "/formation/",
+		data: data
+	}).done(function(data) {
+		console.log(data);
+	});
+});
+
+$('#formation-form #auto').on('click', function(ev) {
+	ev.preventDefault();
+	$.ajax({
+		method : "GET",
+		url : "/formation/auto",
+	}).done(function(data) {
+		console.log(data);
+	});
+});
+
 $(document).ready(function() {
 	$.get("/module/", function(data) {
 		var source = $("#module-template").html();

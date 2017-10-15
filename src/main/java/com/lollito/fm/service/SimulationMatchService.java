@@ -1,6 +1,5 @@
 package com.lollito.fm.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
-import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
 import com.lollito.fm.model.SimulationMatch;
-import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.ModuleRepository;
 import com.lollito.fm.repository.rest.PlayerRepository;
@@ -36,26 +32,15 @@ public class SimulationMatchService {
 	@Autowired RankingService rankingService;
 	@Autowired PlayerRepository playerRepository;
 	
-	public Match simulate(List<Match> matches, FormationRequest formationRequest){
+	public Match simulate(List<Match> matches){
 		Match userMatch = null;
 		for (Match match : matches) {
 			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
-				simulate(match, null);
+				simulate(match);
 			} else {
-				if(formationRequest != null && formationRequest.getModuleId() != null && formationRequest.getPlayersId() != null) {
-					//TODO valida formation
-					Formation formation = new Formation();
-					Module module = moduleRepository.findOne(formationRequest.getModuleId());
-					formation.setModule(module);
-					formation.setPlayers(new ArrayList<>());
-					for (Long id : formationRequest.getPlayersId()) {
-						if(id != null) {
-							formation.addPlayer(playerRepository.findOne(id));
-						}
-					}
-					formationService.validate(formation);
-					simulate(match, formation);
-				}else {
+				if((match.getHome().getUser() != null && match.getHome().getTeam().getFormation() != null) || (match.getAway().getUser() != null && match.getAway().getTeam().getFormation() != null)) {
+					simulate(match);
+				} else {
 					userMatch =  match;
 				}
 				
@@ -64,24 +49,23 @@ public class SimulationMatchService {
 		return userMatch;
 	}
 	
-	public void simulate(Match match, Formation formation){
+	public void simulate(Match match){
 		SimulationMatch simulationMatch = new SimulationMatch();
-		if(formation == null || match.getHome().getUser() == null) {
+		if(match.getHome().getUser() == null) {
 			match.getHome().getTeam().setFormation(formationService.createFormation(match.getHome().getTeam().getPlayers(), match.getHome().getTeam().getFormation()));
-			
-		} else {
-			match.getHome().getTeam().setFormation((formation));
+		} else if(match.getHome().getTeam().getFormation() == null) {
+			throw new RuntimeException("Salvare formazione");
 		}
-		if(formation == null || match.getAway().getUser() == null) {
+		
+		if(match.getAway().getUser() == null) {
 			match.getAway().getTeam().setFormation((formationService.createFormation(match.getAway().getTeam().getPlayers(), match.getAway().getTeam().getFormation())));
-			
-		} else {
-			match.getAway().getTeam().setFormation((formation));
+		} else if(match.getAway().getTeam().getFormation() == null) {
+			throw new RuntimeException("Salvare formazione");
 		}
 		
 		simulationMatch.setMatch(match);
 		simulationMatchRepository.save(simulationMatch);
-		int[] score = playMatch(simulationMatch);
+		playMatch(simulationMatch);
 		match.setFinish(true);
 //		matchRepository.save(simulationMatch.getMatch());
 //		matchRepository.save(simulationMatch.getMatch());
@@ -195,11 +179,11 @@ public class SimulationMatchService {
 			}
 			for(Player player : simulationMatch.getMatch().getHome().getTeam().getFormation().getPlayers()) {
 	        	double d = -((10 * player.getStamina())/99) + (1000/99);
-	        	player.decrementCondition(d/numberOfActions);
+	        	player.decrementCondition(d);
 	        }
 			for(Player player : simulationMatch.getMatch().getAway().getTeam().getFormation().getPlayers()) {
 	        	double d = -((10 * player.getStamina())/99) + (1000/99);
-	        	player.decrementCondition(d/numberOfActions);
+	        	player.decrementCondition(d);
 	        }
 		}
 		simulationMatch.getMatch().setHomeScore(homeScore);
@@ -207,7 +191,7 @@ public class SimulationMatchService {
 		
 		rankingService.update(simulationMatch.getMatch());
 		
-		logger.info("{} vs {}", homeScore, awayScore);
+//		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};
 	}
 }

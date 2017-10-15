@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.lollito.fm.bean.SessionBean;
-import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.service.FormationService;
@@ -35,9 +34,14 @@ public class FmApplicationTests {
 	public void contextLoads() {
 		Game game = gameService.create("test", "test");
 		sessionBean.setGameId(game.getId());
-		LocalDate endDate = LocalDate.of( 2018 , Month.AUGUST , 26 );
+		LocalDate endDate = LocalDate.of( 2017 , Month.AUGUST , 28 );
+		formationService.createPlayerFormation();
 		for (LocalDate date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
-		    gameService.next(null);
+			logger.info("currdate {}", game.getCurrentDate());
+		    gameService.next();
+		}
+		for(Player player : game.getClubs().get(0).getTeam().getPlayers()) {
+			logger.info("player {}", player.getCondition());
 		}
 	}
 

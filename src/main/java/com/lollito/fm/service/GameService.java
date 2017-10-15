@@ -44,18 +44,19 @@ public class GameService {
 		return game;
 	}
 	
-	public GameResponse next(FormationRequest formationRequest){
+	public GameResponse next(){
 		GameResponse gameResponse = new GameResponse();
 		Game game = sessionBean.getGame();
 		List<Match> matches = matchRepository.findByGameAndDateAndFinish(game, game.getCurrentDate().plusDays(1), Boolean.FALSE);
 		logger.debug("matches {}", matches);
 		Match currentMatch = null;
-		if(!matches.isEmpty()){
-			currentMatch = simulationMatchService.simulate(matches, formationRequest);
+		if(matches.isEmpty()){
+			incrementPlayersCondition(game);
+		} else {
+			currentMatch = simulationMatchService.simulate(matches);
 		}
 		if(currentMatch == null) {
 			game.addDay();
-			incrementPlayersCondition(game);
 		} else  {
 			gameResponse.setCurrentMatch(currentMatch);
 		}
@@ -66,12 +67,13 @@ public class GameService {
 	}
 
 	private void incrementPlayersCondition(Game game) {
-		for(Club club : game.getClubs()) {
-			for(Player player : club.getTeam().getPlayers()) {
-				double increment = -((10 * player.getStamina())/99) + (1000/99);
-	        	player.incrementCondition(increment);
-			}
-		}
+		logger.info("incrementPlayersCondition");
+//		for(Club club : game.getClubs()) {
+//			for(Player player : club.getTeam().getPlayers()) {
+//				double increment = -((10 * player.getStamina())/99) + (1000/99);
+//	        	player.incrementCondition(increment);
+//			}
+//		}
 	}
 	
 	public GameResponse load(){

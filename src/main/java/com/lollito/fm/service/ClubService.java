@@ -34,7 +34,8 @@ public class ClubService {
 	}
 	
 	public List<Club> createClubs(Game game){
-		int clubNumber = 19;
+		//TODO config file
+		int clubNumber = 3;
 		
 		List<Club> clubs = new ArrayList<>();
 		

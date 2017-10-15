@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Formation;
+import com.lollito.fm.model.Mentality;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
 import com.lollito.fm.model.Team;
+import com.lollito.fm.model.rest.FormationRequest;
+import com.lollito.fm.repository.rest.FormationRepository;
 
 @Service
 public class FormationService {
@@ -23,10 +26,34 @@ public class FormationService {
 	@Autowired private PlayerService playerService;
 	@Autowired private ClubService clubService;
 	@Autowired private MentalityService mentalityService;
+	@Autowired private FormationRepository formationRepository;
+	
+	public Formation createPlayerFormation(FormationRequest formationRequest) {
+		Team team = clubService.load().getTeam();
+		Formation formation = team.getFormation();
+		if(formation == null) {
+			formation = new Formation();
+		}
+		Module module = moduleService.findOne(formationRequest.getModuleId());
+		formation.setModule(module);
+		formation.setMentality(formationRequest.getMentality());
+		formation.setPlayers(new ArrayList<>());
+		for (Long id : formationRequest.getPlayersId()) {
+			if(id != null) {
+				formation.addPlayer(playerService.findOne(id));
+			}
+		}
+		validate(formation);
+		team.setFormation(formation);
+		formationRepository.save(formation);
+		return formation;
+	}
 	
 	public Formation createPlayerFormation() {
 		Team team = clubService.load().getTeam();
-        return createFormation(team.getPlayers(), team.getFormation());
+		Formation formation = createFormation(team.getPlayers(), team.getFormation());
+		team.setFormation(formation);
+        return formationRepository.save(formation);
 	}
 	
 	public Formation createFormation(List<Player> players, Formation formation){

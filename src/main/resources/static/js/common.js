@@ -32,9 +32,9 @@ function buildTemplateFromGameResponse(data, showToastr){
 				  "preventDuplicates": false,
 				  "onclick": null,
 				  "showDuration": "300",
-				  "hideDuration": "1000",
-				  "timeOut": "2000",
-				  "extendedTimeOut": "1000",
+				  "hideDuration": "500",
+				  "timeOut": "1000",
+				  "extendedTimeOut": "500",
 				  "showEasing": "swing",
 				  "hideEasing": "linear",
 				  "showMethod": "slideDown",
@@ -52,14 +52,9 @@ $("#menu-toggle").click(function(e) {
 
 $("#next").click(function(e) {
 	e.preventDefault();
-	var data = {}
-	if($('#formation-form').length){
-		data = $('#formation-form').serialize();
-	}
 	$.ajax({
 		method : "POST",
 		url : "/game/next",
-		data: data
 	}).done(function(data) {
 		buildTemplateFromGameResponse(data, true);
 	});

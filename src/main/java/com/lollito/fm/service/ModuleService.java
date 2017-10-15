@@ -28,6 +28,11 @@ public class ModuleService {
 		return modules;
 	}
 	
+	public Module findOne(Long id) {
+		return moduleRepository.findOne(id);
+	}
+	
+	
 	public List<Module> findAll() {
 		return moduleRepository.findAll();
 	}
