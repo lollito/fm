@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="common/head :: head"></head>
-
+<link rel="stylesheet" href="//rawgit.com/vitalets/x-editable/master/dist/bootstrap3-editable/css/bootstrap-editable.css"/>
 <body>
 
 <div id="wrapper" class="toggled">
@@ -20,6 +20,7 @@
 		            <table data-toggle="table" data-url="/player/">
 						<thead>
 							<tr>
+								<th data-field="id" data-formatter="selectRoleFormatter">Id</th>
 								<th data-field="id" data-formatter="operateFormatter">Id</th>
 								<th data-field="role">Role</th>
 								<!-- <th data-field="name">Name</th> -->
@@ -126,6 +127,18 @@ function operateFormatter(value, row, index) {
         '<div id="' + row.id + '" data-name="' + name + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
         '<i class="fa fa-futbol-o"></i>',
         '</div>'
+    ].join('');
+}
+
+function selectRoleFormatter(value, row, index) {
+	var name = row.name.charAt(0) + "." + row.surname;
+    return [
+        '<select>',
+        '<option value=""></option>',
+        '<option value="">GK</option>',
+        '<option value="">TS</option>',
+        '<option value="">TD</option>',
+        '</select>'
     ].join('');
 }
 

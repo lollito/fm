@@ -70,20 +70,12 @@ public class SimulationMatchService {
 //		matchRepository.save(simulationMatch.getMatch());
 //		matchRepository.save(simulationMatch.getMatch());
 		simulationMatchRepository.save(simulationMatch);
-//		if(score[0] > score[1]){
-//			ranking.put(match.getHome().getName(), ranking.get(match.getHome().getName()) +3);
-//		} else if(score[0] < score[1]){
-//			ranking.put(match.getAway().getName(), ranking.get(match.getAway().getName()) +3);
-//		} else{
-//			ranking.put(match.getHome().getName(), ranking.get(match.getHome().getName()) +1);
-//			ranking.put(match.getAway().getName(), ranking.get(match.getAway().getName()) +1);
-//		}
 	}
 	
 	private int[] playMatch(SimulationMatch simulationMatch){
 //		Let's say you have an "action" every 5 minutes of the game, so 90/5 = 18 actions. To make it more realistic you can choose random number like:
 		Integer numberOfActions = RandomUtils.randomValue(10,20);
-		//logger.info("numberOfActions {}", numberOfActions);
+		logger.debug("numberOfActions {}", numberOfActions);
 		
 		Integer homeScore = 0;
 		Integer awayScore = 0;
@@ -139,10 +131,10 @@ public class SimulationMatchService {
 						playerPosition = PlayerPosition.MIDFIELD;
 						simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(false);
 						simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
-						//logger.info("home gol");
+						logger.debug("home gol");
 					}
 				}else{
-					//logger.info("home lost ball");
+					logger.debug("home lost ball");
 					simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(false);
 					simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
 				}
@@ -191,7 +183,7 @@ public class SimulationMatchService {
 		
 		rankingService.update(simulationMatch.getMatch());
 		
-//		logger.info("{} vs {}", homeScore, awayScore);
+		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};
 	}
 }

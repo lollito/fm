@@ -34,7 +34,7 @@ public class FmApplicationTests {
 	public void contextLoads() {
 		Game game = gameService.create("test", "test");
 		sessionBean.setGameId(game.getId());
-		LocalDate endDate = LocalDate.of( 2017 , Month.AUGUST , 28 );
+		LocalDate endDate = LocalDate.of( 2017 , Month.AUGUST , 26 );
 		formationService.createPlayerFormation();
 		for (LocalDate date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
 			logger.info("currdate {}", game.getCurrentDate());

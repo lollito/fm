@@ -14,7 +14,6 @@ import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Player;
-import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
@@ -67,13 +66,12 @@ public class GameService {
 	}
 
 	private void incrementPlayersCondition(Game game) {
-		logger.info("incrementPlayersCondition");
-//		for(Club club : game.getClubs()) {
-//			for(Player player : club.getTeam().getPlayers()) {
-//				double increment = -((10 * player.getStamina())/99) + (1000/99);
-//	        	player.incrementCondition(increment);
-//			}
-//		}
+		for(Club club : game.getClubs()) {
+			for(Player player : club.getTeam().getPlayers()) {
+				double increment = -((10 * player.getStamina())/99) + (1000/99);
+	        	player.incrementCondition(increment);
+			}
+		}
 	}
 	
 	public GameResponse load(){
