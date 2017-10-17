@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Game;
-import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.service.GameService;
 
