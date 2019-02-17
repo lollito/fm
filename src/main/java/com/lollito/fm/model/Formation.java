@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -71,6 +73,9 @@ public class Formation implements Serializable{
     @JoinTable(name = "formation_substitutes", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
 	private List<Player> substitutes = new ArrayList<>();
 	
+	@Enumerated(EnumType.ORDINAL)
+	private Mentality mentality = Mentality.NORMAL;
+	
 	public Long getId() {
 		return id;
 	}
@@ -115,6 +120,14 @@ public class Formation implements Serializable{
 		this.substitutes = substitutes;
 	}
 
+	public Mentality getMentality() {
+		return mentality;
+	}
+
+	public void setMentality(Mentality mentality) {
+		this.mentality = mentality;
+	}
+
 	@Transient
 	public Player getGoalKeeper() {
 		for (Player player : players) {
@@ -127,7 +140,7 @@ public class Formation implements Serializable{
 	
 	@Transient
 	public List<Player> getCentralDefenders() {
-		return getPlayersByRole(PlayerRole.CENTRALDEFENDER);
+		return getPlayersByRole(PlayerRole.DEFENDER);
 	}
 	
 	@Transient

@@ -12,14 +12,48 @@ import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
+import com.lollito.fm.model.Team;
+import com.lollito.fm.model.rest.FormationRequest;
+import com.lollito.fm.repository.rest.FormationRepository;
 
 @Service
 public class FormationService {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired ModuleService moduleService;
-	@Autowired PlayerService playerService;
+	@Autowired private ModuleService moduleService;
+	@Autowired private PlayerService playerService;
+	@Autowired private ClubService clubService;
+	@Autowired private MentalityService mentalityService;
+	@Autowired private FormationRepository formationRepository;
+	
+	public Formation createPlayerFormation(FormationRequest formationRequest) {
+		Team team = clubService.load().getTeam();
+		Formation formation = team.getFormation();
+		if(formation == null) {
+			formation = new Formation();
+		}
+		Module module = moduleService.findOne(formationRequest.getModuleId());
+		formation.setModule(module);
+		formation.setMentality(formationRequest.getMentality());
+		formation.setPlayers(new ArrayList<>());
+		for (Long id : formationRequest.getPlayersId()) {
+			if(id != null) {
+				formation.addPlayer(playerService.findOne(id));
+			}
+		}
+		validate(formation);
+		team.setFormation(formation);
+		formationRepository.save(formation);
+		return formation;
+	}
+	
+	public Formation createPlayerFormation() {
+		Team team = clubService.load().getTeam();
+		Formation formation = createFormation(team.getPlayers(), team.getFormation());
+		team.setFormation(formation);
+        return formationRepository.save(formation);
+	}
 	
 	public Formation createFormation(List<Player> players, Formation formation){
 		//logger.info("players {}", players.size());
@@ -30,12 +64,13 @@ public class FormationService {
 			formation = new Formation();
 		}
 		formation.setModule(module);
+		formation.setMentality(mentalityService.random());
 		formation.setPlayers(new ArrayList<>());
 		Player goalKeeper = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.GOALKEEPER);
 		formation.addPlayer(goalKeeper);
 		playersCopy.remove(goalKeeper);
 		for (int i = 0; i < module.getCd(); i++) {
-			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.CENTRALDEFENDER);
+			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.DEFENDER);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}
@@ -68,7 +103,12 @@ public class FormationService {
 		players.add(formation.getGoalKeeper());
 		players.addAll(formation.getCentralDefenders());
 		players.addAll(formation.getWingBacks());
-		players.addAll(formation.getMidfielders());
+		if(formation.getMentality().getvalue() < 2){
+			players.addAll(formation.getMidfielders());
+		}
+		if(formation.getMentality().getvalue() < 1){
+			players.addAll(formation.getWings());
+		}
 		return players;
 	}
 	
@@ -77,15 +117,25 @@ public class FormationService {
 		players.addAll(formation.getCentralDefenders());
 		players.addAll(formation.getWingBacks());
 		players.addAll(formation.getMidfielders());
-		players.addAll(formation.getWings());
+		if(formation.getMentality().getvalue() < 2){
+			players.addAll(formation.getWings());
+		}
+		if(formation.getMentality().getvalue() < 1){
+			players.addAll(formation.getForwards());
+		}
 		return players;
 	}
 	
 	public List<Player> getOffender(Formation formation){
 		List<Player> players = new ArrayList<>();
-		players.addAll(formation.getMidfielders());
 		players.addAll(formation.getWings());
 		players.addAll(formation.getForwards());
+		if(formation.getMentality().getvalue() > 0){
+			players.addAll(formation.getMidfielders());
+		}
+		if(formation.getMentality().getvalue() > 1){
+			players.addAll(formation.getWingBacks());
+		}
 		return players;
 	}
 	

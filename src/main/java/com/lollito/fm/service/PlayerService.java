@@ -4,16 +4,23 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
+import com.lollito.fm.repository.rest.PlayerRepository;
 import com.lollito.fm.utils.RandomUtils;
 
 @Service
 public class PlayerService {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	@Autowired PlayerRepository playerRepository;
+	
+	public Player findOne(Long id) {
+		return playerRepository.findOne(id);
+	}
 	
 	public Player createGk(Player player){
 		player.setStamina(RandomUtils.randomValue(20, 90));
@@ -37,7 +44,7 @@ public class PlayerService {
 		player.setPassing(RandomUtils.randomValue(20, 70));
 		player.setDefending(RandomUtils.randomValue(40, 99));
 		player.setSetPieces(RandomUtils.randomValue(20, 80));
-		player.setRole(PlayerRole.CENTRALDEFENDER);
+		player.setRole(PlayerRole.DEFENDER);
 		return player;
 	}
 	

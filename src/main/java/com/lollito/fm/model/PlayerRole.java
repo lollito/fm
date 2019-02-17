@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum PlayerRole {
 	GOALKEEPER(0),
-	CENTRALDEFENDER(1),
+	DEFENDER(1),
 	WINGBACK(2),
 	MIDFIELDER(3),
 	WING(4),

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="common/head :: head"></head>
-
+<link rel="stylesheet" href="//rawgit.com/vitalets/x-editable/master/dist/bootstrap3-editable/css/bootstrap-editable.css"/>
 <body>
 
 <div id="wrapper" class="toggled">
@@ -20,31 +20,37 @@
 		            <table data-toggle="table" data-url="/player/">
 						<thead>
 							<tr>
+								<th data-field="id" data-formatter="selectRoleFormatter">Id</th>
 								<th data-field="id" data-formatter="operateFormatter">Id</th>
 								<th data-field="role">Role</th>
 								<!-- <th data-field="name">Name</th> -->
 								<th data-field="surname">Surname</th>
-								<th data-field="defenceAverage">D. Avg</th>
-								<th data-field="offenceAverage">O. Avg</th>
+								<th data-field="defenceAverage">Df. Avg</th>
+								<th data-field="offenceAverage">Off. Avg</th>
 								<th data-field="average">Avg</th>
-								<!-- <th data-field="condition">Condition</th> -->
+								<th data-field="condition">Condition</th>
 							</tr>
 						</thead>
 					</table>
 				</div>
 				<div class="col-md-6">
-					<form id="formation-form" action="/game/play" method="POST">
+					<form id="formation-form">
 						<div class="formation">
-							<select name="moduleId">
-								<option value="1" >4-4-2</option>
-							</select>
-							<select name="mentality">
-								<option value="0" >Defensive</option>
-								<option value="1" selected="selected">Normal</option>
-								<option value="2" >Offensive</option>
-							</select>
+							<script id="module-template" type="text/x-handlebars-template">
+									{{#each modules}}
+										<option value="{{this.id}}" >{{this.name}}</option>
+									{{/each}}
+							</script>
+							<select name="moduleId" id="module-template-placeholder" class="col-md-4"></select>
+							
+							<script id="mentality-template" type="text/x-handlebars-template">
+									{{#each mentalities}}
+										<option value="{{this}}" >{{this}}</option>
+									{{/each}}
+							</script>
+							<select name="mentality" id="mentality-template-placeholder" class="col-md-4"></select>
+							
 							<div class="pitch">
-								<!-- <h4>4-4-2</h4> -->
 								<div class="formation-container">
 									<div class="box1">
 										<div class="pen1">
@@ -70,6 +76,8 @@
 									</div>
 								</div>
 							</div>
+							<button id="auto" type="button" class="btn btn-warn">Auto</button>
+							<button id="save" type="button" class="btn btn-dark">Save</button>
 						</div>
 					</form>
 				</div>
@@ -121,6 +129,61 @@ function operateFormatter(value, row, index) {
         '</div>'
     ].join('');
 }
+
+function selectRoleFormatter(value, row, index) {
+	var name = row.name.charAt(0) + "." + row.surname;
+    return [
+        '<select>',
+        '<option value=""></option>',
+        '<option value="">GK</option>',
+        '<option value="">TS</option>',
+        '<option value="">TD</option>',
+        '</select>'
+    ].join('');
+}
+
+$('#formation-form #save').on('click', function(ev) {
+	ev.preventDefault();
+	var data = $('#formation-form').serialize();
+	$.ajax({
+		method : "POST",
+		url : "/formation/",
+		data: data
+	}).done(function(data) {
+		console.log(data);
+	});
+});
+
+$('#formation-form #auto').on('click', function(ev) {
+	ev.preventDefault();
+	$.ajax({
+		method : "GET",
+		url : "/formation/auto",
+	}).done(function(data) {
+		console.log(data);
+	});
+});
+
+$(document).ready(function() {
+	$.get("/module/", function(data) {
+		var source = $("#module-template").html();
+		var template = Handlebars.compile(source);
+		var context = {
+			modules : data
+		};
+		var html = template(context);
+		$("#module-template-placeholder").html(html);
+	}, "json");
+	$.get("/mentality/", function(data) {
+		var source = $("#mentality-template").html();
+		var template = Handlebars.compile(source);
+		var context = {
+			mentalities : data
+		};
+		var html = template(context);
+		$("#mentality-template-placeholder").html(html);
+	}, "json");
+});
 
 /*]]>*/
 </script>
