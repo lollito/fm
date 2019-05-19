@@ -1,7 +1,9 @@
 function buildTemplateFromGameResponse(data, showToastr){
 	var source = $("#entry-template").html();
 	var template = Handlebars.compile(source);
-	currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year
+//	var currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year;
+	var currentDate = data.currentDate;
+	console.log(currentDate);
 	var context = {
 		currentDate : currentDate
 	};

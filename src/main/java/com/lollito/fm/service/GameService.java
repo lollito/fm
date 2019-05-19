@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +84,7 @@ public class GameService {
 	}
 	
 	public GameResponse load(Long gameId){
-		Game game = gameRepository.findOne(gameId);
+		Game game = gameRepository.findById(gameId).get();
 		GameResponse gameResponse = new GameResponse();
 		if (game == null){
 			//TODO error
@@ -100,6 +102,6 @@ public class GameService {
 	
 	public void delete(Long gameId){
 		//TODO security
-		gameRepository.delete(gameId);
+		gameRepository.deleteById(gameId);
 	}
 }

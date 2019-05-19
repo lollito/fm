@@ -62,6 +62,6 @@ public class TeamService {
 	}
 	
 	public void save(List<Team> teams){
-		teamRepository.save(teams);
+		teamRepository.saveAll(teams);
 	}
 }

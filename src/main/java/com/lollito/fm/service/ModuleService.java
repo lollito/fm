@@ -24,12 +24,12 @@ public class ModuleService {
 		modules.add(new Module("4-4-2", 2, 2, 2, 2, 2));
 		modules.add(new Module("4-3-3", 2, 2, 3, 2, 1));
 		modules.add(new Module("4-3-3 offensive", 2, 2, 3, 0, 3));
-		moduleRepository.save(modules);
+		moduleRepository.saveAll(modules);
 		return modules;
 	}
 	
 	public Module findOne(Long id) {
-		return moduleRepository.findOne(id);
+		return moduleRepository.findById(id).get();
 	}
 	
 	

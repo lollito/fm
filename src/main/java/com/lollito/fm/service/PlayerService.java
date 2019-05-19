@@ -19,7 +19,7 @@ public class PlayerService {
 	@Autowired PlayerRepository playerRepository;
 	
 	public Player findOne(Long id) {
-		return playerRepository.findOne(id);
+		return playerRepository.findById(id).get();
 	}
 	
 	public Player createGk(Player player){

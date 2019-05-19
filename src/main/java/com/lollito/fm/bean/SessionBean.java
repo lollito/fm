@@ -35,7 +35,7 @@ public class SessionBean {
 			// TODO error
 			logger.error("error - game is null");
 		} else {
-			game = gameRepository.findOne(this.gameId);
+			game = gameRepository.findById(this.gameId).get();
 			if (game == null) {
 				// TODO error
 				logger.error("error - game is null");
