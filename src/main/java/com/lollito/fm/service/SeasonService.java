@@ -2,7 +2,6 @@ package com.lollito.fm.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,8 +27,9 @@ public class SeasonService {
 	@Autowired SeasonRepository seasonRepository;
 	@Autowired RankingService rankingService;
 	
-	public Season create(List<Club> clubsList, Game game) {
+	public Season create(Game game, LocalDate startDate) {
 		Season season = new Season();
+		List<Club> clubsList = game.getClubs();
 		rankingService.create(clubsList, season);
 		int numClubs = clubsList.size();
 		if (numClubs % 2 != 0) {
@@ -48,18 +48,15 @@ public class SeasonService {
 		List<Round> rounds = new ArrayList<>();
 		
 		for (int day = 0; day < numDays; day++) {
-			//logger.info("Day {}", (day + 1));
-			
 			Round round = new Round();
 			int teamIdx = day % teamsSize;
 
-			//logger.info("{} vs {}", teams.get(teamIdx).getName(), teamsList.get(0).getName());
-			round.addMatch(new Match(clubs.get(teamIdx), clubsList.get(0), game));
+			round.addMatch(new Match(clubs.get(teamIdx), clubsList.get(0), game, false));
 			for (int idx = 1; idx < halfSize; idx++) {
 				int firstTeam = (day + idx) % teamsSize;
 				int secondTeam = (day + teamsSize - idx) % teamsSize;
-				//logger.info("{} vs {}", teams.get(firstTeam).getName(), teams.get(secondTeam).getName());
-				round.addMatch(new Match(clubs.get(firstTeam), clubs.get(secondTeam), game));
+				boolean last = idx == halfSize - 1;
+				round.addMatch(new Match(clubs.get(firstTeam), clubs.get(secondTeam), game, last));
 			}
 			rounds.add(round);
 		}
@@ -68,33 +65,35 @@ public class SeasonService {
 		List<Round> roundReturns = new ArrayList<>();
 		for (Round round : rounds) {
 			Round roundReturn = new Round();
-			for (Match match : round.getMatches()) {
-				roundReturn.addMatch(new Match(match.getAway(), match.getHome(), game));
+			for (int i = 0; i < round.getMatches().size(); i++) {
+				Match match = round.getMatches().get(i);
+				boolean last = i == round.getMatches().size() - 1;
+				roundReturn.addMatch(new Match(match.getAway(), match.getHome(), game, last));
 			}
 			roundReturns.add(roundReturn);
 		}
 		rounds.addAll(roundReturns);
 		int roundNumber = 1;
-		LocalDate date = LocalDate.of( 2017 , Month.AUGUST , 21 );
 		int saturdayMatch = 2;
 		Iterator<Round> iterator = rounds.iterator();
 		while (iterator.hasNext()) {
-			if(date.getDayOfWeek() == DayOfWeek.SATURDAY){
+			if(startDate.getDayOfWeek() == DayOfWeek.SATURDAY){
 				Round round = iterator.next();
 				round.setNumber(roundNumber);
 				List<Match> matches = round.getMatches();
 				for(int i= 0; i < saturdayMatch; i++){
-					matches.get(i).setDate(date);
+					matches.get(i).setDate(startDate);
 				}
-				date = date.plusDays(1);
+				startDate = startDate.plusDays(1);
 				for(int i= saturdayMatch; i < matches.size(); i++){
-					matches.get(i).setDate(date);
+					matches.get(i).setDate(startDate);
 				}
 				roundNumber ++;
 				season.addRound(round);
 			}
-			date = date.plusDays(1);
+			startDate = startDate.plusDays(1);
 		}
+		season.getRounds().get(season.getRounds().size() -1).setLast(Boolean.TRUE);
 		return season;
 	}
 }

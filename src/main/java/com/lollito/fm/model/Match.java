@@ -64,14 +64,18 @@ public class Match implements Serializable{
 	@Type(type = "yes_no")
 	private Boolean finish = Boolean.FALSE;
 	
+	@Type(type = "yes_no")
+	private Boolean last = Boolean.FALSE;
+	
 	public Match() {
 		
 	}
 	
-	public Match(Club home, Club away, Game game) {
+	public Match(Club home, Club away, Game game, Boolean last) {
 		this.home = home;
 		this.away = away;
 		this.game = game;
+		this.last = last;
 	}
 
 	public Long getId() {
@@ -151,6 +155,14 @@ public class Match implements Serializable{
 		this.finish = finish;
 	}
 
+	public Boolean getLast() {
+		return last;
+	}
+
+	public void setLast(Boolean last) {
+		this.last = last;
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

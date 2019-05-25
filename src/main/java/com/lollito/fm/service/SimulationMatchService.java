@@ -32,35 +32,18 @@ public class SimulationMatchService {
 	@Autowired RankingService rankingService;
 	@Autowired PlayerRepository playerRepository;
 	
-	public Match simulate(List<Match> matches){
-		Match userMatch = null;
-		for (Match match : matches) {
-			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
-				simulate(match);
-			} else {
-				if((match.getHome().getUser() != null && match.getHome().getTeam().getFormation() != null) || (match.getAway().getUser() != null && match.getAway().getTeam().getFormation() != null)) {
-					simulate(match);
-				} else {
-					userMatch =  match;
-				}
-				
-			}
-		}
-		return userMatch;
+	public void simulate(List<Match> matches){
+		matches.forEach(match -> simulate(match));
 	}
 	
 	public void simulate(Match match){
 		SimulationMatch simulationMatch = new SimulationMatch();
-		if(match.getHome().getUser() == null) {
+		if(match.getHome().getTeam().getFormation() == null) {
 			match.getHome().getTeam().setFormation(formationService.createFormation(match.getHome().getTeam().getPlayers(), match.getHome().getTeam().getFormation()));
-		} else if(match.getHome().getTeam().getFormation() == null) {
-			throw new RuntimeException("Salvare formazione");
 		}
 		
-		if(match.getAway().getUser() == null) {
+		if(match.getAway().getTeam().getFormation() == null) {
 			match.getAway().getTeam().setFormation((formationService.createFormation(match.getAway().getTeam().getPlayers(), match.getAway().getTeam().getFormation())));
-		} else if(match.getAway().getTeam().getFormation() == null) {
-			throw new RuntimeException("Salvare formazione");
 		}
 		
 		simulationMatch.setMatch(match);

@@ -97,6 +97,11 @@ public class Game implements Serializable{
 		this.seasonHistory = seasonHistory;
 	}
 
+	public void addSeasonHistory(Season season){
+		season.setGame(this);
+		this.seasonHistory.add(season);
+	}
+	
 	public List<Club> getClubs() {
 		return clubs;
 	}

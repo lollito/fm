@@ -48,6 +48,8 @@ public class Season implements Serializable{
 	@OrderBy("points desc")
 	private List<Ranking> rankingLines = new ArrayList<>();
 	
+	private Integer nextRoundNumber = 1;
+	
 	public Season() {
 		
 	}
@@ -105,6 +107,14 @@ public class Season implements Serializable{
 	public void addRankingLine(Ranking rankingLine) {
 		rankingLine.setSeason(this);
 		this.rankingLines.add(rankingLine);
+	}
+
+	public Integer getNextRoundNumber() {
+		return nextRoundNumber;
+	}
+
+	public void setNextRoundNumber(Integer currentRoundNumber) {
+		this.nextRoundNumber = currentRoundNumber;
 	}
 
 	@Override

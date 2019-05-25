@@ -21,23 +21,45 @@
 							<div class="card text-white bg-dark mb-3">
 								<div class="card-header">Next Round</div>
 								<div class="card-body">
-									<h4 class="card-title">Coming Soon</h4>
-									<p class="card-text">Coming Soon</p>
+						            <table id="next-round-table" data-toggle="table" data-url="/match/next" data-group-by="true" data-group-by-field="number">
+										<thead>
+											<tr>
+												<th data-field="home.name">Casa</th>
+												<th data-field="away.name">Trasferta</th>
+												<th data-field="date">Data</th>
+												<th data-field="number" data-visible="false"></th>
+												<th data-field="last" data-visible="false"></th>
+												<th data-field="homeScore"></th>
+												<th data-field="awayScore"></th>
+											</tr>
+										</thead>
+									</table>
 								</div>
 							</div>
 						</div>
 						<div class="col-sm-12">
 							<div class="card text-white bg-dark mb-3">
-								<div class="card-header">Risultati</div>
+								<div class="card-header">Results</div>
 								<div class="card-body">
-									<h4 class="card-title">Coming Soon</h4>
-									<p class="card-text">Coming Soon</p>
+									<table id="previous-round-table" data-toggle="table" data-url="/match/previous" data-group-by="true" data-group-by-field="number">
+										<thead>
+											<tr>
+												<th data-field="home.name">Casa</th>
+												<th data-field="away.name">Trasferta</th>
+												<th data-field="date">Data</th>
+												<th data-field="number" data-visible="false"></th>
+												<th data-field="last" data-visible="false"></th>
+												<th data-field="homeScore"></th>
+												<th data-field="awayScore"></th>
+											</tr>
+										</thead>
+									</table>
 								</div>
 							</div>
 						</div>
 						<div class="col-sm-12">
 							<div class="card text-white bg-dark mb-3">
-								<div class="card-header">Coming Soon</div>
+								<div class="card-header">News</div>
 								<div class="card-body">
 									<h4 class="card-title">Coming Soon</h4>
 									<p class="card-text">Coming Soon</p>
@@ -48,7 +70,7 @@
 					<div class="col-sm-6">
 						<div class="card text-white bg-dark mb-3">
 							<div class="card-body">
-								<table id="ranking-table" data-toggle="table" data-url="/ranking/" data-toolbar="#toolbar">
+								<table id="ranking-table" data-toggle="table" data-url="/ranking/">
 									<thead>
 										<tr>
 											<th data-field="club.name">Club</th>

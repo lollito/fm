@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,8 @@ import com.lollito.fm.model.Player;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
+
+import jdk.internal.jline.internal.Log;
 
 @Service
 public class GameService {
@@ -38,7 +38,7 @@ public class GameService {
 		List<Club> clubs = clubService.createClubs(game);
 		clubs.add(clubService.createPlayerClub(clubName, game));
 		game.setClubs(clubs);
-		game.setCurrentSeason(seasonService.create(clubs, game));
+		game.setCurrentSeason(seasonService.create(game, LocalDate.of( 2017 , Month.AUGUST , 21 )));
 		game.setCurrentDate(LocalDate.of(2017, Month.AUGUST, 24));
 		game = gameRepository.save(game);
 		sessionBean.setGameId(game.getId());
@@ -49,20 +49,24 @@ public class GameService {
 		GameResponse gameResponse = new GameResponse();
 		Game game = sessionBean.getGame();
 		List<Match> matches = matchRepository.findByGameAndDateAndFinish(game, game.getCurrentDate().plusDays(1), Boolean.FALSE);
-		logger.debug("matches {}", matches);
-		Match currentMatch = null;
 		if(matches.isEmpty()){
 			incrementPlayersCondition(game);
 		} else {
-			currentMatch = simulationMatchService.simulate(matches);
+			simulationMatchService.simulate(matches);
+			Match match =  matches.get(matches.size() -1);
+			if(match.getLast()) {
+				game.getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
+				if(match.getRound().getLast()){
+					logger.info("######fine stagione");
+					game.addSeasonHistory(game.getCurrentSeason());
+					game.setCurrentSeason(seasonService.create(game, game.getCurrentDate().plusDays(2)));
+				}
+			} 
 		}
-		if(currentMatch == null) {
-			game.addDay();
-		} else  {
-			gameResponse.setCurrentMatch(currentMatch);
-		}
+		game.addDay();
 		gameResponse.setCurrentDate(game.getCurrentDate());
 		gameResponse.setDisputatedMatch(matches);
+		
 		game = gameRepository.save(game);
 		return gameResponse;
 	}

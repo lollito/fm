@@ -19,10 +19,10 @@ public class DatabaseLoader implements CommandLineRunner {
 	
 	@Override
 	public void run(String... strings) throws Exception {
-		logger.info("loading database");
+		logger.info("Loading Database");
 		moduleService.createModules();
 		userService.create();
-		logger.info("database loaded");
+		logger.info("Database Loaded");
 	}
 
 }
