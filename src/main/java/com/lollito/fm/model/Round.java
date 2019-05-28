@@ -20,6 +20,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,7 +33,8 @@ public class Round implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	private Integer number;
 	
@@ -43,6 +46,9 @@ public class Round implements Serializable{
 	@JoinColumn( name = "season_id" )
 	@JsonIgnore
     private Season season;
+	
+	@Type(type = "yes_no")
+	private Boolean last = Boolean.FALSE;
 	
 	public Round() {
 		
@@ -87,6 +93,14 @@ public class Round implements Serializable{
 
 	public void setSeason(Season season) {
 		this.season = season;
+	}
+
+	public Boolean getLast() {
+		return last;
+	}
+
+	public void setLast(Boolean last) {
+		this.last = last;
 	}
 
 	@Override

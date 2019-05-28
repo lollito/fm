@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -20,6 +22,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,7 +35,8 @@ public class Match implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
@@ -62,14 +66,18 @@ public class Match implements Serializable{
 	@Type(type = "yes_no")
 	private Boolean finish = Boolean.FALSE;
 	
+	@Type(type = "yes_no")
+	private Boolean last = Boolean.FALSE;
+	
 	public Match() {
 		
 	}
 	
-	public Match(Club home, Club away, Game game) {
+	public Match(Club home, Club away, Game game, Boolean last) {
 		this.home = home;
 		this.away = away;
 		this.game = game;
+		this.last = last;
 	}
 
 	public Long getId() {
@@ -149,6 +157,14 @@ public class Match implements Serializable{
 		this.finish = finish;
 	}
 
+	public Boolean getLast() {
+		return last;
+	}
+
+	public void setLast(Boolean last) {
+		this.last = last;
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

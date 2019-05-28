@@ -22,8 +22,18 @@ public class MatchController {
 	@Autowired private MatchService matchService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<Match> game(Model model) {
+    public List<Match> all(Model model) {
         return matchService.load();
+    }
+	
+	@RequestMapping(value = "/next", method = RequestMethod.GET)
+    public List<Match> next(Model model) {
+        return matchService.loadNext();
+    }
+	
+	@RequestMapping(value = "/previous", method = RequestMethod.GET)
+    public List<Match> previuos(Model model) {
+        return matchService.loadPrevious();
     }
    
 }

@@ -64,6 +64,10 @@ Give an example
 
 Add additional notes about how to deploy this on a live system
 
+
+## Db Schema
+<img width="880" alt="DB Schema" src="https://user-images.githubusercontent.com/26112857/57986851-53adab00-7a7a-11e9-8ccc-ecf73194d801.png">
+
 ## Built With
 
 * [Springboot](https://projects.spring.io/spring-boot/) - Java Framework

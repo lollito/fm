@@ -26,4 +26,20 @@ public class MatchService {
 		}
 		return matches;
 	}
+	
+	public List<Match> loadNext(){
+		return loadByRoundNumber(sessionBean.getGame().getCurrentSeason().getNextRoundNumber() - 1);
+	}
+	
+	public List<Match> loadPrevious(){
+		Integer nextRoundNumber = sessionBean.getGame().getCurrentSeason().getNextRoundNumber();
+		return loadByRoundNumber(nextRoundNumber > 1 ? nextRoundNumber - 2 : nextRoundNumber - 1);
+	}
+	
+	private List<Match> loadByRoundNumber(Integer number){
+		if(sessionBean.getGame().getCurrentSeason().getRounds().size() <= number) {
+			return new ArrayList<>();
+		}
+		return sessionBean.getGame().getCurrentSeason().getRounds().get(number).getMatches();
+	}
 }

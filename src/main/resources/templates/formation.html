@@ -124,14 +124,13 @@ function drop(ev) {
 function operateFormatter(value, row, index) {
 	var name = row.name.charAt(0) + "." + row.surname;
     return [
-        '<div id="' + row.id + '" data-name="' + name + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
+        '<div id="' + row.id + '" data-name="' + row.surname + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
         '<i class="fa fa-futbol-o"></i>',
         '</div>'
     ].join('');
 }
 
 function selectRoleFormatter(value, row, index) {
-	var name = row.name.charAt(0) + "." + row.surname;
     return [
         '<select>',
         '<option value=""></option>',

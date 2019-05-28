@@ -1,7 +1,8 @@
 function buildTemplateFromGameResponse(data, showToastr){
 	var source = $("#entry-template").html();
 	var template = Handlebars.compile(source);
-	currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year
+//	var currentDate = data.currentDate.dayOfMonth + "/" + data.currentDate.monthValue + "/" + data.currentDate.year;
+	var currentDate = data.currentDate;
 	var context = {
 		currentDate : currentDate
 	};
@@ -20,6 +21,12 @@ function buildTemplateFromGameResponse(data, showToastr){
 		$("#modal-disputated-match").modal("show");
 		if($('#ranking-table').length){
 			$('#ranking-table').bootstrapTable('refresh');
+		}
+		if($('#next-round-table').length){
+			$('#next-round-table').bootstrapTable('refresh');
+		}
+		if($('#previous-round-table').length){
+			$('#previous-round-table').bootstrapTable('refresh');
 		}
 		
 	} else if(showToastr) {

@@ -9,14 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
-import com.lollito.fm.model.SimulationMatch;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.ModuleRepository;
 import com.lollito.fm.repository.rest.PlayerRepository;
-import com.lollito.fm.repository.rest.SimulationMatchRepository;
 import com.lollito.fm.utils.RandomUtils;
 
 @Service
@@ -26,53 +25,33 @@ public class SimulationMatchService {
 	
 	@Autowired FormationService formationService;
 	@Autowired PlayerService playerService;
-	@Autowired SimulationMatchRepository simulationMatchRepository;
 	@Autowired MatchRepository matchRepository;
 	@Autowired ModuleRepository moduleRepository;
 	@Autowired RankingService rankingService;
 	@Autowired PlayerRepository playerRepository;
 	
-	public Match simulate(List<Match> matches){
-		Match userMatch = null;
-		for (Match match : matches) {
-			if(match.getHome().getUser() == null && match.getAway().getUser() == null){
-				simulate(match);
-			} else {
-				if((match.getHome().getUser() != null && match.getHome().getTeam().getFormation() != null) || (match.getAway().getUser() != null && match.getAway().getTeam().getFormation() != null)) {
-					simulate(match);
-				} else {
-					userMatch =  match;
-				}
-				
-			}
-		}
-		return userMatch;
+	public void simulate(List<Match> matches){
+		matches.forEach(match -> simulate(match));
 	}
 	
 	public void simulate(Match match){
-		SimulationMatch simulationMatch = new SimulationMatch();
-		if(match.getHome().getUser() == null) {
+		//if(match.getHome().getTeam().getFormation() == null) {
 			match.getHome().getTeam().setFormation(formationService.createFormation(match.getHome().getTeam().getPlayers(), match.getHome().getTeam().getFormation()));
-		} else if(match.getHome().getTeam().getFormation() == null) {
-			throw new RuntimeException("Salvare formazione");
-		}
+		//}
 		
-		if(match.getAway().getUser() == null) {
+		//if(match.getAway().getTeam().getFormation() == null) {
 			match.getAway().getTeam().setFormation((formationService.createFormation(match.getAway().getTeam().getPlayers(), match.getAway().getTeam().getFormation())));
-		} else if(match.getAway().getTeam().getFormation() == null) {
-			throw new RuntimeException("Salvare formazione");
-		}
+//		}
 		
-		simulationMatch.setMatch(match);
-		simulationMatchRepository.save(simulationMatch);
-		playMatch(simulationMatch);
+//		simulationMatchRepository.save(simulationMatch);
+		playMatch(match);
 		match.setFinish(true);
 //		matchRepository.save(simulationMatch.getMatch());
-//		matchRepository.save(simulationMatch.getMatch());
-		simulationMatchRepository.save(simulationMatch);
+		matchRepository.save(match);
+//		simulationMatchRepository.save(simulationMatch);
 	}
 	
-	private int[] playMatch(SimulationMatch simulationMatch){
+	private int[] playMatch(Match match){
 //		Let's say you have an "action" every 5 minutes of the game, so 90/5 = 18 actions. To make it more realistic you can choose random number like:
 		Integer numberOfActions = RandomUtils.randomValue(10,20);
 		logger.debug("numberOfActions {}", numberOfActions);
@@ -81,24 +60,26 @@ public class SimulationMatchService {
 		Integer awayScore = 0;
 		
 		int coin = RandomUtils.randomValue(0, 1);
+		Formation homeFormation = match.getHome().getTeam().getFormation();
+		Formation awayFormation = match.getAway().getTeam().getFormation();
 		if (coin == 0){
-			simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(true);
+			homeFormation.setHaveBall(true);
 			//logger.info("home have ball");
 		} else {
-			simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
+			awayFormation.setHaveBall(true);
 			//logger.info("away have ball");
 		}
 		
 		PlayerPosition playerPosition = PlayerPosition.MIDFIELD;
 		Map<PlayerPosition, List<Player>> homePlayers = new HashMap<>();
 		Map<PlayerPosition, List<Player>> awayPlayers = new HashMap<>();
-		homePlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(simulationMatch.getMatch().getHome().getTeam().getFormation()));
-		homePlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(simulationMatch.getMatch().getHome().getTeam().getFormation()));
-		homePlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(simulationMatch.getMatch().getHome().getTeam().getFormation()));
+		homePlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(homeFormation));
+		homePlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(homeFormation));
+		homePlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(homeFormation));
 		
-		awayPlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(simulationMatch.getMatch().getAway().getTeam().getFormation()));
-		awayPlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(simulationMatch.getMatch().getAway().getTeam().getFormation()));
-		awayPlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(simulationMatch.getMatch().getAway().getTeam().getFormation()));
+		awayPlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(awayFormation));
+		awayPlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(awayFormation));
+		awayPlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(awayFormation));
 		
 		Map<PlayerPosition, PlayerPosition> inversePosition = new HashMap<>();
 		inversePosition.put(PlayerPosition.DEFENCE, PlayerPosition.OFFENCE);
@@ -108,7 +89,7 @@ public class SimulationMatchService {
 		int luckAway = 20;
 		for (int i = 0; i <= numberOfActions; i++) {
 			//logger.info("rndm {}", rndm);
-			if(simulationMatch.getMatch().getHome().getTeam().getFormation().getHaveBall()){
+			if(homeFormation.getHaveBall()){
 				int rndm = RandomUtils.randomValue(0, luckHome);
 				if(rndm > (luckHome/2)){
 					luckHome-=RandomUtils.randomValue(0, 5);
@@ -129,14 +110,14 @@ public class SimulationMatchService {
 					}else {
 						homeScore++;
 						playerPosition = PlayerPosition.MIDFIELD;
-						simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(false);
-						simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
+						homeFormation.setHaveBall(false);
+						awayFormation.setHaveBall(true);
 						logger.debug("home gol");
 					}
 				}else{
 					logger.debug("home lost ball");
-					simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(false);
-					simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(true);
+					homeFormation.setHaveBall(false);
+					awayFormation.setHaveBall(true);
 				}
 			} else {
 				int rndm = RandomUtils.randomValue(0, luckAway);
@@ -159,29 +140,29 @@ public class SimulationMatchService {
 					}else {
 						awayScore++;
 						playerPosition = PlayerPosition.MIDFIELD;
-						simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(true);
-						simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(false);
+						homeFormation.setHaveBall(true);
+						awayFormation.setHaveBall(false);
 						//logger.info("away gol");
 					}
 				}else{
 					//logger.info("away lost ball");
-					simulationMatch.getMatch().getHome().getTeam().getFormation().setHaveBall(true);
-					simulationMatch.getMatch().getAway().getTeam().getFormation().setHaveBall(false);
+					homeFormation.setHaveBall(true);
+					awayFormation.setHaveBall(false);
 				}
 			}
-			for(Player player : simulationMatch.getMatch().getHome().getTeam().getFormation().getPlayers()) {
-	        	double d = -((10 * player.getStamina())/99) + (1000/99);
+			for(Player player : homeFormation.getPlayers()) {
+	        	double d = 5 - (5 * player.getStamina()/100 );
 	        	player.decrementCondition(d);
 	        }
-			for(Player player : simulationMatch.getMatch().getAway().getTeam().getFormation().getPlayers()) {
-	        	double d = -((10 * player.getStamina())/99) + (1000/99);
+			for(Player player : awayFormation.getPlayers()) {
+				double d = 5 - (5 * player.getStamina()/100 );
 	        	player.decrementCondition(d);
 	        }
 		}
-		simulationMatch.getMatch().setHomeScore(homeScore);
-		simulationMatch.getMatch().setAwayScore(awayScore);
+		match.setHomeScore(homeScore);
+		match.setAwayScore(awayScore);
 		
-		rankingService.update(simulationMatch.getMatch());
+		rankingService.update(match);
 		
 		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};

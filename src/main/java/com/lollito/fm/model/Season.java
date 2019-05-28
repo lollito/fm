@@ -21,6 +21,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "season")
@@ -30,7 +31,8 @@ public class Season implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	
 	private String name;
@@ -45,6 +47,8 @@ public class Season implements Serializable{
 	@OneToMany(mappedBy = "season", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@OrderBy("points desc")
 	private List<Ranking> rankingLines = new ArrayList<>();
+	
+	private Integer nextRoundNumber = 1;
 	
 	public Season() {
 		
@@ -103,6 +107,14 @@ public class Season implements Serializable{
 	public void addRankingLine(Ranking rankingLine) {
 		rankingLine.setSeason(this);
 		this.rankingLines.add(rankingLine);
+	}
+
+	public Integer getNextRoundNumber() {
+		return nextRoundNumber;
+	}
+
+	public void setNextRoundNumber(Integer currentRoundNumber) {
+		this.nextRoundNumber = currentRoundNumber;
 	}
 
 	@Override

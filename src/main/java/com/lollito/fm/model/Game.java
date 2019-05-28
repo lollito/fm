@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,7 +31,8 @@ public class Game implements Serializable{
 	private static final long serialVersionUID = 1L;
     
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	
     private String name;
@@ -95,6 +97,11 @@ public class Game implements Serializable{
 		this.seasonHistory = seasonHistory;
 	}
 
+	public void addSeasonHistory(Season season){
+		season.setGame(this);
+		this.seasonHistory.add(season);
+	}
+	
 	public List<Club> getClubs() {
 		return clubs;
 	}

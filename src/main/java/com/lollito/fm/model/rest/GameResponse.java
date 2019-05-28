@@ -9,7 +9,6 @@ import com.lollito.fm.model.Match;
 public class GameResponse {
 
 	private LocalDate currentDate;
-	private Match currentMatch;
 	private List<Match> disputatedMatch = new ArrayList<>();
 	
 	public GameResponse() {
@@ -25,14 +24,6 @@ public class GameResponse {
 	
 	public void setCurrentDate(LocalDate currentDate) {
 		this.currentDate = currentDate;
-	}
-	
-	public Match getCurrentMatch() {
-		return currentMatch;
-	}
-	
-	public void setCurrentMatch(Match currentMatch) {
-		this.currentMatch = currentMatch;
 	}
 	
 	public List<Match> getDisputatedMatch() {

@@ -32,19 +32,18 @@ public class FmApplicationTests {
 	@Autowired FormationService formationService;
 	
 	@Test
-	@Ignore
 	public void contextLoads() {
 		Game game = gameService.create("test", "test");
 		sessionBean.setGameId(game.getId());
-		LocalDate endDate = LocalDate.of( 2017 , Month.AUGUST , 26 );
+		LocalDate endDate = LocalDate.of( 2018 , Month.AUGUST , 26 );
 		formationService.createPlayerFormation();
 		for (LocalDate date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
 			logger.info("currdate {}", game.getCurrentDate());
 		    gameService.next();
 		}
-		for(Player player : game.getClubs().get(0).getTeam().getPlayers()) {
-			logger.info("player {}", player.getCondition());
-		}
+//		for(Player player : game.getClubs().get(0).getTeam().getPlayers()) {
+//			logger.info("player {}", player.getCondition());
+//		}
 	}
 
 
