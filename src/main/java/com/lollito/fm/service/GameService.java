@@ -18,8 +18,6 @@ import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
 
-import jdk.internal.jline.internal.Log;
-
 @Service
 public class GameService {
 	
