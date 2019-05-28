@@ -1,13 +1,8 @@
 language: java
 jdk:
  - openjdk11
-matrix:
-  fast_finish: true
-  include:
-    - jdk: openjdk11
-      env:
-        - DESC="build with OpenJDK11"
-        - CMD="mvn -e package -Passembly && mvn -e site -Dlinkcheck.skip=true"
+install: true
+script: mvn clean package -DskipTests=true
 branches:
   only:
   - master
