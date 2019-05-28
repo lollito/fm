@@ -5,7 +5,6 @@ import java.time.Month;
 
 import javax.transaction.Transactional;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Game;
-import com.lollito.fm.model.Player;
 import com.lollito.fm.service.FormationService;
 import com.lollito.fm.service.GameService;
 
