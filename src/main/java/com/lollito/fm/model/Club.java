@@ -61,6 +61,10 @@ public class Club implements Serializable{
     @JsonIgnore
     private User user;
     
+    @ManyToOne( fetch = FetchType.LAZY  )
+	@JoinColumn( name = "finance_id" )
+	private Finance finance;
+    
     public Long getId() {
 		return id;
 	}
@@ -123,6 +127,14 @@ public class Club implements Serializable{
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Finance getFinance() {
+		return finance;
+	}
+
+	public void setFinance(Finance finance) {
+		this.finance = finance;
 	}
 
 	@Override

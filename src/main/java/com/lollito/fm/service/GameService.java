@@ -46,7 +46,7 @@ public class GameService {
 	public GameResponse next(){
 		GameResponse gameResponse = new GameResponse();
 		Game game = sessionBean.getGame();
-		List<Match> matches = matchRepository.findByGameAndDateAndFinish(game, game.getCurrentDate().plusDays(1), Boolean.FALSE);
+		List<Match> matches = matchRepository.findByRoundSeasonAndDateAndFinish(game.getCurrentSeason(), game.getCurrentDate().plusDays(1), Boolean.FALSE);
 		if(matches.isEmpty()){
 			incrementPlayersCondition(game);
 		} else {

@@ -66,7 +66,8 @@ Add additional notes about how to deploy this on a live system
 
 
 ## Db Schema
-<img width="880" alt="DB Schema" src="https://user-images.githubusercontent.com/26112857/57986851-53adab00-7a7a-11e9-8ccc-ecf73194d801.png">
+
+<img width="880" alt="DB Schema" src="https://user-images.githubusercontent.com/26112857/58509700-771dd780-8197-11e9-9eff-a854bc1b82a5.png">
 
 ## Built With
 
@@ -83,7 +84,7 @@ We use [Git](https://git-scm.com/) for versioning.
 
 ## Authors
 
-* **Lorenzo Cunto** - *Initial work - 31/08/2017* 
+* **Lorenzo Cunto** - *Initial work - 31/08/2017* [@Lollito](https://github.com/lollito)
 
 
 ## License

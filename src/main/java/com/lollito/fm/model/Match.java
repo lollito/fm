@@ -56,11 +56,6 @@ public class Match implements Serializable{
 	@JsonIgnore
 	private Round round;
 	
-	@ManyToOne( fetch = FetchType.LAZY  )
-	@JoinColumn( name = "game_id" )
-	@JsonIgnore
-	private Game game;
-	
 	@Type(type = "yes_no")
 	private Boolean finish = Boolean.FALSE;
 	
@@ -74,7 +69,6 @@ public class Match implements Serializable{
 	public Match(Club home, Club away, Game game, Boolean last) {
 		this.home = home;
 		this.away = away;
-		this.game = game;
 		this.last = last;
 	}
 
@@ -139,14 +133,6 @@ public class Match implements Serializable{
 		return round.getNumber();
 	}
 	
-	public Game getGame() {
-		return game;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
-	}
-
 	public Boolean getFinish() {
 		return finish;
 	}
