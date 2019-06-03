@@ -11,4 +11,8 @@ public class RandomUtils {
 	public static <T> T randomValueFromList(List<T> list){
         return list.get(randomValue(0, list.size() - 1));
 	}
+	
+	public static Double randomValue(double from, double to){
+		return ThreadLocalRandom.current().nextDouble(from, to + 1D);
+	}
 }

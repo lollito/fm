@@ -63,28 +63,28 @@ public class Player implements Serializable{
 	private Date birth;
 	
 //	Decide quanta abilità perde un giocatore durante il corso di una partita, a causa della fatica.
-	private Integer stamina;
+	private Double stamina;
 	
 //	L'abilità di controllare il gioco e trasformarlo in occasioni da goal. 
-	private Integer playmaking;
+	private Double playmaking;
 	
 // 	L'abilità di mettere la palla in rete.
-	private Integer scoring;
+	private Double scoring;
 	
 // 	L'abilità di finalizzare azioni da goal grazie alle discese sulle fasce. 
-	private Integer winger;
+	private Double winger;
 	
 // 	Evitare che la palla entri nella propria rete. 
-	private Integer goalkeeping;
+	private Double goalkeeping;
 	
 // 	Giocatori che sanno come fare il passaggio decisivo sono di grande aiuto per l'attacco della squadra. 
-	private Integer passing;
+	private Double passing;
 	
 // 	L'abilità di fermare gli attacchi avversari. 
-	private Integer defending;
+	private Double defending;
 	
 // 	Il risultato delle punizioni e dei rigori dipende da quanto è abile il tuo specialista in calci piazzati. 
-	private Integer setPieces;
+	private Double setPieces;
 
 	@Column(name = "cndtion")
 	private Double condition = 100.0;
@@ -143,67 +143,67 @@ public class Player implements Serializable{
 		this.birth = birth;
 	}
 
-	public Integer getStamina() {
+	public Double getStamina() {
 		return stamina;
 	}
 
-	public void setStamina(Integer stamina) {
+	public void setStamina(Double stamina) {
 		this.stamina = stamina;
 	}
 
-	public Integer getPlaymaking() {
+	public Double getPlaymaking() {
 		return playmaking;
 	}
 
-	public void setPlaymaking(Integer playmaking) {
+	public void setPlaymaking(Double playmaking) {
 		this.playmaking = playmaking;
 	}
 
-	public Integer getScoring() {
+	public Double getScoring() {
 		return scoring;
 	}
 
-	public void setScoring(Integer scoring) {
+	public void setScoring(Double scoring) {
 		this.scoring = scoring;
 	}
 
-	public Integer getWinger() {
+	public Double getWinger() {
 		return winger;
 	}
 
-	public void setWinger(Integer winger) {
+	public void setWinger(Double winger) {
 		this.winger = winger;
 	}
 
-	public Integer getGoalkeeping() {
+	public Double getGoalkeeping() {
 		return goalkeeping;
 	}
 
-	public void setGoalkeeping(Integer goalkeeping) {
+	public void setGoalkeeping(Double goalkeeping) {
 		this.goalkeeping = goalkeeping;
 	}
 
-	public Integer getPassing() {
+	public Double getPassing() {
 		return passing;
 	}
 
-	public void setPassing(Integer passing) {
+	public void setPassing(Double passing) {
 		this.passing = passing;
 	}
 
-	public Integer getDefending() {
+	public Double getDefending() {
 		return defending;
 	}
 
-	public void setDefending(Integer defending) {
+	public void setDefending(Double defending) {
 		this.defending = defending;
 	}
 
-	public Integer getSetPieces() {
+	public Double getSetPieces() {
 		return setPieces;
 	}
 
-	public void setSetPieces(Integer setPieces) {
+	public void setSetPieces(Double setPieces) {
 		this.setPieces = setPieces;
 	}
 
@@ -251,33 +251,33 @@ public class Player implements Serializable{
 
 	@Transient
 	public Integer getAverage(){
-		return (this.stamina + 
-				this.playmaking	+ 
-				this.scoring + 
-				this.winger +
-				this.goalkeeping +
-				this.passing +
-				this.defending +
-				this.setPieces +
+		return (this.stamina.intValue() + 
+				this.playmaking.intValue()	+ 
+				this.scoring.intValue() + 
+				this.winger.intValue() +
+				this.goalkeeping.intValue() +
+				this.passing.intValue() +
+				this.defending.intValue() +
+				this.setPieces.intValue() +
 				this.condition.intValue()) / 9;
 	}
 	
 	@Transient
 	public Integer getOffenceAverage(){
-		return (this.playmaking	+ 
-				this.scoring + 
-				this.winger +
-				this.passing +
-				this.setPieces +
+		return (this.playmaking.intValue()	+ 
+				this.scoring.intValue() + 
+				this.winger.intValue() +
+				this.passing.intValue() +
+				this.setPieces.intValue() +
 				this.condition.intValue()) / 6;
 	}
 	
 	@Transient
 	public Integer getDefenceAverage(){
-		return (this.playmaking	+ 
-				this.goalkeeping +
-				this.defending +
-				this.setPieces +
+		return (this.playmaking.intValue()	+ 
+				this.goalkeeping.intValue() +
+				this.defending.intValue() +
+				this.setPieces.intValue() +
 				this.condition.intValue()) / 5;
 	}
 	

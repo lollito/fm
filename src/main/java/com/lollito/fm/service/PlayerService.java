@@ -23,79 +23,79 @@ public class PlayerService {
 	}
 	
 	public Player createGk(Player player){
-		player.setStamina(RandomUtils.randomValue(20, 90));
-		player.setPlaymaking(RandomUtils.randomValue(1, 50));
-		player.setScoring(RandomUtils.randomValue(1, 20));
-		player.setWinger(RandomUtils.randomValue(1, 20));
-		player.setGoalkeeping(RandomUtils.randomValue(45, 99));
-		player.setPassing(RandomUtils.randomValue(1, 20));
-		player.setDefending(RandomUtils.randomValue(30, 80));
-		player.setSetPieces(RandomUtils.randomValue(40, 99));
+		player.setStamina(RandomUtils.randomValue(20D, 90D));
+		player.setPlaymaking(RandomUtils.randomValue(1D, 50D));
+		player.setScoring(RandomUtils.randomValue(1D, 20D));
+		player.setWinger(RandomUtils.randomValue(1D, 20D));
+		player.setGoalkeeping(RandomUtils.randomValue(45D, 99D));
+		player.setPassing(RandomUtils.randomValue(1D, 20D));
+		player.setDefending(RandomUtils.randomValue(30D, 80D));
+		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.GOALKEEPER);
 		return player;
 	}
 	
 	public Player createCd(Player player){
-		player.setStamina(RandomUtils.randomValue(20, 90));
-		player.setPlaymaking(RandomUtils.randomValue(20, 70));
-		player.setScoring(RandomUtils.randomValue(20, 50));
-		player.setWinger(RandomUtils.randomValue(1, 20));
-		player.setGoalkeeping(RandomUtils.randomValue(1, 20));
-		player.setPassing(RandomUtils.randomValue(20, 70));
-		player.setDefending(RandomUtils.randomValue(40, 99));
-		player.setSetPieces(RandomUtils.randomValue(20, 80));
+		player.setStamina(RandomUtils.randomValue(20D, 90D));
+		player.setPlaymaking(RandomUtils.randomValue(20D, 70D));
+		player.setScoring(RandomUtils.randomValue(20D, 50D));
+		player.setWinger(RandomUtils.randomValue(1D, 20D));
+		player.setGoalkeeping(RandomUtils.randomValue(1D, 20D));
+		player.setPassing(RandomUtils.randomValue(20D, 70D));
+		player.setDefending(RandomUtils.randomValue(40D, 99D));
+		player.setSetPieces(RandomUtils.randomValue(20D, 80D));
 		player.setRole(PlayerRole.DEFENDER);
 		return player;
 	}
 	
 	public Player createWb(Player player){
-		player.setStamina(RandomUtils.randomValue(20, 90));
-		player.setPlaymaking(RandomUtils.randomValue(30, 70));
-		player.setScoring(RandomUtils.randomValue(20, 60));
-		player.setWinger(RandomUtils.randomValue(30, 60));
-		player.setGoalkeeping(RandomUtils.randomValue(1, 20));
-		player.setPassing(RandomUtils.randomValue(30, 80));
-		player.setDefending(RandomUtils.randomValue(40, 80));
-		player.setSetPieces(RandomUtils.randomValue(20, 99));
+		player.setStamina(RandomUtils.randomValue(20D, 90D));
+		player.setPlaymaking(RandomUtils.randomValue(30D, 70D));
+		player.setScoring(RandomUtils.randomValue(20D, 60D));
+		player.setWinger(RandomUtils.randomValue(30D, 60D));
+		player.setGoalkeeping(RandomUtils.randomValue(1D, 20D));
+		player.setPassing(RandomUtils.randomValue(30D, 80D));
+		player.setDefending(RandomUtils.randomValue(40D, 80D));
+		player.setSetPieces(RandomUtils.randomValue(20D, 99D));
 		player.setRole(PlayerRole.WINGBACK);
 		return player;
 	}
 	
 	public Player createMf(Player player){
-		player.setStamina(RandomUtils.randomValue(20, 90));
-		player.setPlaymaking(RandomUtils.randomValue(40, 99));
-		player.setScoring(RandomUtils.randomValue(30, 70));
-		player.setWinger(RandomUtils.randomValue(20, 50));
-		player.setGoalkeeping(RandomUtils.randomValue(1, 20));
-		player.setPassing(RandomUtils.randomValue(30, 80));
-		player.setDefending(RandomUtils.randomValue(35, 80));
-		player.setSetPieces(RandomUtils.randomValue(40, 99));
+		player.setStamina(RandomUtils.randomValue(20D, 90D));
+		player.setPlaymaking(RandomUtils.randomValue(40D, 99D));
+		player.setScoring(RandomUtils.randomValue(30D, 70D));
+		player.setWinger(RandomUtils.randomValue(20D, 50D));
+		player.setGoalkeeping(RandomUtils.randomValue(1D, 20D));
+		player.setPassing(RandomUtils.randomValue(30D, 80D));
+		player.setDefending(RandomUtils.randomValue(35D, 80D));
+		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.MIDFIELDER);
 		return player;
 	}
 	
 	public Player createWng(Player player){
-		player.setStamina(RandomUtils.randomValue(20, 90));
-		player.setPlaymaking(RandomUtils.randomValue(40, 80));
-		player.setScoring(RandomUtils.randomValue(30, 80));
-		player.setWinger(RandomUtils.randomValue(40, 99));
-		player.setGoalkeeping(RandomUtils.randomValue(1, 20));
-		player.setPassing(RandomUtils.randomValue(40, 99));
-		player.setDefending(RandomUtils.randomValue(20, 60));
-		player.setSetPieces(RandomUtils.randomValue(40, 99));
+		player.setStamina(RandomUtils.randomValue(20D, 90D));
+		player.setPlaymaking(RandomUtils.randomValue(40D, 80D));
+		player.setScoring(RandomUtils.randomValue(30D, 80D));
+		player.setWinger(RandomUtils.randomValue(40D, 99D));
+		player.setGoalkeeping(RandomUtils.randomValue(1D, 20D));
+		player.setPassing(RandomUtils.randomValue(40D, 99D));
+		player.setDefending(RandomUtils.randomValue(20D, 60D));
+		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.WING);
 		return player;
 	}
 	
 	public Player createFw(Player player){
-		player.setStamina(RandomUtils.randomValue(20, 90));
-		player.setPlaymaking(RandomUtils.randomValue(20, 30));
-		player.setScoring(RandomUtils.randomValue(50, 99));
-		player.setWinger(RandomUtils.randomValue(20, 60));
-		player.setGoalkeeping(RandomUtils.randomValue(1, 20));
-		player.setPassing(RandomUtils.randomValue(30, 60));
-		player.setDefending(RandomUtils.randomValue(10, 50));
-		player.setSetPieces(RandomUtils.randomValue(40, 99));
+		player.setStamina(RandomUtils.randomValue(20D, 90D));
+		player.setPlaymaking(RandomUtils.randomValue(20D, 30D));
+		player.setScoring(RandomUtils.randomValue(50D, 99D));
+		player.setWinger(RandomUtils.randomValue(20D, 60D));
+		player.setGoalkeeping(RandomUtils.randomValue(1D, 20D));
+		player.setPassing(RandomUtils.randomValue(30D, 60D));
+		player.setDefending(RandomUtils.randomValue(10D, 50D));
+		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.FORWARD);
 		return player;
 	}
