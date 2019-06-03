@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -40,18 +41,9 @@ public class Game implements Serializable{
     @Column(name="crnt_date")
     private LocalDate currentDate;
     
-    @OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
-	@JoinColumn( name = "season_id" )
-    @JsonIgnore
-    private Season currentSeason;
-    
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Season> seasonHistory = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Club> clubs = new ArrayList<>();
+    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+	@JoinColumn( name = "league_id" )
+    private League league;
     
     public Long getId() {
 		return id;
@@ -81,40 +73,14 @@ public class Game implements Serializable{
 		this.currentDate = currentDate.plusDays(1);
 	}
 	
-	public Season getCurrentSeason() {
-		return currentSeason;
+	public League getLeague() {
+		return league;
 	}
 
-	public void setCurrentSeason(Season currentSeason) {
-		this.currentSeason = currentSeason;
+	public void setLeague(League league) {
+		this.league = league;
 	}
 
-	public List<Season> getSeasonHistory() {
-		return seasonHistory;
-	}
-
-	public void setSeasonHistory(List<Season> seasonHistory) {
-		this.seasonHistory = seasonHistory;
-	}
-
-	public void addSeasonHistory(Season season){
-		season.setGame(this);
-		this.seasonHistory.add(season);
-	}
-	
-	public List<Club> getClubs() {
-		return clubs;
-	}
-
-	public void setClubs(List<Club> clubs) {
-		this.clubs = clubs;
-	}
-
-	public void addTeam(Club club){
-		club.setGame(this);
-		this.clubs.add(club);
-	}
-	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

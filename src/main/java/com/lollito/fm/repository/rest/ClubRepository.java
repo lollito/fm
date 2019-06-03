@@ -4,10 +4,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import com.lollito.fm.model.Club;
-import com.lollito.fm.model.Game;
+import com.lollito.fm.model.League;
 import com.lollito.fm.model.User;
 
 @Repository
 public interface ClubRepository extends PagingAndSortingRepository<Club, Long> {
-	public Club findByGameAndUser(Game game, User user);
+	public Club findByLeagueAndUser(League league, User user);
 }

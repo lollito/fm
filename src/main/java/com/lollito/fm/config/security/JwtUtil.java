@@ -22,7 +22,7 @@ public class JwtUtil {
     private String prefix;
 
     @Value("${security.jwt.expiration}")
-    private int expiration;
+    private Integer expiration;
 
     @Value("${security.jwt.secret}")
     private String secret;	
@@ -67,11 +67,11 @@ public class JwtUtil {
 		this.prefix = prefix;
 	}
 
-	public int getExpiration() {
+	public Integer getExpiration() {
 		return expiration;
 	}
 
-	public void setExpiration(int expiration) {
+	public void setExpiration(Integer expiration) {
 		this.expiration = expiration;
 	}
 

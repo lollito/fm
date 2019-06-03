@@ -40,6 +40,6 @@ public class RankingService {
 	}
 	
 	public List<Ranking> load(){
-		return sessionBean.getGame().getCurrentSeason().getRankingLines();
+		return sessionBean.getGame().getLeague().getCurrentSeason().getRankingLines();
 	}
 }

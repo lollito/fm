@@ -2,7 +2,9 @@ package com.lollito.fm.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,6 +32,9 @@ public class Sponsorship implements Serializable {
 	private Long id;
 
 	private BigDecimal amount = BigDecimal.ZERO;
+	
+	@Column(name="expiration_date")
+    private LocalDate expirationDate;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "sponsor_id" )

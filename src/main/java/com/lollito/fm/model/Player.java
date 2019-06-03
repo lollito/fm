@@ -105,7 +105,6 @@ public class Player implements Serializable{
 	}
 	
 	public Player(String name, String surname, Date birth) {
-		//this.id = ThreadLocalRandom.current().nextLong(1, 2000000000);
 		this.name = name;
 		this.surname = surname;
 		this.birth = birth;

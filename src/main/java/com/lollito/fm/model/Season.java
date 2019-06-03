@@ -41,8 +41,8 @@ public class Season implements Serializable{
 	private List<Round> rounds = new ArrayList<>();
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
-	@JoinColumn( name = "game_id" )
-    private Game game;
+	@JoinColumn( name = "league_id" )
+    private League league;
 	
 	@OneToMany(mappedBy = "season", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@OrderBy("points desc")
@@ -88,12 +88,12 @@ public class Season implements Serializable{
 		this.rounds.add(round);
 	}
 	
-	public Game getGame() {
-		return game;
+	public League getLeague() {
+		return league;
 	}
 
-	public void setGame(Game game) {
-		this.game = game;
+	public void setLeague(League league) {
+		this.league = league;
 	}
 
 	public List<Ranking> getRankingLines() {

@@ -21,25 +21,25 @@ public class MatchService {
 	
 	public List<Match> load(){
 		List<Match> matches = new ArrayList<>();
-		for(Round round : sessionBean.getGame().getCurrentSeason().getRounds()){
+		for(Round round : sessionBean.getGame().getLeague().getCurrentSeason().getRounds()){
 			matches.addAll(round.getMatches());
 		}
 		return matches;
 	}
 	
 	public List<Match> loadNext(){
-		return loadByRoundNumber(sessionBean.getGame().getCurrentSeason().getNextRoundNumber() - 1);
+		return loadByRoundNumber(sessionBean.getGame().getLeague().getCurrentSeason().getNextRoundNumber() - 1);
 	}
 	
 	public List<Match> loadPrevious(){
-		Integer nextRoundNumber = sessionBean.getGame().getCurrentSeason().getNextRoundNumber();
+		Integer nextRoundNumber = sessionBean.getGame().getLeague().getCurrentSeason().getNextRoundNumber();
 		return loadByRoundNumber(nextRoundNumber > 1 ? nextRoundNumber - 2 : nextRoundNumber - 1);
 	}
 	
 	private List<Match> loadByRoundNumber(Integer number){
-		if(sessionBean.getGame().getCurrentSeason().getRounds().size() <= number) {
+		if(sessionBean.getGame().getLeague().getCurrentSeason().getRounds().size() <= number) {
 			return new ArrayList<>();
 		}
-		return sessionBean.getGame().getCurrentSeason().getRounds().get(number).getMatches();
+		return sessionBean.getGame().getLeague().getCurrentSeason().getRounds().get(number).getMatches();
 	}
 }

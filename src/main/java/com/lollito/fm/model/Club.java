@@ -52,9 +52,9 @@ public class Club implements Serializable{
     private Stadium stadium;
     
     @ManyToOne( fetch = FetchType.LAZY  )
-	@JoinColumn( name = "game_id" )
+	@JoinColumn( name = "league_id" )
     @JsonIgnore
-    private Game game;
+    private League league;
     
     @ManyToOne( fetch = FetchType.LAZY  )
    	@JoinColumn( name = "user_id" )
@@ -112,13 +112,13 @@ public class Club implements Serializable{
 	public void setStadium(Stadium stadium) {
 		this.stadium = stadium;
 	}
-    
-	public Game getGame() {
-		return game;
+
+	public League getLeague() {
+		return league;
 	}
 
-	public void setGame(Game game) {
-		this.game = game;
+	public void setLeague(League league) {
+		this.league = league;
 	}
 
 	public User getUser() {

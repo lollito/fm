@@ -29,7 +29,7 @@ public class SeasonService {
 	
 	public Season create(Game game, LocalDate startDate) {
 		Season season = new Season();
-		List<Club> clubsList = game.getClubs();
+		List<Club> clubsList = game.getLeague().getClubs();
 		rankingService.create(clubsList, season);
 		int numClubs = clubsList.size();
 		if (numClubs % 2 != 0) {

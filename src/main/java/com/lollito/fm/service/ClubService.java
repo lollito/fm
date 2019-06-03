@@ -35,7 +35,7 @@ public class ClubService {
 	
 	public List<Club> createClubs(Game game){
 		//TODO config file
-		int clubNumber = 3;
+		int clubNumber = 9;
 		
 		List<Club> clubs = new ArrayList<>();
 		
@@ -48,13 +48,13 @@ public class ClubService {
 	}
 
 	public Club load(){
-		return clubRepository.findByGameAndUser(sessionBean.getGame(), userService.find());
+		return clubRepository.findByLeagueAndUser(sessionBean.getGame().getLeague(), userService.find());
 	}
 	
 	private Club createClub(String clubName, Game game, User user) {
 		Club club = new Club();
 		club.setName(clubName != null ? clubName : nameService.generateClubName());
-		club.setGame(game);
+		club.setLeague(game.getLeague());
 		club.setUser(user);
 		club.setFoundation(LocalDate.now());
 		club.setTeam(teamService.createTeam());
