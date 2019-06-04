@@ -61,5 +61,9 @@ public class ClubService {
 		club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
 		return club;
 	}
+
+	public Long getCount() {
+		return clubRepository.count();
+	}
 	
 }

@@ -1,38 +1,65 @@
 package com.lollito.fm.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
-public enum Country {
-	ITALY(0),
-	ENGLAND(1),
-	FRANCE(2),
-	GERMANY(3),
-	SPAIN(4),
-	;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-	private int value;
-	private static Map<Integer, Country> map = new HashMap<>();
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name = "country")
+public class Country implements Serializable{
 	
-	private Country( int value ) {
-		  this.value = value;
+	@Transient
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	@GenericGenerator(name = "native", strategy = "native")
+	private Long id;
+	
+    private String name;
+    
+    public Country() {
+	}
+    
+    public Country(String name) {
+		this.name = name;
 	}
 
-	public int getvalue() {
-		return value;
+	public Long getId() {
+		return id;
 	}
 
-	public void setvalue(int value) {
-		this.value = value;
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
-	static {
-        for (Country source : Country.values()) {
-            map.put(source.value, source);
-        }
-    }
+	public String getName() {
+		return name;
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(11, 121).append(name).toHashCode();
+	}
 
-    public static Country valueOf(int source) {
-        return (Country)map.get(source);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Country)) {
+			return false;
+		} else if (this == obj) {
+			return true;
+		} else {
+			Country other = (Country) obj;
+			return new EqualsBuilder().append(id, other.id).isEquals();
+		}
+	}
 }

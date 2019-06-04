@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -41,7 +42,8 @@ public class League implements Serializable{
 	
 	private String name;
 	
-	@Enumerated(EnumType.ORDINAL)
+	@ManyToOne( fetch = FetchType.LAZY  )
+	@JoinColumn( name = "country_id" )
 	private Country country;
 	
 	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )

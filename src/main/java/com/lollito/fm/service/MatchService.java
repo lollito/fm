@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Round;
+import com.lollito.fm.repository.rest.MatchRepository;
 
 @Service
 public class MatchService {
@@ -18,6 +19,7 @@ public class MatchService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired SessionBean sessionBean;
+	@Autowired MatchRepository matchRepository;
 	
 	public List<Match> load(){
 		List<Match> matches = new ArrayList<>();
@@ -41,5 +43,9 @@ public class MatchService {
 			return new ArrayList<>();
 		}
 		return sessionBean.getGame().getLeague().getCurrentSeason().getRounds().get(number).getMatches();
+	}
+
+	public Long getCount() {
+		return matchRepository.count();
 	}
 }

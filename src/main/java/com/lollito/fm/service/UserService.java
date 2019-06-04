@@ -25,4 +25,8 @@ public class UserService {
 	public User find(){
 		return userRepository.findAll().iterator().next();
 	}
+
+	public Long getCount() {
+		return userRepository.count();
+	}
 }

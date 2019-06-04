@@ -7,5 +7,6 @@ import com.lollito.fm.model.User;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
-
+	public Boolean existsByUsername(String username);
+	public Boolean existsByEmail(String email);
 }

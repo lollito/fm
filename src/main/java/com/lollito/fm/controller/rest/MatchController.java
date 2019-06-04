@@ -36,4 +36,8 @@ public class MatchController {
         return matchService.loadPrevious();
     }
    
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long count() {
+        return matchService.getCount();
+    }
 }

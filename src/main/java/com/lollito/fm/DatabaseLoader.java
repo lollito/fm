@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.lollito.fm.service.CountryService;
 import com.lollito.fm.service.ModuleService;
 import com.lollito.fm.service.UserService;
 
@@ -16,12 +17,14 @@ public class DatabaseLoader implements CommandLineRunner {
 	
 	@Autowired private ModuleService moduleService;
 	@Autowired private UserService userService;
+	@Autowired private CountryService countryService;
 	
 	@Override
 	public void run(String... strings) throws Exception {
 		logger.info("Loading Database");
 		moduleService.createModules();
 		userService.create();
+		countryService.create();
 		logger.info("Database Loaded");
 	}
 

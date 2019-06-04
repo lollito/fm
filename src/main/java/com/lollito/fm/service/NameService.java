@@ -41,6 +41,10 @@ public class NameService {
 		return getStrings("/name/surname.txt");
 	}
 	
+	public List<String> getCountryNames(){
+		return getStrings("/name/country.txt");
+	}
+	
 	private List<String> getStrings(String path){
 		List<String> ret = new ArrayList<>();
 		BufferedReader bufRead;

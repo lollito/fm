@@ -10,22 +10,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.service.ClubService;
+import com.lollito.fm.service.CountryService;
 
 @RestController
-@RequestMapping(value="/club")
-public class ClubController {
+@RequestMapping(value="/country")
+public class CountryController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired private ClubService clubService;
+	@Autowired private CountryService countryService;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public Club club() {
-        return clubService.load();
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long game(Model model) {
+        return countryService.getCount();
     }
    
-	@RequestMapping(value = "/count", method = RequestMethod.GET)
-    public Long count() {
-        return clubService.getCount();
-    }
 }

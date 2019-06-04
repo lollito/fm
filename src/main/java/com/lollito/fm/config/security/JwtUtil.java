@@ -34,16 +34,16 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public String generateToken(User u) {
+    public String generateToken(User user) {
     	
 	    	Long now = System.currentTimeMillis();
 	        
 	    	Claims claims = Jwts.claims()
 //	    			TODO check id/username
-	        		.setSubject(u.getId().toString())
+	        		.setSubject(user.getId().toString())
 	        		.setIssuedAt( new Date (now) )
 	        		.setExpiration( new Date( now + expiration * 1000) );
-	    	claims.put("userId", u.getId() );
+	    	claims.put("userId", user.getId() );
 	    	
 	        return Jwts.builder()
 	                .setClaims(claims)
