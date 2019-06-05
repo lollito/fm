@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,7 +43,12 @@ public class User implements Serializable {
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "country_id" )
 	private Country country;
+	
+	@Type(type = "yes_no")
+	private Boolean active = Boolean.FALSE;
 
+	private String activationToken;
+	
 	public User() {
 		
 	}
@@ -110,6 +116,22 @@ public class User implements Serializable {
 
 	public void setCountry(Country country) {
 		this.country = country;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public String getActivationToken() {
+		return activationToken;
+	}
+
+	public void setActivationToken(String activationToken) {
+		this.activationToken = activationToken;
 	}
 
 	@Override

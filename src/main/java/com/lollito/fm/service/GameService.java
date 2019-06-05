@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Club;
+import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
@@ -30,14 +31,34 @@ public class GameService {
 	@Autowired private ClubService clubService;
 	@Autowired private SessionBean sessionBean;
 	@Autowired private SimulationMatchService simulationMatchService;
+	@Autowired private CountryService countryService;
+	
+	public Game create(String gameName){
+		Game game = new Game();
+		game.setName(gameName);
+		for(Country country : countryService.findAll()){
+			League league = new League();
+			league.setName(gameName + "_" + country.getName());
+			league.setCountry(country);
+			game.addLeague(league);
+			List<Club> clubs = clubService.createClubs(game, 10);
+			league.setClubs(clubs);
+			league.setCurrentSeason(seasonService.create(game, LocalDate.of( 2017 , Month.AUGUST , 21 )));
+		};
+		
+		game.setCurrentDate(LocalDate.of(2017, Month.AUGUST, 24));
+		game = gameRepository.save(game);
+		sessionBean.setGameId(game.getId());
+		return game;
+	}
 	
 	public Game create(String clubName, String gameName){
 		Game game = new Game();
 		game.setName(gameName);
 		League league = new League();
 		league.setName(gameName);
-		game.setLeague(league);
-		List<Club> clubs = clubService.createClubs(game);
+		game.addLeague(league);
+		List<Club> clubs = clubService.createClubs(game, 9);
 		clubs.add(clubService.createPlayerClub(clubName, game));
 		league.setClubs(clubs);
 		league.setCurrentSeason(seasonService.create(game, LocalDate.of( 2017 , Month.AUGUST , 21 )));
@@ -50,17 +71,17 @@ public class GameService {
 	public GameResponse next(){
 		GameResponse gameResponse = new GameResponse();
 		Game game = sessionBean.getGame();
-		List<Match> matches = matchRepository.findByRoundSeasonAndDateAndFinish(game.getLeague().getCurrentSeason(), game.getCurrentDate().plusDays(1), Boolean.FALSE);
+		List<Match> matches = matchRepository.findByRoundSeasonAndDateAndFinish(game.getLeagues().get(0).getCurrentSeason(), game.getCurrentDate().plusDays(1), Boolean.FALSE);
 		if(matches.isEmpty()){
 			incrementPlayersCondition(game);
 		} else {
 			simulationMatchService.simulate(matches);
 			Match match =  matches.get(matches.size() -1);
 			if(match.getLast()) {
-				game.getLeague().getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
+				game.getLeagues().get(0).getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
 				if(match.getRound().getLast()){
-					game.getLeague().addSeasonHistory(game.getLeague().getCurrentSeason());
-					game.getLeague().setCurrentSeason(seasonService.create(game, game.getCurrentDate().plusDays(2)));
+					game.getLeagues().get(0).addSeasonHistory(game.getLeagues().get(0).getCurrentSeason());
+					game.getLeagues().get(0).setCurrentSeason(seasonService.create(game, game.getCurrentDate().plusDays(2)));
 				}
 			} 
 		}
@@ -73,7 +94,7 @@ public class GameService {
 	}
 
 	private void incrementPlayersCondition(Game game) {
-		for(Club club : game.getLeague().getClubs()) {
+		for(Club club : game.getLeagues().get(0).getClubs()) {
 			for(Player player : club.getTeam().getPlayers()) {
 				double increment = -((10 * player.getStamina())/99) + (1000/99);
 	        	player.incrementCondition(increment);

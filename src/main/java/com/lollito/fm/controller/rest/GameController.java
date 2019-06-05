@@ -28,6 +28,12 @@ public class GameController {
         return new GameResponse(game.getCurrentDate());
     }
    
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+    public GameResponse create(@RequestParam(required = true) String gameName) {
+		Game game = gameService.create(gameName);
+        return new GameResponse(game.getCurrentDate());
+    }
+	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
     public GameResponse game() {
 		return gameService.load();

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +21,13 @@ public class NameService {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
+	@Autowired NameGenerator nameGenerator;
+	
 	public String generateClubName(){
-		String name = "";
 		List<String> prefix = Arrays.asList("A.S. ", "F.C. ", "S.S. ", "A.C. ", "", "", "", "", "");
-		try {
-			NameGenerator nameGenerator = new NameGenerator("/name/custom.txt");
-			name = RandomUtils.randomValueFromList(prefix) + nameGenerator.compose(RandomUtils.randomValue(2, 5));
-		} catch (IOException e) {
-			logger.error("ERROR {}", e.getMessage());
-			throw new RuntimeException(e.getMessage());
-		}
-		return name;
+		
+		return RandomUtils.randomValueFromList(prefix) + nameGenerator.compose(RandomUtils.randomValue(2, 5));
+		
 	}
 	
 	public List<String> getNames(){

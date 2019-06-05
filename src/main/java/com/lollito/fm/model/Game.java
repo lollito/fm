@@ -41,9 +41,9 @@ public class Game implements Serializable{
     @Column(name="crnt_date")
     private LocalDate currentDate;
     
-    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@JoinColumn( name = "league_id" )
-    private League league;
+    private List<League> leagues = new ArrayList<>();
     
     public Long getId() {
 		return id;
@@ -73,14 +73,18 @@ public class Game implements Serializable{
 		this.currentDate = currentDate.plusDays(1);
 	}
 	
-	public League getLeague() {
-		return league;
+	public List<League> getLeagues() {
+		return leagues;
 	}
 
-	public void setLeague(League league) {
-		this.league = league;
+	public void setLeagues(List<League> leagues) {
+		this.leagues = leagues;
 	}
 
+	public void addLeague(League league) {
+		this.leagues.add(league);
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();
