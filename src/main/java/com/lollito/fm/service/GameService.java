@@ -36,7 +36,7 @@ public class GameService {
 	public Game create(String gameName){
 		Game game = new Game();
 		game.setName(gameName);
-		for(Country country : countryService.findAll()){
+		for(Country country : countryService.findByCreateLeague(true)){
 			League league = new League();
 			league.setName(gameName + "_" + country.getName());
 			league.setCountry(country);

@@ -19,8 +19,11 @@ public class CountryService {
 	@Autowired CountryRepository countryRepository;
 	
 	public void create(){
-		nameService.getCountryNames().parallelStream().forEach(name -> {
-			countryRepository.save(new Country(name));
+		nameService.getCountryFileLanes().parallelStream().forEach(lane -> {
+			String[] tokens = lane.split(",");
+			String name = tokens[0];
+			Boolean createLeague = Boolean.valueOf(tokens[1]);
+			countryRepository.save(new Country(name, createLeague));
 		});;
 	}
 	
@@ -32,5 +35,8 @@ public class CountryService {
 		return countryRepository.findAll();
 	}
 	
+	public List<Country> findByCreateLeague(Boolean createLeague) {
+		return countryRepository.findByCreateLeague(createLeague);
+	}
 	
 }

@@ -3,6 +3,7 @@
 [![codecov.io](https://codecov.io/gh/lollito/fm/branch/master/graphs/badge.svg)](https://codecov.io/gh/lollito/fm/branch/master)
 [![License](https://img.shields.io/github/license/lollito/fm.svg)](LICENSE.md)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b9a51647ded9b4784955/maintainability)](https://codeclimate.com/github/lollito/fm/maintainability)
+[![Renovate enabled](https://badges.renovateapi.com/github/lollito/fm)](https://renovatebot.com/)
 
 A Football Manager online game
 

@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "country")
@@ -27,11 +28,16 @@ public class Country implements Serializable{
 	
     private String name;
     
+    @Type(type = "yes_no")
+	private Boolean createLeague = Boolean.FALSE;
+    
     public Country() {
+    	
 	}
     
-    public Country(String name) {
+    public Country(String name, Boolean createLeague) {
 		this.name = name;
+		this.createLeague = createLeague;
 	}
 
 	public Long getId() {
@@ -46,6 +52,18 @@ public class Country implements Serializable{
 		return name;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Boolean getCreateLeague() {
+		return createLeague;
+	}
+
+	public void setCreateLeague(Boolean createLeague) {
+		this.createLeague = createLeague;
+	}
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(name).toHashCode();

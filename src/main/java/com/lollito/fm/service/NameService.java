@@ -38,7 +38,7 @@ public class NameService {
 		return getStrings("/name/surname.txt");
 	}
 	
-	public List<String> getCountryNames(){
+	public List<String> getCountryFileLanes(){
 		return getStrings("/name/country.txt");
 	}
 	

@@ -1,210 +1,210 @@
-Afghanistan
-Albania
-Algeria
-America
-Andorra
-Angola
-Antigua
-Argentina
-Armenia
-Australia
-Austria
-Azerbaijan
-Bahamas
-Bahrain
-Bangladesh
-Barbados
-Belarus
-Belgium
-Belize
-Benin
-Bhutan
-Bissau
-Bolivia
-Bosnia
-Botswana
-Brazil
-British
-Brunei
-Bulgaria
-Burkina
-Burma
-Burundi
-Cambodia
-Cameroon
-Canada
-Cape Verde
-Central African Republic
-Chad
-Chile
-China
-Colombia
-Comoros
-Congo
-Costa Rica
-country debt
-Croatia
-Cuba
-Cyprus
-Czech
-Denmark
-Djibouti
-Dominica
-East Timor
-Ecuador
-Egypt
-El Salvador
-Emirate
-England
-Eritrea
-Estonia
-Ethiopia
-Fiji
-Finland
-France
-Gabon
-Gambia
-Georgia
-Germany
-Ghana
-Great Britain
-Greece
-Grenada
-Grenadines
-Guatemala
-Guinea
-Guyana
-Haiti
-Herzegovina
-Honduras
-Hungary
-Iceland
-in usa
-India
-Indonesia
-Iran
-Iraq
-Ireland
-Israel
-Italy
-Ivory Coast
-Jamaica
-Japan
-Jordan
-Kazakhstan
-Kenya
-Kiribati
-Korea
-Kosovo
-Kuwait
-Kyrgyzstan
-Laos
-Latvia
-Lebanon
-Lesotho
-Liberia
-Libya
-Liechtenstein
-Lithuania
-Luxembourg
-Macedonia
-Madagascar
-Malawi
-Malaysia
-Maldives
-Mali
-Malta
-Marshall
-Mauritania
-Mauritius
-Mexico
-Micronesia
-Moldova
-Monaco
-Mongolia
-Montenegro
-Morocco
-Mozambique
-Myanmar
-Namibia
-Nauru
-Nepal
-Netherlands
-New Zealand
-Nicaragua
-Niger
-Nigeria
-Norway
-Oman
-Pakistan
-Palau
-Panama
-Papua
-Paraguay
-Peru
-Philippines
-Poland
-Portugal
-Qatar
-Romania
-Russia
-Rwanda
-Samoa
-San Marino
-Sao Tome
-Saudi Arabia
-scotland
-scottish
-Senegal
-Serbia
-Seychelles
-Sierra Leone
-Singapore
-Slovakia
-Slovenia
-Solomon
-Somalia
-South Africa
-South Sudan
-Spain
-Sri Lanka
-St. Kitts
-St. Lucia
-St Kitts
-St Lucia
-Saint Kitts
-Santa Lucia
-Sudan
-Suriname
-Swaziland
-Sweden
-Switzerland
-Syria
-Taiwan
-Tajikistan
-Tanzania
-Thailand
-Tobago
-Togo
-Tonga
-Trinidad
-Tunisia
-Turkey
-Turkmenistan
-Tuvalu
-Uganda
-Ukraine
-United Kingdom
-United States
-Uruguay
-USA
-Uzbekistan
-Vanuatu
-Vatican
-Venezuela
-Vietnam
-wales
-welsh
-Yemen
-Zambia
-Zimbabwe
+Afghanistan,false
+Albania,false
+Algeria,false
+America,false
+Andorra,false
+Angola,false
+Antigua,false
+Argentina,false
+Armenia,false
+Australia,false
+Austria,false
+Azerbaijan,false
+Bahamas,false
+Bahrain,false
+Bangladesh,false
+Barbados,false
+Belarus,false
+Belgium,false
+Belize,false
+Benin,false
+Bhutan,false
+Bissau,false
+Bolivia,false
+Bosnia,false
+Botswana,false
+Brazil,false
+British,false
+Brunei,false
+Bulgaria,false
+Burkina,false
+Burma,false
+Burundi,false
+Cambodia,false
+Cameroon,false
+Canada,false
+Cape Verde,false
+Central African Republic,false
+Chad,false
+Chile,false
+China,false
+Colombia,false
+Comoros,false
+Congo,false
+Costa Rica,false
+country debt,false
+Croatia,false
+Cuba,false
+Cyprus,false
+Czech,false
+Denmark,false
+Djibouti,false
+Dominica,false
+East Timor,false
+Ecuador,false
+Egypt,false
+El Salvador,false
+Emirate,false
+England,true
+Eritrea,false
+Estonia,false
+Ethiopia,false
+Fiji,false
+Finland,false
+France,true
+Gabon,false
+Gambia,false
+Georgia,false
+Germany,true
+Ghana,false
+Great Britain,false
+Greece,false
+Grenada,false
+Grenadines,false
+Guatemala,false
+Guinea,false
+Guyana,false
+Haiti,false
+Herzegovina,false
+Honduras,false
+Hungary,false
+Iceland,false
+in usa,false
+India,false
+Indonesia,false
+Iran,false
+Iraq,false
+Ireland,false
+Israel,false
+Italy,true
+Ivory Coast,false
+Jamaica,false
+Japan,false
+Jordan,false
+Kazakhstan,false
+Kenya,false
+Kiribati,false
+Korea,false
+Kosovo,false
+Kuwait,false
+Kyrgyzstan,false
+Laos,false
+Latvia,false
+Lebanon,false
+Lesotho,false
+Liberia,false
+Libya,false
+Liechtenstein,false
+Lithuania,false
+Luxembourg,false
+Macedonia,false
+Madagascar,false
+Malawi,false
+Malaysia,false
+Maldives,false
+Mali,false
+Malta,false
+Marshall,false
+Mauritania,false
+Mauritius,false
+Mexico,false
+Micronesia,false
+Moldova,false
+Monaco,false
+Mongolia,false
+Montenegro,false
+Morocco,false
+Mozambique,false
+Myanmar,false
+Namibia,false
+Nauru,false
+Nepal,false
+Netherlands,false
+New Zealand,false
+Nicaragua,false
+Niger,false
+Nigeria,false
+Norway,false
+Oman,false
+Pakistan,false
+Palau,false
+Panama,false
+Papua,false
+Paraguay,false
+Peru,false
+Philippines,false
+Poland,false
+Portugal,false
+Qatar,false
+Romania,false
+Russia,false
+Rwanda,false
+Samoa,false
+San Marino,false
+Sao Tome,false
+Saudi Arabia,false
+scotland,false
+scottish,false
+Senegal,false
+Serbia,false
+Seychelles,false
+Sierra Leone,false
+Singapore,false
+Slovakia,false
+Slovenia,false
+Solomon,false
+Somalia,false
+South Africa,false
+South Sudan,false
+Spain,true
+Sri Lanka,false
+St. Kitts,false
+St. Lucia,false
+St Kitts,false
+St Lucia,false
+Saint Kitts,false
+Santa Lucia,false
+Sudan,false
+Suriname,false
+Swaziland,false
+Sweden,false
+Switzerland,false
+Syria,false
+Taiwan,false
+Tajikistan,false
+Tanzania,false
+Thailand,false
+Tobago,false
+Togo,false
+Tonga,false
+Trinidad,false
+Tunisia,false
+Turkey,false
+Turkmenistan,false
+Tuvalu,false
+Uganda,false
+Ukraine,false
+United Kingdom,false
+United States,false
+Uruguay,false
+USA,false
+Uzbekistan,false
+Vanuatu,false
+Vatican,false
+Venezuela,false
+Vietnam,false
+wales,false
+welsh,false
+Yemen,false
+Zambia,false
+Zimbabwe,false
