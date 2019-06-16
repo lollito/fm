@@ -23,12 +23,6 @@ public class GameController {
 	@Autowired private GameService gameService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-    public GameResponse game(@RequestParam(required = true) String clubName, @RequestParam(required = true) String gameName) {
-		Game game = gameService.create(clubName, gameName);
-        return new GameResponse(game.getCurrentDate());
-    }
-   
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
     public GameResponse create(@RequestParam(required = true) String gameName) {
 		Game game = gameService.create(gameName);
         return new GameResponse(game.getCurrentDate());

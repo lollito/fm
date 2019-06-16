@@ -2,7 +2,6 @@ package com.lollito.fm.utils;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -125,10 +124,11 @@ public class Dates {
 		return Calendar.getInstance().get(Calendar.YEAR);
 	}
 	
-	public static Date generateRandomDate(){
+	public static LocalDate generateRandomDate(){
 		LocalDate fromDate = LocalDate.of( 1980 , Month.JANUARY , 1 ); 
 		LocalDate toDate = LocalDate.of( 2000 , Month.DECEMBER , 31 ); 
 		LocalDate birth = LocalDate.ofEpochDay(ThreadLocalRandom.current().longs(fromDate.toEpochDay(), toDate.toEpochDay()).findAny().getAsLong());
-		return Date.from(birth.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+//		return Date.from(birth.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		return birth;
 	}
 }

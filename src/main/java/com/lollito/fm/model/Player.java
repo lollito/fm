@@ -1,8 +1,9 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -60,7 +61,7 @@ public class Player implements Serializable{
 	private Long id;
 	private String name;
 	private String surname;
-	private Date birth;
+	private LocalDate birth;
 	
 //	Decide quanta abilità perde un giocatore durante il corso di una partita, a causa della fatica.
 	private Double stamina;
@@ -104,7 +105,7 @@ public class Player implements Serializable{
 		
 	}
 	
-	public Player(String name, String surname, Date birth) {
+	public Player(String name, String surname, LocalDate birth) {
 		this.name = name;
 		this.surname = surname;
 		this.birth = birth;
@@ -134,11 +135,11 @@ public class Player implements Serializable{
 		this.surname = surname;
 	}
 
-	public Date getBirth() {
+	public LocalDate getBirth() {
 		return birth;
 	}
 
-	public void setBirth(Date birth) {
+	public void setBirth(LocalDate birth) {
 		this.birth = birth;
 	}
 
@@ -248,6 +249,23 @@ public class Player implements Serializable{
 		this.team = team;
 	}
 
+	@Transient
+	public Integer getAge(){
+		return Period.between(birth, LocalDate.now()).getYears();
+	}
+	
+	@Transient
+	public void updateSkills(Double update){
+		this.stamina += update;
+		this.playmaking += update;
+		this.scoring += update;
+		this.winger += update;
+		this.goalkeeping += update;
+		this.passing += update;
+		this.defending += update;
+		this.setPieces += update;
+	}
+	
 	@Transient
 	public Integer getAverage(){
 		return (this.stamina.intValue() + 

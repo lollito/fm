@@ -163,4 +163,24 @@ public class PlayerService {
 		}
 		return tot/players.size();
 	}
+	
+	public void updateSkills(Player player) {
+		Double update = 0.0;
+		if(player.getAge() < 21) {
+			update = RandomUtils.randomValue(0.0, 0.2);
+		} else if(player.getAge() < 28) {
+			update = RandomUtils.randomValue(0.0, 0.1);
+		} else if(player.getAge() < 35) {
+			update = RandomUtils.randomValue(-0.1, 0.1);
+		} else if(player.getAge() < 41) {
+			update = RandomUtils.randomValue(-0.2, 0.1);
+		} else {
+			throw new RuntimeException("Retired player");
+		}
+		player.updateSkills(update);
+	}
+
+	public void updateSkills(List<Player> players) {
+		players.parallelStream().forEach(player -> updateSkills(player));
+	}
 }

@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -48,6 +49,11 @@ public class User implements Serializable {
 	private Boolean active = Boolean.FALSE;
 
 	private String activationToken;
+	
+	@OneToOne( fetch = FetchType.LAZY  )
+   	@JoinColumn( name = "club_id" )
+    @JsonIgnore
+    private Club club;
 	
 	public User() {
 		
@@ -132,6 +138,14 @@ public class User implements Serializable {
 
 	public void setActivationToken(String activationToken) {
 		this.activationToken = activationToken;
+	}
+
+	public Club getClub() {
+		return club;
+	}
+
+	public void setClub(Club club) {
+		this.club = club;
 	}
 
 	@Override

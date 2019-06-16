@@ -14,10 +14,10 @@ public class UserService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired UserRepository userRepository;
+	@Autowired ClubService clubService;
 	
-	public User create() {
-		User user = new User();
-		user.setName("stocazzo");
+	public User create(User user) {
+		user.setClub(clubService.findTopByLeagueCountryAndUserIsNull(user.getCountry()));
 		userRepository.save(user);
 		return user;
 	}
@@ -28,5 +28,13 @@ public class UserService {
 
 	public Long getCount() {
 		return userRepository.count();
+	}
+
+	public boolean existsByUsername(String username) {
+		return userRepository.existsByUsername(username);
+	}
+
+	public boolean existsByEmail(String email) {
+		return userRepository.existsByEmail(email);
 	}
 }

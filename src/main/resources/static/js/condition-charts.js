@@ -12,7 +12,7 @@ function createConditionChart(labels, data){
 	  data: {
 	    labels: labels,
 	    datasets: [{
-	      label: "Revenue",
+	      label: "Condition",
 	      backgroundColor: "#4e73df",
 	      hoverBackgroundColor: "#2e59d9",
 	      borderColor: "#4e73df",
@@ -91,13 +91,13 @@ $.get("/player/condition", function(data) {
 	createConditionChart(allPlayerNames, allPlayerConditions);
 }, "json");
 
-setInterval(function() {
-	$.get("/player/condition", function(data) {
-		
-		var allPlayerConditions = data.map(function (player) {
-			  return player.condition;  
-			});
-		myBarChart.data.datasets[0].data=allPlayerConditions;
-		myBarChart.update()
-	}, "json");
-}, 10000);
+//setInterval(function() {
+//	$.get("/player/condition", function(data) {
+//		
+//		var allPlayerConditions = data.map(function (player) {
+//			  return player.condition;  
+//			});
+//		myBarChart.data.datasets[0].data=allPlayerConditions;
+//		myBarChart.update()
+//	}, "json");
+//}, 10000);

@@ -25,10 +25,10 @@ Bosnia,false
 Botswana,false
 Brazil,false
 British,false
-Brunei,false
+#Brunei,false
 Bulgaria,false
 Burkina,false
-Burma,false
+#Burma,false
 Burundi,false
 Cambodia,false
 Cameroon,false
@@ -42,7 +42,6 @@ Colombia,false
 Comoros,false
 Congo,false
 Costa Rica,false
-country debt,false
 Croatia,false
 Cuba,false
 Cyprus,false
@@ -79,7 +78,6 @@ Herzegovina,false
 Honduras,false
 Hungary,false
 Iceland,false
-in usa,false
 India,false
 Indonesia,false
 Iran,false
@@ -118,7 +116,7 @@ Marshall,false
 Mauritania,false
 Mauritius,false
 Mexico,false
-Micronesia,false
+#Micronesia,false
 Moldova,false
 Monaco,false
 Mongolia,false
@@ -153,13 +151,13 @@ Samoa,false
 San Marino,false
 Sao Tome,false
 Saudi Arabia,false
-scotland,false
-scottish,false
+Scotland,false
+#Scottish,false
 Senegal,false
 Serbia,false
-Seychelles,false
+#Seychelles,false
 Sierra Leone,false
-Singapore,false
+#Singapore,false
 Slovakia,false
 Slovenia,false
 Solomon,false
@@ -168,20 +166,20 @@ South Africa,false
 South Sudan,false
 Spain,true
 Sri Lanka,false
-St. Kitts,false
-St. Lucia,false
-St Kitts,false
-St Lucia,false
-Saint Kitts,false
-Santa Lucia,false
+#St. Kitts,false
+#St. Lucia,false
+#St Kitts,false
+#St Lucia,false
+#Saint Kitts,false
+#Santa Lucia,false
 Sudan,false
-Suriname,false
-Swaziland,false
+#Suriname,false
+#Swaziland,false
 Sweden,false
 Switzerland,false
 Syria,false
 Taiwan,false
-Tajikistan,false
+#Tajikistan,false
 Tanzania,false
 Thailand,false
 Tobago,false
@@ -191,20 +189,20 @@ Trinidad,false
 Tunisia,false
 Turkey,false
 Turkmenistan,false
-Tuvalu,false
-Uganda,false
+#Tuvalu,false
+#Uganda,false
 Ukraine,false
 United Kingdom,false
 United States,false
 Uruguay,false
 USA,false
-Uzbekistan,false
-Vanuatu,false
-Vatican,false
+#Uzbekistan,false
+#Vanuatu,false
+#Vatican,false
 Venezuela,false
-Vietnam,false
-wales,false
-welsh,false
-Yemen,false
-Zambia,false
-Zimbabwe,false
+#Vietnam,false
+#wales,false
+#welsh,false
+#Yemen,false
+#Zambia,false
+#Zimbabwe,false

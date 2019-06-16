@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Club;
+import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
+import com.lollito.fm.model.League;
 import com.lollito.fm.model.Stadium;
-import com.lollito.fm.model.User;
 import com.lollito.fm.repository.rest.ClubRepository;
 import com.lollito.fm.utils.RandomUtils;
 
@@ -28,18 +29,12 @@ public class ClubService {
 	@Autowired ClubRepository clubRepository;
 	@Autowired SessionBean sessionBean;
 	
-	public Club createPlayerClub(String clubName, Game game){
-		User user = userService.find();
-		return createClub(clubName, game, user);
-	}
-	
-	public List<Club> createClubs(Game game, int clubNumber){
-		//TODO config file
-		
+	public List<Club> createClubs(Game game, League league, int clubNumber){
 		List<Club> clubs = new ArrayList<>();
 		
 		for(int clubCreated = 0; clubCreated < clubNumber; clubCreated ++){
-			Club club = createClub(null, game, null);
+			Club club = createClub(null, game);
+			club.setLeague(league);
 			clubs.add(club);
 		}
 		
@@ -47,14 +42,13 @@ public class ClubService {
 	}
 
 	public Club load(){
-		return clubRepository.findByLeagueAndUser(sessionBean.getGame().getLeagues().get(0), userService.find());
+		return userService.find().getClub();
 	}
 	
-	private Club createClub(String clubName, Game game, User user) {
+	private Club createClub(String clubName, Game game) {
 		Club club = new Club();
 		club.setName(clubName != null ? clubName : nameService.generateClubName());
 		club.setLeague(game.getLeagues().get(0));
-		club.setUser(user);
 		club.setFoundation(LocalDate.now());
 		club.setTeam(teamService.createTeam());
 		club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
@@ -65,4 +59,8 @@ public class ClubService {
 		return clubRepository.count();
 	}
 	
+	//TODO exception free club not found
+	public Club findTopByLeagueCountryAndUserIsNull(Country country) {
+		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow();
+	}
 }

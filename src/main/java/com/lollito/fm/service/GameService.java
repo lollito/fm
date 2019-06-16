@@ -32,6 +32,7 @@ public class GameService {
 	@Autowired private SessionBean sessionBean;
 	@Autowired private SimulationMatchService simulationMatchService;
 	@Autowired private CountryService countryService;
+	@Autowired private PlayerService playerService;
 	
 	public Game create(String gameName){
 		Game game = new Game();
@@ -41,27 +42,11 @@ public class GameService {
 			league.setName(gameName + "_" + country.getName());
 			league.setCountry(country);
 			game.addLeague(league);
-			List<Club> clubs = clubService.createClubs(game, 10);
+			List<Club> clubs = clubService.createClubs(game, league, 10);
 			league.setClubs(clubs);
 			league.setCurrentSeason(seasonService.create(game, LocalDate.of( 2017 , Month.AUGUST , 21 )));
 		};
 		
-		game.setCurrentDate(LocalDate.of(2017, Month.AUGUST, 24));
-		game = gameRepository.save(game);
-		sessionBean.setGameId(game.getId());
-		return game;
-	}
-	
-	public Game create(String clubName, String gameName){
-		Game game = new Game();
-		game.setName(gameName);
-		League league = new League();
-		league.setName(gameName);
-		game.addLeague(league);
-		List<Club> clubs = clubService.createClubs(game, 9);
-		clubs.add(clubService.createPlayerClub(clubName, game));
-		league.setClubs(clubs);
-		league.setCurrentSeason(seasonService.create(game, LocalDate.of( 2017 , Month.AUGUST , 21 )));
 		game.setCurrentDate(LocalDate.of(2017, Month.AUGUST, 24));
 		game = gameRepository.save(game);
 		sessionBean.setGameId(game.getId());
@@ -74,6 +59,7 @@ public class GameService {
 		List<Match> matches = matchRepository.findByRoundSeasonAndDateAndFinish(game.getLeagues().get(0).getCurrentSeason(), game.getCurrentDate().plusDays(1), Boolean.FALSE);
 		if(matches.isEmpty()){
 			incrementPlayersCondition(game);
+			updatePlayerSkills(game);
 		} else {
 			simulationMatchService.simulate(matches);
 			Match match =  matches.get(matches.size() -1);
@@ -93,6 +79,12 @@ public class GameService {
 		return gameResponse;
 	}
 
+	private void updatePlayerSkills(Game game) {
+		for(Club club : game.getLeagues().get(0).getClubs()) {
+			playerService.updateSkills(club.getTeam().getPlayers());
+		}
+	}
+	
 	private void incrementPlayersCondition(Game game) {
 		for(Club club : game.getLeagues().get(0).getClubs()) {
 			for(Player player : club.getTeam().getPlayers()) {

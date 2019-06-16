@@ -23,7 +23,6 @@ public class DatabaseLoader implements CommandLineRunner {
 	public void run(String... strings) throws Exception {
 		logger.info("Loading Database");
 		moduleService.createModules();
-		userService.create();
 		countryService.create();
 		logger.info("Database Loaded");
 	}

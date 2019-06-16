@@ -33,7 +33,7 @@ public class FmApplicationTests {
 	@Test
 	@Ignore
 	public void contextLoads() {
-		Game game = gameService.create("test", "test");
+		Game game = gameService.create("test");
 		sessionBean.setGameId(game.getId());
 		LocalDate endDate = LocalDate.of( 2018 , Month.AUGUST , 26 );
 		formationService.createPlayerFormation();

@@ -56,8 +56,7 @@ public class Club implements Serializable{
     @JsonIgnore
     private League league;
     
-    @ManyToOne( fetch = FetchType.LAZY  )
-   	@JoinColumn( name = "user_id" )
+    @OneToOne( fetch = FetchType.LAZY, mappedBy="club" )
     @JsonIgnore
     private User user;
     

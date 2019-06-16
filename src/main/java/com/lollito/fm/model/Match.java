@@ -62,6 +62,8 @@ public class Match implements Serializable{
 	@Type(type = "yes_no")
 	private Boolean last = Boolean.FALSE;
 	
+	public Integer spectators;
+	
 	public Match() {
 		
 	}
@@ -149,6 +151,14 @@ public class Match implements Serializable{
 		this.last = last;
 	}
 	
+	public Integer getSpectators() {
+		return spectators;
+	}
+
+	public void setSpectators(Integer spectators) {
+		this.spectators = spectators;
+	}
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

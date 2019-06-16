@@ -52,7 +52,7 @@ public class NameService {
 			line = "";
 	        while (line != null) {
 	            line = bufRead.readLine();
-	            if(line != null) {
+	            if(line != null && !line.startsWith("#")) {
 	            	ret.add(line);
 	            }
 	        }

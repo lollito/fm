@@ -1,7 +1,5 @@
 package com.lollito.fm.controller.rest;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,7 @@ import com.lollito.fm.model.User;
 import com.lollito.fm.model.rest.ApiResponse;
 import com.lollito.fm.model.rest.SignUpRequest;
 import com.lollito.fm.repository.rest.CountryRepository;
-import com.lollito.fm.repository.rest.UserRepository;
+import com.lollito.fm.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,7 +26,7 @@ public class AuthController {
 //    @Autowired
 //    AuthenticationManager authenticationManager;
 
-    @Autowired UserRepository userRepository;
+    @Autowired UserService userService;
 
     @Autowired CountryRepository countryRepository;
 
@@ -59,12 +57,12 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if(userService.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if(userService.existsByEmail(signUpRequest.getEmail())) {
             return new ResponseEntity<>(new ApiResponse(false, "Email Address already in use!"),
                     HttpStatus.BAD_REQUEST);
         }
@@ -86,7 +84,7 @@ public class AuthController {
 
 //        user.setRoles(Collections.singleton(userRole));
 
-        User result = userRepository.save(user);
+        User result = userService.create(user);
 
         
 

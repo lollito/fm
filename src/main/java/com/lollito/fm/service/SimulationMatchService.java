@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
@@ -35,6 +36,8 @@ public class SimulationMatchService {
 	}
 	
 	public void simulate(Match match){
+		Integer stadiumCapacity = match.getHome().getStadium().getCapacity();
+		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		//if(match.getHome().getTeam().getFormation() == null) {
 			match.getHome().getTeam().setFormation(formationService.createFormation(match.getHome().getTeam().getPlayers(), match.getHome().getTeam().getFormation()));
 		//}
