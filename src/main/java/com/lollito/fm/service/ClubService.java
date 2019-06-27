@@ -31,7 +31,6 @@ public class ClubService {
 	
 	public List<Club> createClubs(Game game, League league, int clubNumber){
 		List<Club> clubs = new ArrayList<>();
-		
 		for(int clubCreated = 0; clubCreated < clubNumber; clubCreated ++){
 			Club club = createClub(null, game);
 			club.setLeague(league);

@@ -77,7 +77,6 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
         Country country = countryRepository.findById(signUpRequest.getCountryId()).orElseThrow(() -> new RuntimeException("Invalid Country"));
-
         user.setCountry(country);
 //        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
 //                .orElseThrow(() -> new AppException("User Role not set."));

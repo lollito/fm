@@ -51,6 +51,7 @@ public class JwtUtil {
 	                .compact();
     }
 
+    
 	public String getHeader() {
 		return header;
 	}
@@ -82,5 +83,5 @@ public class JwtUtil {
 	public void setSecret(String secret) {
 		this.secret = secret;
 	}
-    
+
 }

@@ -44,4 +44,5 @@ public class WelcomeController {
 	public String admin() {
 		return "admin/dashboard";
 	}
+	
 }
