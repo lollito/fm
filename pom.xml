@@ -139,7 +139,7 @@
 		 <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>startbootstrap-sb-admin-2</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.6</version>
         </dependency>
 
 		<dependency>
