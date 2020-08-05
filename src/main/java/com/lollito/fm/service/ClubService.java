@@ -60,6 +60,6 @@ public class ClubService {
 	
 	//TODO exception free club not found
 	public Club findTopByLeagueCountryAndUserIsNull(Country country) {
-		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow();
+		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow(() -> new RuntimeException("free club not found"));
 	}
 }

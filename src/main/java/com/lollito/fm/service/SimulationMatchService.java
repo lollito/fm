@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +74,8 @@ public class SimulationMatchService {
 		}
 		
 		PlayerPosition playerPosition = PlayerPosition.MIDFIELD;
-		Map<PlayerPosition, List<Player>> homePlayers = new HashMap<>();
-		Map<PlayerPosition, List<Player>> awayPlayers = new HashMap<>();
+		EnumMap<PlayerPosition, List<Player>> homePlayers = new EnumMap<>(PlayerPosition.class);
+		EnumMap<PlayerPosition, List<Player>> awayPlayers = new EnumMap<>(PlayerPosition.class);
 		homePlayers.put(PlayerPosition.DEFENCE, formationService.getDefender(homeFormation));
 		homePlayers.put(PlayerPosition.MIDFIELD, formationService.getMiedfileder(homeFormation));
 		homePlayers.put(PlayerPosition.OFFENCE, formationService.getOffender(homeFormation));

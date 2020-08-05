@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -63,6 +67,11 @@ public class Match implements Serializable{
 	private Boolean last = Boolean.FALSE;
 	
 	public Integer spectators;
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @JoinColumn( name = "match_id" )
+    private List<EventHistory> events = new ArrayList<>();
+    
 	
 	public Match() {
 		
@@ -157,6 +166,14 @@ public class Match implements Serializable{
 
 	public void setSpectators(Integer spectators) {
 		this.spectators = spectators;
+	}
+
+	public List<EventHistory> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<EventHistory> events) {
+		this.events = events;
 	}
 
 	@Override
