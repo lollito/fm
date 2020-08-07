@@ -17,7 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 
 @Entity
-@Table(name = "event-history")
+@Table(name = "event_history")
 public class EventHistory implements Serializable{
 	
 	@Transient

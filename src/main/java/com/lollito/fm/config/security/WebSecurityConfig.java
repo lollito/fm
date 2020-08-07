@@ -30,7 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			"favicon.ico",
 			"/css/**",
 			"/js/**", 
-			"/img/**"
+			"/img/**",
+			"/**", 
+			"/home", 
 	};
 	
 	@Qualifier("userDetailsServiceImpl")

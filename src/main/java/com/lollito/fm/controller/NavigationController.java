@@ -9,7 +9,7 @@ public class NavigationController {
 
 	@GetMapping(path = "/")
 	public String welcome() {
-		return "login";
+		return "home";
 	}
 	
 	@GetMapping(path = "/login")
@@ -17,9 +17,9 @@ public class NavigationController {
 		return "login";
 	}
 	
-	@GetMapping(path = "/index")
+	@GetMapping(path = "/home")
 	public String index() {
-		return "index";
+		return "home";
 	}
 	
 	@GetMapping(path = "/team")

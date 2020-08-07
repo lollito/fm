@@ -1,0 +1,175 @@
+/*!
+ * Start Bootstrap - Simple Sidebar (https://startbootstrap.com/templates/simple-sidebar)
+ * Copyright 2013-2020 Start Bootstrap
+ * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-simple-sidebar/blob/master/LICENSE)
+ */
+
+body{
+	background-image: url(../img/football-pitch.jpg);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+ #wrapper {
+    overflow-x: hidden;
+ }
+
+#sidebar-wrapper {
+  min-height: 100vh;
+  margin-left: -15rem;
+  -webkit-transition: margin .25s ease-out;
+  -moz-transition: margin .25s ease-out;
+  -o-transition: margin .25s ease-out;
+  transition: margin .25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+  width: 15rem;
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+#sidebar-wrapper .list-group .list-group-item {
+    border-color: #FFF;
+}
+
+#sidebar-wrapper .list-group .list-group-item i {
+    font-size: .85rem;
+    margin-right: .30rem;
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: 0;
+}
+
+.score_card{
+	width: 500px;
+	border-radius: 7px;
+	background-color: red;
+	display: block;
+	padding: 30px;
+	box-sizing: border-box;
+	overflow: hidden;
+	margin: 40px auto;
+	background-color: rgba(85, 85, 85, 0.9);
+	border: solid 6px #555555;
+}
+
+.inner_card{
+	width: 400px;
+	display: block;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+.left_team,
+.right_team{
+	height: 100%;
+	display: block;
+	width: 150px;
+	float: left;
+}
+
+.vs{
+	float: left;
+	width: calc(100% - 300px);
+	text-align: center;
+	color: white;
+	padding-top: 40px;
+	font-family: 'Open Sans';
+}
+
+.left_team .team_container,
+.right_team .team_container{
+	font-family: 'Open Sans';
+	font-size: 18px;
+	color: white;
+	text-align: right;
+	font-weight: 300;
+	width: 100%;
+}
+
+.right_team .team_container{
+	text-align: left;
+}
+
+.left_team .team_container img,
+.right_team .team_container img{
+	width: 35px;
+	float: right;
+	display: block;
+	margin: 0 auto;
+}
+
+.right_team .team_container img{
+	float: left;
+}
+
+.left_team .team_container span,
+.right_team .team_container span{
+	font-size: 40px;
+	width: 100%;
+	clear: both;
+	display: block;
+	margin-left: -6px;
+	font-weight: 600;
+}
+
+.right_team .team_container span{
+	margin-left: 6px;
+}
+
+.start{
+	width: 100%;
+	font-family: 'Open Sans';
+	font-size: 16px;
+	color: white;
+	display: block;
+	text-align: center;
+	padding-top: 30px;
+}
+
+.fact_card{
+	width: 700px;
+	height: 350px;
+	background-color: rgba(85, 85, 85, 0.8);
+	border: solid 5px #555555;
+	display: block;
+	margin: 50px auto;
+	overflow-y: auto;
+	box-sizing: border-box;
+	padding: 20px;
+}
+
+.one_event{
+	width: 100%;
+	font-family: 'Open Sans';
+	font-size: 20px;
+	color: white;
+	margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
+
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -15rem;
+  }
+}
