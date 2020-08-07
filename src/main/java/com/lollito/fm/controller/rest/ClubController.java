@@ -11,7 +11,7 @@ import com.lollito.fm.model.Club;
 import com.lollito.fm.service.ClubService;
 
 @RestController
-@RequestMapping(value="/club")
+@RequestMapping(value="/api/club")
 public class ClubController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

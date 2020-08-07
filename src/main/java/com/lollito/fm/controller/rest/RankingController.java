@@ -14,7 +14,7 @@ import com.lollito.fm.model.Ranking;
 import com.lollito.fm.service.RankingService;
 
 @RestController
-@RequestMapping(value="/ranking")
+@RequestMapping(value="/api/ranking")
 public class RankingController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -46,11 +46,11 @@ body {
   padding: 2rem;
 }
 
-.form-signin {
+.form-signup {
   width: 100%;
 }
 
-.form-signin .btn {
+.form-signup .btn {
   font-size: 80%;
   border-radius: 0rem;
   letter-spacing: .1rem;
@@ -164,36 +164,48 @@ body {
 				<div class="card card-signin my-5">
 					<div class="card-body">
 						<h5 class="card-title text-center">FM - A Football Manager Game</h5>
-						<form class="form-signin">
+						<form class="form-signup">
 							<div class="form-label-group">
-								<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+								<input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+								<label for="username">Username</label>
+							</div>
+							<div class="form-label-group">
+								<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
 								<label for="inputEmail">Email address</label>
 							</div>
-
+							
+							<div class="form-label-group">
+								<input type="email" id="inputEmailRepeat" class="form-control" placeholder="Repeat Email address" required>
+								<label for="inputEmailRepeat">Repeat Email address</label>
+							</div>
+							
 							<div class="form-label-group">
 								<input type="password" id="inputPassword" class="form-control" placeholder="Password" required> 
 								<label for="inputPassword">Password</label>
 							</div>
 
-							<div class="custom-control custom-checkbox mb-3">
-								<input type="checkbox" class="custom-control-input" id="customCheck1"> 
-								<label class="custom-control-label" for="customCheck1">Remember password</label>
+							<div class="form-label-group">
+								<input type="password" id="inputPasswordRepeat" class="form-control" placeholder="Repeat Password" required> 
+								<label for="inputPasswordRepeat">Repeat Password</label>
 							</div>
-							<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
-							<hr class="my-4">
-							<button class="btn btn-lg btn-google btn-block text-uppercase" type="submit">
-								<i class="fab fa-google mr-2"></i> Sign in with Google
-							</button>
-							<button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit">
-								<i class="fab fa-facebook-f mr-2"></i> Sign in with Facebook
-							</button>
+							
+							<script id="country-template" type="text/x-handlebars-template">
+								<option>Country</option>
+								{{#each data}}
+									<option value="{{this.id}}" >{{this.name}}</option>
+								{{/each}}
+							</script>
+							<div class="form-group">
+								<select id="country-template-placeholder" class="form-control"></select> 
+							</div>
+							<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Create Account</button>
 						</form>
 						<hr>
 		                  <div class="text-center">
 		                    <a class="small" href="forgot-password.html">Forgot Password?</a>
 		                  </div>
 		                  <div class="text-center">
-		                    <a class="small" href="/register">Create an Account!</a>
+		                    <a class="small" href="/login">Alredy Registerd?</a>
 		                  </div>
 					</div>
 				</div>
@@ -201,12 +213,30 @@ body {
 		</div>
 	</div>
 	
-	<!-- Bootstrap core JavaScript-->
-  <script src="/webjars/startbootstrap-sb-admin-2/vendor/jquery/jquery.min.js"></script>
-  <script src="/webjars/startbootstrap-sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Core plugin JavaScript-->
-  <script src="/webjars/startbootstrap-sb-admin-2/vendor/jquery-easing/jquery.easing.min.js"></script>
-  
+	<div th:replace="common/scripts :: scripts"></div>  
+  <script type="text/javascript">
+  	function initSelect(endpoint, templateId, selected, placeholder, callback){
+		$.get(endpoint, function(data) {
+			var source = $(templateId).html();
+			var template = Handlebars.compile(source);
+			var context = {
+				data : data,
+				selected: selected
+			};
+			var html = template(context);
+			$(placeholder).html(html);
+			
+			if(callback != null){
+				window[callback]();
+			}
+			
+		}, "json");
+	}
+  	
+	$(function() {
+   		//$('#table-ordini').bootstrapTable("resetSearch", stato);
+   		initSelect("/api/country/", "#country-template", null, "#country-template-placeholder", null);
+   	});
+  </script>
 </body>
 </html>

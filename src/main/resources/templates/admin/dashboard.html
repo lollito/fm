@@ -633,7 +633,7 @@
   <script th:inline="javascript">
 	/*<![CDATA[*/
 		$(document).ready(function() {
-			$.get("/user/count", function(data) {
+			$.get("/api/user/count", function(data) {
 				var source = $("#users-template").html();
 				var template = Handlebars.compile(source);
 				var context = {
@@ -643,7 +643,7 @@
 				$("#users-template-placeholder").html(html);
 			}, "json");
 			
-			$.get("/club/count", function(data) {
+			$.get("/api/club/count", function(data) {
 				var source = $("#clubs-template").html();
 				var template = Handlebars.compile(source);
 				var context = {
@@ -653,7 +653,7 @@
 				$("#clubs-template-placeholder").html(html);
 			}, "json");
 			
-			$.get("/match/count", function(data) {
+			$.get("/api/match/count", function(data) {
 				var source = $("#matches-template").html();
 				var template = Handlebars.compile(source);
 				var context = {
@@ -663,7 +663,7 @@
 				$("#matches-template-placeholder").html(html);
 			}, "json");
 			
-			$.get("/league/count", function(data) {
+			$.get("/api/league/count", function(data) {
 				var source = $("#leagues-template").html();
 				var template = Handlebars.compile(source);
 				var context = {

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lollito.fm.service.LeagueService;
 
 @RestController
-@RequestMapping(value="/league")
+@RequestMapping(value="/api/league")
 public class LeagueController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

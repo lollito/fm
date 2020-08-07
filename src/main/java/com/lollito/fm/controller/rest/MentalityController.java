@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lollito.fm.model.Mentality;
 
 @RestController
-@RequestMapping(value="/mentality")
+@RequestMapping(value="/api/mentality")
 public class MentalityController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -15,7 +15,7 @@ import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.service.GameService;
 
 @RestController
-@RequestMapping(value="/game")
+@RequestMapping(value="/api/game")
 public class GameController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

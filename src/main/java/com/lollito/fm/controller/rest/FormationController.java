@@ -14,7 +14,7 @@ import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.service.FormationService;
 
 @RestController
-@RequestMapping(value="/formation")
+@RequestMapping(value="/api/formation")
 public class FormationController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

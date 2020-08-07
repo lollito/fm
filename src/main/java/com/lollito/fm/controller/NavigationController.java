@@ -17,6 +17,11 @@ public class NavigationController {
 		return "login";
 	}
 	
+	@GetMapping(path = "/register")
+	public String register() {
+		return "register";
+	}
+	
 	@GetMapping(path = "/home")
 	public String index() {
 		return "home";

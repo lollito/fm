@@ -15,7 +15,7 @@ import com.lollito.fm.service.ClubService;
 import com.lollito.fm.service.PlayerService;
 
 @RestController
-@RequestMapping(value="/player")
+@RequestMapping(value="/api/player")
 public class PlayerController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

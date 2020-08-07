@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<div th:fragment="scripts">
+	
+		<!-- Bootstrap core JavaScript -->
+	  <script src="/webjars/jquery/jquery.min.js"></script>
+	  <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
+	  <script src="/webjars/bootstrap-table/bootstrap-table.min.js"></script>
+	  
+	  <script src="/webjars/jquery.serializeJSON/jquery.serializejson.min.js"></script>
+	  <script src="/webjars/toastr/build/toastr.min.js"></script>
+	  <script src="/webjars/bootbox/bootbox.js"></script>
+	  <script src="/webjars/handlebars/handlebars.js"></script>
+	  
+	  <!-- Menu Toggle Script -->
+	  <script>
+	    $("#menu-toggle").click(function(e) {
+	      e.preventDefault();
+	      $("#wrapper").toggleClass("toggled");
+	    });
+	  </script>
+		
+	</div>
+
+</html>

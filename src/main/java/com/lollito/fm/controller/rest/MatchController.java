@@ -14,7 +14,7 @@ import com.lollito.fm.model.Match;
 import com.lollito.fm.service.MatchService;
 
 @RestController
-@RequestMapping(value="/match")
+@RequestMapping(value="/api/match")
 public class MatchController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

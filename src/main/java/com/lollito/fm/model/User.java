@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,8 +42,14 @@ public class User implements Serializable {
 	
 	private String email;
 	
+	@Transient
+    private String emailConfirm;
+	
 	@JsonIgnore
 	private String password;
+	
+	@Transient
+    private String passwordConfirm;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "country_id" )
@@ -58,7 +66,7 @@ public class User implements Serializable {
     private Club club;
 	
 	@ManyToMany
-	private Set<Role> roles;
+	private Set<Role> roles = new HashSet<>();
 	 
 	public User() {
 		
@@ -113,6 +121,14 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
+	public String getEmailConfirm() {
+		return emailConfirm;
+	}
+
+	public void setEmailConfirm(String emailConfirm) {
+		this.emailConfirm = emailConfirm;
+	}
+
 	public String getPassword() {
 		return password;
 	}
@@ -121,6 +137,14 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
+	
 	public Country getCountry() {
 		return country;
 	}

@@ -14,7 +14,7 @@ import com.lollito.fm.model.Module;
 import com.lollito.fm.service.ModuleService;
 
 @RestController
-@RequestMapping(value="/module")
+@RequestMapping(value="/api/module")
 public class ModuleController {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
