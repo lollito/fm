@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -55,6 +57,9 @@ public class User implements Serializable {
     @JsonIgnore
     private Club club;
 	
+	@ManyToMany
+	private Set<Role> roles;
+	 
 	public User() {
 		
 	}
@@ -146,6 +151,14 @@ public class User implements Serializable {
 
 	public void setClub(Club club) {
 		this.club = club;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 
 	@Override

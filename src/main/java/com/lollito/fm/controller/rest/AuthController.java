@@ -36,9 +36,6 @@ public class AuthController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Autowired
-    JwtUtil jwtUtil;
-
 //    @PostMapping("/signin")
 //    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 //
