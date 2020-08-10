@@ -17,11 +17,13 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lollito.fm.model.rest.RegistrationRequest;
 
 @Entity
 @Table(name="user")
@@ -42,14 +44,8 @@ public class User implements Serializable {
 	
 	private String email;
 	
-	@Transient
-    private String emailConfirm;
-	
 	@JsonIgnore
 	private String password;
-	
-	@Transient
-    private String passwordConfirm;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "country_id" )
@@ -80,6 +76,14 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
+
+	public User(RegistrationRequest request) {
+		this.username = request.getUsername();
+		this.name = request.getName();
+		this.surname = request.getSurname();
+		this.email = request.getEmail();
+		this.password = request.getPassword();
+	}
 
 	public Long getId() {
 		return id;
@@ -121,14 +125,6 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public String getEmailConfirm() {
-		return emailConfirm;
-	}
-
-	public void setEmailConfirm(String emailConfirm) {
-		this.emailConfirm = emailConfirm;
-	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -137,14 +133,6 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public String getPasswordConfirm() {
-		return passwordConfirm;
-	}
-
-	public void setPasswordConfirm(String passwordConfirm) {
-		this.passwordConfirm = passwordConfirm;
-	}
-	
 	public Country getCountry() {
 		return country;
 	}
@@ -200,5 +188,16 @@ public class User implements Serializable {
 			User other = (User) obj;
 			return new EqualsBuilder().append(id, other.id).isEquals();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("username", username)
+				.append("email", email)
+				.append("country", country)
+				//.append("players", players)
+				.toString();
 	}
 }

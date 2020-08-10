@@ -3,7 +3,8 @@ package com.lollito.fm.model;
 public enum Event {
 
 
-	HAVE_BALL				("Have Ball");
+	HAVE_BALL("%s have Ball"),
+	HAVE_SCORED("%s have Scored!");
 	
 	
 	private String message;

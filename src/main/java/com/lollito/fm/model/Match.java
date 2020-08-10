@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -70,6 +71,7 @@ public class Match implements Serializable{
 	
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JoinColumn( name = "match_id" )
+	@OrderBy("minute")
     private List<EventHistory> events = new ArrayList<>();
     
 	
@@ -77,7 +79,7 @@ public class Match implements Serializable{
 		
 	}
 	
-	public Match(Club home, Club away, Game game, Boolean last) {
+	public Match(Club home, Club away, Boolean last) {
 		this.home = home;
 		this.away = away;
 		this.last = last;
@@ -176,6 +178,18 @@ public class Match implements Serializable{
 		this.events = events;
 	}
 
+	public void addEvents(List<EventHistory> events) {
+		this.events.addAll(events);
+	}
+	
+	public void addEvent(EventHistory event) {
+		this.events.add(event);
+	}
+	
+	public void removeEvent(EventHistory event) {
+		this.events.remove(event);
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

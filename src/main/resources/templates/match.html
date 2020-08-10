@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head"></head>
+
+
+<body>
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="common/sidebar :: sidebar"></div>
+    
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+		<div id="page-content-wrapper">
+			<nav th:replace="common/navbar :: navbar"></nav>
+
+
+			<div id="match-template-placeholder" class="container-fluid">
+				<script id="match-template" type="text/x-handlebars-template">
+					<div class="score_card col-md-8 mx-auto bg-primary">
+						<div class="inner_card">
+							<div class="left_team">
+								<div class="team_container">
+									{{home.name}}
+									<img src="{{home.logoURL}}"> <span data-id="England">{{homeScore}}</span>
+								</div>
+							</div>
+	
+							<p class="vs">VS</p>
+	
+							<div class="right_team">
+								<div class="team_container">
+									{{away.name}}
+									<img src="{{home.logoURL}}"> <span data-id="The Netherlands">{{awayScore}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="fact_card">
+						{{#each events}}
+							<p class="one_event">{{minute}}' - {{event}}</p>
+						{{/each}}
+					</div>
+				</script>
+			</div>
+		</div>
+		<!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <div th:replace="common/scripts :: scripts"></div>
+
+	<script type="text/javascript">
+		var url = $(location).attr('href'), parts = url.split("/"), id = parts[parts.length - 1];
+		console.log(id);
+		$.get("/api/match/" + id, function(data) {
+			var source = $("#match-template").html();
+			var template = Handlebars.compile(source);
+			var html = template(data);
+			$("#match-template-placeholder").html(html);
+		}, "json");
+	</script>
+</body>
+
+</html>

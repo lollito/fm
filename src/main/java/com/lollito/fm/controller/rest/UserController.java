@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.User;
+import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.service.SecurityService;
 import com.lollito.fm.service.UserService;
 
@@ -31,13 +32,13 @@ public class UserController {
     }
 	
 	@PostMapping("/register")
-    public ResponseEntity<?> registration(@RequestBody User user) {
+    public ResponseEntity<?> registration(@RequestBody RegistrationRequest request) {
 
-        userService.save(user);
+        User user = userService.save(request);
 
-        securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
+        securityService.autoLogin(user.getUsername(), request.getPasswordConfirm());
 
-        return ResponseEntity.ok(user );
+        return ResponseEntity.ok(user);
     }
     
     @GetMapping("/")

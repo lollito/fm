@@ -20,9 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] AUTH_WHITELIST = {
-			"/api/userBO/registra",
-			"/api/userBO/",
-			"/api/role/",
+			"/api/user/register",
 			"/swagger-resources/**",
 			"/swagger-ui.html",
 			"/v2/api-docs",
@@ -32,8 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			"/js/**", 
 			"/img/**",
 			"/register",
-			"/**", 
-			"/home", 
+			"/api/country/",
 	};
 	
 	@Qualifier("userDetailsServiceImpl")
@@ -54,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/index", true)
+                .defaultSuccessUrl("/", true)
                 .permitAll()
                 .and()
                 

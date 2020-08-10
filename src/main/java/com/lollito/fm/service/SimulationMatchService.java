@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.Event;
+import com.lollito.fm.model.EventHistory;
 import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Player;
@@ -46,12 +49,9 @@ public class SimulationMatchService {
 			match.getAway().getTeam().setFormation((formationService.createFormation(match.getAway().getTeam().getPlayers(), match.getAway().getTeam().getFormation())));
 //		}
 		
-//		simulationMatchRepository.save(simulationMatch);
 		playMatch(match);
 		match.setFinish(true);
-//		matchRepository.save(simulationMatch.getMatch());
 		matchRepository.save(match);
-//		simulationMatchRepository.save(simulationMatch);
 	}
 	
 	private int[] playMatch(Match match){
@@ -65,11 +65,14 @@ public class SimulationMatchService {
 		int coin = RandomUtils.randomValue(0, 1);
 		Formation homeFormation = match.getHome().getTeam().getFormation();
 		Formation awayFormation = match.getAway().getTeam().getFormation();
+		List<EventHistory> events = new ArrayList<>();
 		if (coin == 0){
 			homeFormation.setHaveBall(true);
+			events.add(new EventHistory(String.format(Event.HAVE_BALL.getMessage(), match.getHome().getName()) , 0));
 			//logger.info("home have ball");
 		} else {
 			awayFormation.setHaveBall(true);
+			events.add(new EventHistory(String.format(Event.HAVE_BALL.getMessage(), match.getAway().getName()) , 0));
 			//logger.info("away have ball");
 		}
 		
@@ -90,7 +93,10 @@ public class SimulationMatchService {
 		inversePosition.put(PlayerPosition.OFFENCE, PlayerPosition.DEFENCE);
 		int luckHome = 20;
 		int luckAway = 20;
-		for (int i = 0; i <= numberOfActions; i++) {
+		int homePosession = 0;
+		for (int actionNumber = 1; actionNumber <= numberOfActions; actionNumber++) {
+			int minute = (90 * actionNumber) / numberOfActions;
+			homePosession = homeFormation.getHaveBall() ? homePosession + 1 : homePosession;
 			//logger.info("rndm {}", rndm);
 			if(homeFormation.getHaveBall()){
 				int rndm = RandomUtils.randomValue(0, luckHome);
@@ -115,6 +121,7 @@ public class SimulationMatchService {
 						playerPosition = PlayerPosition.MIDFIELD;
 						homeFormation.setHaveBall(false);
 						awayFormation.setHaveBall(true);
+						events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), match.getHome().getName()) , minute));
 						logger.debug("home gol");
 					}
 				}else{
@@ -132,23 +139,20 @@ public class SimulationMatchService {
 				} else{
 					luckAway+=RandomUtils.randomValue(0, 5);
 				}
-				//logger.info("getOffenceAverage Away {}", getOffenceAverage(awayPlayers.get(playerPosition)));
-				//logger.info("getDefenceAverage Home {}", getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))));
-//				logger.info("awayPlayers.get(playerPosition).size() {}", awayPlayers.get(playerPosition).size());
-//				logger.info("homePlayers.get(inversePosition.get(playerPosition)).size() {}", homePlayers.get(inversePosition.get(playerPosition)).size());
 				if((playerService.getOffenceAverage(awayPlayers.get(playerPosition)) + awayPlayers.get(playerPosition).size() - playerService.getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))) + homePlayers.get(inversePosition.get(playerPosition)).size()) * rndm > 100){
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
-						//logger.info("away ball -> {}", playerPosition.getvalue());
+						logger.debug("away ball -> {}", playerPosition.getvalue());
 					}else {
 						awayScore++;
 						playerPosition = PlayerPosition.MIDFIELD;
 						homeFormation.setHaveBall(true);
 						awayFormation.setHaveBall(false);
-						//logger.info("away gol");
+						events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), match.getAway().getName()) , minute));
+						logger.debug("away gol");
 					}
 				}else{
-					//logger.info("away lost ball");
+					logger.debug("away lost ball");
 					homeFormation.setHaveBall(true);
 					awayFormation.setHaveBall(false);
 				}
@@ -162,6 +166,12 @@ public class SimulationMatchService {
 	        	player.decrementCondition(d);
 	        }
 		}
+		
+		int homePosessionPerc = (homePosession * 100) / numberOfActions;
+		
+		logger.info("homePosessionPerc {}", homePosessionPerc);
+		
+		match.addEvents(events);
 		match.setHomeScore(homeScore);
 		match.setAwayScore(awayScore);
 		

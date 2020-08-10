@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
@@ -27,7 +26,6 @@ public class ClubService {
 	@Autowired NameService nameService;
 	@Autowired UserService userService;
 	@Autowired ClubRepository clubRepository;
-	@Autowired SessionBean sessionBean;
 	
 	public List<Club> createClubs(Game game, League league, int clubNumber){
 		List<Club> clubs = new ArrayList<>();
@@ -36,7 +34,6 @@ public class ClubService {
 			club.setLeague(league);
 			clubs.add(club);
 		}
-		
 		return clubs;
 	}
 
@@ -50,6 +47,7 @@ public class ClubService {
 		club.setLeague(game.getLeagues().get(0));
 		club.setFoundation(LocalDate.now());
 		club.setTeam(teamService.createTeam());
+		club.setLogoURL("https://picsum.photos/35?random=" + RandomUtils.randomValue(1, 2));
 		club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
 		return club;
 	}
@@ -61,5 +59,9 @@ public class ClubService {
 	//TODO exception free club not found
 	public Club findTopByLeagueCountryAndUserIsNull(Country country) {
 		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow(() -> new RuntimeException("free club not found"));
+	}
+	
+	public Club findTopByLeagueCountry(Country country) {
+		return clubRepository.findTopByLeagueCountry(country).orElseThrow(() -> new RuntimeException("free club not found"));
 	}
 }

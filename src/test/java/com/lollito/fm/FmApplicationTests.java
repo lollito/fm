@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.service.FormationService;
 import com.lollito.fm.service.GameService;
@@ -27,14 +26,13 @@ public class FmApplicationTests {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired GameService gameService;
-	@Autowired SessionBean sessionBean;
 	@Autowired FormationService formationService;
 	
 	@Test
 	@Ignore
 	public void contextLoads() {
 		Game game = gameService.create("test");
-		sessionBean.setGameId(game.getId());
+//		sessionBean.setGameId(game.getId());
 		LocalDate endDate = LocalDate.of( 2018 , Month.AUGUST , 26 );
 		formationService.createPlayerFormation();
 		for (LocalDate date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){

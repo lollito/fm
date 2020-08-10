@@ -54,15 +54,10 @@ body{
 }
 
 .score_card{
-	width: 500px;
 	border-radius: 7px;
-	background-color: red;
-	display: block;
 	padding: 30px;
-	box-sizing: border-box;
 	overflow: hidden;
 	margin: 40px auto;
-	background-color: rgba(85, 85, 85, 0.9);
 	border: solid 6px #555555;
 }
 
@@ -128,16 +123,6 @@ body{
 
 .right_team .team_container span{
 	margin-left: 6px;
-}
-
-.start{
-	width: 100%;
-	font-family: 'Open Sans';
-	font-size: 16px;
-	color: white;
-	display: block;
-	text-align: center;
-	padding-top: 30px;
 }
 
 .fact_card{

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Club;
-import com.lollito.fm.model.Game;
+import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Round;
 import com.lollito.fm.model.Season;
@@ -27,9 +27,9 @@ public class SeasonService {
 	@Autowired SeasonRepository seasonRepository;
 	@Autowired RankingService rankingService;
 	
-	public Season create(Game game, LocalDate startDate) {
+	public Season create(League league, LocalDate startDate) {
 		Season season = new Season();
-		List<Club> clubsList = game.getLeagues().get(0).getClubs();
+		List<Club> clubsList = league.getClubs();
 		rankingService.create(clubsList, season);
 		int numClubs = clubsList.size();
 		if (numClubs % 2 != 0) {
@@ -51,12 +51,12 @@ public class SeasonService {
 			Round round = new Round();
 			int teamIdx = day % teamsSize;
 
-			round.addMatch(new Match(clubs.get(teamIdx), clubsList.get(0), game, false));
+			round.addMatch(new Match(clubs.get(teamIdx), clubsList.get(0), false));
 			for (int idx = 1; idx < halfSize; idx++) {
 				int firstTeam = (day + idx) % teamsSize;
 				int secondTeam = (day + teamsSize - idx) % teamsSize;
 				boolean last = idx == halfSize - 1;
-				round.addMatch(new Match(clubs.get(firstTeam), clubs.get(secondTeam), game, last));
+				round.addMatch(new Match(clubs.get(firstTeam), clubs.get(secondTeam), last));
 			}
 			rounds.add(round);
 		}
@@ -68,11 +68,17 @@ public class SeasonService {
 			for (int i = 0; i < round.getMatches().size(); i++) {
 				Match match = round.getMatches().get(i);
 				boolean last = i == round.getMatches().size() - 1;
-				roundReturn.addMatch(new Match(match.getAway(), match.getHome(), game, last));
+				roundReturn.addMatch(new Match(match.getAway(), match.getHome(), last));
 			}
 			roundReturns.add(roundReturn);
 		}
 		rounds.addAll(roundReturns);
+		realisticCalendar(startDate, season, rounds);
+		season.getRounds().get(season.getRounds().size() -1).setLast(Boolean.TRUE);
+		return season;
+	}
+
+	private void realisticCalendar(LocalDate startDate, Season season, List<Round> rounds) {
 		int roundNumber = 1;
 		int saturdayMatch = 2;
 		Iterator<Round> iterator = rounds.iterator();
@@ -93,7 +99,5 @@ public class SeasonService {
 			}
 			startDate = startDate.plusDays(1);
 		}
-		season.getRounds().get(season.getRounds().size() -1).setLast(Boolean.TRUE);
-		return season;
 	}
 }

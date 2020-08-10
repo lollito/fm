@@ -11,4 +11,5 @@ import com.lollito.fm.model.Country;
 @Repository
 public interface ClubRepository extends PagingAndSortingRepository<Club, Long> {
 	public Optional<Club> findTopByLeagueCountryAndUserIsNull(Country country);
+	public Optional<Club> findTopByLeagueCountry(Country country);
 }

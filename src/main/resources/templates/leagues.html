@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head"></head>
+
+
+<body>
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="common/sidebar :: sidebar"></div>
+    
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+		<div id="page-content-wrapper">
+			<nav th:replace="common/navbar :: navbar"></nav>
+
+
+			<div class="container-fluid">
+				<div id="toolbar">
+				</div>
+	            <table id="ranking-table" data-toggle="table" data-url="/api/league/" data-toolbar="#toolbar" data-show-refresh="true">
+					<thead>
+						<tr>
+							<th data-field="name">Name</th>
+							<th data-field="country.name">Country</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+		<!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <div th:replace="common/scripts :: scripts"></div>
+  
+</body>
+
+</html>

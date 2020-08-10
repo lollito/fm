@@ -1,8 +1,8 @@
 package com.lollito.fm.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class NavigationController {
@@ -32,6 +32,11 @@ public class NavigationController {
 		return "team";
 	}
 	
+	@GetMapping(value = {"/match/", "/match/{id}"})
+	public String match(@PathVariable (required = false, value = "id") String id) {
+		return "match";
+	}
+	
 	@GetMapping(path = "/schedule")
 	public String schedule() {
 		return "schedule";
@@ -45,6 +50,11 @@ public class NavigationController {
 	@GetMapping(path = "/formation")
 	public String formation() {
 		return "formation";
+	}
+	
+	@GetMapping(path = "/leagues")
+	public String leagues() {
+		return "leagues";
 	}
 	
 	@GetMapping(path = "/admin")

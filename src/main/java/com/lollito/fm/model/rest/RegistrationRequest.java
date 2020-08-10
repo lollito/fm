@@ -7,7 +7,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class SignUpRequest implements Serializable{
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lollito.fm.model.Country;
+
+public class RegistrationRequest implements Serializable{
 	
 	private static final long serialVersionUID = -2922813997308541538L;
 
@@ -29,12 +32,21 @@ public class SignUpRequest implements Serializable{
 	private String email;
 
 	@NotBlank
+	@Size(max = 40)
+	@Email
+	private String emailConfirm;
+	
+	@NotBlank
 	@Size(min = 6, max = 20)
 	private String password;
 	
+	@NotBlank
+	@Size(min = 6, max = 20)
+    private String passwordConfirm;
+	
 	@NotNull
 	private Long countryId;
-
+	
 	public String getName() {
 		return name;
 	}
@@ -75,6 +87,22 @@ public class SignUpRequest implements Serializable{
 		this.password = password;
 	}
 
+	public String getEmailConfirm() {
+		return emailConfirm;
+	}
+
+	public void setEmailConfirm(String emailConfirm) {
+		this.emailConfirm = emailConfirm;
+	}
+
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
+
 	public Long getCountryId() {
 		return countryId;
 	}
@@ -82,5 +110,5 @@ public class SignUpRequest implements Serializable{
 	public void setCountryId(Long countryId) {
 		this.countryId = countryId;
 	}
-	
+
 }

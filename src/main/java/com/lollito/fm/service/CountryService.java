@@ -24,7 +24,7 @@ public class CountryService {
 			String name = tokens[0];
 			Boolean createLeague = Boolean.valueOf(tokens[1]);
 			countryRepository.save(new Country(name, createLeague));
-		});;
+		});
 	}
 	
 	public Long getCount() {

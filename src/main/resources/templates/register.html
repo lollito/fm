@@ -15,6 +15,7 @@
 <link href="/webjars/font-awesome/css/all.css" rel="stylesheet" type="text/css"></link>
 <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet"></link>
+<link rel="stylesheet" href="/webjars/toastr/build/toastr.min.css"></link>
 
 <style>
 :root {
@@ -166,26 +167,26 @@ body {
 						<h5 class="card-title text-center">FM - A Football Manager Game</h5>
 						<form class="form-signup">
 							<div class="form-label-group">
-								<input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+								<input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
 								<label for="username">Username</label>
 							</div>
 							<div class="form-label-group">
-								<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+								<input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required>
 								<label for="inputEmail">Email address</label>
 							</div>
 							
 							<div class="form-label-group">
-								<input type="email" id="inputEmailRepeat" class="form-control" placeholder="Repeat Email address" required>
+								<input type="email" id="inputEmailRepeat" class="form-control" name="emailConfirm" placeholder="Repeat Email address" required>
 								<label for="inputEmailRepeat">Repeat Email address</label>
 							</div>
 							
 							<div class="form-label-group">
-								<input type="password" id="inputPassword" class="form-control" placeholder="Password" required> 
+								<input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required> 
 								<label for="inputPassword">Password</label>
 							</div>
 
 							<div class="form-label-group">
-								<input type="password" id="inputPasswordRepeat" class="form-control" placeholder="Repeat Password" required> 
+								<input type="password" id="inputPasswordRepeat" class="form-control" name="passwordConfirm" placeholder="Repeat Password" required> 
 								<label for="inputPasswordRepeat">Repeat Password</label>
 							</div>
 							
@@ -196,9 +197,9 @@ body {
 								{{/each}}
 							</script>
 							<div class="form-group">
-								<select id="country-template-placeholder" class="form-control"></select> 
+								<select id="country-template-placeholder" name="countryId" class="form-control"></select> 
 							</div>
-							<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Create Account</button>
+							<button id="register-button" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Create Account</button>
 						</form>
 						<hr>
 		                  <div class="text-center">
@@ -236,7 +237,26 @@ body {
 	$(function() {
    		//$('#table-ordini').bootstrapTable("resetSearch", stato);
    		initSelect("/api/country/", "#country-template", null, "#country-template-placeholder", null);
+   		
+   		$("#register-button").click(function(event) {
+     		event.preventDefault();
+     		console.log($('.form-signup').serializeJSON());
+     		var data = JSON.stringify($('.form-signup').serializeJSON());
+     		$.ajax({
+     			method : "POST",
+     			url : "/api/user/register",
+     			dataType: "json",
+     			contentType:"application/json; charset=utf-8",
+     			data: data
+     		}).done(function(data) {
+     			console.log(data);
+     			toastr.success('OOEEE', 'Salvataggio effettuato!' );
+     		}); 		
+  
+   		});
    	});
+	
+	
   </script>
 </body>
 </html>

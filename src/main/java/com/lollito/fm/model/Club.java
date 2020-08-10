@@ -64,6 +64,8 @@ public class Club implements Serializable{
 	@JoinColumn( name = "finance_id" )
 	private Finance finance;
     
+    private String logoURL;
+    
     public Long getId() {
 		return id;
 	}
@@ -134,6 +136,14 @@ public class Club implements Serializable{
 
 	public void setFinance(Finance finance) {
 		this.finance = finance;
+	}
+
+	public String getLogoURL() {
+		return logoURL;
+	}
+
+	public void setLogoURL(String logoURL) {
+		this.logoURL = logoURL;
 	}
 
 	@Override

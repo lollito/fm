@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lollito.fm.bean.SessionBean;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Ranking;
@@ -20,7 +19,8 @@ public class RankingService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired RankingRepository rankingLineRepository;
-	@Autowired SessionBean sessionBean;
+	@Autowired UserService userService;
+	
 	public void create(List<Club> clubs, Season season) {
 		for (Club club : clubs) {
 			Ranking rankingLine = new Ranking();
@@ -40,6 +40,6 @@ public class RankingService {
 	}
 	
 	public List<Ranking> load(){
-		return sessionBean.getGame().getLeagues().get(0).getCurrentSeason().getRankingLines();
+		return userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRankingLines();
 	}
 }
