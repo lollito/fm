@@ -31,6 +31,16 @@ public class UserController {
         return userService.getCount();
     }
 	
+	@PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody RegistrationRequest request) {
+		logger.info("loginRequest {}", request);
+        User user = userService.findByUsernameAndActive(request.getUsername());
+
+        securityService.autoLogin(user.getUsername(), request.getPassword());
+
+        return ResponseEntity.ok(user);
+    }
+	
 	@PostMapping("/register")
     public ResponseEntity<?> registration(@RequestBody RegistrationRequest request) {
 

@@ -26,12 +26,12 @@ body{
 
 #sidebar-wrapper .sidebar-heading {
   padding: 0.875rem 1.25rem;
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   border-bottom: 1px solid #FFF;
 }
 
 #sidebar-wrapper .list-group {
-  width: 15rem;
+  width: 13rem;
   padding-left: 7px;
   padding-right: 7px;
 }
@@ -41,7 +41,7 @@ body{
 }
 
 #sidebar-wrapper .list-group .list-group-item i {
-    font-size: .85rem;
+    font-size: .80rem;
     margin-right: .30rem;
 }
 
@@ -128,7 +128,6 @@ body{
 .fact_card{
 	width: 700px;
 	height: 350px;
-	background-color: rgba(85, 85, 85, 0.8);
 	border: solid 5px #555555;
 	display: block;
 	margin: 50px auto;
@@ -143,6 +142,120 @@ body{
 	font-size: 20px;
 	color: white;
 	margin-bottom: 10px;
+}
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+.formation {
+	padding: 0px 50px;
+	position: fixed;
+}
+
+.formation select{
+	margin-left: 15px;	
+}
+
+.pitch {
+	background: #26A65B;
+	border-radius: 5px;
+	padding: 20px;
+	margin: 5px 16px;
+	display: inline-block;
+}
+
+.pitch h4 {
+	position: absolute;
+	color: #eee;
+	text-align: center;
+	margin: -40px 153px;
+}
+
+.pitch .formation-container {
+	width: 350px;
+	height: 450px;
+	border: 2px solid #eee;
+}
+
+.pitch .half {
+	margin: 217px 0 0 -2px;
+	width: 350px;
+	border: 1px solid #eee;
+}
+
+.pitch .half:before {
+	position: absolute;
+	margin: -63px 115px;
+	width: 120px;
+	height: 120px;
+	border-radius: 60px;
+	border: 2px solid #eee;
+	content: "";
+}
+
+.pitch .box1 {
+	position: absolute;
+	margin: -2px 114px;
+	width: 120px;
+	height: 60px;
+	border: 2px solid #eee;
+}
+
+.pitch .pen1 {
+	position: absolute;
+	margin: -2px 21px;
+	width: 75px;
+	height: 35px;
+	border: 2px solid #eee;
+}
+
+.pitch .box2 {
+	position: absolute;
+	margin: 169px 114px;
+	width: 120px;
+	height: 60px;
+	border: 2px solid #eee;
+}
+
+.pitch .pen2 {
+	position: absolute;
+	margin: 23px 21px;
+	width: 75px;
+	height: 35px;
+	border: 2px solid #eee;
+}
+
+.pos {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	border-radius: 20px;
+	background: #C00;
+	color: #FFF;
+	text-align: center;
+	line-height: 33px;
+	font-size: 18px;
+	font-weight: 110;
+	transition: .3s linear all;
+	z-index: 1;
+	margin-bottom: 5px;
+	border: 3px solid #FFF;
+}
+
+.pos:hover {
+	color: #BDC3C7;
+	background: #34495e;
+}
+
+.pos div{
+	font-size: 14px;
+	font-weight: 500;
+	margin-left: -7px;
+}
+
+.table{
+	font-size: 0.8rem;
 }
 
 @media (min-width: 768px) {

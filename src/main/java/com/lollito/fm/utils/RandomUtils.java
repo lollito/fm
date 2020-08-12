@@ -15,4 +15,13 @@ public class RandomUtils {
 	public static Double randomValue(double from, double to){
 		return ThreadLocalRandom.current().nextDouble(from, to + 1D);
 	}
+	
+	public static Boolean randomPercentage(double percent){
+		randomValue(1, 100);
+	    int number = randomValue(1, 100);
+	    if (number <= percent){ // 60%
+	        return true;
+	    }
+	    return false;
+	}
 }

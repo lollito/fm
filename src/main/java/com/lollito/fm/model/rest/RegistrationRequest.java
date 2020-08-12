@@ -47,6 +47,10 @@ public class RegistrationRequest implements Serializable{
 	@NotNull
 	private Long countryId;
 	
+	@NotBlank
+	@Size(min = 3, max = 15)
+	private String clubName;
+	
 	public String getName() {
 		return name;
 	}
@@ -111,4 +115,38 @@ public class RegistrationRequest implements Serializable{
 		this.countryId = countryId;
 	}
 
+	public String getClubName() {
+		return clubName;
+	}
+
+	public void setClubName(String clubName) {
+		this.clubName = clubName;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RegistrationRequest [name=");
+		builder.append(name);
+		builder.append(", surname=");
+		builder.append(surname);
+		builder.append(", username=");
+		builder.append(username);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", emailConfirm=");
+		builder.append(emailConfirm);
+		builder.append(", password=");
+		builder.append(password);
+		builder.append(", passwordConfirm=");
+		builder.append(passwordConfirm);
+		builder.append(", countryId=");
+		builder.append(countryId);
+		builder.append(", clubName=");
+		builder.append(clubName);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
 }

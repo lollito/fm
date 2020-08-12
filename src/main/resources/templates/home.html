@@ -25,7 +25,7 @@
 						<div class="card text-white bg-warning mb-3">
 							<div class="card-header">News</div>
 							<div class="card-body">
-								<table id="next-round-table" class="text-white" data-toggle="table" data-url="/api/news/">
+								<table id="news-table" class="text-white" data-toggle="table" data-url="/api/news/">
 									<thead>
 										<tr>
 											<th data-field="date">Date</th>
@@ -43,12 +43,12 @@
 							<div class="card text-white bg-primary mb-3">
 								<div class="card-header">Next Round</div>
 								<div class="card-body">
-									<table id="next-round-table" class="text-white" data-toggle="table" data-url="/api/match/next">
+									<table id="next-round-table" data-row-style="matchRowStyle" class="text-white" data-toggle="table" data-url="/api/match/next">
 										<thead>
 											<tr>
-												<th data-field="home.name">Casa</th>
-												<th data-field="away.name">Trasferta</th>
-												<th data-field="date">Data</th>
+												<th data-field="home.name">Home</th>
+												<th data-field="away.name">Away</th>
+												<th data-field="date">Date</th>
 												<th data-field="number" data-visible="false"></th>
 												<th data-field="last" data-visible="false"></th>
 												<th data-field="homeScore"></th>
@@ -61,14 +61,14 @@
 						</div>
 						<div class="col-sm-12">
 							<div class="card text-white bg-primary mb-3">
-								<div class="card-header">Results</div>
+								<div class="card-header">Last Match Results</div>
 								<div class="card-body">
-									<table id="previous-round-table" class="text-white" data-toggle="table" data-url="/api/match/previous">
+									<table id="previous-round-table" class="text-white" data-row-style="matchRowStyle" data-toggle="table" data-url="/api/match/previous">
 										<thead>
 											<tr>
-												<th data-field="home.name">Casa</th>
-												<th data-field="away.name">Trasferta</th>
-												<th data-field="date">Data</th>
+												<th data-field="home.name">Home</th>
+												<th data-field="away.name">Away</th>
+												<th data-field="date">Date</th>
 												<th data-field="number" data-visible="false"></th>
 												<th data-field="last" data-visible="false"></th>
 												<th data-field="homeScore"></th>
@@ -93,7 +93,7 @@
 						<div class="card text-white bg-primary mb-3">
 							<div class="card-header">Ranking</div>
 							<div class="card-body">
-								<table id="ranking-table" class="text-white" data-toggle="table" data-url="/api/ranking/">
+								<table id="ranking-table" data-row-style="rankingRowStyle" class="text-white" data-toggle="table" data-url="/api/ranking/">
 									<thead>
 										<tr>
 											<th data-field="club.name">Club</th>
@@ -114,7 +114,45 @@
   <!-- /#wrapper -->
 
   <div th:replace="common/scripts :: scripts"></div>
-  
+	<script>
+		function matchRowStyle(row, index) {
+			var classes = "cursor-pointer";
+			if(localStorage.getItem("user")){
+				var clubName = JSON.parse(localStorage.getItem("user")).club.name;
+				if(row.home.name == clubName || row.away.name == clubName){
+					classes += " bg-info"
+				}
+			}
+			return {
+				classes : classes
+			}
+		}
+		
+		function rankingRowStyle(row, index) {
+			var classes = "cursor-pointer";
+			if(localStorage.getItem("user")){
+				var clubName = JSON.parse(localStorage.getItem("user")).club.name;
+				if(row.club.name == clubName || row.club.name == clubName){
+					classes += " bg-info"
+				}
+			}
+			return {
+				classes : classes
+			}
+		}
+		
+		$("#next-round-table").on("click-cell.bs.table", function (field, value, row, $element) {
+	   	    if (value !="operate"){
+	   	    	window.location.href = '/match/' + $element.id;
+	   	    }
+	   	});
+		
+		$("#previous-round-table").on("click-cell.bs.table", function (field, value, row, $element) {
+	   	    if (value !="operate"){
+	   	    	window.location.href = '/match/' + $element.id;
+	   	    }
+	   	});
+	</script>
 </body>
 
 </html>

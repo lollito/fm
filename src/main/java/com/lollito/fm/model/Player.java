@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -61,6 +62,8 @@ public class Player implements Serializable{
 	private Long id;
 	private String name;
 	private String surname;
+	
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate birth;
 	
 //	Decide quanta abilità perde un giocatore durante il corso di una partita, a causa della fatica.
@@ -281,21 +284,35 @@ public class Player implements Serializable{
 	
 	@Transient
 	public Integer getOffenceAverage(){
-		return (this.playmaking.intValue()	+ 
-				this.scoring.intValue() + 
+		return (this.playmaking.intValue()	 + 
 				this.winger.intValue() +
 				this.passing.intValue() +
-				this.setPieces.intValue() +
-				this.condition.intValue()) / 6;
+				this.condition.intValue()) / 4;
 	}
 	
 	@Transient
 	public Integer getDefenceAverage(){
 		return (this.playmaking.intValue()	+ 
-				this.goalkeeping.intValue() +
 				this.defending.intValue() +
-				this.setPieces.intValue() +
-				this.condition.intValue()) / 5;
+				this.condition.intValue()) / 3;
+	}
+	
+	@Transient
+	public Integer getScoringAverage(){
+		return (this.scoring.intValue() + 
+				this.condition.intValue()) / 2;
+	}
+	
+	@Transient
+	public Integer getGoalkeepingAverage(){
+		return (this.goalkeeping.intValue() +
+				this.condition.intValue()) / 2;
+	}
+	
+	@Transient
+	public Integer getPiecesAverage(){
+		return (this.setPieces.intValue() + 
+				this.condition.intValue()) / 2;
 	}
 	
 	@Override

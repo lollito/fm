@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.Club;
 import com.lollito.fm.model.News;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.rest.RegistrationRequest;
@@ -40,11 +41,14 @@ public class UserService {
 		user.setCountry(countryRepository.findById(request.getCountryId()).get());
 		user.setActive(true);
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setClub(clubService.findTopByLeagueCountryAndUserIsNull(user.getCountry()));
+        Club club = clubService.findTopByLeagueCountryAndUserIsNull(user.getCountry());
+        club.setName(request.getClubName());
+        clubService.save(club);
+		user.setClub(club);
         //TODO temp roles
         user.setRoles(new HashSet<>(roleRepository.findAll()));
         
-        News news = new News(String.format("%s is the new coach of %s", user.getUsername(), user.getClub().getName()) , LocalDateTime.now());
+        News news = new News(String.format("%s is the new manager of %s", user.getUsername(), user.getClub().getName()) , LocalDateTime.now());
         newsService.save(news);
         return userRepository.save(user);
     }
@@ -57,6 +61,10 @@ public class UserService {
 		user.setClub(clubService.findTopByLeagueCountryAndUserIsNull(user.getCountry()));
 		userRepository.save(user);
 		return user;
+	}
+	
+	public User findByUsernameAndActive(String username){
+		return userRepository.findByUsernameAndActive(username, true);
 	}
 	
 	public User find(){

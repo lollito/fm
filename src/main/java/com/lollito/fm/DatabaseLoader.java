@@ -33,6 +33,7 @@ public class DatabaseLoader implements CommandLineRunner {
 		registration.setPassword("ciao");
 		registration.setPasswordConfirm("ciao");
 		registration.setUsername("lollito");
+		registration.setClubName("Roma");
 		registration.setCountryId(countryService.findByCreateLeague(true).get(0).getId());
 		userService.save(registration);
 		logger.info("Database Loaded");

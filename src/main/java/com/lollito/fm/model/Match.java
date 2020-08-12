@@ -1,11 +1,8 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -28,6 +25,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -54,7 +52,8 @@ public class Match implements Serializable{
 	
 	private Integer awayScore = 0;
 	
-	private LocalDate date;
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	private LocalDateTime date;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "round_id" )
@@ -74,6 +73,9 @@ public class Match implements Serializable{
 	@OrderBy("minute")
     private List<EventHistory> events = new ArrayList<>();
     
+	@ManyToOne( fetch = FetchType.LAZY  )
+    @JoinColumn( name = "match_id" )
+    private Stats stats;
 	
 	public Match() {
 		
@@ -125,11 +127,11 @@ public class Match implements Serializable{
 		this.awayScore = awayScore;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 	
@@ -190,6 +192,14 @@ public class Match implements Serializable{
 		this.events.remove(event);
 	}
 	
+	public Stats getStats() {
+		return stats;
+	}
+
+	public void setStats(Stats stats) {
+		this.stats = stats;
+	}
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();
@@ -209,14 +219,12 @@ public class Match implements Serializable{
 	
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat();
-	    String dataStr = sdf.format(Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
 				.append("home", home)
 				.append("away", away)
 				.append("homeScore", homeScore)
 				.append("awayScore", awayScore)
-				.append("date", dataStr)
+				.append("date", date)
 				.toString();
 	}
 

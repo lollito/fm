@@ -64,4 +64,8 @@ public class ClubService {
 	public Club findTopByLeagueCountry(Country country) {
 		return clubRepository.findTopByLeagueCountry(country).orElseThrow(() -> new RuntimeException("free club not found"));
 	}
+
+	public Club save(Club club) {
+		return clubRepository.save(club);
+	}
 }

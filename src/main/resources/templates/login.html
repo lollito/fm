@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -164,7 +164,7 @@ body {
 				<div class="card card-signin my-5">
 					<div class="card-body">
 						<h5 class="card-title text-center">FM - A Football Manager Game</h5>
-						<form class="form-signin" method="POST" action="/login">
+						<form class="form-signin">
 							<div class="form-label-group">
 								<input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
 								<label for="username">Username</label>
@@ -179,7 +179,7 @@ body {
 								<input type="checkbox" class="custom-control-input" id="customCheck1"> 
 								<label class="custom-control-label" for="customCheck1">Remember password</label>
 							</div>
-							<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
+							<button id="login-button" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
 <!-- 							<hr class="my-4"> -->
 <!-- 							<button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"> -->
 <!-- 								<i class="fab fa-google mr-2"></i> Sign in with Google -->
@@ -201,12 +201,28 @@ body {
 		</div>
 	</div>
 	
-	<!-- Bootstrap core JavaScript-->
-  <script src="/webjars/startbootstrap-sb-admin-2/vendor/jquery/jquery.min.js"></script>
-  <script src="/webjars/startbootstrap-sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<div th:replace="common/scripts :: scripts"></div>  
+  <script type="text/javascript">
+  	$(function() {
+ 		
+ 		$("#login-button").click(function(event) {
+ 			console.log("ooee");
+	   		event.preventDefault();
+	   		var data = JSON.stringify($('.form-signin').serializeJSON());
+	   		$.ajax({
+	   			method : "POST",
+	   			url : "/api/user/login",
+	   			dataType: "json",
+	   			contentType:"application/json; charset=utf-8",
+	   			data: data
+	   		}).done(function(data) {
+	   			console.log(data);
+	   			localStorage.setItem("user", JSON.stringify(data));
+	   			window.location.href = '/';
+	   		}); 		
 
-  <!-- Core plugin JavaScript-->
-  <script src="/webjars/startbootstrap-sb-admin-2/vendor/jquery-easing/jquery.easing.min.js"></script>
-  
+ 		});
+ 	});
+  </script>
 </body>
 </html>

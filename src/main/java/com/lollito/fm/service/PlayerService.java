@@ -183,4 +183,8 @@ public class PlayerService {
 	public void updateSkills(List<Player> players) {
 		players.parallelStream().forEach(player -> updateSkills(player));
 	}
+
+	public void saveAll(List<Player> players) {
+		playerRepository.saveAll(players);
+	}
 }

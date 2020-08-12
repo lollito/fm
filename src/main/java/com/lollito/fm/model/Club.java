@@ -36,6 +36,8 @@ public class Club implements Serializable{
     
     private LocalDate foundation;
     
+    private String logoURL;
+    
     @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "team_id" )
     @JsonIgnore
@@ -62,9 +64,8 @@ public class Club implements Serializable{
     
     @ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "finance_id" )
+    @JsonIgnore
 	private Finance finance;
-    
-    private String logoURL;
     
     public Long getId() {
 		return id;

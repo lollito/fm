@@ -58,7 +58,7 @@ public class User implements Serializable {
 	
 	@OneToOne( fetch = FetchType.LAZY  )
    	@JoinColumn( name = "club_id" )
-    @JsonIgnore
+//    @JsonIgnore
     private Club club;
 	
 	@ManyToMany

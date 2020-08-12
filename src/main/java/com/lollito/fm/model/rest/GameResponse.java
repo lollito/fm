@@ -1,6 +1,7 @@
 package com.lollito.fm.model.rest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,21 +9,21 @@ import com.lollito.fm.model.Match;
 
 public class GameResponse {
 
-	private LocalDate currentDate;
+	private LocalDateTime currentDate;
 	private List<Match> disputatedMatch = new ArrayList<>();
 	
 	public GameResponse() {
 	}
 	
-	public GameResponse(LocalDate currentDate) {
+	public GameResponse(LocalDateTime currentDate) {
 		this.currentDate = currentDate;
 	}
 
-	public LocalDate getCurrentDate() {
+	public LocalDateTime getCurrentDate() {
 		return currentDate;
 	}
 	
-	public void setCurrentDate(LocalDate currentDate) {
+	public void setCurrentDate(LocalDateTime currentDate) {
 		this.currentDate = currentDate;
 	}
 	

@@ -26,15 +26,15 @@
 						<th data-field="name">Name</th>
 						<th data-field="surname">Surname</th>
 						<th data-field="birth">Birth</th>
-						<th data-field="stamina">Stamina</th>
-						<th data-field="playmaking">Playmaking</th>
-						<th data-field="scoring">Scoring</th>
-						<th data-field="winger">Winger</th>
-						<th data-field="goalkeeping">Goalkeeping</th>
-						<th data-field="passing">Passing</th>
-						<th data-field="defending">Defending</th>
-						<th data-field="setPieces">Set Pieces</th>
-						<th data-field="condition">Condition</th>
+						<th data-field="stamina" data-formatter="roundFormatter">Stamina</th>
+						<th data-field="playmaking" data-formatter="roundFormatter">Playmaking</th>
+						<th data-field="scoring" data-formatter="roundFormatter">Scoring</th>
+						<th data-field="winger" data-formatter="roundFormatter">Winger</th>
+						<th data-field="goalkeeping" data-formatter="roundFormatter">Goalkeeping</th>
+						<th data-field="passing" data-formatter="roundFormatter">Passing</th>
+						<th data-field="defending" data-formatter="roundFormatter">Defending</th>
+						<th data-field="setPieces" data-formatter="roundFormatter">Set Pieces</th>
+						<th data-field="condition" data-formatter="roundFormatter">Condition</th>
 					</tr>
 				</thead>
 			</table>
@@ -46,7 +46,12 @@
   <!-- /#wrapper -->
 
   <div th:replace="common/scripts :: scripts"></div>
+  <script type="text/javascript">
+  	function roundFormatter(value, row, index) {
+		return Math.round(value);
+	}
   
+  </script>
 </body>
 
 </html>

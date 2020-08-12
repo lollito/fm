@@ -47,9 +47,9 @@ Cuba,false
 Cyprus,false
 Czech,false
 Denmark,false
-Djibouti,false
+#Djibouti,false
 Dominica,false
-East Timor,false
+#East Timor,false
 Ecuador,false
 Egypt,false
 El Salvador,false
@@ -133,9 +133,9 @@ Nicaragua,false
 Niger,false
 Nigeria,false
 Norway,false
-Oman,false
+#Oman,false
 Pakistan,false
-Palau,false
+#Palau,false
 Panama,false
 Papua,false
 Paraguay,false
@@ -146,8 +146,8 @@ Portugal,false
 Qatar,false
 Romania,false
 Russia,false
-Rwanda,false
-Samoa,false
+#Rwanda,false
+#Samoa,false
 San Marino,false
 Sao Tome,false
 Saudi Arabia,false
@@ -156,14 +156,14 @@ Scotland,false
 Senegal,false
 Serbia,false
 #Seychelles,false
-Sierra Leone,false
+#Sierra Leone,false
 #Singapore,false
 Slovakia,false
 Slovenia,false
-Solomon,false
+#Solomon,false
 Somalia,false
 South Africa,false
-South Sudan,false
+#South Sudan,false
 Spain,true
 Sri Lanka,false
 #St. Kitts,false
@@ -180,15 +180,15 @@ Switzerland,false
 Syria,false
 Taiwan,false
 #Tajikistan,false
-Tanzania,false
+#Tanzania,false
 Thailand,false
-Tobago,false
-Togo,false
-Tonga,false
-Trinidad,false
+#Tobago,false
+#Togo,false
+#Tonga,false
+#Trinidad,false
 Tunisia,false
 Turkey,false
-Turkmenistan,false
+#Turkmenistan,false
 #Tuvalu,false
 #Uganda,false
 Ukraine,false
@@ -201,7 +201,7 @@ USA,false
 #Vatican,false
 Venezuela,false
 #Vietnam,false
-#wales,false
+Wales,false
 #welsh,false
 #Yemen,false
 #Zambia,false

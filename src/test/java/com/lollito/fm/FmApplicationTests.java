@@ -1,6 +1,7 @@
 package com.lollito.fm;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 
 import javax.transaction.Transactional;
@@ -33,9 +34,9 @@ public class FmApplicationTests {
 	public void contextLoads() {
 		Game game = gameService.create("test");
 //		sessionBean.setGameId(game.getId());
-		LocalDate endDate = LocalDate.of( 2018 , Month.AUGUST , 26 );
+		LocalDateTime endDate = LocalDateTime.of( 2021 , Month.AUGUST , 26, 00, 00 );
 		formationService.createPlayerFormation();
-		for (LocalDate date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
+		for (LocalDateTime date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
 			logger.info("currdate {}", game.getCurrentDate());
 		    gameService.next();
 		}

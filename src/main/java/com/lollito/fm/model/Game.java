@@ -1,6 +1,6 @@
 package com.lollito.fm.model;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class Game implements Serializable{
     private String name;
     
     @Column(name="crnt_date")
-    private LocalDate currentDate;
+    private LocalDateTime currentDate;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@JoinColumn( name = "league_id" )
@@ -57,11 +57,11 @@ public class Game implements Serializable{
 		this.name = name;
 	}
 
-	public LocalDate getCurrentDate() {
+	public LocalDateTime getCurrentDate() {
 		return currentDate;
 	}
 
-	public void setCurrentDate(LocalDate currentDate) {
+	public void setCurrentDate(LocalDateTime currentDate) {
 		this.currentDate = currentDate;
 	}
 	

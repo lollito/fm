@@ -1,7 +1,7 @@
 package com.lollito.fm.service;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ public class SeasonService {
 	@Autowired SeasonRepository seasonRepository;
 	@Autowired RankingService rankingService;
 	
-	public Season create(League league, LocalDate startDate) {
+	public Season create(League league, LocalDateTime startDate) {
 		Season season = new Season();
 		List<Club> clubsList = league.getClubs();
 		rankingService.create(clubsList, season);
@@ -73,12 +73,26 @@ public class SeasonService {
 			roundReturns.add(roundReturn);
 		}
 		rounds.addAll(roundReturns);
-		realisticCalendar(startDate, season, rounds);
+		minCalendar(startDate, season, rounds);
 		season.getRounds().get(season.getRounds().size() -1).setLast(Boolean.TRUE);
 		return season;
 	}
 
-	private void realisticCalendar(LocalDate startDate, Season season, List<Round> rounds) {
+	private void minCalendar(LocalDateTime startDate, Season season, List<Round> rounds) {
+		int roundNumber = 1;
+		for(Round round : rounds) {
+			for(Match match: round.getMatches()) {
+				match.setDate(startDate);
+				
+			}
+			round.setNumber(roundNumber);
+			season.addRound(round);
+			roundNumber ++;
+			startDate = startDate.plusMinutes(10);
+		}
+	}
+	
+	private void realisticCalendar(LocalDateTime startDate, Season season, List<Round> rounds) {
 		int roundNumber = 1;
 		int saturdayMatch = 2;
 		Iterator<Round> iterator = rounds.iterator();

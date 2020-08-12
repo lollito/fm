@@ -1,6 +1,6 @@
 package com.lollito.fm.repository.rest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,5 +11,5 @@ import com.lollito.fm.model.Season;
 
 @Repository
 public interface MatchRepository extends PagingAndSortingRepository<Match, Long> {
-	public List<Match> findByRoundSeasonAndDateAndFinish(Season season, LocalDate date, Boolean finish);
+	public List<Match> findByRoundSeasonAndDateBeforeAndFinish(Season season, LocalDateTime date, Boolean finish);
 }

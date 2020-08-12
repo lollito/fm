@@ -1,10 +1,13 @@
 package com.lollito.fm.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
+import com.lollito.fm.model.Stats;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.ModuleRepository;
 import com.lollito.fm.repository.rest.PlayerRepository;
@@ -56,7 +60,7 @@ public class SimulationMatchService {
 	
 	private int[] playMatch(Match match){
 //		Let's say you have an "action" every 5 minutes of the game, so 90/5 = 18 actions. To make it more realistic you can choose random number like:
-		Integer numberOfActions = RandomUtils.randomValue(10,20);
+		Integer numberOfActions = RandomUtils.randomValue(12,22);
 		logger.debug("numberOfActions {}", numberOfActions);
 		
 		Integer homeScore = 0;
@@ -66,6 +70,7 @@ public class SimulationMatchService {
 		Formation homeFormation = match.getHome().getTeam().getFormation();
 		Formation awayFormation = match.getAway().getTeam().getFormation();
 		List<EventHistory> events = new ArrayList<>();
+		Stats stats = new Stats();
 		if (coin == 0){
 			homeFormation.setHaveBall(true);
 			events.add(new EventHistory(String.format(Event.HAVE_BALL.getMessage(), match.getHome().getName()) , 0));
@@ -97,41 +102,121 @@ public class SimulationMatchService {
 		for (int actionNumber = 1; actionNumber <= numberOfActions; actionNumber++) {
 			int minute = (90 * actionNumber) / numberOfActions;
 			homePosession = homeFormation.getHaveBall() ? homePosession + 1 : homePosession;
-			//logger.info("rndm {}", rndm);
 			if(homeFormation.getHaveBall()){
-				int rndm = RandomUtils.randomValue(0, luckHome);
-				if(rndm > (luckHome/2)){
+				int luck = RandomUtils.randomValue(0, luckHome);
+				if(luck > (luckHome/2)){
 					luckHome-=RandomUtils.randomValue(0, 5);
 					if(luckHome < 0){
-						luckHome = 8;
+						luckHome = 10;
 					}
 				} else{
 					luckHome+=RandomUtils.randomValue(0, 5);
 				}
-				//logger.info("getOffenceAverage Home {}", getOffenceAverage(homePlayers.get(playerPosition)));
-				//logger.info("getDefenceAverage Away {}", getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition))));
-//				logger.info("homePlayers.get(playerPosition).size() {}", homePlayers.get(playerPosition).size());
-//				logger.info("awayPlayers.get(inversePosition.get(playerPosition)).size() {}", awayPlayers.get(inversePosition.get(playerPosition)).size());
-				if((playerService.getOffenceAverage(homePlayers.get(playerPosition)) + homePlayers.get(playerPosition).size() - playerService.getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition))) + awayPlayers.get(inversePosition.get(playerPosition)).size()) * rndm > 100){
+				logger.debug("luck home {}", luck);
+				int averageDiff = (playerService.getOffenceAverage(homePlayers.get(playerPosition)) + homePlayers.get(playerPosition).size()) - (playerService.getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition))) + awayPlayers.get(inversePosition.get(playerPosition)).size());
+				logger.debug("home average diff {}", averageDiff);
+				if((averageDiff > 0 && RandomUtils.randomPercentage(60 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(40 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
-						//logger.info("home ball -> {}", playerPosition.getvalue());
+						logger.info("home ball -> {}", playerPosition.getvalue());
 					}else {
-						homeScore++;
-						playerPosition = PlayerPosition.MIDFIELD;
-						homeFormation.setHaveBall(false);
-						awayFormation.setHaveBall(true);
-						events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), match.getHome().getName()) , minute));
-						logger.debug("home gol");
+							      
+						
+						Player scorer = RandomUtils.randomValueFromList(homePlayers.get(playerPosition));
+						
+						Integer goalKeeping = awayFormation.getGoalKeeper().getGoalkeepingAverage();
+						
+						if(scorer.getScoringAverage()  >= goalKeeping) {
+							Integer diff = scorer.getScoringAverage() - goalKeeping;
+							logger.debug("diff > {}", diff);
+							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+								homeScore++;
+								playerPosition = PlayerPosition.MIDFIELD;
+								homeFormation.setHaveBall(false);
+								awayFormation.setHaveBall(true);
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute));
+								logger.info("home gol");
+							} else {
+								events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute));
+								logger.info("home corner");
+							}
+						} else {
+							Integer diff = goalKeeping - scorer.getScoringAverage();
+							logger.debug("diff < {}", diff);
+							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+								homeFormation.setHaveBall(false);
+								awayFormation.setHaveBall(true);
+								playerPosition = inversePosition.get(playerPosition);
+								events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute));
+								logger.info("shot missed");
+							} else {
+								homeScore++;
+								playerPosition = PlayerPosition.MIDFIELD;
+								homeFormation.setHaveBall(false);
+								awayFormation.setHaveBall(true);
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute));
+								logger.info("home gol");
+							}
+						}
+						
 					}
 				}else{
-					logger.debug("home lost ball");
-					homeFormation.setHaveBall(false);
-					awayFormation.setHaveBall(true);
+					if((averageDiff > 0 && RandomUtils.randomPercentage(40)) || averageDiff <= 0 && RandomUtils.randomPercentage(20)) {
+						Player badPlayer = RandomUtils.randomValueFromList(awayPlayers.get(playerPosition));
+						events.add(new EventHistory(String.format(Event.COMMITS_FAUL.getMessage(), badPlayer.getName()) , minute));
+						if(RandomUtils.randomPercentage(100 - (badPlayer.getDefending() / 4))) {
+							events.add(new EventHistory(String.format(Event.YELLOW_CARD.getMessage(), badPlayer.getName()) , minute));
+						}
+						logger.info("away commits faul {}" , playerPosition);
+						if(playerPosition.getvalue() == PlayerPosition.values().length -1 ) {
+							Player scorer = homePlayers.get(playerPosition).stream().max(Comparator.comparing(Player::getPiecesAverage)).get();
+							
+							Integer goalKeeping = awayFormation.getGoalKeeper().getGoalkeepingAverage();
+							
+							if(scorer.getPiecesAverage()  >= goalKeeping) {
+								Integer diff = scorer.getScoringAverage() - goalKeeping;
+								logger.debug("diff > {}", diff);
+								if(RandomUtils.randomPercentage(40 + (diff / 2))) {
+									homeScore++;
+									playerPosition = PlayerPosition.MIDFIELD;
+									homeFormation.setHaveBall(false);
+									awayFormation.setHaveBall(true);
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute));
+									logger.info("home gol free kick");
+								} else {
+									events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute));
+									logger.info("home corner");
+								}
+							} else {
+								Integer diff = goalKeeping - scorer.getScoringAverage();
+								logger.debug("diff < {}", diff);
+								if(RandomUtils.randomPercentage(70 + (diff / 2))) {
+									homeFormation.setHaveBall(false);
+									awayFormation.setHaveBall(true);
+									playerPosition = inversePosition.get(playerPosition);
+									events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute));
+									logger.info("shot missed");
+								} else {
+									homeScore++;
+									playerPosition = PlayerPosition.MIDFIELD;
+									homeFormation.setHaveBall(false);
+									awayFormation.setHaveBall(true);
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute));
+									logger.info("home gol free kick");
+								}
+							}
+						}
+					} else {
+						logger.info("home lost ball {}" , playerPosition);
+						playerPosition = inversePosition.get(playerPosition);
+						homeFormation.setHaveBall(false);
+						awayFormation.setHaveBall(true);
+					}
+					
 				}
 			} else {
-				int rndm = RandomUtils.randomValue(0, luckAway);
-				if(rndm > (luckAway/2)){
+				int luck = RandomUtils.randomValue(0, luckAway);
+				if(luck > (luckAway/2)){
 					luckAway-=RandomUtils.randomValue(0, 5);
 					if(luckAway < 0){
 						luckAway = 8;
@@ -139,22 +224,104 @@ public class SimulationMatchService {
 				} else{
 					luckAway+=RandomUtils.randomValue(0, 5);
 				}
-				if((playerService.getOffenceAverage(awayPlayers.get(playerPosition)) + awayPlayers.get(playerPosition).size() - playerService.getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))) + homePlayers.get(inversePosition.get(playerPosition)).size()) * rndm > 100){
+				logger.debug("luck away {}", luck);
+				int averageDiff = (playerService.getOffenceAverage(awayPlayers.get(playerPosition)) + awayPlayers.get(playerPosition).size()) - (playerService.getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))) + homePlayers.get(inversePosition.get(playerPosition)).size());
+				logger.debug("away averageDiff {}", averageDiff);
+				if((averageDiff > 0 && RandomUtils.randomPercentage(60 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(40 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
-						logger.debug("away ball -> {}", playerPosition.getvalue());
+						logger.info("away ball -> {}", playerPosition.getvalue());
 					}else {
-						awayScore++;
-						playerPosition = PlayerPosition.MIDFIELD;
-						homeFormation.setHaveBall(true);
-						awayFormation.setHaveBall(false);
-						events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), match.getAway().getName()) , minute));
-						logger.debug("away gol");
+						Player scorer = RandomUtils.randomValueFromList(awayPlayers.get(playerPosition));
+						
+						Integer goalKeeping = homeFormation.getGoalKeeper().getGoalkeepingAverage();
+						
+						if(scorer.getScoringAverage()  >= goalKeeping) {
+							Integer diff = scorer.getScoringAverage() - goalKeeping;
+							logger.debug("diff > {}", diff);
+							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+								awayScore++;
+								playerPosition = PlayerPosition.MIDFIELD;
+								homeFormation.setHaveBall(true);
+								awayFormation.setHaveBall(false);
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute));
+								logger.info("away gol");
+							} else {
+								events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute));
+								logger.info("home corner");
+							}
+						} else {
+							Integer diff = goalKeeping - scorer.getScoringAverage();
+							logger.debug("diff < {}", diff);
+							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+								homeFormation.setHaveBall(true);
+								awayFormation.setHaveBall(false);
+								playerPosition = inversePosition.get(playerPosition);
+								events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute));
+								logger.info("shot missed");
+							} else {
+								awayScore++;
+								playerPosition = PlayerPosition.MIDFIELD;
+								homeFormation.setHaveBall(true);
+								awayFormation.setHaveBall(false);
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute));
+								logger.info("away gol");
+							}
+						}
+						
 					}
 				}else{
-					logger.debug("away lost ball");
-					homeFormation.setHaveBall(true);
-					awayFormation.setHaveBall(false);
+					if((averageDiff > 0 && RandomUtils.randomPercentage(40)) || averageDiff <= 0 && RandomUtils.randomPercentage(20)) {
+						Player badPlayer = RandomUtils.randomValueFromList(homePlayers.get(playerPosition));
+						events.add(new EventHistory(String.format(Event.COMMITS_FAUL.getMessage(), badPlayer.getName()) , minute));
+						if(RandomUtils.randomPercentage(100 - (badPlayer.getDefending() / 4))) {
+							events.add(new EventHistory(String.format(Event.YELLOW_CARD.getMessage(), badPlayer.getName()) , minute));
+						}
+						logger.info("home commits faul {}" , playerPosition);
+						if(playerPosition.getvalue() == PlayerPosition.values().length -1 ) {
+							Player scorer = awayPlayers.get(playerPosition).stream().max(Comparator.comparing(Player::getPiecesAverage)).get();
+							
+							Integer goalKeeping = homeFormation.getGoalKeeper().getGoalkeepingAverage();
+							
+							if(scorer.getPiecesAverage()  >= goalKeeping) {
+								Integer diff = scorer.getScoringAverage() - goalKeeping;
+								logger.debug("diff > {}", diff);
+								if(RandomUtils.randomPercentage(40 + (diff / 2))) {
+									homeScore++;
+									playerPosition = PlayerPosition.MIDFIELD;
+									homeFormation.setHaveBall(false);
+									awayFormation.setHaveBall(true);
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute));
+									logger.info("home gol free kick");
+								} else {
+									events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute));
+									logger.info("home corner");
+								}
+							} else {
+								Integer diff = goalKeeping - scorer.getScoringAverage();
+								logger.debug("diff < {}", diff);
+								if(RandomUtils.randomPercentage(70 + (diff / 2))) {
+									homeFormation.setHaveBall(false);
+									awayFormation.setHaveBall(true);
+									playerPosition = inversePosition.get(playerPosition);
+									events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute));
+									logger.info("shot missed");
+								} else {
+									homeScore++;
+									playerPosition = PlayerPosition.MIDFIELD;
+									homeFormation.setHaveBall(true);
+									awayFormation.setHaveBall(false);
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute));
+									logger.info("home gol free kick");
+								}
+							}
+						}
+					} else {
+						logger.info("away lost ball {}" , playerPosition);
+						playerPosition = inversePosition.get(playerPosition);
+						homeFormation.setHaveBall(true);
+						awayFormation.setHaveBall(false);
+					}
 				}
 			}
 			for(Player player : homeFormation.getPlayers()) {
@@ -166,10 +333,16 @@ public class SimulationMatchService {
 	        	player.decrementCondition(d);
 	        }
 		}
+		List<Player> players = Stream.concat(homeFormation.getPlayers().stream(), awayFormation.getPlayers().stream())
+                .collect(Collectors.toList());
 		
+		playerService.saveAll(players);
 		int homePosessionPerc = (homePosession * 100) / numberOfActions;
+		stats.setHomePossession(homePosessionPerc);
+		stats.setAwayPossession(100 - homePosessionPerc);
 		
 		logger.info("homePosessionPerc {}", homePosessionPerc);
+		
 		
 		match.addEvents(events);
 		match.setHomeScore(homeScore);
@@ -180,4 +353,5 @@ public class SimulationMatchService {
 		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};
 	}
+	
 }

@@ -1,6 +1,6 @@
 package com.lollito.fm.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,6 +27,7 @@ public class GameService {
 	@Autowired private MatchRepository matchRepository;
 	@Autowired private SeasonService seasonService;
 	@Autowired private ClubService clubService;
+	@Autowired private LeagueService leagueService;
 	@Autowired private SimulationMatchService simulationMatchService;
 	@Autowired private CountryService countryService;
 	@Autowired private PlayerService playerService;
@@ -35,7 +36,7 @@ public class GameService {
 		Game game = new Game();
 		game.setName(gameName);
 //		LocalDate gameStartDate = LocalDate.of(2020, Month.AUGUST, 21);
-		LocalDate gameStartDate = LocalDate.now();
+		LocalDateTime gameStartDate = LocalDateTime.now();
 		for(Country country : countryService.findByCreateLeague(true)){
 			League league = new League();
 			league.setName(gameName + "_" + country.getName());
@@ -52,42 +53,41 @@ public class GameService {
 		return game;
 	}
 	
-	public GameResponse next(){
+	public GameResponse next() {
+		leagueService.findAll().forEach(league -> next(league));
+		return  new GameResponse();
+	}
+	public GameResponse next(League league){
 		GameResponse gameResponse = new GameResponse();
-//		Game game = sessionBean.getGame();
-		//FIXME
-		Game game = new Game();
-		List<Match> matches = matchRepository.findByRoundSeasonAndDateAndFinish(game.getLeagues().get(0).getCurrentSeason(), game.getCurrentDate().plusDays(1), Boolean.FALSE);
+		List<Match> matches = matchRepository.findByRoundSeasonAndDateBeforeAndFinish(league.getCurrentSeason(), LocalDateTime.now(), Boolean.FALSE);
 		if(matches.isEmpty()){
-			incrementPlayersCondition(game);
-			updatePlayerSkills(game);
+			incrementPlayersCondition(league);
+			updatePlayerSkills(league);
 		} else {
 			simulationMatchService.simulate(matches);
 			Match match =  matches.get(matches.size() -1);
 			if(match.getLast()) {
-				game.getLeagues().get(0).getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
+				league.getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
 				if(match.getRound().getLast()){
-					game.getLeagues().get(0).addSeasonHistory(game.getLeagues().get(0).getCurrentSeason());
-					game.getLeagues().get(0).setCurrentSeason(seasonService.create(game.getLeagues().get(0), game.getCurrentDate().plusDays(2)));
+					league.addSeasonHistory(league.getCurrentSeason());
+					league.setCurrentSeason(seasonService.create(league, LocalDateTime.now().plusMinutes(10)));
 				}
 			} 
 		}
-		game.addDay();
-		gameResponse.setCurrentDate(game.getCurrentDate());
 		gameResponse.setDisputatedMatch(matches);
 		
-		game = gameRepository.save(game);
+		leagueService.save(league);
 		return gameResponse;
 	}
 
-	private void updatePlayerSkills(Game game) {
-		for(Club club : game.getLeagues().get(0).getClubs()) {
+	private void updatePlayerSkills(League league) {
+		for(Club club : league.getClubs()) {
 			playerService.updateSkills(club.getTeam().getPlayers());
 		}
 	}
 	
-	private void incrementPlayersCondition(Game game) {
-		for(Club club : game.getLeagues().get(0).getClubs()) {
+	private void incrementPlayersCondition(League league) {
+		for(Club club : league.getClubs()) {
 			for(Player player : club.getTeam().getPlayers()) {
 				double increment = -((10 * player.getStamina())/99) + (1000/99);
 	        	player.incrementCondition(increment);

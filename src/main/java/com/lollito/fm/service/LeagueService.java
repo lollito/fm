@@ -25,6 +25,10 @@ public class LeagueService {
 	public List<League> findAll() {
 		return leagueRepository.findAll();
 	}
+
+	public League save(League league) {
+		return leagueRepository.save(league);
+	}
 	
 	
 }
