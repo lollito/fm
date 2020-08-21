@@ -73,7 +73,7 @@ public class Match implements Serializable{
 	@OrderBy("minute")
     private List<EventHistory> events = new ArrayList<>();
     
-	@ManyToOne( fetch = FetchType.LAZY  )
+	@ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
     @JoinColumn( name = "match_id" )
     private Stats stats;
 	

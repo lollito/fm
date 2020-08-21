@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -24,6 +25,7 @@ import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lollito.fm.model.rest.RegistrationRequest;
+import com.lollito.fm.utils.Level;
 
 @Entity
 @Table(name="user")
@@ -63,6 +65,8 @@ public class User implements Serializable {
 	
 	@ManyToMany
 	private Set<Role> roles = new HashSet<>();
+	
+	private double experience = 100; 
 	 
 	public User() {
 		
@@ -173,6 +177,20 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	
+	public double getExperience() {
+		return experience;
+	}
+
+	public void setExperience(double experience) {
+		this.experience = experience;
+	}
+
+	@Transient
+	private int getLevel() {
+		return Level.level(experience);
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

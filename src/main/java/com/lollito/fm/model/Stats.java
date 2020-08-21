@@ -27,17 +27,17 @@ public class Stats implements Serializable{
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	
-	private Integer homeShots;
-	private Integer homeOnTarget;
-	private Integer homeFouls;
-	private Integer homeYellowCards;
-	private Integer homePossession;
+	private Integer homeShots = 0;
+	private Integer homeOnTarget = 0;
+	private Integer homeFouls = 0;
+	private Integer homeYellowCards = 0;
+	private Integer homePossession = 0;
 	
-	private Integer awayShots;
-	private Integer awayOnTarget;
-	private Integer awayFouls;
-	private Integer awayYellowCards;
-	private Integer awayPossession;
+	private Integer awayShots = 0;
+	private Integer awayOnTarget = 0;
+	private Integer awayFouls = 0;
+	private Integer awayYellowCards = 0;
+	private Integer awayPossession = 0;
 	
 	
 	public Stats() {
@@ -61,6 +61,10 @@ public class Stats implements Serializable{
 		this.homeShots = shots;
 	}
 
+	public void addHomeShot() {
+		this.homeShots += 1;
+	}
+	
 	public Integer getHomeOnTarget() {
 		return homeOnTarget;
 	}
@@ -69,6 +73,10 @@ public class Stats implements Serializable{
 		this.homeOnTarget = onTarget;
 	}
 
+	public void addHomeOnTarget() {
+		this.homeOnTarget += 1;
+	}
+	
 	public Integer getHomeFouls() {
 		return homeFouls;
 	}
@@ -77,6 +85,10 @@ public class Stats implements Serializable{
 		this.homeFouls = fouls;
 	}
 
+	public void addHomeFoul() {
+		this.homeFouls += 1;
+	}
+	
 	public Integer getHomeYellowCards() {
 		return homeYellowCards;
 	}
@@ -85,6 +97,10 @@ public class Stats implements Serializable{
 		this.homeYellowCards = yellowCards;
 	}
 
+	public void addHomeYellowCard() {
+		this.homeYellowCards += 1;
+	}
+	
 	public Integer getHomePossession() {
 		return homePossession;
 	}
@@ -101,6 +117,10 @@ public class Stats implements Serializable{
 		this.awayShots = awayShots;
 	}
 
+	public void addAwayShot() {
+		this.awayShots += 1;
+	}
+	
 	public Integer getAwayOnTarget() {
 		return awayOnTarget;
 	}
@@ -109,6 +129,10 @@ public class Stats implements Serializable{
 		this.awayOnTarget = awayOnTarget;
 	}
 
+	public void addAwayOnTarget() {
+		this.awayOnTarget += 1;
+	}
+	
 	public Integer getAwayFouls() {
 		return awayFouls;
 	}
@@ -117,6 +141,10 @@ public class Stats implements Serializable{
 		this.awayFouls = awayFouls;
 	}
 
+	public void addAwayFoul() {
+		this.awayFouls += 1;
+	}
+	
 	public Integer getAwayYellowCards() {
 		return awayYellowCards;
 	}
@@ -125,6 +153,10 @@ public class Stats implements Serializable{
 		this.awayYellowCards = awayYellowCards;
 	}
 
+	public void addAwayYellowCard() {
+		this.awayYellowCards += 1;
+	}
+	
 	public Integer getAwayPossession() {
 		return awayPossession;
 	}

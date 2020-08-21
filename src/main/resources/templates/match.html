@@ -45,8 +45,89 @@
 							<p class="one_event">{{minute}}' - {{event}}</p>
 						{{/each}}
 					</div>
+
+					<div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Stats</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold">{{stats.homeShots}}</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold text-center">Shots</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold float-right">{{stats.awayShots}}</h4>
+                	</div>
+                  </div>
+                  <div class="progress mb-4 bg-info">
+                    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  
+                  <div class="row">
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold">{{stats.homeOnTarget}}</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold text-center">On Target</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold float-right">{{stats.awayOnTarget}}</h4>
+                	</div>
+                  </div>
+                  <div class="progress mb-4 bg-info">
+                    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <div class="row">
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold">{{stats.homeFouls}}</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold text-center">Fouls</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold float-right">{{stats.awayFouls}}</h4>
+                	</div>
+                  </div>
+                  <div class="progress mb-4 bg-info">
+                    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <div class="row">
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold">{{stats.homeYellowCards}}</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold text-center">Yellow Cards</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold float-right">{{stats.awayYellowCards}}</h4>
+                	</div>
+                  </div>
+                  <div class="progress mb-4 bg-info">
+                    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <div class="row">
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold">{{stats.homePossession}}%</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold text-center">Possession</h4>
+                	</div>
+                	<div class="col-lg-4">
+                		<h4 class="small font-weight-bold float-right">{{stats.awayPossession}}%</h4>
+                	</div>
+                  </div>
+                  <div class="progress bg-info">
+                    <div class="progress-bar" role="progressbar" style="width: {{stats.homePossession}}%" aria-valuenow="{{stats.homePossession}}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
 				</script>
 			</div>
+			
+			
 		</div>
 		<!-- /#page-content-wrapper -->
 

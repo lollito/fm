@@ -38,6 +38,14 @@ public class Finance implements Serializable{
     @JoinColumn( name = "finance_id" )
     private List<Sponsorship> sponsorships = new ArrayList<>();
     
+	public Finance(BigDecimal balance) {
+		this.balance = balance;
+	}
+	
+	public Finance() {
+		
+	}
+
 	public Long getId() {
 		return id;
 	}

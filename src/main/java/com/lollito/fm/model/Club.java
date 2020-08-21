@@ -62,9 +62,9 @@ public class Club implements Serializable{
     @JsonIgnore
     private User user;
     
-    @ManyToOne( fetch = FetchType.LAZY  )
+    @ManyToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "finance_id" )
-    @JsonIgnore
+//    @JsonIgnore
 	private Finance finance;
     
     public Long getId() {

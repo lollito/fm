@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Country;
+import com.lollito.fm.model.Finance;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Stadium;
@@ -44,11 +46,11 @@ public class ClubService {
 	private Club createClub(String clubName, Game game) {
 		Club club = new Club();
 		club.setName(clubName != null ? clubName : nameService.generateClubName());
-		club.setLeague(game.getLeagues().get(0));
 		club.setFoundation(LocalDate.now());
 		club.setTeam(teamService.createTeam());
 		club.setLogoURL("https://picsum.photos/35?random=" + RandomUtils.randomValue(1, 2));
 		club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
+		club.setFinance(new Finance(new BigDecimal(RandomUtils.randomValue(500000, 1500000))));
 		return club;
 	}
 

@@ -115,11 +115,13 @@
 
   <div th:replace="common/scripts :: scripts"></div>
 	<script>
+		var nextMatchDate;
 		function matchRowStyle(row, index) {
 			var classes = "cursor-pointer";
 			if(localStorage.getItem("user")){
 				var clubName = JSON.parse(localStorage.getItem("user")).club.name;
 				if(row.home.name == clubName || row.away.name == clubName){
+					nextMatchDate = new Date(row.date);
 					classes += " bg-info"
 				}
 			}
@@ -152,6 +154,37 @@
 	   	    	window.location.href = '/match/' + $element.id;
 	   	    }
 	   	});
+		
+		function refresh() {
+			console.log(nextMatchDate);
+			var now = new Date(); 
+			var dif = (nextMatchDate - now); 
+            var dif = Math.round((dif/1000)/60); 
+            console.log("Minutes left = " + dif);
+		    //setTimeout(refresh, 5000);
+		}
+
+		setTimeout(refresh, 5000);
+		function moneyFormat (labelValue) {
+
+		    // Nine Zeroes for Billions
+		    return Math.abs(Number(labelValue)) >= 1.0e+9
+
+		    ? Math.abs(Number(labelValue)) / 1.0e+9 + "B"
+		    // Six Zeroes for Millions 
+		    : Math.abs(Number(labelValue)) >= 1.0e+6
+
+		    ? Math.abs(Number(labelValue)) / 1.0e+6 + "M"
+		    // Three Zeroes for Thousands
+		    : Math.abs(Number(labelValue)) >= 1.0e+3
+
+		    ? Math.abs(Number(labelValue)) / 1.0e+3 + "K"
+
+		    : Math.abs(Number(labelValue));
+
+		}
+		
+		$("#balance").html(moneyFormat(JSON.parse(localStorage.getItem("user")).club.finance.balance));
 	</script>
 </body>
 
