@@ -19,8 +19,44 @@
 
 
 			<div class="container-fluid">
-				<h1 class="mt-4">Home</h1>
-				<div class="raw">
+				<h1 class="mt-2">Home</h1>
+				<div class="row">
+					<div class="col-sm-3 pr-0">
+						<div class="card">
+						  <div class="card-body">
+						    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+						<div class="card bg-success">
+						  <div class="card-body">
+						    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+						<div class="card">
+						  <div class="card-body">
+						    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+						<div class="card">
+						  <div class="card-body">
+						    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+						<div class="card">
+						  <div class="card-body">
+						    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+					</div>
+					<div class="col-sm-9 pl-0">
+						<div class="card">
+						  <div class="card-body">
+						    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
 					<div class="col-sm-12">
 						<div class="card text-white bg-warning mb-3">
 							<div class="card-header">News</div>
@@ -183,8 +219,11 @@
 		    : Math.abs(Number(labelValue));
 
 		}
-		
-		$("#balance").html(moneyFormat(JSON.parse(localStorage.getItem("user")).club.finance.balance));
+		var user = JSON.parse(localStorage.getItem("user"));
+		$("#balance").html(moneyFormat(user.club.finance.balance));
+		$("#username").html(user.username);
+		$("#level").append(user.level);
+		$("#level").css("width", user.levelProgress + "%");
 	</script>
 </body>
 

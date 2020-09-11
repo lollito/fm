@@ -24,11 +24,12 @@ public class FormationService {
 	@Autowired private ModuleService moduleService;
 	@Autowired private PlayerService playerService;
 	@Autowired private ClubService clubService;
+	@Autowired private UserService userService;
 	@Autowired private MentalityService mentalityService;
 	@Autowired private FormationRepository formationRepository;
 	
 	public Formation createPlayerFormation(FormationRequest formationRequest) {
-		Team team = clubService.load().getTeam();
+		Team team = userService.getLoggedUser().getClub().getTeam();
 		Formation formation = team.getFormation();
 		if(formation == null) {
 			formation = new Formation();
@@ -49,7 +50,7 @@ public class FormationService {
 	}
 	
 	public Formation createPlayerFormation() {
-		Team team = clubService.load().getTeam();
+		Team team = userService.getLoggedUser().getClub().getTeam();
 		Formation formation = createFormation(team.getPlayers(), team.getFormation());
 		team.setFormation(formation);
         return formationRepository.save(formation);

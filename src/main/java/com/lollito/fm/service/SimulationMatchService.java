@@ -36,6 +36,7 @@ public class SimulationMatchService {
 	@Autowired MatchRepository matchRepository;
 	@Autowired ModuleRepository moduleRepository;
 	@Autowired RankingService rankingService;
+	@Autowired StadiumService stadiumService;
 	@Autowired PlayerRepository playerRepository;
 	
 	public void simulate(List<Match> matches){
@@ -43,7 +44,7 @@ public class SimulationMatchService {
 	}
 	
 	public void simulate(Match match){
-		Integer stadiumCapacity = match.getHome().getStadium().getCapacity();
+		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		//if(match.getHome().getTeam().getFormation() == null) {
 			match.getHome().getTeam().setFormation(formationService.createFormation(match.getHome().getTeam().getPlayers(), match.getHome().getTeam().getFormation()));

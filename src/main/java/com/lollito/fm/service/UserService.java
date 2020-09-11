@@ -67,10 +67,6 @@ public class UserService {
 		return userRepository.findByUsernameAndActive(username, true);
 	}
 	
-	public User find(){
-		return userRepository.findAll().iterator().next();
-	}
-
 	public Long getCount() {
 		return userRepository.count();
 	}

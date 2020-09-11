@@ -27,15 +27,23 @@ public class Stadium implements Serializable{
 	
     private String name;
     
-    private Integer capacity;
+    private Integer grandstandNord = 0;
+    private Integer grandstandSud = 0;
+    private Integer grandstandWest = 1;
+    private Integer grandstandEst = 0;
+    private Integer grandstandNordWest = 0;
+    private Integer grandstandNordEst = 0;
+    private Integer grandstandSudWest = 0;
+    private Integer grandstandSudEst = 0;
+  
+    private Integer ground = 1;
     
     public Stadium(){
     	
     }
     
-    public Stadium(String name, Integer capacity){
+    public Stadium(String name){
     	this.name = name;
-    	this.capacity = capacity;
     }
 
     public Long getId() {
@@ -54,14 +62,78 @@ public class Stadium implements Serializable{
 		this.name = name;
 	}
 	
-    public Integer getCapacity() {
-		return capacity;
+	public Integer getGrandstandNord() {
+		return grandstandNord;
 	}
 
-	public void setCapacity(Integer capacity) {
-		this.capacity = capacity;
+	public void setGrandstandNord(Integer grandstandNord) {
+		this.grandstandNord = grandstandNord;
 	}
-	
+
+	public Integer getGrandstandSud() {
+		return grandstandSud;
+	}
+
+	public void setGrandstandSud(Integer grandstandSud) {
+		this.grandstandSud = grandstandSud;
+	}
+
+	public Integer getGrandstandWest() {
+		return grandstandWest;
+	}
+
+	public void setGrandstandWest(Integer grandstandWest) {
+		this.grandstandWest = grandstandWest;
+	}
+
+	public Integer getGrandstandEst() {
+		return grandstandEst;
+	}
+
+	public void setGrandstandEst(Integer grandstandEst) {
+		this.grandstandEst = grandstandEst;
+	}
+
+	public Integer getGrandstandNordWest() {
+		return grandstandNordWest;
+	}
+
+	public void setGrandstandNordWest(Integer grandstandNordWest) {
+		this.grandstandNordWest = grandstandNordWest;
+	}
+
+	public Integer getGrandstandNordEst() {
+		return grandstandNordEst;
+	}
+
+	public void setGrandstandNordEst(Integer grandstandNordEst) {
+		this.grandstandNordEst = grandstandNordEst;
+	}
+
+	public Integer getGrandstandSudWest() {
+		return grandstandSudWest;
+	}
+
+	public void setGrandstandSudWest(Integer grandstandSudWest) {
+		this.grandstandSudWest = grandstandSudWest;
+	}
+
+	public Integer getGrandstandSudEst() {
+		return grandstandSudEst;
+	}
+
+	public void setGrandstandSudEst(Integer grandstandSudEst) {
+		this.grandstandSudEst = grandstandSudEst;
+	}
+
+	public Integer getGround() {
+		return ground;
+	}
+
+	public void setGround(Integer ground) {
+		this.ground = ground;
+	}
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(11, 121).append(id).toHashCode();

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Club;
-import com.lollito.fm.model.Country;
 import com.lollito.fm.repository.rest.CountryRepository;
 import com.lollito.fm.service.ClubService;
+import com.lollito.fm.service.UserService;
 
 @RestController
 @RequestMapping(value="/api/club")
@@ -20,11 +20,12 @@ public class ClubController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired private ClubService clubService;
+	@Autowired private UserService userService;
 	@Autowired private CountryRepository countryRepository;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
     public Club club() {
-        return clubService.load();
+        return userService.getLoggedUser().getClub();
     }
    
 	@RequestMapping(value = "/count", method = RequestMethod.GET)

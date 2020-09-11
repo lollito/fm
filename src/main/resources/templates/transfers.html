@@ -19,10 +19,9 @@
 
 
 			<div class="container-fluid">
-				<table data-toggle="table" data-url="/api/player/">
+				<table data-toggle="table" data-url="/api/player/onSale">
 				<thead>
 					<tr>
-						<th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
 						<th data-field="role">Role</th>
 						<th data-field="name">Name</th>
 						<th data-field="surname">Surname</th>
@@ -48,34 +47,10 @@
 
   <div th:replace="common/scripts :: scripts"></div>
   <script type="text/javascript">
-  
   	function roundFormatter(value, row, index) {
 		return Math.round(value);
 	}
-  	
-  	function operateFormatter(value, row, index) {
-   	    return [
-   	      '<a class="on-sale" href="javascript:void(0)" title="On Sale">',
-   	      '<i class="fa fa-exchange-alt" style="color:#8c2457"></i>',
-   	      '</a>'
-   	    ].join('')
-   	  }
-
-   	  window.operateEvents = {
-   	    'click .on-sale': function (e, value, row, index) {
-   	    	$.ajax({
-   	    	    url: '/api/player/' + row.id + '/onSale',
-   	    	    type: 'POST',
-   	    	    success: function(result) {
-   	    	    	toastr.success('Player on Sale', 'Ok!' )
-   	    	    },
-   	    	    error : function(result){
-   	    	    	console.log("error");
-   	    	    	toastr.error('Error', 'Error!' )
-   	    	    }
-   	    	});
-   	    }
-   	  }
+  
   </script>
 </body>
 

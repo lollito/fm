@@ -65,6 +65,11 @@ public class Stats implements Serializable{
 		this.homeShots += 1;
 	}
 	
+	@Transient
+	public Integer getHomeShotsPerc() {
+		return homeShots + awayShots == 0 ? 50 : homeShots * 100 / (homeShots + awayShots);
+	}
+	
 	public Integer getHomeOnTarget() {
 		return homeOnTarget;
 	}
@@ -75,6 +80,11 @@ public class Stats implements Serializable{
 
 	public void addHomeOnTarget() {
 		this.homeOnTarget += 1;
+	}
+	
+	@Transient
+	public Integer getHomeOnTargetPerc() {
+		return homeOnTarget + awayOnTarget == 0 ? 50 : homeOnTarget * 100 / (homeOnTarget + awayOnTarget);
 	}
 	
 	public Integer getHomeFouls() {
@@ -89,6 +99,11 @@ public class Stats implements Serializable{
 		this.homeFouls += 1;
 	}
 	
+	@Transient
+	public Integer getHomeFoulsPerc() {
+		return homeFouls + awayFouls == 0 ? 50 : homeFouls * 100 / (homeFouls + awayFouls);
+	}
+	
 	public Integer getHomeYellowCards() {
 		return homeYellowCards;
 	}
@@ -99,6 +114,11 @@ public class Stats implements Serializable{
 
 	public void addHomeYellowCard() {
 		this.homeYellowCards += 1;
+	}
+	
+	@Transient
+	public Integer getHomeYellowCardsPerc() {
+		return homeYellowCards + awayYellowCards == 0 ? 50 : homeYellowCards * 100 / (homeYellowCards + awayYellowCards);
 	}
 	
 	public Integer getHomePossession() {

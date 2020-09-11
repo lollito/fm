@@ -13,4 +13,6 @@ import com.lollito.fm.model.rest.PlayerCondition;
 public interface PlayerRepository extends PagingAndSortingRepository<Player, Long> {
 
 	public List<PlayerCondition> findAllBy(Pageable pageable);
+	
+	public List<Player> findByOnSale(Boolean onSale);
 }

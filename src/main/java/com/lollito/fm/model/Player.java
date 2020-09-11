@@ -99,6 +99,8 @@ public class Player implements Serializable{
     private Team team;
 	
 	private BigDecimal salary;
+
+	private Boolean onSale = Boolean.FALSE;
 	
 	public Player() {
 		
@@ -254,6 +256,14 @@ public class Player implements Serializable{
 
 	public void setSalary(BigDecimal salary) {
 		this.salary = salary;
+	}
+
+	public Boolean getOnSale() {
+		return onSale;
+	}
+
+	public void setOnSale(Boolean onSale) {
+		this.onSale = onSale;
 	}
 
 	@Transient

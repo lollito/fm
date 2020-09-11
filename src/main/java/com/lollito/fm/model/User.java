@@ -66,7 +66,7 @@ public class User implements Serializable {
 	@ManyToMany
 	private Set<Role> roles = new HashSet<>();
 	
-	private double experience = 100; 
+	private double experience = 0; 
 	 
 	public User() {
 		
@@ -187,8 +187,18 @@ public class User implements Serializable {
 	}
 
 	@Transient
-	private int getLevel() {
+	public Integer getLevel() {
 		return Level.level(experience);
+	}
+	
+	@Transient
+	public Double getLevelToExp() {
+		return Level.levelToExp(Level.level(experience));
+	}
+	
+	@Transient
+	public Double getLevelProgress() {
+		return Level.getLevelProgress(experience);
 	}
 	
 	@Override

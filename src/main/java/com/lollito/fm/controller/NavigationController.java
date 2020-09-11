@@ -2,7 +2,6 @@ package com.lollito.fm.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class NavigationController {
@@ -55,6 +54,16 @@ public class NavigationController {
 	@GetMapping(path = "/leagues")
 	public String leagues() {
 		return "leagues";
+	}
+	
+	@GetMapping(path = "/transfers")
+	public String transfers() {
+		return "transfers";
+	}
+	
+	@GetMapping(path = "/stadium")
+	public String stadium() {
+		return "stadium";
 	}
 	
 	@GetMapping(path = "/admin")

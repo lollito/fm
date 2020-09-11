@@ -187,4 +187,18 @@ public class PlayerService {
 	public void saveAll(List<Player> players) {
 		playerRepository.saveAll(players);
 	}
+	
+	public Player save(Player player) {
+		return playerRepository.save(player);
+	}
+	
+	public List<Player> findByOnSale(Boolean onSale){
+		return playerRepository.findByOnSale(onSale);
+	}
+
+	public Player onSale(Long id) {
+		Player player = findOne(id);
+		player.setOnSale(Boolean.TRUE);
+		return save(player);
+	}
 }

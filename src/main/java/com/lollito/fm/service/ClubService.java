@@ -39,17 +39,13 @@ public class ClubService {
 		return clubs;
 	}
 
-	public Club load(){
-		return userService.find().getClub();
-	}
-	
 	private Club createClub(String clubName, Game game) {
 		Club club = new Club();
 		club.setName(clubName != null ? clubName : nameService.generateClubName());
 		club.setFoundation(LocalDate.now());
 		club.setTeam(teamService.createTeam());
 		club.setLogoURL("https://picsum.photos/35?random=" + RandomUtils.randomValue(1, 2));
-		club.setStadium(new Stadium(club.getName() + " Stadium", RandomUtils.randomValue(15000, 40000)));
+		club.setStadium(new Stadium(club.getName() + " Stadium"));
 		club.setFinance(new Finance(new BigDecimal(RandomUtils.randomValue(500000, 1500000))));
 		return club;
 	}
