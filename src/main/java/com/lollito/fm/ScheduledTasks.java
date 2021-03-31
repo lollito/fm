@@ -15,9 +15,9 @@ public class ScheduledTasks {
 	
 	@Autowired private GameService gameService;
 	
-    @Scheduled(cron = "0 0/1 * * * ?")
-    public void reportCurrentTime() {
-    	logger.info("OOOEEEE");
-    	gameService.next();
-    }
+//    @Scheduled(cron = "0 0/1 * * * ?")
+//    public void reportCurrentTime() {
+//    	logger.info("OOOEEEE");
+//    	gameService.next();
+//    }
 }
