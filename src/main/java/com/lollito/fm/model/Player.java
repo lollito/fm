@@ -90,6 +90,8 @@ public class Player implements Serializable{
 	@Column(name = "cndtion")
 	private Double condition = 100.0;
 	
+	private Double moral = 100.0;
+	
 	@Enumerated(EnumType.ORDINAL)
 	private PlayerRole role;
 	
@@ -101,6 +103,9 @@ public class Player implements Serializable{
 	private BigDecimal salary;
 
 	private Boolean onSale = Boolean.FALSE;
+	
+	@Enumerated(EnumType.ORDINAL)
+	private Foot preferredFoot;
 	
 	public Player() {
 		
@@ -234,6 +239,33 @@ public class Player implements Serializable{
 		}
 	}
 	
+	
+	public Double getMoral() {
+		return moral;
+	}
+
+	public void setMoral(Double moral) {
+		this.moral = moral;
+	}
+
+	@Transient
+	public void decrementMoral(Double decrement) {
+		if(this.moral - decrement < 0){
+			this.moral = 0.0;
+		} else {
+			this.moral -= decrement;
+		}
+	}
+	
+	@Transient
+	public void incrementMoral(Double increment) {
+		if(this.moral + increment > 100){
+			this.moral = 100.0;
+		} else {
+			this.moral += increment;
+		}
+	}
+	
 	public PlayerRole getRole() {
 		return role;
 	}
@@ -294,6 +326,11 @@ public class Player implements Serializable{
 				this.defending.intValue() +
 				this.setPieces.intValue() +
 				this.condition.intValue()) / 9;
+	}
+	
+	@Transient
+	public Integer getStars(){
+		return getAverage() * 5 / 100;
 	}
 	
 	@Transient

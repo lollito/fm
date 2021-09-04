@@ -81,7 +81,7 @@ function createConditionChart(labels, data){
 	});
 }
 
-$.get("/player/condition", function(data) {
+$.get("/api/player/condition", function(data) {
 	var allPlayerNames = data.map(function (player) {
 		  return player.surname;  
 		});

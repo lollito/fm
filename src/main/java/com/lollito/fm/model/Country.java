@@ -31,6 +31,8 @@ public class Country implements Serializable{
     @Type(type = "yes_no")
 	private Boolean createLeague = Boolean.FALSE;
     
+    private String flagUrl;
+    
     public Country() {
     	
 	}
@@ -39,6 +41,12 @@ public class Country implements Serializable{
 		this.name = name;
 		this.createLeague = createLeague;
 	}
+    
+    public Country(String name, Boolean createLeague, String flagUrl) {
+    	this.name = name;
+    	this.createLeague = createLeague;
+    	this.flagUrl = flagUrl;
+    }
 
 	public Long getId() {
 		return id;
@@ -62,6 +70,14 @@ public class Country implements Serializable{
 
 	public void setCreateLeague(Boolean createLeague) {
 		this.createLeague = createLeague;
+	}
+
+	public String getFlagUrl() {
+		return flagUrl;
+	}
+
+	public void setFlagUrl(String flagUrl) {
+		this.flagUrl = flagUrl;
 	}
 
 	@Override

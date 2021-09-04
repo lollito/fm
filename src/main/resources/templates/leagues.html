@@ -25,7 +25,7 @@
 					<thead>
 						<tr>
 							<th data-field="name">Name</th>
-							<th data-field="country.name">Country</th>
+							<th data-field="country" data-formatter="countryFormatter">Country</th>
 						</tr>
 					</thead>
 				</table>
@@ -38,6 +38,11 @@
 
   <div th:replace="common/scripts :: scripts"></div>
   
+  <script>
+  	function countryFormatter(value) {
+   	    return '<img src="' + value.flagUrl  + '"> ' + value.name;
+   	  }
+  </script>
 </body>
 
 </html>

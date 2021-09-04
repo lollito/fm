@@ -1,6 +1,7 @@
 package com.lollito.fm.service;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,16 @@ public class CountryService {
 			String[] tokens = lane.split(",");
 			String name = tokens[0];
 			Boolean createLeague = Boolean.valueOf(tokens[1]);
-			countryRepository.save(new Country(name, createLeague));
+			Locale[] all = Locale.getAvailableLocales();
+			String flagUrl = "";
+		    for (Locale locale : all) {
+		        String displayCountry = locale.getDisplayCountry(Locale.ENGLISH);
+		        if(name.equalsIgnoreCase(displayCountry)) {
+		        	flagUrl = "https://www.countryflags.io/" + locale.getLanguage() + "/flat/32.png";
+		        	break;
+		        }
+		    }
+			countryRepository.save(new Country(name, createLeague, flagUrl));
 		});
 	}
 	

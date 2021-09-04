@@ -7,9 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lollito.fm.model.Country;
-
 public class RegistrationRequest implements Serializable{
 	
 	private static final long serialVersionUID = -2922813997308541538L;

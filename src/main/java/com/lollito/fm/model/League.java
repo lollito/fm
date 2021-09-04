@@ -62,6 +62,12 @@ public class League implements Serializable{
     @JsonIgnore
     private League minorLeague;
     
+    private Integer promotion;
+    
+    private Integer relegation;
+    
+    private Integer euroCup;
+    
     public Long getId() {
 		return id;
 	}
@@ -121,6 +127,30 @@ public class League implements Serializable{
 
 	public void setMinorLeague(League minorLeague) {
 		this.minorLeague = minorLeague;
+	}
+
+	public Integer getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(Integer promotion) {
+		this.promotion = promotion;
+	}
+
+	public Integer getRelegation() {
+		return relegation;
+	}
+
+	public void setRelegation(Integer relegation) {
+		this.relegation = relegation;
+	}
+
+	public Integer getEuroCup() {
+		return euroCup;
+	}
+
+	public void setEuroCup(Integer euroCup) {
+		this.euroCup = euroCup;
 	}
 
 	@Override
