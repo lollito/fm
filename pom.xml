@@ -153,7 +153,7 @@
 		<dependency>
 		    <groupId>org.webjars</groupId>
 		    <artifactId>font-awesome</artifactId>
-		    <version>5.14.0</version>
+		    <version>5.15.4</version>
 		</dependency>
 
 
