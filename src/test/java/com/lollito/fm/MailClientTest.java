@@ -1,16 +1,14 @@
 package com.lollito.fm;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import com.lollito.fm.service.MailClient;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
+@WithMockUser(username = "lollito")
 public class MailClientTest {
  
      
@@ -18,7 +16,6 @@ public class MailClientTest {
     private MailClient mailClient;
      
     @Test
-    @Ignore
     public void shouldSendMail() throws Exception {
         //given
         String recipient = "";
