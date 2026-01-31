@@ -2,12 +2,12 @@ package com.lollito.fm.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -28,7 +28,7 @@ public class Country implements Serializable{
 	
     private String name;
     
-    @Type(type = "yes_no")
+    @jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
 	private Boolean createLeague = Boolean.FALSE;
     
     private String flagUrl;
