@@ -1,0 +1,24 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Sidebar = () => {
+  return (
+    <div id="sidebar-wrapper">
+      <div className="sidebar-heading">FM </div>
+      <div className="list-group">
+        <Link to="/" className="list-group-item">
+          <i className="fas fa-fw fa-tachometer-alt"></i><span> Home</span>
+        </Link>
+        <Link to="/team" className="list-group-item">Team</Link>
+        <Link to="/formation" className="list-group-item">Formation</Link>
+        <Link to="/ranking" className="list-group-item">Ranking</Link>
+        <Link to="/schedule" className="list-group-item">Schedule</Link>
+        <Link to="/leagues" className="list-group-item">Leagues</Link>
+        <Link to="/transfers" className="list-group-item">Transfers</Link>
+        <Link to="/stadium" className="list-group-item">Stadium</Link>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
