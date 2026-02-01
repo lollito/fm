@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import Layout from '../components/Layout';
-import '../styles/formation.css';
 
 const Formation = () => {
   const [players, setPlayers] = useState([]);
@@ -69,14 +68,9 @@ const Formation = () => {
   };
 
   const saveFormation = async () => {
-    // Collect playersId from UI if needed, or use state
-    // The original project uses form serialization.
-    // Here we can build the params.
     const params = new URLSearchParams();
     params.append('moduleId', formation.moduleId);
     params.append('mentality', formation.mentality);
-    // This part is tricky with multiple playersId in URLSearchParams
-    // The backend expects multiple playersId parameters
     formation.playersId.forEach(id => params.append('playersId', id));
 
     await api.post('/formation/', params);
@@ -90,10 +84,9 @@ const Formation = () => {
   };
 
   const renderSlot = (role, top, left, label) => {
-    // Find player in this slot? Original logic was a bit different
-    // For simplicity, let's just render the slots based on the module
     return (
       <div
+        key={`${role}-${top}-${left}`}
         className="pos"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => onDrop(e, role)}
@@ -106,33 +99,27 @@ const Formation = () => {
 
   const positions = [];
   if (selectedModule) {
-    // GK
     positions.push({ role: 0, top: '90%', left: '50%', label: 'GK' });
-    // Defs
     for (let i = 0; i < selectedModule.def; i++)
       positions.push({ role: 1, top: '80%', left: (10 + (80 / (selectedModule.def + 1)) * (i + 1)) + '%', label: 'DEF' });
-    // WBs
     for (let i = 0; i < selectedModule.wb; i++)
       positions.push({ role: 2, top: '70%', left: (i % 2 === 0 ? '10%' : '90%') + '%', label: 'WB' });
-    // MFs
     for (let i = 0; i < selectedModule.mf; i++)
       positions.push({ role: 3, top: '50%', left: (10 + (80 / (selectedModule.mf + 1)) * (i + 1)) + '%', label: 'MF' });
-    // Wings
     for (let i = 0; i < selectedModule.wng; i++)
       positions.push({ role: 4, top: '40%', left: (i % 2 === 0 ? '5%' : '95%') + '%', label: 'WNG' });
-    // FWs
     for (let i = 0; i < selectedModule.fw; i++)
       positions.push({ role: 5, top: '20%', left: (10 + (80 / (selectedModule.fw + 1)) * (i + 1)) + '%', label: 'FW' });
   }
 
   return (
     <Layout>
-      <div className="row mt-4">
-        <div className="col-sm-12 col-md-5">
-          <div className="card shadow mb-4">
-            <div className="card-header py-3"><h6 className="m-0 font-weight-bold text-primary">Team Roster</h6></div>
+      <div className="row">
+        <div className="col-4">
+          <div className="card">
+            <div className="card-header">Team Roster</div>
             <div className="card-body">
-              <table className="table table-sm">
+              <table className="table">
                 <thead>
                   <tr><th>Role</th><th>Player</th><th>Avg</th></tr>
                 </thead>
@@ -153,19 +140,19 @@ const Formation = () => {
             </div>
           </div>
         </div>
-        <div className="col-sm-12 col-md-7">
-          <div className="card shadow mb-4">
-            <div className="card-header py-3"><h6 className="m-0 font-weight-bold text-primary">Formation & Tactics</h6></div>
+        <div className="col">
+          <div className="card">
+            <div className="card-header">Formation & Tactics</div>
             <div className="card-body">
-              <div className="row mb-3">
-                <div className="col-md-6">
+              <div className="row" style={{ marginBottom: '20px' }}>
+                <div className="col">
                   <label>Module</label>
                   <select className="form-control" value={formation.moduleId} onChange={handleModuleChange}>
                     <option value="">Select Module</option>
                     {modules.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                   </select>
                 </div>
-                <div className="col-md-6">
+                <div className="col">
                   <label>Mentality</label>
                   <select className="form-control" value={formation.mentality} onChange={(e) => setFormation({...formation, mentality: e.target.value})}>
                     <option value="">Select Mentality</option>
@@ -173,13 +160,13 @@ const Formation = () => {
                   </select>
                 </div>
               </div>
-              <div className="pitch" style={{ position: 'relative', height: '500px', backgroundColor: 'green' }}>
+              <div className="pitch">
                 <div className="formation-container">
-                  {positions.map((p, i) => renderSlot(p.role, p.top, p.left, p.label))}
+                  {positions.map((p) => renderSlot(p.role, p.top, p.left, p.label))}
                 </div>
               </div>
-              <div className="mt-4">
-                <button className="btn btn-info mr-2" onClick={autoSelect}>Auto Select</button>
+              <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                <button className="btn btn-outline" onClick={autoSelect}>Auto Select</button>
                 <button className="btn btn-primary" onClick={saveFormation}>Save Formation</button>
               </div>
             </div>

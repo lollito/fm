@@ -31,18 +31,18 @@ const Home = () => {
   }, []);
 
   const getRowClass = (rowUserClubName) => {
-    return user?.club?.name === rowUserClubName ? 'bg-info' : '';
+    return user?.club?.name === rowUserClubName ? 'active' : '';
   };
 
   return (
     <Layout>
       <h1 className="mt-2">Home</h1>
       <div className="row">
-        <div className="col-sm-12">
-          <div className="card text-white bg-warning mb-3">
-            <div className="card-header">News</div>
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header" style={{ backgroundColor: 'var(--warning)', color: 'black' }}>News</div>
             <div className="card-body">
-              <table className="table table-sm text-white">
+              <table className="table">
                 <thead>
                   <tr>
                     <th>Date</th>
@@ -63,11 +63,11 @@ const Home = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-sm-6">
-          <div className="card text-white bg-primary mb-3">
+        <div className="col-6">
+          <div className="card">
             <div className="card-header">Next Round</div>
             <div className="card-body">
-              <table className="table table-sm text-white">
+              <table className="table">
                 <thead>
                   <tr>
                     <th>Home</th>
@@ -87,10 +87,10 @@ const Home = () => {
               </table>
             </div>
           </div>
-          <div className="card text-white bg-primary mb-3">
+          <div className="card">
             <div className="card-header">Last Match Results</div>
             <div className="card-body">
-              <table className="table table-sm text-white">
+              <table className="table">
                 <thead>
                   <tr>
                     <th>Home</th>
@@ -111,11 +111,11 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="col-sm-6">
-          <div className="card text-white bg-primary mb-3">
+        <div className="col-6">
+          <div className="card">
             <div className="card-header">Ranking</div>
             <div className="card-body">
-              <table className="table table-sm text-white">
+              <table className="table">
                 <thead>
                   <tr>
                     <th>Club</th>
