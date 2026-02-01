@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="common/head :: head"></head>
+<head>
+    <div th:replace="common/head :: head"></div>
+    <link href="/css/formation.css" rel="stylesheet">
+</head>
 
 
 <body>
@@ -19,75 +22,73 @@
 
 
 			<div class="container-fluid">
-				<div class="row">
-	        		<div class="col-sm-12 col-md-6">
-			            <table data-toggle="table" data-url="/api/player/">
-							<thead>
-								<tr>
-<!-- 									<th data-field="id" data-formatter="selectRoleFormatter">Id</th> -->
-									<th data-field="id" data-formatter="operateFormatter">Id</th>
-									<th data-field="role">Role</th>
-									<!-- <th data-field="name">Name</th> -->
-									<th data-field="surname">Surname</th>
-									<th data-field="age">Age</th>
-									<th data-field="defenceAverage">Df. Avg</th>
-									<th data-field="offenceAverage">Off. Avg</th>
-									<th data-field="average">Avg</th>
-									<th data-field="stars">Stars</th>
-									<th data-field="condition">Condition</th>
-								</tr>
-							</thead>
-						</table>
+				<div class="row mt-4">
+				<div class="col-sm-12 col-md-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Team Roster</h6>
+                            </div>
+                            <div class="card-body">
+                                <table id="players-table" data-toggle="table" data-url="/api/player/">
+                                    <thead>
+                                        <tr>
+                                            <th data-field="id" data-formatter="selectRoleFormatter">Role</th>
+                                            <th data-field="surname" data-formatter="operateFormatter">Player</th>
+                                            <th data-field="average">Avg</th>
+                                            <th data-field="condition">Cond.</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
 					</div>
-					<div class="col-sm-12 col-md-6">
-						<form id="formation-form">
-							<div class="formation">
-								<script id="module-template" type="text/x-handlebars-template">
-									{{#each modules}}
-										<option value="{{this.id}}" >{{this.name}}</option>
-									{{/each}}
-							</script>
-								<select name="moduleId" id="module-template-placeholder" class="col-md-4"></select>
-								
-								<script id="mentality-template" type="text/x-handlebars-template">
-									{{#each mentalities}}
-										<option value="{{this}}" >{{this}}</option>
-									{{/each}}
-							</script>
-								<select name="mentality" id="mentality-template-placeholder" class="col-md-4"></select>
-								
-								<div class="pitch">
-									<div class="formation-container">
-										<div class="box1">
-											<div class="pen1">
-												<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 5px 15px">1<input type="hidden" name="playersId" /></div>
-											</div>
-										</div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 40px">2<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 120px">3<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 190px">4<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 80px 270px">5<input type="hidden" name="playersId" /></div>
-						
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 43px">6<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 180px 120px">7<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 180px 192px">8<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 215px 268px">9<input type="hidden" name="playersId" /></div>
-						
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 126px;">10<input type="hidden" name="playersId" /></div>
-										<div class="pos" ondrop="drop(event)" ondragover="allowDrop(event)" style="margin: 300px 186px;">11<input type="hidden" name="playersId" /></div>
-						
-										<div class="half"></div>
-										<div class="box2">
-											<div class="pen2"></div>
-										</div>
-									</div>
-								</div>
-								<div>
-								<button id="auto" type="button" class="btn btn-info">Auto</button>
-								<button id="save" type="button" class="btn btn-primary">Save</button>
-								</div>
-							</div>
-						</form>
+					<div class="col-sm-12 col-md-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Formation & Tactics</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="formation-form">
+                                    <div class="formation">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="font-weight-bold">Module</label>
+                                                <script id="module-template" type="text/x-handlebars-template">
+                                                    {{#each modules}}
+                                                        <option value="{{this.id}}" >{{this.name}}</option>
+                                                    {{/each}}
+                                                </script>
+                                                <select name="moduleId" id="module-template-placeholder" class="form-control"></select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="font-weight-bold">Mentality</label>
+                                                <script id="mentality-template" type="text/x-handlebars-template">
+                                                    {{#each mentalities}}
+                                                        <option value="{{this}}" >{{this}}</option>
+                                                    {{/each}}
+                                                </script>
+                                                <select name="mentality" id="mentality-template-placeholder" class="form-control"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="pitch">
+                                            <div class="formation-container">
+                                                <div class="pos gk" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                    <span class="player-name">GK</span>
+                                                    <input type="hidden" name="playersId" />
+                                                </div>
+
+                                                <div class="half"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <button id="auto" type="button" class="btn btn-info shadow-sm"><i class="fas fa-magic fa-sm text-white-50"></i> Auto Select</button>
+                                            <button id="save" type="button" class="btn btn-primary shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save Formation</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 					</div>
 				</div>
 			</div>
@@ -98,63 +99,19 @@
   <!-- /#wrapper -->
 
   <div th:replace="common/scripts :: scripts"></div>
+  <script src="/js/formation.js"></script>
   <script th:inline="javascript">
 /*<![CDATA[*/
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-}
-
-function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    if(ev.target.childElementCount < 2){
-    	ev.target.firstElementChild.value = data;
-    	var element = $("#" + data).html($("#" + data).data("name"));
-    	ev.target.appendChild(document.getElementById(data));
-    }
-    
-}
-
-/* $('table').bootstrapTable({
-    onLoadSuccess: function () {
-    	$("tr").attr("draggable", true);
-    	$("tr").attr("ondragstart", "drag(event)");
-    }
-}); */
-
-function operateFormatter(value, row, index) {
-	var name = row.name.charAt(0) + "." + row.surname;
-    return [
-        '<div id="' + row.id + '" data-name="' + row.surname + '" draggable="true" ondragstart="drag(event)" style="cursor:grab;">',
-        '<i class="fas fa-futbol"></i>',
-        '</div>'
-    ].join('');
-}
-
-function selectRoleFormatter(value, row, index) {
-    return [
-        '<select>',
-        '<option value=""></option>',
-        '<option value="">GK</option>',
-        '<option value="">TS</option>',
-        '<option value="">TD</option>',
-        '</select>'
-    ].join('');
-}
 
 $('#formation-form #save').on('click', function(ev) {
 	ev.preventDefault();
 	var data = $('#formation-form').serialize();
 	$.ajax({
 		method : "POST",
-		url : "/formation/",
+		url : "/api/formation/",
 		data: data
 	}).done(function(data) {
-		console.log(data);
+		toastr.success("Formation saved successfully!");
 	});
 });
 
@@ -162,9 +119,10 @@ $('#formation-form #auto').on('click', function(ev) {
 	ev.preventDefault();
 	$.ajax({
 		method : "GET",
-		url : "/formation/auto",
+		url : "/api/formation/auto",
 	}).done(function(data) {
-		console.log(data);
+		toastr.info("Auto-selection completed. Refreshing...");
+		setTimeout(function() { location.reload(); }, 1000);
 	});
 });
 
@@ -177,7 +135,23 @@ $(document).ready(function() {
 		};
 		var html = template(context);
 		$("#module-template-placeholder").html(html);
+
+        // Load current formation
+        $.get("/api/formation/", function(formation) {
+            if (formation) {
+                $("#module-template-placeholder").val(formation.module.id);
+                $("#mentality-template-placeholder").val(formation.mentality);
+                $.get('/api/module/', function(modules) {
+                    const module = modules.find(m => m.id == formation.module.id);
+                    if (module) {
+                        renderPitch(module);
+                        populateFormation(formation);
+                    }
+                });
+            }
+        });
 	}, "json");
+
 	$.get("/api/mentality/", function(data) {
 		var source = $("#mentality-template").html();
 		var template = Handlebars.compile(source);

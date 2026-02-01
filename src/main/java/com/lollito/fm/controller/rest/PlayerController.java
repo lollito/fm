@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Player;
@@ -44,5 +45,10 @@ public class PlayerController {
 	@PostMapping(value = "/{id}/onSale")
 	public Player onSale(@PathVariable(value="id") Long id) {
 		return playerService.onSale(id);
+	}
+
+	@PostMapping(value = "/{id}/change-role")
+	public Player changeRole(@PathVariable(value="id") Long id, @RequestParam(value="role") Integer role) {
+		return playerService.changeRole(id, role);
 	}
 }

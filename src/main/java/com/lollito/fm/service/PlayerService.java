@@ -201,4 +201,10 @@ public class PlayerService {
 		player.setOnSale(Boolean.TRUE);
 		return save(player);
 	}
+
+	public Player changeRole(Long id, Integer roleValue) {
+		Player player = findOne(id);
+		player.setRole(PlayerRole.valueOf(roleValue));
+		return save(player);
+	}
 }
