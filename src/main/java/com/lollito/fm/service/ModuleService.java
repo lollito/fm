@@ -21,9 +21,14 @@ public class ModuleService {
 	
 	public List<Module> createModules() {
 		List<Module> modules = new ArrayList<>();
-		modules.add(new Module("4-4-2", 2, 2, 2, 2, 2));
-		modules.add(new Module("4-3-3", 2, 2, 3, 2, 1));
-		modules.add(new Module("4-3-3 offensive", 2, 2, 3, 0, 3));
+		// Constructor: name, cd, wb, mf, wng, fw
+		modules.add(new Module("4-4-2", 2, 2, 4, 0, 2));
+		modules.add(new Module("4-3-3", 2, 2, 3, 0, 3));
+		modules.add(new Module("4-3-3 offensive", 2, 2, 0, 3, 3));
+		modules.add(new Module("3-5-2", 3, 0, 5, 0, 2));
+		modules.add(new Module("5-3-2", 3, 2, 3, 0, 2));
+		modules.add(new Module("5-4-1", 3, 2, 4, 0, 1));
+		modules.add(new Module("4-5-1", 2, 2, 5, 0, 1));
 		moduleRepository.saveAll(modules);
 		return modules;
 	}
