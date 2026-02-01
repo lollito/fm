@@ -1,9 +1,17 @@
 package com.lollito.fm.controller.rest;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lollito.fm.config.security.jwt.JwtUtils;
 import com.lollito.fm.model.User;
+import com.lollito.fm.model.rest.JwtResponse;
 import com.lollito.fm.model.rest.RegistrationRequest;
-import com.lollito.fm.service.SecurityService;
 import com.lollito.fm.service.UserService;
 
 @RestController
@@ -24,7 +33,9 @@ public class UserController {
 	
 	@Autowired private UserService userService;
 	
-	@Autowired private SecurityService securityService;
+	@Autowired private AuthenticationManager authenticationManager;
+
+	@Autowired private JwtUtils jwtUtils;
 	
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
     public Long count() {
@@ -34,11 +45,23 @@ public class UserController {
 	@PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RegistrationRequest request) {
 		logger.info("loginRequest {}", request);
-        User user = userService.findByUsernameAndActive(request.getUsername());
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        securityService.autoLogin(user.getUsername(), request.getPassword());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtUtils.generateJwtToken(authentication);
 
-        return ResponseEntity.ok(user);
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(item -> item.getAuthority())
+				.collect(Collectors.toList());
+
+		User user = userService.findByUsernameAndActive(request.getUsername());
+
+		return ResponseEntity.ok(new JwtResponse(jwt,
+												 user.getId(),
+												 userDetails.getUsername(),
+												 roles));
     }
 	
 	@PostMapping("/register")
@@ -46,9 +69,21 @@ public class UserController {
 
         User user = userService.save(request);
 
-        securityService.autoLogin(user.getUsername(), request.getPasswordConfirm());
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        return ResponseEntity.ok(user);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtUtils.generateJwtToken(authentication);
+
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(item -> item.getAuthority())
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok(new JwtResponse(jwt,
+												 user.getId(),
+												 userDetails.getUsername(),
+												 roles));
     }
     
     @GetMapping("/")
