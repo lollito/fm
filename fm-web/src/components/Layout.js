@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className={`d-flex ${menuToggled ? 'toggled' : ''}`} id="wrapper">
+    <div className={menuToggled ? 'toggled' : ''} id="wrapper">
       <Sidebar />
       <div id="page-content-wrapper">
         <Navbar onToggleMenu={toggleMenu} />

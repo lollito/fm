@@ -53,107 +53,103 @@ const Register = () => {
   };
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-          <div className="card card-signin my-5">
-            <div className="card-body">
-              <h5 className="card-title text-center">FM - A Football Manager Game</h5>
-              <form className="form-signup" onSubmit={handleSubmit}>
-                <div className="form-label-group">
-                  <input
-                    type="text"
-                    name="username"
-                    className="form-control"
-                    placeholder="Username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    autoFocus
-                  />
-                  <label>Username</label>
-                </div>
-                <div className="form-label-group">
-                  <input
-                    type="email"
-                    name="email"
-                    className="form-control"
-                    placeholder="Email address"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label>Email address</label>
-                </div>
-                <div className="form-label-group">
-                  <input
-                    type="email"
-                    name="emailConfirm"
-                    className="form-control"
-                    placeholder="Repeat Email address"
-                    value={formData.emailConfirm}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label>Repeat Email address</label>
-                </div>
-                <div className="form-label-group">
-                  <input
-                    type="password"
-                    name="password"
-                    className="form-control"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label>Password</label>
-                </div>
-                <div className="form-label-group">
-                  <input
-                    type="password"
-                    name="passwordConfirm"
-                    className="form-control"
-                    placeholder="Repeat Password"
-                    value={formData.passwordConfirm}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label>Repeat Password</label>
-                </div>
-                <div className="form-group">
-                  <select
-                    name="countryId"
-                    className="form-control"
-                    value={formData.countryId}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Country</option>
-                    {countries.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-label-group">
-                  <input
-                    type="text"
-                    name="clubName"
-                    className="form-control"
-                    placeholder="Club Name"
-                    value={formData.clubName}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label>Club Name</label>
-                </div>
-                <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Create Account</button>
-              </form>
-              <hr />
-              <div className="text-center">
-                <Link className="small" to="/login">Already Registered?</Link>
-              </div>
+    <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: '20px' }}>
+      <div className="card" style={{ width: '100%', maxWidth: '500px' }}>
+        <div className="card-body">
+          <h2 className="card-title text-center" style={{ textAlign: 'center', color: 'var(--accent-color)' }}>FM Register</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                className="form-control"
+                placeholder="Username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
             </div>
+            <div className="form-group">
+              <label>Email address</label>
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                placeholder="Email address"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Repeat Email address</label>
+              <input
+                type="email"
+                name="emailConfirm"
+                className="form-control"
+                placeholder="Repeat Email address"
+                value={formData.emailConfirm}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Repeat Password</label>
+              <input
+                type="password"
+                name="passwordConfirm"
+                className="form-control"
+                placeholder="Repeat Password"
+                value={formData.passwordConfirm}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Country</label>
+              <select
+                name="countryId"
+                className="form-control"
+                value={formData.countryId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Country</option>
+                {countries.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Club Name</label>
+              <input
+                type="text"
+                name="clubName"
+                className="form-control"
+                placeholder="Club Name"
+                value={formData.clubName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button className="btn btn-primary" style={{ width: '100%' }} type="submit">Create Account</button>
+          </form>
+          <hr style={{ border: '0.5px solid rgba(255,255,255,0.1)', margin: '20px 0' }} />
+          <div style={{ textAlign: 'center' }}>
+            <Link className="small" to="/login" style={{ color: 'var(--accent-color)' }}>Already Registered?</Link>
           </div>
         </div>
       </div>
