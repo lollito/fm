@@ -3,7 +3,7 @@ import api from '../services/api';
 import Layout from '../components/Layout';
 
 const PLAYER_ROLES = {
-  GK: 0,
+  GOALKEEPER: 0,
   DEFENDER: 1,
   WINGBACK: 2,
   MIDFIELDER: 3,
@@ -12,12 +12,12 @@ const PLAYER_ROLES = {
 };
 
 const ROLE_NAMES = {
-  [PLAYER_ROLES.GK]: 'GOALKEEPER',
-  [PLAYER_ROLES.DEFENDER]: 'DEFENDER',
-  [PLAYER_ROLES.WINGBACK]: 'WINGBACK',
-  [PLAYER_ROLES.MIDFIELDER]: 'MIDFIELDER',
-  [PLAYER_ROLES.WING]: 'WING',
-  [PLAYER_ROLES.FORWARD]: 'FORWARD'
+  [PLAYER_ROLES.GOALKEEPER]: 'GK',
+  [PLAYER_ROLES.DEFENDER]: 'DEF',
+  [PLAYER_ROLES.WINGBACK]: 'WB',
+  [PLAYER_ROLES.MIDFIELDER]: 'MID',
+  [PLAYER_ROLES.WING]: 'WNG',
+  [PLAYER_ROLES.FORWARD]: 'FWD'
 };
 
 const Formation = () => {
@@ -150,11 +150,37 @@ const Formation = () => {
     }
   };
 
+  const handlePositionChange = (playerId, slotIndex) => {
+    setFormation(prev => {
+        const newPlayersId = [...prev.playersId];
+
+        // Remove player from existing slot if any
+        const existingIndex = newPlayersId.indexOf(playerId);
+        if (existingIndex !== -1) {
+            newPlayersId[existingIndex] = null;
+        }
+
+        if (slotIndex !== "") {
+            const idx = parseInt(slotIndex);
+            // If another player was in that slot, they get unassigned
+            newPlayersId[idx] = playerId;
+        }
+
+        return { ...prev, playersId: newPlayersId };
+    });
+  };
+
   const getPlayerRoleName = (player) => {
-    if (!player || player.role === undefined || player.role === null) return '';
-    if (typeof player.role === 'string') return player.role;
-    if (typeof player.role === 'number') return ROLE_NAMES[player.role];
-    return player.role.name || '';
+    if (!player || !player.role) return '';
+    let roleKey = '';
+    if (typeof player.role === 'object') roleKey = player.role.name;
+    else if (typeof player.role === 'string') roleKey = player.role;
+    else if (typeof player.role === 'number') return ROLE_NAMES[player.role];
+
+    if (roleKey && PLAYER_ROLES[roleKey] !== undefined) {
+      return ROLE_NAMES[PLAYER_ROLES[roleKey]];
+    }
+    return roleKey || '';
   };
 
   const renderSlot = (role, top, left, label, index) => {
@@ -177,7 +203,7 @@ const Formation = () => {
       >
         {isOutOfRole && <div style={{ position: 'absolute', top: -10, right: -10, background: 'var(--warning)', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '12px' }}>!</div>}
         <span className="player-name">
-            {player ? `${player.surname} (${player.average})` : label}
+            {player ? `${player.surname} ${player.name ? player.name.charAt(0) + '.' : ''}` : label}
         </span>
       </div>
     );
@@ -186,7 +212,7 @@ const Formation = () => {
   const positions = [];
   if (selectedModule) {
     // GK
-    positions.push({ role: PLAYER_ROLES.GK, top: '85%', left: '50%', label: 'GK', index: 0 });
+    positions.push({ role: PLAYER_ROLES.GOALKEEPER, top: '85%', left: '50%', label: 'GK', index: 0 });
 
     // DEF
     for (let i = 0; i < (selectedModule.cd || 0); i++)
@@ -194,19 +220,19 @@ const Formation = () => {
 
     // WB
     for (let i = 0; i < (selectedModule.wb || 0); i++)
-      positions.push({ role: PLAYER_ROLES.WINGBACK, top: '60%', left: (i % 2 === 0 ? '15%' : '85%') + '%', label: 'WB', index: positions.length });
+      positions.push({ role: PLAYER_ROLES.WINGBACK, top: '60%', left: (i % 2 === 0 ? '20%' : '80%'), label: 'WB', index: positions.length });
 
     // MF
     for (let i = 0; i < (selectedModule.mf || 0); i++)
-      positions.push({ role: PLAYER_ROLES.MIDFIELDER, top: '45%', left: (20 + (60 / (selectedModule.mf + 1)) * (i + 1)) + '%', label: 'MF', index: positions.length });
+      positions.push({ role: PLAYER_ROLES.MIDFIELDER, top: '45%', left: (20 + (60 / (selectedModule.mf + 1)) * (i + 1)) + '%', label: 'MID', index: positions.length });
 
     // WNG
     for (let i = 0; i < (selectedModule.wng || 0); i++)
-      positions.push({ role: PLAYER_ROLES.WING, top: '35%', left: (i % 2 === 0 ? '10%' : '90%') + '%', label: 'WNG', index: positions.length });
+      positions.push({ role: PLAYER_ROLES.WING, top: '35%', left: (i % 2 === 0 ? '15%' : '85%'), label: 'WNG', index: positions.length });
 
     // FW
     for (let i = 0; i < (selectedModule.fw || 0); i++)
-      positions.push({ role: PLAYER_ROLES.FORWARD, top: '15%', left: (20 + (60 / (selectedModule.fw + 1)) * (i + 1)) + '%', label: 'FW', index: positions.length });
+      positions.push({ role: PLAYER_ROLES.FORWARD, top: '15%', left: (20 + (60 / (selectedModule.fw + 1)) * (i + 1)) + '%', label: 'FWD', index: positions.length });
   }
 
   return (
@@ -218,18 +244,36 @@ const Formation = () => {
             <div className="card-body">
               <table className="table">
                 <thead>
-                  <tr><th>Role</th><th>Player</th><th>Avg</th></tr>
+                  <tr><th>Role</th><th>Player</th><th>Pos</th><th>Avg</th></tr>
                 </thead>
                 <tbody>
                   {players.map(p => {
-                    const isInFormation = formation.playersId.includes(p.id);
+                    const slotIndex = formation.playersId.indexOf(p.id);
+                    const isInFormation = slotIndex !== -1;
                     return (
-                        <tr key={p.id} style={{ opacity: isInFormation ? 0.6 : 1 }}>
+                        <tr
+                          key={p.id}
+                          style={{ opacity: isInFormation ? 0.6 : 1, cursor: 'pointer' }}
+                          draggable
+                          onDragStart={(e) => onDragStart(e, p.id)}
+                        >
                           <td>{getPlayerRoleName(p)}</td>
                           <td>
-                            <div draggable onDragStart={(e) => onDragStart(e, p.id)} style={{ cursor: 'grab' }}>
-                              <i className={`fas ${isInFormation ? 'fa-check-circle text-success' : 'fa-futbol'}`}></i> {p.surname}
-                            </div>
+                            <i className={`fas ${isInFormation ? 'fa-check-circle text-success' : 'fa-futbol'}`}></i> {p.surname} {p.name ? p.name.charAt(0) + '.' : ''}
+                          </td>
+                          <td>
+                            <select
+                              className="form-control"
+                              style={{ padding: '2px 5px', height: 'auto', fontSize: '0.8rem', width: 'auto' }}
+                              value={slotIndex === -1 ? "" : slotIndex}
+                              onChange={(e) => handlePositionChange(p.id, e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <option value="">---</option>
+                              {positions.map((pos, idx) => (
+                                <option key={idx} value={idx}>{pos.label} {idx + 1}</option>
+                              ))}
+                            </select>
                           </td>
                           <td>{p.average}</td>
                         </tr>
