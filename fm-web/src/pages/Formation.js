@@ -24,7 +24,7 @@ const Formation = () => {
   const [players, setPlayers] = useState([]);
   const [modules, setModules] = useState([]);
   const [mentalities, setMentalities] = useState([]);
-  const [formation, setFormation] = useState({ moduleId: '', mentality: '', playersId: [] });
+  const [formation, setFormation] = useState({ moduleId: '', mentality: '', playersId: Array(11).fill(null) });
   const [selectedModule, setSelectedModule] = useState(null);
 
   const fetchPlayers = useCallback(async () => {
@@ -36,10 +36,16 @@ const Formation = () => {
     try {
       const res = await api.get('/formation/');
       if (res.data) {
+        const pIds = Array(11).fill(null);
+        if (res.data.players) {
+            res.data.players.forEach((p, idx) => {
+                if (p && idx < 11) pIds[idx] = p.id;
+            });
+        }
         setFormation({
           moduleId: res.data.module.id,
           mentality: res.data.mentality,
-          playersId: res.data.players.filter(p => p != null).map(p => p.id)
+          playersId: pIds
         });
         const mRes = await api.get('/module/');
         const mod = mRes.data.find(m => m.id === res.data.module.id);
@@ -72,31 +78,51 @@ const Formation = () => {
     const moduleId = e.target.value;
     const mod = modules.find(m => m.id === parseInt(moduleId));
     setSelectedModule(mod);
-    setFormation({ ...formation, moduleId });
+    setFormation({ ...formation, moduleId: parseInt(moduleId) });
   };
 
-  const onDragStart = (e, playerId) => {
+  const onDragStart = (e, playerId, sourceSlotIndex = "") => {
     e.dataTransfer.setData('playerId', playerId);
+    e.dataTransfer.setData('sourceSlotIndex', sourceSlotIndex);
   };
 
-  const onDrop = async (e, slotRole) => {
+  const onDrop = (e, slotIndex) => {
     e.preventDefault();
-    const playerId = parseInt(e.dataTransfer.getData('playerId'));
-    try {
-        await api.post(`/player/${playerId}/change-role?role=${slotRole}`);
-        setFormation(prev => {
-            if (prev.playersId.includes(playerId)) return prev;
-            return { ...prev, playersId: [...prev.playersId, playerId] };
-        });
-        fetchPlayers();
-    } catch (error) {
-        alert('Error changing role: ' + (error.response?.data?.message || error.message));
-    }
+    const draggedPlayerId = parseInt(e.dataTransfer.getData('playerId'));
+    const sourceSlotIndex = e.dataTransfer.getData('sourceSlotIndex');
+
+    setFormation(prev => {
+        const newPlayersId = [...prev.playersId];
+
+        if (sourceSlotIndex !== "") {
+            // Swapping between slots
+            const srcIdx = parseInt(sourceSlotIndex);
+            const targetPlayerId = newPlayersId[slotIndex];
+            newPlayersId[slotIndex] = draggedPlayerId;
+            newPlayersId[srcIdx] = targetPlayerId;
+        } else {
+            // From roster to slot
+            const existingIndex = newPlayersId.indexOf(draggedPlayerId);
+            if (existingIndex !== -1) {
+                newPlayersId[existingIndex] = null;
+            }
+            newPlayersId[slotIndex] = draggedPlayerId;
+        }
+        return { ...prev, playersId: newPlayersId };
+    });
   };
+
+  const unassignPlayer = (slotIndex) => {
+    setFormation(prev => {
+        const newPlayersId = [...prev.playersId];
+        newPlayersId[slotIndex] = null;
+        return { ...prev, playersId: newPlayersId };
+    });
+  }
 
   const saveFormation = async () => {
-    if (formation.playersId.length !== 11) {
-        alert('You must select exactly 11 players. Current: ' + formation.playersId.length);
+    if (formation.playersId.some(id => id === null)) {
+        alert('You must fill all 11 positions.');
         return;
     }
     const params = new URLSearchParams();
@@ -107,6 +133,8 @@ const Formation = () => {
     try {
         await api.post('/formation/', params);
         alert('Formation saved');
+        fetchFormation();
+        fetchPlayers();
     } catch (error) {
         alert('Error saving formation: ' + (error.response?.data?.message || error.message));
     }
@@ -122,53 +150,63 @@ const Formation = () => {
     }
   };
 
-  const renderSlot = (role, top, left, label, index) => {
-    const assignedPlayers = players.filter(p => {
-        const pRole = typeof p.role === 'string' ? p.role : (p.role?.name || ROLE_NAMES[p.role]);
-        return pRole === ROLE_NAMES[role] && formation.playersId.includes(p.id);
-    });
+  const getPlayerRoleName = (player) => {
+    if (!player || player.role === undefined || player.role === null) return '';
+    if (typeof player.role === 'string') return player.role;
+    if (typeof player.role === 'number') return ROLE_NAMES[player.role];
+    return player.role.name || '';
+  };
 
-    const player = assignedPlayers[index];
+  const renderSlot = (role, top, left, label, index) => {
+    const playerId = formation.playersId[index];
+    const player = players.find(p => p.id === playerId);
+
+    const pRole = getPlayerRoleName(player);
+    const isOutOfRole = player && pRole !== ROLE_NAMES[role];
 
     return (
       <div
         key={`${role}-${top}-${left}-${index}`}
-        className="pos"
+        className={`pos ${isOutOfRole ? 'out-of-role' : ''}`}
+        draggable={!!player}
+        onDragStart={(e) => player && onDragStart(e, player.id, index)}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => onDrop(e, role)}
-        style={{ position: 'absolute', top, left, transform: 'translate(-50%, -50%)' }}
+        onDrop={(e) => onDrop(e, index)}
+        onClick={() => player && unassignPlayer(index)}
+        style={{ position: 'absolute', top, left, transform: 'translate(-50%, -50%)', border: isOutOfRole ? '2px solid var(--warning)' : '2px solid white' }}
       >
-        <span className="player-name">{player ? player.surname : label}</span>
+        {isOutOfRole && <div style={{ position: 'absolute', top: -10, right: -10, background: 'var(--warning)', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '12px' }}>!</div>}
+        <span className="player-name">
+            {player ? `${player.surname} (${player.average})` : label}
+        </span>
       </div>
     );
   };
 
   const positions = [];
   if (selectedModule) {
-    let roleCount = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-
     // GK
-    positions.push({ role: PLAYER_ROLES.GK, top: '85%', left: '50%', label: 'GK', index: roleCount[PLAYER_ROLES.GK]++ });
+    positions.push({ role: PLAYER_ROLES.GK, top: '85%', left: '50%', label: 'GK', index: 0 });
 
     // DEF
     for (let i = 0; i < (selectedModule.cd || 0); i++)
-      positions.push({ role: PLAYER_ROLES.DEFENDER, top: '70%', left: (20 + (60 / (selectedModule.cd + 1)) * (i + 1)) + '%', label: 'DEF', index: roleCount[PLAYER_ROLES.DEFENDER]++ });
+      positions.push({ role: PLAYER_ROLES.DEFENDER, top: '70%', left: (20 + (60 / (selectedModule.cd + 1)) * (i + 1)) + '%', label: 'DEF', index: positions.length });
 
     // WB
     for (let i = 0; i < (selectedModule.wb || 0); i++)
-      positions.push({ role: PLAYER_ROLES.WINGBACK, top: '60%', left: (i % 2 === 0 ? '15%' : '85%') + '%', label: 'WB', index: roleCount[PLAYER_ROLES.WINGBACK]++ });
+      positions.push({ role: PLAYER_ROLES.WINGBACK, top: '60%', left: (i % 2 === 0 ? '15%' : '85%') + '%', label: 'WB', index: positions.length });
 
     // MF
     for (let i = 0; i < (selectedModule.mf || 0); i++)
-      positions.push({ role: PLAYER_ROLES.MIDFIELDER, top: '45%', left: (20 + (60 / (selectedModule.mf + 1)) * (i + 1)) + '%', label: 'MF', index: roleCount[PLAYER_ROLES.MIDFIELDER]++ });
+      positions.push({ role: PLAYER_ROLES.MIDFIELDER, top: '45%', left: (20 + (60 / (selectedModule.mf + 1)) * (i + 1)) + '%', label: 'MF', index: positions.length });
 
     // WNG
     for (let i = 0; i < (selectedModule.wng || 0); i++)
-      positions.push({ role: PLAYER_ROLES.WING, top: '35%', left: (i % 2 === 0 ? '10%' : '90%') + '%', label: 'WNG', index: roleCount[PLAYER_ROLES.WING]++ });
+      positions.push({ role: PLAYER_ROLES.WING, top: '35%', left: (i % 2 === 0 ? '10%' : '90%') + '%', label: 'WNG', index: positions.length });
 
     // FW
     for (let i = 0; i < (selectedModule.fw || 0); i++)
-      positions.push({ role: PLAYER_ROLES.FORWARD, top: '15%', left: (20 + (60 / (selectedModule.fw + 1)) * (i + 1)) + '%', label: 'FW', index: roleCount[PLAYER_ROLES.FORWARD]++ });
+      positions.push({ role: PLAYER_ROLES.FORWARD, top: '15%', left: (20 + (60 / (selectedModule.fw + 1)) * (i + 1)) + '%', label: 'FW', index: positions.length });
   }
 
   return (
@@ -187,7 +225,7 @@ const Formation = () => {
                     const isInFormation = formation.playersId.includes(p.id);
                     return (
                         <tr key={p.id} style={{ opacity: isInFormation ? 0.6 : 1 }}>
-                          <td>{p.role}</td>
+                          <td>{getPlayerRoleName(p)}</td>
                           <td>
                             <div draggable onDragStart={(e) => onDragStart(e, p.id)} style={{ cursor: 'grab' }}>
                               <i className={`fas ${isInFormation ? 'fa-check-circle text-success' : 'fa-futbol'}`}></i> {p.surname}
