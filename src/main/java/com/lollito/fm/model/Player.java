@@ -18,10 +18,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -48,6 +51,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "player")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Player implements Serializable{
 	
 	@Transient
@@ -56,6 +66,7 @@ public class Player implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	private String name;
 	private String surname;
@@ -88,8 +99,10 @@ public class Player implements Serializable{
 	private Double setPieces;
 
 	@Column(name = "cndtion")
+	@Builder.Default
 	private Double condition = 100.0;
 	
+	@Builder.Default
 	private Double moral = 100.0;
 	
 	@Enumerated(EnumType.ORDINAL)
@@ -98,127 +111,22 @@ public class Player implements Serializable{
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "team_id" )
 	@JsonIgnore
+	@ToString.Exclude
     private Team team;
 	
 	private BigDecimal salary;
 
+	@Builder.Default
 	private Boolean onSale = Boolean.FALSE;
 	
 	@Enumerated(EnumType.ORDINAL)
 	private Foot preferredFoot;
 	
-	public Player() {
-		
-	}
-	
 	public Player(String name, String surname, LocalDate birth) {
+		this();
 		this.name = name;
 		this.surname = surname;
 		this.birth = birth;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public LocalDate getBirth() {
-		return birth;
-	}
-
-	public void setBirth(LocalDate birth) {
-		this.birth = birth;
-	}
-
-	public Double getStamina() {
-		return stamina;
-	}
-
-	public void setStamina(Double stamina) {
-		this.stamina = stamina;
-	}
-
-	public Double getPlaymaking() {
-		return playmaking;
-	}
-
-	public void setPlaymaking(Double playmaking) {
-		this.playmaking = playmaking;
-	}
-
-	public Double getScoring() {
-		return scoring;
-	}
-
-	public void setScoring(Double scoring) {
-		this.scoring = scoring;
-	}
-
-	public Double getWinger() {
-		return winger;
-	}
-
-	public void setWinger(Double winger) {
-		this.winger = winger;
-	}
-
-	public Double getGoalkeeping() {
-		return goalkeeping;
-	}
-
-	public void setGoalkeeping(Double goalkeeping) {
-		this.goalkeeping = goalkeeping;
-	}
-
-	public Double getPassing() {
-		return passing;
-	}
-
-	public void setPassing(Double passing) {
-		this.passing = passing;
-	}
-
-	public Double getDefending() {
-		return defending;
-	}
-
-	public void setDefending(Double defending) {
-		this.defending = defending;
-	}
-
-	public Double getSetPieces() {
-		return setPieces;
-	}
-
-	public void setSetPieces(Double setPieces) {
-		this.setPieces = setPieces;
-	}
-
-	public Double getCondition() {
-		return condition;
-	}
-
-	public void setCondition(Double condition) {
-		this.condition = condition;
 	}
 
 	@Transient
@@ -239,15 +147,6 @@ public class Player implements Serializable{
 		}
 	}
 	
-	
-	public Double getMoral() {
-		return moral;
-	}
-
-	public void setMoral(Double moral) {
-		this.moral = moral;
-	}
-
 	@Transient
 	public void decrementMoral(Double decrement) {
 		if(this.moral - decrement < 0){
@@ -266,38 +165,6 @@ public class Player implements Serializable{
 		}
 	}
 	
-	public PlayerRole getRole() {
-		return role;
-	}
-
-	public void setRole(PlayerRole role) {
-		this.role = role;
-	}
-
-	public Team getTeam() {
-		return team;
-	}
-
-	public void setTeam(Team team) {
-		this.team = team;
-	}
-
-	public BigDecimal getSalary() {
-		return salary;
-	}
-
-	public void setSalary(BigDecimal salary) {
-		this.salary = salary;
-	}
-
-	public Boolean getOnSale() {
-		return onSale;
-	}
-
-	public void setOnSale(Boolean onSale) {
-		this.onSale = onSale;
-	}
-
 	@Transient
 	public Integer getAge(){
 		return Period.between(birth, LocalDate.now()).getYears();
@@ -364,42 +231,6 @@ public class Player implements Serializable{
 	public Integer getPiecesAverage(){
 		return ((this.setPieces == null ? 0 : this.setPieces.intValue()) +
 				(this.condition == null ? 0 : this.condition.intValue())) / 2;
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Player)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Player other = (Player) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("id", id)
-				.append("name", name)
-				.append("surname", surname)
-				.append("birth", birth)
-				.append("stamina", stamina)
-				.append("playmaking", playmaking)
-				.append("scoring", scoring)
-				.append("winger", winger)
-				.append("goalkeeping", goalkeeping)
-				.append("passing", passing)
-				.append("defending", defending)
-				.append("setPieces", setPieces)
-				.append("condition", condition)
-				.toString();
 	}
 	
 }

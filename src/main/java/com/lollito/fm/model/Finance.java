@@ -16,12 +16,24 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "finance")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Finance implements Serializable{
 	
 	@Transient
@@ -30,60 +42,21 @@ public class Finance implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
+	@Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JoinColumn( name = "finance_id" )
+	@Builder.Default
+	@ToString.Exclude
     private List<Sponsorship> sponsorships = new ArrayList<>();
     
 	public Finance(BigDecimal balance) {
-		this.balance = balance;
-	}
-	
-	public Finance() {
-		
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public BigDecimal getBalance() {
-		return balance;
-	}
-
-	public void setBalance(BigDecimal balance) {
+		this();
 		this.balance = balance;
 	}
 
-	public List<Sponsorship> getSponsorships() {
-		return sponsorships;
-	}
-
-	public void setSponsorships(List<Sponsorship> sponsorships) {
-		this.sponsorships = sponsorships;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Finance)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Finance other = (Finance) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
 }

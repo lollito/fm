@@ -16,12 +16,14 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lollito.fm.model.rest.RegistrationRequest;
@@ -29,6 +31,13 @@ import com.lollito.fm.utils.Level;
 
 @Entity
 @Table(name="user")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -36,6 +45,7 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	private String username;
@@ -51,28 +61,30 @@ public class User implements Serializable {
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "country_id" )
+	@ToString.Exclude
 	private Country country;
 	
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
+	@Builder.Default
 	private Boolean active = Boolean.FALSE;
 
 	private String activationToken;
 	
 	@OneToOne( fetch = FetchType.LAZY  )
    	@JoinColumn( name = "club_id" )
-//    @JsonIgnore
+	@ToString.Exclude
     private Club club;
 	
 	@ManyToMany
+	@Builder.Default
+	@ToString.Exclude
 	private Set<Role> roles = new HashSet<>();
 	
+	@Builder.Default
 	private double experience = 0; 
 	 
-	public User() {
-		
-	}
-	
 	public User(String username, String name, String surname, String email, String password) {
+		this();
 		this.username = username;
 		this.name = name;
 		this.surname = surname;
@@ -82,108 +94,12 @@ public class User implements Serializable {
 
 
 	public User(RegistrationRequest request) {
+		this();
 		this.username = request.getUsername();
 		this.name = request.getName();
 		this.surname = request.getSurname();
 		this.email = request.getEmail();
 		this.password = request.getPassword();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
-	public String getActivationToken() {
-		return activationToken;
-	}
-
-	public void setActivationToken(String activationToken) {
-		this.activationToken = activationToken;
-	}
-
-	public Club getClub() {
-		return club;
-	}
-
-	public void setClub(Club club) {
-		this.club = club;
-	}
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-
-	
-	public double getExperience() {
-		return experience;
-	}
-
-	public void setExperience(double experience) {
-		this.experience = experience;
 	}
 
 	@Transient
@@ -201,31 +117,4 @@ public class User implements Serializable {
 		return Level.getLevelProgress(experience);
 	}
 	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof User)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			User other = (User) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("id", id)
-				.append("username", username)
-				.append("email", email)
-				.append("country", country)
-				//.append("players", players)
-				.toString();
-	}
 }

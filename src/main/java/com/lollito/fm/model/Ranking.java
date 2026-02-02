@@ -12,14 +12,26 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="ranking")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Ranking implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -27,111 +39,41 @@ public class Ranking implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "club_id" )
+	@ToString.Exclude
 	private Club club ;
 	
+	@Builder.Default
 	private Integer played = 0;
 	
+	@Builder.Default
 	private Integer points = 0;
 	
+	@Builder.Default
 	private Integer won = 0;
 	
+	@Builder.Default
 	private Integer drawn = 0;
 	
+	@Builder.Default
 	private Integer lost = 0;
 
+	@Builder.Default
 	private Integer goalsFor = 0;
 	
+	@Builder.Default
 	private Integer goalAgainst = 0;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "season_id" )
 	@JsonIgnore
+	@ToString.Exclude
 	private Season season;
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Club getClub() {
-		return club;
-	}
-
-	public void setClub(Club club) {
-		this.club = club;
-	}
-
-	public Integer getPlayed() {
-		return played;
-	}
-
-	public void setPlayed(Integer played) {
-		this.played = played;
-	}
-
-	public Integer getPoints() {
-		return points;
-	}
-
-	public void setPoints(Integer points) {
-		this.points = points;
-	}
-
-	public Integer getWon() {
-		return won;
-	}
-
-	public void setWon(Integer won) {
-		this.won = won;
-	}
-
-	public Integer getDrawn() {
-		return drawn;
-	}
-
-	public void setDrawn(Integer drawn) {
-		this.drawn = drawn;
-	}
-
-	public Integer getLost() {
-		return lost;
-	}
-
-	public void setLost(Integer lost) {
-		this.lost = lost;
-	}
-
-	public Integer getGoalsFor() {
-		return goalsFor;
-	}
-
-	public void setGoalsFor(Integer goalsFor) {
-		this.goalsFor = goalsFor;
-	}
-
-	public Integer getGoalAgainst() {
-		return goalAgainst;
-	}
-
-	public void setGoalAgainst(Integer goalAgainst) {
-		this.goalAgainst = goalAgainst;
-	}
-
-	public Season getSeason() {
-		return season;
-	}
-
-	public void setSeason(Season season) {
-		this.season = season;
-	}
-
 	@Transient
 	public void updateStats(Integer goalsFor, Integer goalAgainst){
 		if(goalsFor > goalAgainst){
@@ -163,20 +105,4 @@ public class Ranking implements Serializable {
 		this.lost += 1;
 	}
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Ranking)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Ranking other = (Ranking) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
 }

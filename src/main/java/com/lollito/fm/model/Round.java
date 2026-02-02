@@ -16,17 +16,26 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "round")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Round implements Serializable{
 	
 	@Transient
@@ -35,96 +44,34 @@ public class Round implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	private Integer number;
 	
 	@OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnore
+	@Builder.Default
+	@ToString.Exclude
 	private List<Match> matches = new ArrayList<>();
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "season_id" )
 	@JsonIgnore
+	@ToString.Exclude
     private Season season;
 	
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
+	@Builder.Default
 	private Boolean last = Boolean.FALSE;
 	
-	public Round() {
-		
-	}
-	
 	public Round(Integer number) {
+		this();
 		this.number = number;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Integer getNumber() {
-		return number;
-	}
-	
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
-	
-	public List<Match> getMatches() {
-		return matches;
-	}
-	
-	public void setMatches(List<Match> matches) {
-		this.matches = matches;
-	}
-	
 	public void addMatch(Match match){
 		match.setRound(this);
 		this.matches.add(match);
 	}
 	
-	public Season getSeason() {
-		return season;
-	}
-
-	public void setSeason(Season season) {
-		this.season = season;
-	}
-
-	public Boolean getLast() {
-		return last;
-	}
-
-	public void setLast(Boolean last) {
-		this.last = last;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Round)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Round other = (Round) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("number", number)
-				.append("matches", matches)
-				.toString();
-	}
 }

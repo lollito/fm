@@ -21,18 +21,27 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "matchh")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Match implements Serializable{
 	
 	@Transient
@@ -41,18 +50,23 @@ public class Match implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "home_id" )
+	@ToString.Exclude
 	private Club home;	
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "away_id" )
+	@ToString.Exclude
 	private Club away;
 	
+	@Builder.Default
 	private Integer homeScore = 0;
 	
+	@Builder.Default
 	private Integer awayScore = 0;
 	
 	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
@@ -61,15 +75,19 @@ public class Match implements Serializable{
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "round_id" )
 	@JsonIgnore
+	@ToString.Exclude
 	private Round round;
 	
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
+	@Builder.Default
 	private Boolean finish = Boolean.FALSE;
 
 	@Enumerated(EnumType.STRING)
+	@Builder.Default
 	private MatchStatus status = MatchStatus.SCHEDULED;
 	
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
+	@Builder.Default
 	private Boolean last = Boolean.FALSE;
 	
 	public Integer spectators;
@@ -77,87 +95,35 @@ public class Match implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JoinColumn( name = "match_id" )
 	@OrderBy("minute")
+	@Builder.Default
+	@ToString.Exclude
     private List<EventHistory> events = new ArrayList<>();
     
 	@ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
     @JoinColumn( name = "match_id" )
+	@ToString.Exclude
     private Stats stats;
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@ToString.Exclude
 	private Formation homeFormation;
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@ToString.Exclude
 	private Formation awayFormation;
 
 	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
+	@Builder.Default
+	@ToString.Exclude
 	private List<MatchPlayerStats> playerStats = new ArrayList<>();
 	
-	public Match() {
-		
-	}
-	
 	public Match(Club home, Club away, Boolean last) {
+		this();
 		this.home = home;
 		this.away = away;
 		this.last = last;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Club getHome() {
-		return home;
-	}
-	
-	public void setHome(Club home) {
-		this.home = home;
-	}
-	
-	public Club getAway() {
-		return away;
-	}
-	
-	public void setAway(Club away) {
-		this.away = away;
-	}
-	
-	public Integer getHomeScore() {
-		return homeScore;
-	}
-	
-	public void setHomeScore(Integer homeScore) {
-		this.homeScore = homeScore;
-	}
-	
-	public Integer getAwayScore() {
-		return awayScore;
-	}
-	
-	public void setAwayScore(Integer awayScore) {
-		this.awayScore = awayScore;
-	}
-
-	public LocalDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
-	
-	public Round getRound() {
-		return round;
-	}
-
-	public void setRound(Round round) {
-		this.round = round;
-	}
-	
 	@Transient
 	public Integer getNumber() {
 		return round.getNumber();
@@ -179,47 +145,11 @@ public class Match implements Serializable{
 		return "Unknown Stadium";
 	}
 	
-	public Boolean getFinish() {
-		return finish;
-	}
-
 	public void setFinish(Boolean finish) {
 		this.finish = finish;
 		if (finish) {
 			this.status = MatchStatus.COMPLETED;
 		}
-	}
-
-	public MatchStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(MatchStatus status) {
-		this.status = status;
-	}
-
-	public Boolean getLast() {
-		return last;
-	}
-
-	public void setLast(Boolean last) {
-		this.last = last;
-	}
-	
-	public Integer getSpectators() {
-		return spectators;
-	}
-
-	public void setSpectators(Integer spectators) {
-		this.spectators = spectators;
-	}
-
-	public List<EventHistory> getEvents() {
-		return events;
-	}
-
-	public void setEvents(List<EventHistory> events) {
-		this.events = events;
 	}
 
 	public void addEvents(List<EventHistory> events) {
@@ -232,66 +162,6 @@ public class Match implements Serializable{
 	
 	public void removeEvent(EventHistory event) {
 		this.events.remove(event);
-	}
-	
-	public Stats getStats() {
-		return stats;
-	}
-
-	public void setStats(Stats stats) {
-		this.stats = stats;
-	}
-
-	public Formation getHomeFormation() {
-		return homeFormation;
-	}
-
-	public void setHomeFormation(Formation homeFormation) {
-		this.homeFormation = homeFormation;
-	}
-
-	public Formation getAwayFormation() {
-		return awayFormation;
-	}
-
-	public void setAwayFormation(Formation awayFormation) {
-		this.awayFormation = awayFormation;
-	}
-
-	public List<MatchPlayerStats> getPlayerStats() {
-		return playerStats;
-	}
-
-	public void setPlayerStats(List<MatchPlayerStats> playerStats) {
-		this.playerStats = playerStats;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Match)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Match other = (Match) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("home", home)
-				.append("away", away)
-				.append("homeScore", homeScore)
-				.append("awayScore", awayScore)
-				.append("date", date)
-				.toString();
 	}
 
 }
