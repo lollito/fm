@@ -29,3 +29,4 @@ mvnw.cmd
 
 node_modules/
 *.log
+package-lock.json
