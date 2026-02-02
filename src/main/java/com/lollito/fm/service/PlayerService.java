@@ -149,19 +149,29 @@ public class PlayerService {
 	}
 	
 	public Integer getOffenceAverage(List<Player> players){
+		if (players == null) return 0;
 		int tot = 0;
+		int count = 0;
 		for (Player player : players) {
-			tot += player.getOffenceAverage();
+			if (player != null) {
+				tot += player.getOffenceAverage();
+				count++;
+			}
 		}
-		return tot/players.size();
+		return count > 0 ? tot/count : 0;
 	}
 	
 	public Integer getDefenceAverage(List<Player> players){
+		if (players == null) return 0;
 		int tot = 0;
+		int count = 0;
 		for (Player player : players) {
-			tot += player.getDefenceAverage();
+			if (player != null) {
+				tot += player.getDefenceAverage();
+				count++;
+			}
 		}
-		return tot/players.size();
+		return count > 0 ? tot/count : 0;
 	}
 	
 	public void updateSkills(Player player) {

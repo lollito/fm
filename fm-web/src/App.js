@@ -8,6 +8,7 @@ import Team from './pages/Team';
 import Formation from './pages/Formation';
 import Ranking from './pages/Ranking';
 import Schedule from './pages/Schedule';
+import UpcomingMatches from './pages/UpcomingMatches';
 import Stadium from './pages/Stadium';
 import Leagues from './pages/Leagues';
 import Transfers from './pages/Transfers';
@@ -32,6 +33,7 @@ function App() {
           <Route path="/formation" element={<PrivateRoute><Formation /></PrivateRoute>} />
           <Route path="/ranking" element={<PrivateRoute><Ranking /></PrivateRoute>} />
           <Route path="/schedule" element={<PrivateRoute><Schedule /></PrivateRoute>} />
+          <Route path="/upcoming-matches" element={<PrivateRoute><UpcomingMatches /></PrivateRoute>} />
           <Route path="/stadium" element={<PrivateRoute><Stadium /></PrivateRoute>} />
           <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
           <Route path="/transfers" element={<PrivateRoute><Transfers /></PrivateRoute>} />

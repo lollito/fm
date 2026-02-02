@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Match;
+import com.lollito.fm.model.MatchStatus;
+import com.lollito.fm.model.Round;
 import com.lollito.fm.model.Season;
 
 @Repository
@@ -20,4 +22,9 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
 	@Query("SELECT m FROM Match m WHERE (m.home = :club OR m.away = :club) AND m.finish = true ORDER BY m.date DESC")
 	public Page<Match> findByClubAndFinishOrderByDateDesc(@Param("club") Club club, Pageable pageable);
+	public List<Match> findByStatusAndDateBefore(MatchStatus status, LocalDateTime date);
+	public long countByRoundAndFinish(Round round, Boolean finish);
+
+	@Query("SELECT m FROM Match m JOIN FETCH m.home h LEFT JOIN FETCH h.stadium JOIN FETCH m.away a JOIN FETCH m.round r JOIN FETCH r.season s JOIN FETCH s.league l WHERE m.finish = false AND (m.home.id = :clubId OR m.away.id = :clubId) ORDER BY m.date ASC")
+	List<Match> findUpcomingMatchesByClub(@Param("clubId") Long clubId);
 }

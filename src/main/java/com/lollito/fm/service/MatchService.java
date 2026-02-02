@@ -41,6 +41,9 @@ public class MatchService {
 
 	public Page<Match> loadHistory(Pageable pageable){
 		return matchRepository.findByClubAndFinishOrderByDateDesc(userService.getLoggedUser().getClub(), pageable);
+  }
+	public List<Match> loadUpcomingMatchesForClub() {
+		return matchRepository.findUpcomingMatchesByClub(userService.getLoggedUser().getClub().getId());
 	}
 	
 	private List<Match> loadByRoundNumber(Integer number){
