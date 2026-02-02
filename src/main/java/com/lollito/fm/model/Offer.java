@@ -13,12 +13,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="offer")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Offer implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -26,18 +38,22 @@ public class Offer implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "user_from_id" )
+	@ToString.Exclude
 	private User from;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "user_to_id" )
+	@ToString.Exclude
 	private User to;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "club_id" )
+	@ToString.Exclude
 	private Player player;
 	
 	private BigDecimal value;
@@ -46,76 +62,4 @@ public class Offer implements Serializable {
 	
 	private LocalDateTime expirationDate;
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public User getFrom() {
-		return from;
-	}
-
-	public void setFrom(User from) {
-		this.from = from;
-	}
-
-	public User getTo() {
-		return to;
-	}
-
-	public void setTo(User to) {
-		this.to = to;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public LocalDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
-
-	public LocalDateTime getExpirationDate() {
-		return expirationDate;
-	}
-
-	public void setExpirationDate(LocalDateTime expirationDate) {
-		this.expirationDate = expirationDate;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Offer)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Offer other = (Offer) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
 }

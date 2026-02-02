@@ -14,14 +14,26 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "club")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Club implements Serializable{
 	
 	@Transient
@@ -30,6 +42,7 @@ public class Club implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
     private String name;
@@ -41,127 +54,35 @@ public class Club implements Serializable{
     @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "team_id" )
     @JsonIgnore
+	@ToString.Exclude
     private Team team;
     
     @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "under18_id" )
     @JsonIgnore
+	@ToString.Exclude
     private Team under18;
     
     @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "stadium_id" )
     @JsonIgnore
+	@ToString.Exclude
     private Stadium stadium;
     
     @ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "league_id" )
     @JsonIgnore
+	@ToString.Exclude
     private League league;
     
     @OneToOne( fetch = FetchType.LAZY, mappedBy="club" )
     @JsonIgnore
+	@ToString.Exclude
     private User user;
     
     @ManyToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "finance_id" )
-//    @JsonIgnore
+	@ToString.Exclude
 	private Finance finance;
     
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public LocalDate getFoundation() {
-		return foundation;
-	}
-	
-	public void setFoundation(LocalDate foundation) {
-		this.foundation = foundation;
-	}
-	
-	public Team getTeam() {
-		return team;
-	}
-	
-	public void setTeam(Team team) {
-		this.team = team;
-	}
-	
-	public Team getUnder18() {
-		return under18;
-	}
-
-	public void setUnder18(Team under18) {
-		this.under18 = under18;
-	}
-
-	public Stadium getStadium() {
-		return stadium;
-	}
-	
-	public void setStadium(Stadium stadium) {
-		this.stadium = stadium;
-	}
-
-	public League getLeague() {
-		return league;
-	}
-
-	public void setLeague(League league) {
-		this.league = league;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Finance getFinance() {
-		return finance;
-	}
-
-	public void setFinance(Finance finance) {
-		this.finance = finance;
-	}
-
-	public String getLogoURL() {
-		return logoURL;
-	}
-
-	public void setLogoURL(String logoURL) {
-		this.logoURL = logoURL;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(name).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Club)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Club other = (Club) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
 }

@@ -9,15 +9,25 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 
 @Entity
 @Table(name = "event_history")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class EventHistory implements Serializable{
 	
 	@Transient
@@ -26,6 +36,7 @@ public class EventHistory implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	private String event;
@@ -34,75 +45,16 @@ public class EventHistory implements Serializable{
 
 	private Event type;
 	
-	public EventHistory() {
-		
-	}
-	
 	public EventHistory(String event, Integer minute) {
+		this();
 		this.event = event;
 		this.minute = minute;
 	}
 
 	public EventHistory(String event, Integer minute, Event type) {
+		this();
 		this.event = event;
 		this.minute = minute;
 		this.type = type;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getEvent() {
-		return event;
-	}
-
-	public void setEvent(String event) {
-		this.event = event;
-	}
-
-	public Integer getMinute() {
-		return minute;
-	}
-
-	public void setMinute(Integer minute) {
-		this.minute = minute;
-	}
-
-	public Event getType() {
-		return type;
-	}
-
-	public void setType(Event type) {
-		this.type = type;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof EventHistory)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			EventHistory other = (EventHistory) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("event", event)
-				.append("minute", minute)
-				.toString();
 	}
 }

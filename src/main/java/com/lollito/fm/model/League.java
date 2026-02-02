@@ -17,10 +17,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +31,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "league")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class League implements Serializable{
 	
 	@Transient
@@ -36,30 +46,38 @@ public class League implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	private String name;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "country_id" )
+	@ToString.Exclude
 	private Country country;
 	
 	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	@JoinColumn( name = "season_id" )
     @JsonIgnore
+	@ToString.Exclude
     private Season currentSeason;
     
     @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
+	@Builder.Default
+	@ToString.Exclude
     private List<Season> seasonHistory = new ArrayList<>();
     
     @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
+	@Builder.Default
+	@ToString.Exclude
     private List<Club> clubs = new ArrayList<>();
 	
     @OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	@JoinColumn( name = "minor_league_id" )
     @JsonIgnore
+	@ToString.Exclude
     private League minorLeague;
     
     private Integer promotion;
@@ -68,113 +86,9 @@ public class League implements Serializable{
     
     private Integer euroCup;
     
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-
-	public Season getCurrentSeason() {
-		return currentSeason;
-	}
-
-	public void setCurrentSeason(Season currentSeason) {
-		this.currentSeason = currentSeason;
-	}
-
-	public List<Season> getSeasonHistory() {
-		return seasonHistory;
-	}
-
-	public void setSeasonHistory(List<Season> seasonHistory) {
-		this.seasonHistory = seasonHistory;
-	}
-
 	public void addSeasonHistory(Season season){
 		season.setLeague(this);
 		this.seasonHistory.add(season);
 	}
 
-	public List<Club> getClubs() {
-		return clubs;
-	}
-
-	public void setClubs(List<Club> clubs) {
-		this.clubs = clubs;
-	}
-
-	public League getMinorLeague() {
-		return minorLeague;
-	}
-
-	public void setMinorLeague(League minorLeague) {
-		this.minorLeague = minorLeague;
-	}
-
-	public Integer getPromotion() {
-		return promotion;
-	}
-
-	public void setPromotion(Integer promotion) {
-		this.promotion = promotion;
-	}
-
-	public Integer getRelegation() {
-		return relegation;
-	}
-
-	public void setRelegation(Integer relegation) {
-		this.relegation = relegation;
-	}
-
-	public Integer getEuroCup() {
-		return euroCup;
-	}
-
-	public void setEuroCup(Integer euroCup) {
-		this.euroCup = euroCup;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof League)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			League other = (League) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("id", id)
-				.append("country", country)
-				.toString();
-	}
 }

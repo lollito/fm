@@ -16,12 +16,24 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "game")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Game implements Serializable{
 	
 	@Transient
@@ -30,6 +42,7 @@ public class Game implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
     private String name;
@@ -39,62 +52,16 @@ public class Game implements Serializable{
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@JoinColumn( name = "game_id" )
+	@Builder.Default
+	@ToString.Exclude
     private List<League> leagues = new ArrayList<>();
     
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public LocalDateTime getCurrentDate() {
-		return currentDate;
-	}
-
-	public void setCurrentDate(LocalDateTime currentDate) {
-		this.currentDate = currentDate;
-	}
-	
 	public void addDay(){
 		this.currentDate = currentDate.plusDays(1);
 	}
 	
-	public List<League> getLeagues() {
-		return leagues;
-	}
-
-	public void setLeagues(List<League> leagues) {
-		this.leagues = leagues;
-	}
-
 	public void addLeague(League league) {
 		this.leagues.add(league);
 	}
 	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Game)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Game other = (Game) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
 }

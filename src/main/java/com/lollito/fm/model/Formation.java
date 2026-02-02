@@ -22,16 +22,25 @@ import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 
 @Entity
 @Table(name = "formation")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Formation implements Serializable{
 	
 	@Transient
@@ -40,98 +49,44 @@ public class Formation implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "module_id" )
+	@ToString.Exclude
 	private Module module;
 	
 	@Column(name="have_ball")
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
+	@Builder.Default
 	private Boolean haveBall = Boolean.FALSE;
 	
-//	@OneToOne( mappedBy= "homeFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-//	private SimulationMatch simulationMatch;
-//	
-//	@OneToOne( mappedBy= "awayFormation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-//	private SimulationMatch simulationMatchAway;
-	
 	@OneToOne( mappedBy= "formation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+	@ToString.Exclude
 	private Team team;
-	
-//	private Player goalKeeper;
-//	
-//	
-//	private List<Player> centralDefenders = new ArrayList<>();
-//	private List<Player> wingBacks = new ArrayList<>();
-//	private List<Player> midfielders = new ArrayList<>();
-//	private List<Player> wings = new ArrayList<>();
-//	private List<Player> forwards = new ArrayList<>();
 	
 	@ManyToMany
     @JoinTable(name = "formation_player", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
 	@OrderColumn(name = "idx")
+	@Builder.Default
+	@ToString.Exclude
 	private List<Player> players = new ArrayList<>();
 	
 	@ManyToMany
     @JoinTable(name = "formation_substitutes", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
+	@Builder.Default
+	@ToString.Exclude
 	private List<Player> substitutes = new ArrayList<>();
 	
 	@Enumerated(EnumType.ORDINAL)
+	@Builder.Default
 	private Mentality mentality = Mentality.NORMAL;
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Module getModule() {
-		return module;
-	}
-	
-	public void setModule(Module module) {
-		this.module = module;
-	}
-	
-	public void setHaveBall(Boolean haveBall) {
-		this.haveBall = haveBall;
-	}
-	
-	public Boolean getHaveBall() {
-		return haveBall;
-	}
-	
-	public List<Player> getPlayers() {
-		return players;
-	}
-
-	public void setPlayers(List<Player> players) {
-		this.players = players;
-	}
-
 	public void addPlayer(Player player) {
 		this.players.add(player);
 	}
 	
-	public List<Player> getSubstitutes() {
-		return substitutes;
-	}
-
-	public void setSubstitutes(List<Player> substitutes) {
-		this.substitutes = substitutes;
-	}
-
-	public Mentality getMentality() {
-		return mentality;
-	}
-
-	public void setMentality(Mentality mentality) {
-		this.mentality = mentality;
-	}
-
 	public Formation copy() {
 		Formation copy = new Formation();
 		copy.setModule(this.module);
@@ -193,28 +148,4 @@ public class Formation implements Serializable{
 		return new ArrayList<>(players.subList(start, end));
 	}
 	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Formation)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Formation other = (Formation) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("players", players)
-				.append("module", module)
-				.toString();
-	}
 }

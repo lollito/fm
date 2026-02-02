@@ -9,12 +9,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "stadium")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Stadium implements Serializable{
 	
 	@Transient
@@ -23,131 +35,34 @@ public class Stadium implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
 	
     private String name;
     
+	@Builder.Default
     private Integer grandstandNord = 0;
+	@Builder.Default
     private Integer grandstandSud = 0;
+	@Builder.Default
     private Integer grandstandWest = 1;
+	@Builder.Default
     private Integer grandstandEst = 0;
+	@Builder.Default
     private Integer grandstandNordWest = 0;
+	@Builder.Default
     private Integer grandstandNordEst = 0;
+	@Builder.Default
     private Integer grandstandSudWest = 0;
+	@Builder.Default
     private Integer grandstandSudEst = 0;
   
+	@Builder.Default
     private Integer ground = 1;
     
-    public Stadium(){
-    	
-    }
-    
     public Stadium(String name){
+	this();
     	this.name = name;
     }
 
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-    public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public Integer getGrandstandNord() {
-		return grandstandNord;
-	}
-
-	public void setGrandstandNord(Integer grandstandNord) {
-		this.grandstandNord = grandstandNord;
-	}
-
-	public Integer getGrandstandSud() {
-		return grandstandSud;
-	}
-
-	public void setGrandstandSud(Integer grandstandSud) {
-		this.grandstandSud = grandstandSud;
-	}
-
-	public Integer getGrandstandWest() {
-		return grandstandWest;
-	}
-
-	public void setGrandstandWest(Integer grandstandWest) {
-		this.grandstandWest = grandstandWest;
-	}
-
-	public Integer getGrandstandEst() {
-		return grandstandEst;
-	}
-
-	public void setGrandstandEst(Integer grandstandEst) {
-		this.grandstandEst = grandstandEst;
-	}
-
-	public Integer getGrandstandNordWest() {
-		return grandstandNordWest;
-	}
-
-	public void setGrandstandNordWest(Integer grandstandNordWest) {
-		this.grandstandNordWest = grandstandNordWest;
-	}
-
-	public Integer getGrandstandNordEst() {
-		return grandstandNordEst;
-	}
-
-	public void setGrandstandNordEst(Integer grandstandNordEst) {
-		this.grandstandNordEst = grandstandNordEst;
-	}
-
-	public Integer getGrandstandSudWest() {
-		return grandstandSudWest;
-	}
-
-	public void setGrandstandSudWest(Integer grandstandSudWest) {
-		this.grandstandSudWest = grandstandSudWest;
-	}
-
-	public Integer getGrandstandSudEst() {
-		return grandstandSudEst;
-	}
-
-	public void setGrandstandSudEst(Integer grandstandSudEst) {
-		this.grandstandSudEst = grandstandSudEst;
-	}
-
-	public Integer getGround() {
-		return ground;
-	}
-
-	public void setGround(Integer ground) {
-		this.ground = ground;
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Stadium)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			Stadium other = (Stadium) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
 }

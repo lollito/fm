@@ -12,16 +12,26 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "goalscorer")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class GoalScorer implements Serializable{
 	
 	@Transient
@@ -30,71 +40,19 @@ public class GoalScorer implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
+	@EqualsAndHashCode.Include
 	private Long id;
-	
-	
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "player_id" )
 	@JsonIgnore
+	@ToString.Exclude
     private Player player;
 	
 	private Integer number;
 	
-	public GoalScorer() {
-		
-	}
-	
 	public GoalScorer(Integer number) {
+		this();
 		this.number = number;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Player getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
-	public Integer getNumber() {
-		return number;
-	}
-	
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(11, 121).append(id).toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof GoalScorer)) {
-			return false;
-		} else if (this == obj) {
-			return true;
-		} else {
-			GoalScorer other = (GoalScorer) obj;
-			return new EqualsBuilder().append(id, other.id).isEquals();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("number", number)
-				.append("player", player)
-				.toString();
 	}
 }
