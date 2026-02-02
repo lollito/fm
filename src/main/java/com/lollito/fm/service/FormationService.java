@@ -68,30 +68,36 @@ public class FormationService {
 		formation.setMentality(mentalityService.random());
 		formation.setPlayers(new ArrayList<>());
 		Player goalKeeper = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.GOALKEEPER);
+		if (goalKeeper == null && !playersCopy.isEmpty()) goalKeeper = playersCopy.get(0);
 		formation.addPlayer(goalKeeper);
 		playersCopy.remove(goalKeeper);
 		for (int i = 0; i < module.getCd(); i++) {
 			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.DEFENDER);
+			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}
 		for (int i = 0; i < module.getWb(); i++) {
 			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.WINGBACK);
+			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}
 		for (int i = 0; i < module.getMf(); i++) {
 			Player best = playerService.getBestBalancedPlayer(playersCopy, PlayerRole.MIDFIELDER);
+			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}
 		for (int i = 0; i < module.getWng(); i++) {
 			Player best = playerService.getBestBalancedPlayer(playersCopy, PlayerRole.WING);
+			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}
 		for (int i = 0; i < module.getFw(); i++) {
 			Player best = playerService.getBestOffensivePlayer(playersCopy, PlayerRole.FORWARD);
+			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
 			formation.addPlayer(best);
 			playersCopy.remove(best);
 		}

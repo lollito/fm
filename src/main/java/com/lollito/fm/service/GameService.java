@@ -13,6 +13,7 @@ import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
+import com.lollito.fm.model.MatchStatus;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
@@ -64,7 +65,11 @@ public class GameService {
 			incrementPlayersCondition(league);
 			updatePlayerSkills(league);
 		} else {
-			simulationMatchService.simulate(matches);
+			for (Match match : matches) {
+				if (match.getStatus() == MatchStatus.SCHEDULED) {
+					simulationMatchService.simulate(match);
+				}
+			}
 			Match match =  matches.get(matches.size() -1);
 			if(match.getLast()) {
 				league.getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);

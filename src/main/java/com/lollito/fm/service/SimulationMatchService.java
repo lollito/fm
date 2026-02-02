@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Event;
 import com.lollito.fm.model.EventHistory;
+import com.lollito.fm.model.MatchStatus;
 import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Player;
@@ -56,6 +57,7 @@ public class SimulationMatchService {
 		
 		playMatch(match);
 		match.setFinish(true);
+		match.setStatus(MatchStatus.COMPLETED);
 		matchRepository.save(match);
 	}
 	
@@ -115,7 +117,9 @@ public class SimulationMatchService {
 					luckHome+=RandomUtils.randomValue(0, 5);
 				}
 				logger.debug("luck home {}", luck);
-				int averageDiff = (playerService.getOffenceAverage(homePlayers.get(playerPosition)) + homePlayers.get(playerPosition).size()) - (playerService.getDefenceAverage(awayPlayers.get(inversePosition.get(playerPosition))) + awayPlayers.get(inversePosition.get(playerPosition)).size());
+				List<Player> hPlayers = homePlayers.get(playerPosition);
+				List<Player> aPlayers = awayPlayers.get(inversePosition.get(playerPosition));
+				int averageDiff = (playerService.getOffenceAverage(hPlayers) + (hPlayers == null ? 0 : hPlayers.size())) - (playerService.getDefenceAverage(aPlayers) + (aPlayers == null ? 0 : aPlayers.size()));
 				logger.debug("home average diff {}", averageDiff);
 				if((averageDiff > 0 && RandomUtils.randomPercentage(60 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(40 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
@@ -252,7 +256,9 @@ public class SimulationMatchService {
 					luckAway+=RandomUtils.randomValue(0, 5);
 				}
 				logger.debug("luck away {}", luck);
-				int averageDiff = (playerService.getOffenceAverage(awayPlayers.get(playerPosition)) + awayPlayers.get(playerPosition).size()) - (playerService.getDefenceAverage(homePlayers.get(inversePosition.get(playerPosition))) + homePlayers.get(inversePosition.get(playerPosition)).size());
+				List<Player> aPlayers = awayPlayers.get(playerPosition);
+				List<Player> hPlayers = homePlayers.get(inversePosition.get(playerPosition));
+				int averageDiff = (playerService.getOffenceAverage(aPlayers) + (aPlayers == null ? 0 : aPlayers.size())) - (playerService.getDefenceAverage(hPlayers) + (hPlayers == null ? 0 : hPlayers.size()));
 				logger.debug("away averageDiff {}", averageDiff);
 				if((averageDiff > 0 && RandomUtils.randomPercentage(60 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(40 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){

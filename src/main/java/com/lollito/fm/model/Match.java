@@ -7,6 +7,8 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -62,6 +64,9 @@ public class Match implements Serializable{
 	
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
 	private Boolean finish = Boolean.FALSE;
+
+	@Enumerated(EnumType.STRING)
+	private MatchStatus status = MatchStatus.SCHEDULED;
 	
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
 	private Boolean last = Boolean.FALSE;
@@ -170,6 +175,17 @@ public class Match implements Serializable{
 
 	public void setFinish(Boolean finish) {
 		this.finish = finish;
+		if (finish) {
+			this.status = MatchStatus.COMPLETED;
+		}
+	}
+
+	public MatchStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MatchStatus status) {
+		this.status = status;
 	}
 
 	public Boolean getLast() {

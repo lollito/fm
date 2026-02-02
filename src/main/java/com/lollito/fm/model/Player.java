@@ -317,15 +317,15 @@ public class Player implements Serializable{
 	
 	@Transient
 	public Integer getAverage(){
-		return (this.stamina.intValue() + 
-				this.playmaking.intValue()	+ 
-				this.scoring.intValue() + 
-				this.winger.intValue() +
-				this.goalkeeping.intValue() +
-				this.passing.intValue() +
-				this.defending.intValue() +
-				this.setPieces.intValue() +
-				this.condition.intValue()) / 9;
+		return ((this.stamina == null ? 0 : this.stamina.intValue()) +
+				(this.playmaking == null ? 0 : this.playmaking.intValue())	+
+				(this.scoring == null ? 0 : this.scoring.intValue()) +
+				(this.winger == null ? 0 : this.winger.intValue()) +
+				(this.goalkeeping == null ? 0 : this.goalkeeping.intValue()) +
+				(this.passing == null ? 0 : this.passing.intValue()) +
+				(this.defending == null ? 0 : this.defending.intValue()) +
+				(this.setPieces == null ? 0 : this.setPieces.intValue()) +
+				(this.condition == null ? 0 : this.condition.intValue())) / 9;
 	}
 	
 	@Transient
@@ -335,35 +335,35 @@ public class Player implements Serializable{
 	
 	@Transient
 	public Integer getOffenceAverage(){
-		return (this.playmaking.intValue()	 + 
-				this.winger.intValue() +
-				this.passing.intValue() +
-				this.condition.intValue()) / 4;
+		return ((this.playmaking == null ? 0 : this.playmaking.intValue())	 +
+				(this.winger == null ? 0 : this.winger.intValue()) +
+				(this.passing == null ? 0 : this.passing.intValue()) +
+				(this.condition == null ? 0 : this.condition.intValue())) / 4;
 	}
 	
 	@Transient
 	public Integer getDefenceAverage(){
-		return (this.playmaking.intValue()	+ 
-				this.defending.intValue() +
-				this.condition.intValue()) / 3;
+		return ((this.playmaking == null ? 0 : this.playmaking.intValue())	+
+				(this.defending == null ? 0 : this.defending.intValue()) +
+				(this.condition == null ? 0 : this.condition.intValue())) / 3;
 	}
 	
 	@Transient
 	public Integer getScoringAverage(){
-		return (this.scoring.intValue() + 
-				this.condition.intValue()) / 2;
+		return ((this.scoring == null ? 0 : this.scoring.intValue()) +
+				(this.condition == null ? 0 : this.condition.intValue())) / 2;
 	}
 	
 	@Transient
 	public Integer getGoalkeepingAverage(){
-		return (this.goalkeeping.intValue() +
-				this.condition.intValue()) / 2;
+		return ((this.goalkeeping == null ? 0 : this.goalkeeping.intValue()) +
+				(this.condition == null ? 0 : this.condition.intValue())) / 2;
 	}
 	
 	@Transient
 	public Integer getPiecesAverage(){
-		return (this.setPieces.intValue() + 
-				this.condition.intValue()) / 2;
+		return ((this.setPieces == null ? 0 : this.setPieces.intValue()) +
+				(this.condition == null ? 0 : this.condition.intValue())) / 2;
 	}
 	
 	@Override
