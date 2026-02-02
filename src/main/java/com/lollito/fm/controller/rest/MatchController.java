@@ -52,6 +52,11 @@ public class MatchController {
     public List<Match> previuos(Model model) {
         return matchService.loadPrevious();
     }
+
+	@GetMapping(value = "/upcoming")
+	public List<Match> upcoming(Model model) {
+		return matchService.loadUpcomingMatchesForClub();
+	}
    
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
     public Long count() {

@@ -147,6 +147,22 @@ public class Match implements Serializable{
 	public Integer getNumber() {
 		return round.getNumber();
 	}
+
+	@Transient
+	public String getCompetitionName() {
+		if (round != null && round.getSeason() != null && round.getSeason().getLeague() != null) {
+			return round.getSeason().getLeague().getName();
+		}
+		return "League";
+	}
+
+	@Transient
+	public String getStadiumName() {
+		if (home != null && home.getStadium() != null) {
+			return home.getStadium().getName();
+		}
+		return "Unknown Stadium";
+	}
 	
 	public Boolean getFinish() {
 		return finish;
