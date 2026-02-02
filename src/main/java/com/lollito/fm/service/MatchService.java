@@ -36,6 +36,10 @@ public class MatchService {
 		Integer nextRoundNumber = userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getNextRoundNumber();
 		return loadByRoundNumber(nextRoundNumber > 1 ? nextRoundNumber - 2 : nextRoundNumber - 1);
 	}
+
+	public List<Match> loadUpcomingMatchesForClub() {
+		return matchRepository.findUpcomingMatchesByClub(userService.getLoggedUser().getClub().getId());
+	}
 	
 	private List<Match> loadByRoundNumber(Integer number){
 		if(userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRounds().size() <= number) {
