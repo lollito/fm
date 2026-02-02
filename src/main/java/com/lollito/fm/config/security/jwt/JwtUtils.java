@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
+import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtils {
@@ -23,7 +23,7 @@ public class JwtUtils {
 	@Value("${fm.app.jwtExpirationMs}")
 	private int jwtExpirationMs;
 
-	private Key key() {
+	private javax.crypto.SecretKey key() {
 		return Keys.hmacShaKeyFor(jwtSecret.getBytes());
 	}
 
@@ -40,13 +40,13 @@ public class JwtUtils {
 	}
 
 	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parserBuilder().setSigningKey(key()).build()
-				.parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parser().verifyWith(key()).build()
+				.parseSignedClaims(token).getPayload().getSubject();
 	}
 
 	public boolean validateJwtToken(String authToken) {
 		try {
-			Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
+			Jwts.parser().verifyWith(key()).build().parseSignedClaims(authToken);
 			return true;
 		} catch (MalformedJwtException e) {
 			logger.error("Invalid JWT token: {}", e.getMessage());
