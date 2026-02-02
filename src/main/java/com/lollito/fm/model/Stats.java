@@ -32,12 +32,20 @@ public class Stats implements Serializable{
 	private Integer homeFouls = 0;
 	private Integer homeYellowCards = 0;
 	private Integer homePossession = 0;
-	
+	private Integer homePasses = 0;
+	private Integer homeCompletedPasses = 0;
+	private Integer homeTackles = 0;
+	private Integer homeInterceptions = 0;
+
 	private Integer awayShots = 0;
 	private Integer awayOnTarget = 0;
 	private Integer awayFouls = 0;
 	private Integer awayYellowCards = 0;
 	private Integer awayPossession = 0;
+	private Integer awayPasses = 0;
+	private Integer awayCompletedPasses = 0;
+	private Integer awayTackles = 0;
+	private Integer awayInterceptions = 0;
 	
 	
 	public Stats() {
@@ -129,6 +137,38 @@ public class Stats implements Serializable{
 		this.homePossession = possession;
 	}
 
+	public Integer getHomePasses() {
+		return homePasses;
+	}
+
+	public void setHomePasses(Integer homePasses) {
+		this.homePasses = homePasses;
+	}
+
+	public Integer getHomeCompletedPasses() {
+		return homeCompletedPasses;
+	}
+
+	public void setHomeCompletedPasses(Integer homeCompletedPasses) {
+		this.homeCompletedPasses = homeCompletedPasses;
+	}
+
+	public Integer getHomeTackles() {
+		return homeTackles;
+	}
+
+	public void setHomeTackles(Integer homeTackles) {
+		this.homeTackles = homeTackles;
+	}
+
+	public Integer getHomeInterceptions() {
+		return homeInterceptions;
+	}
+
+	public void setHomeInterceptions(Integer homeInterceptions) {
+		this.homeInterceptions = homeInterceptions;
+	}
+
 	public Integer getAwayShots() {
 		return awayShots;
 	}
@@ -183,6 +223,38 @@ public class Stats implements Serializable{
 
 	public void setAwayPossession(Integer awayPossession) {
 		this.awayPossession = awayPossession;
+	}
+
+	public Integer getAwayPasses() {
+		return awayPasses;
+	}
+
+	public void setAwayPasses(Integer awayPasses) {
+		this.awayPasses = awayPasses;
+	}
+
+	public Integer getAwayCompletedPasses() {
+		return awayCompletedPasses;
+	}
+
+	public void setAwayCompletedPasses(Integer awayCompletedPasses) {
+		this.awayCompletedPasses = awayCompletedPasses;
+	}
+
+	public Integer getAwayTackles() {
+		return awayTackles;
+	}
+
+	public void setAwayTackles(Integer awayTackles) {
+		this.awayTackles = awayTackles;
+	}
+
+	public Integer getAwayInterceptions() {
+		return awayInterceptions;
+	}
+
+	public void setAwayInterceptions(Integer awayInterceptions) {
+		this.awayInterceptions = awayInterceptions;
 	}
 
 	@Override

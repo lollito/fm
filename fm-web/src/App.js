@@ -11,6 +11,8 @@ import Schedule from './pages/Schedule';
 import Stadium from './pages/Stadium';
 import Leagues from './pages/Leagues';
 import Transfers from './pages/Transfers';
+import History from './pages/History';
+import MatchDetail from './pages/MatchDetail';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -33,6 +35,8 @@ function App() {
           <Route path="/stadium" element={<PrivateRoute><Stadium /></PrivateRoute>} />
           <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
           <Route path="/transfers" element={<PrivateRoute><Transfers /></PrivateRoute>} />
+          <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
+          <Route path="/match/:id" element={<PrivateRoute><MatchDetail /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
