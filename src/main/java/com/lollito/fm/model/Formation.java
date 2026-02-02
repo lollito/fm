@@ -133,7 +133,7 @@ public class Formation implements Serializable{
 	@Transient
 	public Player getGoalKeeper() {
 		for (Player player : players) {
-			if(player.getRole().getvalue() == PlayerRole.GOALKEEPER.getvalue()){
+			if(player != null && player.getRole().getvalue() == PlayerRole.GOALKEEPER.getvalue()){
 				return player;
 			}
 		}
@@ -169,7 +169,7 @@ public class Formation implements Serializable{
 	private List<Player> getPlayersByRole(PlayerRole role){
 		List<Player> ret = new ArrayList<>();
 		for (Player player : players) {
-			if(player.getRole().getvalue() == role.getvalue()){
+			if(player != null && player.getRole().getvalue() == role.getvalue()){
 				ret.add(player);
 			}
 		}

@@ -26,3 +26,6 @@ nbdist/
 .mvn/wrapper/maven-wrapper.properties
 mvnw
 mvnw.cmd
+
+node_modules/
+*.log
