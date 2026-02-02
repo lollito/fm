@@ -10,7 +10,8 @@ public enum Event {
 	COMMITS_FAUL("%s commits a faul"),
 	YELLOW_CARD("%s received a yellow card,"),
 	RED_CARD("%s received a red card,"),
-	SHOT_AND_MISSED("%s shot and missed");
+	SHOT_AND_MISSED("%s shot and missed"),
+	SUBSTITUTION("%s replaces %s");
 	
 	
 	private String message;

@@ -31,6 +31,8 @@ public class EventHistory implements Serializable{
 	private String event;
 	
 	private Integer minute;
+
+	private Event type;
 	
 	public EventHistory() {
 		
@@ -39,6 +41,12 @@ public class EventHistory implements Serializable{
 	public EventHistory(String event, Integer minute) {
 		this.event = event;
 		this.minute = minute;
+	}
+
+	public EventHistory(String event, Integer minute, Event type) {
+		this.event = event;
+		this.minute = minute;
+		this.type = type;
 	}
 
 	public Long getId() {
@@ -63,6 +71,14 @@ public class EventHistory implements Serializable{
 
 	public void setMinute(Integer minute) {
 		this.minute = minute;
+	}
+
+	public Event getType() {
+		return type;
+	}
+
+	public void setType(Event type) {
+		this.type = type;
 	}
 
 	@Override

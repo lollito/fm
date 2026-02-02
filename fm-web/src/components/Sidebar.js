@@ -13,6 +13,7 @@ const Sidebar = () => {
         <Link to="/formation" className="list-group-item">Formation</Link>
         <Link to="/ranking" className="list-group-item">Ranking</Link>
         <Link to="/schedule" className="list-group-item">Schedule</Link>
+        <Link to="/history" className="list-group-item">Match History</Link>
         <Link to="/upcoming-matches" className="list-group-item">Upcoming Matches</Link>
         <Link to="/leagues" className="list-group-item">Leagues</Link>
         <Link to="/transfers" className="list-group-item">Transfers</Link>

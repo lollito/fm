@@ -6,6 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Match;
@@ -37,6 +39,9 @@ public class MatchService {
 		return loadByRoundNumber(nextRoundNumber > 1 ? nextRoundNumber - 2 : nextRoundNumber - 1);
 	}
 
+	public Page<Match> loadHistory(Pageable pageable){
+		return matchRepository.findByClubAndFinishOrderByDateDesc(userService.getLoggedUser().getClub(), pageable);
+  }
 	public List<Match> loadUpcomingMatchesForClub() {
 		return matchRepository.findUpcomingMatchesByClub(userService.getLoggedUser().getClub().getId());
 	}

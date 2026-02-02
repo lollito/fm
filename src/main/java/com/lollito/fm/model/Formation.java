@@ -132,6 +132,15 @@ public class Formation implements Serializable{
 		this.mentality = mentality;
 	}
 
+	public Formation copy() {
+		Formation copy = new Formation();
+		copy.setModule(this.module);
+		copy.setMentality(this.mentality);
+		copy.setPlayers(new ArrayList<>(this.players));
+		copy.setSubstitutes(new ArrayList<>(this.substitutes));
+		return copy;
+	}
+
 	@Transient
 	public Player getGoalKeeper() {
 		if (players == null || players.isEmpty()) return null;

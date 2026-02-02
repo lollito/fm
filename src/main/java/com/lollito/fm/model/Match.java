@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -81,6 +82,15 @@ public class Match implements Serializable{
 	@ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
     @JoinColumn( name = "match_id" )
     private Stats stats;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private Formation homeFormation;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private Formation awayFormation;
+
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
+	private List<MatchPlayerStats> playerStats = new ArrayList<>();
 	
 	public Match() {
 		
@@ -230,6 +240,30 @@ public class Match implements Serializable{
 
 	public void setStats(Stats stats) {
 		this.stats = stats;
+	}
+
+	public Formation getHomeFormation() {
+		return homeFormation;
+	}
+
+	public void setHomeFormation(Formation homeFormation) {
+		this.homeFormation = homeFormation;
+	}
+
+	public Formation getAwayFormation() {
+		return awayFormation;
+	}
+
+	public void setAwayFormation(Formation awayFormation) {
+		this.awayFormation = awayFormation;
+	}
+
+	public List<MatchPlayerStats> getPlayerStats() {
+		return playerStats;
+	}
+
+	public void setPlayerStats(List<MatchPlayerStats> playerStats) {
+		this.playerStats = playerStats;
 	}
 
 	@Override
