@@ -78,29 +78,44 @@ public class Team implements Serializable{
 
 	@Transient
 	public Integer getAverage(){
+		if (players == null || players.isEmpty()) return 0;
 		int tot = 0;
+		int count = 0;
 		for (Player player : players) {
-			tot += player.getAverage();
+			if (player != null) {
+				tot += player.getAverage();
+				count++;
+			}
 		}
-		return tot/players.size();
+		return count > 0 ? tot/count : 0;
 	}
 	
 	@Transient
 	public Integer getOffenceAverage(){
+		if (players == null || players.isEmpty()) return 0;
 		int tot = 0;
+		int count = 0;
 		for (Player player : players) {
-			tot += player.getOffenceAverage();
+			if (player != null) {
+				tot += player.getOffenceAverage();
+				count++;
+			}
 		}
-		return tot/players.size();
+		return count > 0 ? tot/count : 0;
 	}
 	
 	@Transient
 	public Integer getDefenceAverage(){
+		if (players == null || players.isEmpty()) return 0;
 		int tot = 0;
+		int count = 0;
 		for (Player player : players) {
-			tot += player.getDefenceAverage();
+			if (player != null) {
+				tot += player.getDefenceAverage();
+				count++;
+			}
 		}
-		return tot/players.size();
+		return count > 0 ? tot/count : 0;
 	}
 	
 	@Override
