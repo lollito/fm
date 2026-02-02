@@ -18,6 +18,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -69,6 +70,7 @@ public class Formation implements Serializable{
 	
 	@ManyToMany
     @JoinTable(name = "formation_player", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
+	@OrderColumn(name = "idx")
 	private List<Player> players = new ArrayList<>();
 	
 	@ManyToMany
@@ -132,48 +134,54 @@ public class Formation implements Serializable{
 
 	@Transient
 	public Player getGoalKeeper() {
-		for (Player player : players) {
-			if(player != null && player.getRole().getvalue() == PlayerRole.GOALKEEPER.getvalue()){
-				return player;
-			}
-		}
-		return null;
+		if (players == null || players.isEmpty()) return null;
+		return players.get(0);
 	}
-	
+
 	@Transient
 	public List<Player> getCentralDefenders() {
-		return getPlayersByRole(PlayerRole.DEFENDER);
+		if (module == null || players == null) return new ArrayList<>();
+		int start = 1;
+		int end = Math.min(players.size(), start + module.getCd());
+		return getSafeSubList(start, end);
 	}
-	
+
 	@Transient
 	public List<Player> getWingBacks() {
-		return getPlayersByRole(PlayerRole.WINGBACK);
+		if (module == null || players == null) return new ArrayList<>();
+		int start = 1 + module.getCd();
+		int end = Math.min(players.size(), start + module.getWb());
+		return getSafeSubList(start, end);
 	}
-	
+
 	@Transient
 	public List<Player> getMidfielders() {
-		return getPlayersByRole(PlayerRole.MIDFIELDER);
+		if (module == null || players == null) return new ArrayList<>();
+		int start = 1 + module.getCd() + module.getWb();
+		int end = Math.min(players.size(), start + module.getMf());
+		return getSafeSubList(start, end);
 	}
-	
+
 	@Transient
 	public List<Player> getWings() {
-		return getPlayersByRole(PlayerRole.WING);
+		if (module == null || players == null) return new ArrayList<>();
+		int start = 1 + module.getCd() + module.getWb() + module.getMf();
+		int end = Math.min(players.size(), start + module.getWng());
+		return getSafeSubList(start, end);
 	}
-	
+
 	@Transient
 	public List<Player> getForwards() {
-		return getPlayersByRole(PlayerRole.FORWARD);
+		if (module == null || players == null) return new ArrayList<>();
+		int start = 1 + module.getCd() + module.getWb() + module.getMf() + module.getWng();
+		int end = Math.min(players.size(), start + module.getFw());
+		return getSafeSubList(start, end);
 	}
-	
+
 	@Transient
-	private List<Player> getPlayersByRole(PlayerRole role){
-		List<Player> ret = new ArrayList<>();
-		for (Player player : players) {
-			if(player != null && player.getRole().getvalue() == role.getvalue()){
-				ret.add(player);
-			}
-		}
-		return ret;
+	private List<Player> getSafeSubList(int start, int end) {
+		if (start >= players.size() || start >= end) return new ArrayList<>();
+		return new ArrayList<>(players.subList(start, end));
 	}
 	
 	@Override
