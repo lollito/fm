@@ -34,8 +34,8 @@ const Formation = () => {
     setPlayers(res.data);
   }, []);
 
-  const updateFormationState = useCallback((data, modulesList = modules) => {
-    if (!data) return;
+  const updateFormationState = useCallback((data, modulesList) => {
+    if (!data || !data.module) return;
     const pIds = Array(11).fill(null);
     if (data.players) {
         data.players.forEach((p, idx) => {
@@ -43,30 +43,34 @@ const Formation = () => {
         });
     }
     setFormation({
-      moduleId: data.module.id,
-      mentality: data.mentality,
+      moduleId: data.module.id || '',
+      mentality: data.mentality || '',
       playersId: pIds
     });
-    const mod = modulesList.find(m => m.id === data.module.id);
-    setSelectedModule(mod);
-  }, [modules]);
+    const mod = modulesList?.find(m => m.id === data.module.id);
+    setSelectedModule(mod || null);
+  }, []);
 
-  const fetchFormation = useCallback(async (modulesList = modules) => {
+  const fetchFormation = useCallback(async (modulesList) => {
     try {
       const res = await api.get('/formation/');
-      updateFormationState(res.data, modulesList);
+      if (res.data) {
+        updateFormationState(res.data, modulesList);
+      }
     } catch (e) {
       console.error('No formation found');
     }
-  }, [updateFormationState, modules]);
+  }, [updateFormationState]);
 
   useEffect(() => {
+    let isMounted = true;
     const init = async () => {
       try {
         const [mRes, mentRes] = await Promise.all([
           api.get('/module/'),
           api.get('/mentality/')
         ]);
+        if (!isMounted) return;
         setModules(mRes.data);
         setMentalities(mentRes.data);
         fetchPlayers();
@@ -76,6 +80,7 @@ const Formation = () => {
       }
     };
     init();
+    return () => { isMounted = false; };
   }, [fetchPlayers, fetchFormation]);
 
   const handleModuleChange = (e) => {
@@ -125,6 +130,14 @@ const Formation = () => {
   }
 
   const saveFormation = async () => {
+    if (!formation.moduleId) {
+        alert('Please select a module.');
+        return;
+    }
+    if (!formation.mentality) {
+        alert('Please select a mentality.');
+        return;
+    }
     if (formation.playersId.some(id => id === null)) {
         alert('You must fill all 11 positions.');
         return;
@@ -137,7 +150,7 @@ const Formation = () => {
     try {
         await api.post('/formation/', params);
         alert('Formation saved');
-        fetchFormation();
+        fetchFormation(modules);
         fetchPlayers();
     } catch (error) {
         alert('Error saving formation: ' + (error.response?.data?.message || error.message));
@@ -147,7 +160,7 @@ const Formation = () => {
   const autoSelect = async () => {
     try {
         const res = await api.get('/formation/auto');
-        updateFormationState(res.data);
+        updateFormationState(res.data, modules);
         await fetchPlayers();
     } catch (error) {
         alert('Error in auto select: ' + (error.response?.data?.message || error.message));
