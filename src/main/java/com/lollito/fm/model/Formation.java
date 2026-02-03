@@ -29,6 +29,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 
@@ -63,6 +64,7 @@ public class Formation implements Serializable{
 	private Boolean haveBall = Boolean.FALSE;
 	
 	@OneToOne( mappedBy= "formation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+	@JsonIgnore
 	@ToString.Exclude
 	private Team team;
 	
