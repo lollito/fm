@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import Layout from '../components/Layout';
+import useSortableData from '../hooks/useSortableData';
 
 const Home = () => {
   const [news, setNews] = useState([]);
@@ -9,6 +11,12 @@ const Home = () => {
   const [previousMatches, setPreviousMatches] = useState([]);
   const [ranking, setRanking] = useState([]);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const { items: sortedNews, requestSort: requestSortNews, sortConfig: sortConfigNews } = useSortableData(news);
+  const { items: sortedNextMatches, requestSort: requestSortNext, sortConfig: sortConfigNext } = useSortableData(nextMatches);
+  const { items: sortedPreviousMatches, requestSort: requestSortPrev, sortConfig: sortConfigPrev } = useSortableData(previousMatches);
+  const { items: sortedRanking, requestSort: requestSortRank, sortConfig: sortConfigRank } = useSortableData(ranking);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +42,13 @@ const Home = () => {
     return user?.club?.name === rowUserClubName ? 'active' : '';
   };
 
+  const getSortIcon = (sortConfig, key) => {
+    if (!sortConfig || sortConfig.key !== key) return <i className="fas fa-sort" style={{ marginLeft: '5px', opacity: 0.3 }}></i>;
+    return sortConfig.direction === 'ascending' ?
+        <i className="fas fa-sort-up" style={{ marginLeft: '5px' }}></i> :
+        <i className="fas fa-sort-down" style={{ marginLeft: '5px' }}></i>;
+  };
+
   return (
     <Layout>
       <h1 className="mt-2">Home</h1>
@@ -45,12 +60,16 @@ const Home = () => {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>News</th>
+                    <th onClick={() => requestSortNews('date')} style={{ cursor: 'pointer' }}>
+                        Date {getSortIcon(sortConfigNews, 'date')}
+                    </th>
+                    <th onClick={() => requestSortNews('text')} style={{ cursor: 'pointer' }}>
+                        News {getSortIcon(sortConfigNews, 'text')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {news.map((n, i) => (
+                  {sortedNews.map((n, i) => (
                     <tr key={i}>
                       <td>{n.date}</td>
                       <td>{n.text}</td>
@@ -70,14 +89,21 @@ const Home = () => {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Home</th>
-                    <th>Away</th>
-                    <th>Date</th>
+                    <th onClick={() => requestSortNext('home.name')} style={{ cursor: 'pointer' }}>
+                        Home {getSortIcon(sortConfigNext, 'home.name')}
+                    </th>
+                    <th onClick={() => requestSortNext('away.name')} style={{ cursor: 'pointer' }}>
+                        Away {getSortIcon(sortConfigNext, 'away.name')}
+                    </th>
+                    <th onClick={() => requestSortNext('date')} style={{ cursor: 'pointer' }}>
+                        Date {getSortIcon(sortConfigNext, 'date')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {nextMatches.map((m, i) => (
-                    <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}>
+                  {sortedNextMatches.map((m, i) => (
+                    <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}
+                        onClick={() => navigate(`/match/${m.id}`)} style={{ cursor: 'pointer' }}>
                       <td>{m.home.name}</td>
                       <td>{m.away.name}</td>
                       <td>{m.date}</td>
@@ -93,14 +119,21 @@ const Home = () => {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Home</th>
-                    <th>Away</th>
-                    <th>Score</th>
+                    <th onClick={() => requestSortPrev('home.name')} style={{ cursor: 'pointer' }}>
+                        Home {getSortIcon(sortConfigPrev, 'home.name')}
+                    </th>
+                    <th onClick={() => requestSortPrev('away.name')} style={{ cursor: 'pointer' }}>
+                        Away {getSortIcon(sortConfigPrev, 'away.name')}
+                    </th>
+                    <th onClick={() => requestSortPrev('homeScore')} style={{ cursor: 'pointer' }}>
+                        Score {getSortIcon(sortConfigPrev, 'homeScore')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {previousMatches.map((m, i) => (
-                    <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}>
+                  {sortedPreviousMatches.map((m, i) => (
+                    <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}
+                        onClick={() => navigate(`/match/${m.id}`)} style={{ cursor: 'pointer' }}>
                       <td>{m.home.name}</td>
                       <td>{m.away.name}</td>
                       <td>{m.homeScore} - {m.awayScore}</td>
@@ -118,13 +151,19 @@ const Home = () => {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Club</th>
-                    <th>Played</th>
-                    <th>Points</th>
+                    <th onClick={() => requestSortRank('club.name')} style={{ cursor: 'pointer' }}>
+                        Club {getSortIcon(sortConfigRank, 'club.name')}
+                    </th>
+                    <th onClick={() => requestSortRank('played')} style={{ cursor: 'pointer' }}>
+                        Played {getSortIcon(sortConfigRank, 'played')}
+                    </th>
+                    <th onClick={() => requestSortRank('points')} style={{ cursor: 'pointer' }}>
+                        Points {getSortIcon(sortConfigRank, 'points')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ranking.map((r, i) => (
+                  {sortedRanking.map((r, i) => (
                     <tr key={i} className={getRowClass(r.club.name)}>
                       <td>{r.club.name}</td>
                       <td>{r.played}</td>

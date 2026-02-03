@@ -46,11 +46,13 @@ public class MatchProcessor {
         }
     }
 
-    private synchronized void checkRoundAndSeasonProgression(Match match) {
+    private void checkRoundAndSeasonProgression(Match match) {
         Round round = match.getRound();
+        Season season = seasonRepository.findByIdWithLock(round.getSeason().getId())
+                .orElseThrow(() -> new RuntimeException("Season not found"));
+
         long unfinishedCount = matchRepository.countByRoundAndFinish(round, Boolean.FALSE);
         if (unfinishedCount == 0) {
-            Season season = round.getSeason();
             if (season.getNextRoundNumber() > round.getNumber()) {
                 // Already advanced
                 return;

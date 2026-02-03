@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Club;
@@ -26,7 +27,7 @@ public class ClubService {
 	
 	@Autowired TeamService teamService;
 	@Autowired NameService nameService;
-	@Autowired UserService userService;
+	@Lazy @Autowired UserService userService;
 	@Autowired ClubRepository clubRepository;
 	
 	public List<Club> createClubs(Game game, League league, int clubNumber){
