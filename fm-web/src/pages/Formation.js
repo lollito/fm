@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import Layout from '../components/Layout';
+import useSortableData from '../hooks/useSortableData';
 
 const PLAYER_ROLES = {
   GOALKEEPER: 0,
@@ -22,6 +23,7 @@ const ROLE_NAMES = {
 
 const Formation = () => {
   const [players, setPlayers] = useState([]);
+  const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
   const [modules, setModules] = useState([]);
   const [mentalities, setMentalities] = useState([]);
   const [formation, setFormation] = useState({ moduleId: '', mentality: '', playersId: Array(11).fill(null) });
@@ -32,29 +34,31 @@ const Formation = () => {
     setPlayers(res.data);
   }, []);
 
-  const fetchFormation = useCallback(async () => {
+  const updateFormationState = useCallback((data, modulesList = modules) => {
+    if (!data) return;
+    const pIds = Array(11).fill(null);
+    if (data.players) {
+        data.players.forEach((p, idx) => {
+            if (p && idx < 11) pIds[idx] = p.id;
+        });
+    }
+    setFormation({
+      moduleId: data.module.id,
+      mentality: data.mentality,
+      playersId: pIds
+    });
+    const mod = modulesList.find(m => m.id === data.module.id);
+    setSelectedModule(mod);
+  }, [modules]);
+
+  const fetchFormation = useCallback(async (modulesList = modules) => {
     try {
       const res = await api.get('/formation/');
-      if (res.data) {
-        const pIds = Array(11).fill(null);
-        if (res.data.players) {
-            res.data.players.forEach((p, idx) => {
-                if (p && idx < 11) pIds[idx] = p.id;
-            });
-        }
-        setFormation({
-          moduleId: res.data.module.id,
-          mentality: res.data.mentality,
-          playersId: pIds
-        });
-        const mRes = await api.get('/module/');
-        const mod = mRes.data.find(m => m.id === res.data.module.id);
-        setSelectedModule(mod);
-      }
+      updateFormationState(res.data, modulesList);
     } catch (e) {
       console.error('No formation found');
     }
-  }, []);
+  }, [updateFormationState, modules]);
 
   useEffect(() => {
     const init = async () => {
@@ -66,7 +70,7 @@ const Formation = () => {
         setModules(mRes.data);
         setMentalities(mentRes.data);
         fetchPlayers();
-        fetchFormation();
+        fetchFormation(mRes.data);
       } catch (e) {
         console.error('Error initializing data', e);
       }
@@ -142,8 +146,8 @@ const Formation = () => {
 
   const autoSelect = async () => {
     try {
-        await api.get('/formation/auto');
-        await fetchFormation();
+        const res = await api.get('/formation/auto');
+        updateFormationState(res.data);
         await fetchPlayers();
     } catch (error) {
         alert('Error in auto select: ' + (error.response?.data?.message || error.message));
@@ -183,6 +187,13 @@ const Formation = () => {
     return roleKey || '';
   };
 
+  const getSortIcon = (key) => {
+    if (!sortConfig || sortConfig.key !== key) return <i className="fas fa-sort" style={{ marginLeft: '5px', opacity: 0.3 }}></i>;
+    return sortConfig.direction === 'ascending' ?
+        <i className="fas fa-sort-up" style={{ marginLeft: '5px' }}></i> :
+        <i className="fas fa-sort-down" style={{ marginLeft: '5px' }}></i>;
+  };
+
   const renderSlot = (role, top, left, label, index) => {
     const playerId = formation.playersId[index];
     const player = players.find(p => p.id === playerId);
@@ -192,8 +203,8 @@ const Formation = () => {
 
     return (
       <div
-        key={`${role}-${top}-${left}-${index}`}
-        className={`pos ${isOutOfRole ? 'out-of-role' : ''}`}
+        key={\`\${role}-\${top}-\${left}-\${index}\`}
+        className={\`pos \${isOutOfRole ? 'out-of-role' : ''}\`}
         draggable={!!player}
         onDragStart={(e) => player && onDragStart(e, player.id, index)}
         onDragOver={(e) => e.preventDefault()}
@@ -203,7 +214,7 @@ const Formation = () => {
       >
         {isOutOfRole && <div style={{ position: 'absolute', top: -10, right: -10, background: 'var(--warning)', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '12px' }}>!</div>}
         <span className="player-name">
-            {player ? `${player.surname} ${player.name ? player.name.charAt(0) + '.' : ''}` : label}
+            {player ? \`\${player.surname} \${player.name ? player.name.charAt(0) + '.' : ''}\` : label}
         </span>
       </div>
     );
@@ -244,10 +255,15 @@ const Formation = () => {
             <div className="card-body">
               <table className="table">
                 <thead>
-                  <tr><th>Role</th><th>Player</th><th>Pos</th><th>Avg</th></tr>
+                  <tr>
+                    <th onClick={() => requestSort('role')} style={{ cursor: 'pointer' }}>Role {getSortIcon('role')}</th>
+                    <th onClick={() => requestSort('surname')} style={{ cursor: 'pointer' }}>Player {getSortIcon('surname')}</th>
+                    <th>Pos</th>
+                    <th onClick={() => requestSort('average')} style={{ cursor: 'pointer' }}>Avg {getSortIcon('average')}</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  {players.map(p => {
+                  {sortedPlayers.map(p => {
                     const slotIndex = formation.playersId.indexOf(p.id);
                     const isInFormation = slotIndex !== -1;
                     return (
@@ -259,7 +275,7 @@ const Formation = () => {
                         >
                           <td>{getPlayerRoleName(p)}</td>
                           <td>
-                            <i className={`fas ${isInFormation ? 'fa-check-circle text-success' : 'fa-futbol'}`}></i> {p.surname} {p.name ? p.name.charAt(0) + '.' : ''}
+                            <i className={\`fas \${isInFormation ? 'fa-check-circle text-success' : 'fa-futbol'}\`}></i> {p.surname} {p.name ? p.name.charAt(0) + '.' : ''}
                           </td>
                           <td>
                             <select

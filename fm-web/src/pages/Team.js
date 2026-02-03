@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import Layout from '../components/Layout';
+import useSortableData from '../hooks/useSortableData';
 
 const Team = () => {
   const [players, setPlayers] = useState([]);
+  const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
 
   useEffect(() => {
     const fetchPlayers = async () => {

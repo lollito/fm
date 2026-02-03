@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Module;
@@ -15,6 +16,7 @@ import com.lollito.fm.model.PlayerRole;
 import com.lollito.fm.model.Team;
 import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.repository.rest.FormationRepository;
+import com.lollito.fm.repository.rest.TeamRepository;
 
 @Service
 public class FormationService {
@@ -27,7 +29,9 @@ public class FormationService {
 	@Autowired private UserService userService;
 	@Autowired private MentalityService mentalityService;
 	@Autowired private FormationRepository formationRepository;
+	@Autowired private TeamRepository teamRepository;
 	
+	@Transactional
 	public Formation createPlayerFormation(FormationRequest formationRequest) {
 		Team team = userService.getLoggedUser().getClub().getTeam();
 		Formation formation = team.getFormation();
@@ -46,16 +50,21 @@ public class FormationService {
 		validate(formation);
 		team.setFormation(formation);
 		formationRepository.save(formation);
+		teamRepository.save(team);
 		return formation;
 	}
 	
+	@Transactional
 	public Formation createPlayerFormation() {
 		Team team = userService.getLoggedUser().getClub().getTeam();
 		Formation formation = createFormation(team.getPlayers(), team.getFormation());
 		team.setFormation(formation);
-        return formationRepository.save(formation);
+		formationRepository.save(formation);
+		teamRepository.save(team);
+        return formation;
 	}
 	
+	@Transactional
 	public Formation createFormation(List<Player> players, Formation formation){
 		//logger.info("players {}", players.size());
 		List<Player> playersCopy = new ArrayList<>();

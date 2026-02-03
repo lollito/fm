@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
+import useSortableData from '../hooks/useSortableData';
 
 const UpcomingMatches = () => {
   const [matches, setMatches] = useState([]);
@@ -10,6 +11,7 @@ const UpcomingMatches = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ type: 'all', location: 'all' });
   const [sortBy, setSortBy] = useState('dateAsc');
+  const { items: sortedMatches, requestSort, sortConfig } = useSortableData(filteredMatches);
   const { user } = useContext(AuthContext);
   const [countdown, setCountdown] = useState('');
 
@@ -30,6 +32,7 @@ const UpcomingMatches = () => {
   }, [fetchUpcomingMatches]);
 
   const parseDate = (dateStr) => {
+    if (!dateStr) return new Date();
     // pattern = "dd-MM-yyyy HH:mm"
     const [datePart, timePart] = dateStr.split(' ');
     const [day, month, year] = datePart.split('-');
@@ -94,6 +97,13 @@ const UpcomingMatches = () => {
 
   const isHome = (match) => match.home.id === user?.club?.id;
   const getOpponent = (match) => isHome(match) ? match.away : match.home;
+
+  const getSortIcon = (key) => {
+    if (!sortConfig || sortConfig.key !== key) return <i className="fas fa-sort" style={{ marginLeft: '5px', opacity: 0.3 }}></i>;
+    return sortConfig.direction === 'ascending' ?
+        <i className="fas fa-sort-up" style={{ marginLeft: '5px' }}></i> :
+        <i className="fas fa-sort-down" style={{ marginLeft: '5px' }}></i>;
+  };
 
   if (loading) {
     return (
@@ -207,18 +217,18 @@ const UpcomingMatches = () => {
                   <table className="table table-hover mb-0">
                     <thead className="thead-light">
                       <tr>
-                        <th>Data</th>
-                        <th>Opponente</th>
-                        <th className="d-none d-md-table-cell">Competizione</th>
-                        <th className="d-none d-md-table-cell">Sito</th>
+                        <th onClick={() => requestSort('date')} style={{ cursor: 'pointer' }}>Data {getSortIcon('date')}</th>
+                        <th onClick={() => requestSort('away.name')} style={{ cursor: 'pointer' }}>Opponente {getSortIcon('away.name')}</th>
+                        <th onClick={() => requestSort('competitionName')} style={{ cursor: 'pointer' }} className="d-none d-md-table-cell">Competizione {getSortIcon('competitionName')}</th>
+                        <th onClick={() => requestSort('stadiumName')} style={{ cursor: 'pointer' }} className="d-none d-md-table-cell">Sito {getSortIcon('stadiumName')}</th>
                         <th>Azioni</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredMatches.length === 0 ? (
+                      {sortedMatches.length === 0 ? (
                         <tr><td colSpan="5" className="text-center py-4">Nessuna partita trovata con questi filtri.</td></tr>
                       ) : (
-                        filteredMatches.map((m) => {
+                        sortedMatches.map((m) => {
                           const opponent = getOpponent(m);
                           const home = isHome(m);
                           return (
