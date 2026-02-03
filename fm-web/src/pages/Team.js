@@ -21,7 +21,7 @@ const Team = () => {
 
   const putOnSale = async (playerId) => {
     try {
-      await api.post(`/player/${playerId}/onSale`);
+      await api.post('/player/' + playerId + '/onSale');
       alert('Player put on sale');
     } catch (error) {
       alert('Error putting player on sale');

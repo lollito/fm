@@ -11,7 +11,7 @@ const History = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    api.get(`/match/history?page=${page}&size=10`).then(res => {
+    api.get('/match/history?page=' + page + '&size=10').then(res => {
       setMatches(res.data.content || []);
       setTotalPages(res.data.totalPages || 0);
     });
@@ -34,7 +34,7 @@ const History = () => {
         {matches.map(m => {
           const res = getResultInfo(m);
           return (
-            <div key={m.id} className="card mb-3" style={{ borderLeft: `8px solid ${res.color}` }}>
+            <div key={m.id} className="card mb-3" style={{ borderLeft: '8px solid ' + res.color }}>
               <div className="card-body d-flex justify-content-between align-items-center">
                 <div>
                   <h5 className="mb-1" style={{ color: res.color }}>{res.label}</h5>
@@ -48,7 +48,7 @@ const History = () => {
                     </small>
                   </div>
                 </div>
-                <Link to={`/match/${m.id}`} className="btn btn-outline btn-sm">Vedi Dettagli</Link>
+                <Link to={'/match/' + m.id} className="btn btn-outline btn-sm">Vedi Dettagli</Link>
               </div>
             </div>
           );
@@ -58,15 +58,15 @@ const History = () => {
         <div className="d-flex justify-content-center mt-4 mb-4">
           <nav>
             <ul className="pagination" style={{ display: 'flex', listStyle: 'none', gap: '5px' }}>
-              <li className={`page-item ${page === 0 ? 'disabled' : ''}`}>
+              <li className={'page-item ' + (page === 0 ? 'disabled' : '')}>
                 <button className="btn btn-outline btn-sm" onClick={() => setPage(page - 1)} disabled={page === 0}>Previous</button>
               </li>
               {[...Array(totalPages).keys()].map(p => (
-                <li key={p} className={`page-item ${page === p ? 'active' : ''}`}>
-                  <button className={`btn btn-sm ${page === p ? 'btn-primary' : 'btn-outline'}`} onClick={() => setPage(p)}>{p + 1}</button>
+                <li key={p} className={'page-item ' + (page === p ? 'active' : '')}>
+                  <button className={'btn btn-sm ' + (page === p ? 'btn-primary' : 'btn-outline')} onClick={() => setPage(p)}>{p + 1}</button>
                 </li>
               ))}
-              <li className={`page-item ${page >= totalPages - 1 ? 'disabled' : ''}`}>
+              <li className={'page-item ' + (page >= totalPages - 1 ? 'disabled' : '')}>
                 <button className="btn btn-outline btn-sm" onClick={() => setPage(page + 1)} disabled={page >= totalPages - 1}>Next</button>
               </li>
             </ul>

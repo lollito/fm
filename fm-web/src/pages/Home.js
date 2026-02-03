@@ -103,7 +103,7 @@ const Home = () => {
                 <tbody>
                   {sortedNextMatches.map((m, i) => (
                     <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}
-                        onClick={() => navigate(`/match/${m.id}`)} style={{ cursor: 'pointer' }}>
+                        onClick={() => navigate('/match/' + m.id)} style={{ cursor: 'pointer' }}>
                       <td>{m.home.name}</td>
                       <td>{m.away.name}</td>
                       <td>{m.date}</td>
@@ -133,7 +133,7 @@ const Home = () => {
                 <tbody>
                   {sortedPreviousMatches.map((m, i) => (
                     <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}
-                        onClick={() => navigate(`/match/${m.id}`)} style={{ cursor: 'pointer' }}>
+                        onClick={() => navigate('/match/' + m.id)} style={{ cursor: 'pointer' }}>
                       <td>{m.home.name}</td>
                       <td>{m.away.name}</td>
                       <td>{m.homeScore} - {m.awayScore}</td>

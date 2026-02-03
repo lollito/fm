@@ -12,7 +12,7 @@ const MatchDetail = () => {
     const { items: sortedPlayerStats, requestSort, sortConfig } = useSortableData(match?.playerStats || [], { key: 'rating', direction: 'descending' });
 
     useEffect(() => {
-        api.get(\`/match/\${id}\`).then(res => setMatch(res.data));
+        api.get('/match/' + id).then(res => setMatch(res.data));
     }, [id]);
 
     if (!match) return <Layout><div className="text-center mt-5">Loading match details...</div></Layout>;
@@ -36,12 +36,12 @@ const MatchDetail = () => {
     const renderSlot = (player, top, left, label) => {
         return (
             <div
-                key={\`\${label}-\${top}-\${left}\`}
+                key={label + '-' + top + '-' + left}
                 className="pos"
                 style={{ position: 'absolute', top, left, transform: 'translate(-50%, -50%)', width: '40px', height: '40px', fontSize: '0.6rem' }}
             >
                 <span className="player-name" style={{ fontSize: '0.6rem', bottom: '-20px' }}>
-                    {player ? \`\${player.surname} \${player.name ? player.name.charAt(0) + '.' : ''}\` : label}
+                    {player ? player.surname + ' ' + (player.name ? player.name.charAt(0) + '.' : '') : label}
                 </span>
             </div>
         );
@@ -114,10 +114,10 @@ const MatchDetail = () => {
             </div>
 
             <div className="row mb-3" style={{ padding: '0 12px', gap: '10px' }}>
-                <button className={\`btn \${activeTab === 'summary' ? 'btn-primary' : 'btn-outline'}\`} onClick={() => setActiveTab('summary')}>Summary</button>
-                <button className={\`btn \${activeTab === 'stats' ? 'btn-primary' : 'btn-outline'}\`} onClick={() => setActiveTab('stats')}>Stats</button>
-                <button className={\`btn \${activeTab === 'lineups' ? 'btn-primary' : 'btn-outline'}\`} onClick={() => setActiveTab('lineups')}>Lineups</button>
-                <button className={\`btn \${activeTab === 'ratings' ? 'btn-primary' : 'btn-outline'}\`} onClick={() => setActiveTab('ratings')}>Player Ratings</button>
+                <button className={'btn ' + (activeTab === 'summary' ? 'btn-primary' : 'btn-outline')} onClick={() => setActiveTab('summary')}>Summary</button>
+                <button className={'btn ' + (activeTab === 'stats' ? 'btn-primary' : 'btn-outline')} onClick={() => setActiveTab('stats')}>Stats</button>
+                <button className={'btn ' + (activeTab === 'lineups' ? 'btn-primary' : 'btn-outline')} onClick={() => setActiveTab('lineups')}>Lineups</button>
+                <button className={'btn ' + (activeTab === 'ratings' ? 'btn-primary' : 'btn-outline')} onClick={() => setActiveTab('ratings')}>Player Ratings</button>
             </div>
 
             {activeTab === 'summary' && (
@@ -171,13 +171,13 @@ const MatchDetail = () => {
                                         </div>
                                         <div className="attr-bar" style={{ display: 'flex' }}>
                                             <div style={{
-                                                width: \`\${(s.home / (s.home + s.away || 1)) * 100}%\`,
+                                                width: ((s.home / (s.home + s.away || 1)) * 100) + '%',
                                                 backgroundColor: 'var(--primary)',
                                                 height: '100%',
                                                 borderRadius: '4px 0 0 4px'
                                             }}></div>
                                             <div style={{
-                                                width: \`\${(s.away / (s.home + s.away || 1)) * 100}%\`,
+                                                width: ((s.away / (s.home + s.away || 1)) * 100) + '%',
                                                 backgroundColor: 'var(--accent)',
                                                 height: '100%',
                                                 borderRadius: '0 4px 4px 0'

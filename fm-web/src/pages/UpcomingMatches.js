@@ -59,9 +59,9 @@ const UpcomingMatches = () => {
           const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
           let countdownStr = '';
-          if (days > 0) countdownStr += `${days}d `;
-          if (hours > 0 || days > 0) countdownStr += `${hours}h `;
-          countdownStr += `${minutes}m ${seconds}s`;
+          if (days > 0) countdownStr += days + 'd ';
+          if (hours > 0 || days > 0) countdownStr += hours + 'h ';
+          countdownStr += minutes + 'm ' + seconds + 's';
           setCountdown(countdownStr);
         }
       }, 1000);

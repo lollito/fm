@@ -13,7 +13,7 @@ const Transfers = () => {
 
   const buyPlayer = async (playerId) => {
     try {
-      await api.post(`/player/${playerId}/buy`);
+      await api.post('/player/' + playerId + '/buy');
       alert('Player bought');
       setPlayersOnSale(playersOnSale.filter(p => p.id !== playerId));
     } catch (e) {
