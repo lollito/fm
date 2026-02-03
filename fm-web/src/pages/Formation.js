@@ -203,8 +203,8 @@ const Formation = () => {
 
     return (
       <div
-        key={\`\${role}-\${top}-\${left}-\${index}\`}
-        className={\`pos \${isOutOfRole ? 'out-of-role' : ''}\`}
+        key={role + '-' + top + '-' + left + '-' + index}
+        className={'pos ' + (isOutOfRole ? 'out-of-role' : '')}
         draggable={!!player}
         onDragStart={(e) => player && onDragStart(e, player.id, index)}
         onDragOver={(e) => e.preventDefault()}
@@ -214,7 +214,7 @@ const Formation = () => {
       >
         {isOutOfRole && <div style={{ position: 'absolute', top: -10, right: -10, background: 'var(--warning)', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '12px' }}>!</div>}
         <span className="player-name">
-            {player ? \`\${player.surname} \${player.name ? player.name.charAt(0) + '.' : ''}\` : label}
+            {player ? player.surname + ' ' + (player.name ? player.name.charAt(0) + '.' : '') : label}
         </span>
       </div>
     );
@@ -275,7 +275,7 @@ const Formation = () => {
                         >
                           <td>{getPlayerRoleName(p)}</td>
                           <td>
-                            <i className={\`fas \${isInFormation ? 'fa-check-circle text-success' : 'fa-futbol'}\`}></i> {p.surname} {p.name ? p.name.charAt(0) + '.' : ''}
+                            <i className={'fas ' + (isInFormation ? 'fa-check-circle text-success' : 'fa-futbol')}></i> {p.surname} {p.name ? p.name.charAt(0) + '.' : ''}
                           </td>
                           <td>
                             <select

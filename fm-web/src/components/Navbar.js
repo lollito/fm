@@ -24,7 +24,7 @@ const Navbar = ({ onToggleMenu }) => {
 
       <div style={{ marginLeft: '20px', display: 'flex', alignItems: 'center', flexGrow: 1 }}>
         <div className="progress" style={{ width: '150px' }}>
-          <div className="progress-bar" style={{ width: `${user?.levelProgress || 0}%` }}>
+          <div className="progress-bar" style={{ width: (user?.levelProgress || 0) + '%' }}>
             Lvl. {user?.level || 0}
           </div>
         </div>

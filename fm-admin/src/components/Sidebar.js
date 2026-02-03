@@ -15,7 +15,7 @@ const Sidebar = () => {
 
       <hr className="sidebar-divider" />
 
-      <li className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
+      <li className={'nav-item ' + (location.pathname === '/' ? 'active' : '')}>
         <Link className="nav-link" to="/">
           <i className="fas fa-fw fa-tachometer-alt"></i>
           <span> Dashboard</span>
