@@ -78,37 +78,62 @@ public class FormationService {
 		formation.setPlayers(new ArrayList<>());
 		Player goalKeeper = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.GOALKEEPER);
 		if (goalKeeper == null && !playersCopy.isEmpty()) goalKeeper = playersCopy.get(0);
-		formation.addPlayer(goalKeeper);
-		playersCopy.remove(goalKeeper);
+		if (goalKeeper != null) {
+			formation.addPlayer(goalKeeper);
+			playersCopy.remove(goalKeeper);
+		} else {
+			logger.error("Could not find a goalkeeper for formation");
+		}
+
 		for (int i = 0; i < module.getCd(); i++) {
 			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.DEFENDER);
 			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
-			formation.addPlayer(best);
-			playersCopy.remove(best);
+			if (best != null) {
+				formation.addPlayer(best);
+				playersCopy.remove(best);
+			} else {
+				logger.error("Could not find a CD for formation at index {}", i);
+			}
 		}
 		for (int i = 0; i < module.getWb(); i++) {
 			Player best = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.WINGBACK);
 			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
-			formation.addPlayer(best);
-			playersCopy.remove(best);
+			if (best != null) {
+				formation.addPlayer(best);
+				playersCopy.remove(best);
+			} else {
+				logger.error("Could not find a WB for formation at index {}", i);
+			}
 		}
 		for (int i = 0; i < module.getMf(); i++) {
 			Player best = playerService.getBestBalancedPlayer(playersCopy, PlayerRole.MIDFIELDER);
 			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
-			formation.addPlayer(best);
-			playersCopy.remove(best);
+			if (best != null) {
+				formation.addPlayer(best);
+				playersCopy.remove(best);
+			} else {
+				logger.error("Could not find a MF for formation at index {}", i);
+			}
 		}
 		for (int i = 0; i < module.getWng(); i++) {
 			Player best = playerService.getBestBalancedPlayer(playersCopy, PlayerRole.WING);
 			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
-			formation.addPlayer(best);
-			playersCopy.remove(best);
+			if (best != null) {
+				formation.addPlayer(best);
+				playersCopy.remove(best);
+			} else {
+				logger.error("Could not find a WNG for formation at index {}", i);
+			}
 		}
 		for (int i = 0; i < module.getFw(); i++) {
 			Player best = playerService.getBestOffensivePlayer(playersCopy, PlayerRole.FORWARD);
 			if (best == null && !playersCopy.isEmpty()) best = playersCopy.get(0);
-			formation.addPlayer(best);
-			playersCopy.remove(best);
+			if (best != null) {
+				formation.addPlayer(best);
+				playersCopy.remove(best);
+			} else {
+				logger.error("Could not find a FW for formation at index {}", i);
+			}
 		}
 		//logger.info("formation {}", formation);
 		return formation;
@@ -157,7 +182,14 @@ public class FormationService {
 	
 	public void validate(Formation formation) {
 		if(formation.getPlayers().size() != 11) {
+			logger.error("Formation validation error: expected 11 players, found {}", formation.getPlayers().size());
 			throw new RuntimeException("formation validation error: 11 players required");
+		}
+		for (int i = 0; i < formation.getPlayers().size(); i++) {
+			if (formation.getPlayers().get(i) == null) {
+				logger.error("Formation validation error: player at index {} is null", i);
+				throw new RuntimeException("formation validation error: all players must be non-null");
+			}
 		}
 	}
 }
