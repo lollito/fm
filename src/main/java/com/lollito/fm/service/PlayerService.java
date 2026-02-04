@@ -23,6 +23,12 @@ public class PlayerService {
 	public Player findOne(Long id) {
 		return playerRepository.findById(id).get();
 	}
+
+	public List<Player> findAll(List<Long> ids) {
+		List<Player> players = new java.util.ArrayList<>();
+		playerRepository.findAllById(ids).forEach(players::add);
+		return players;
+	}
 	
 	public List<PlayerCondition> findAllCondition() {
 		return playerRepository.findAllBy(PageRequest.of(0, 20));

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import com.lollito.fm.controller.rest.errors.GameNotFoundException;
+import com.lollito.fm.controller.rest.errors.CustomParameterizedException;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.repository.rest.GameRepository;
 
@@ -36,5 +37,12 @@ public class SessionBean {
 		}
 		return gameRepository.findById(this.gameId)
 				.orElseThrow(() -> new GameNotFoundException("Game not found with ID: " + this.gameId));
+			logger.error("error - game is null");
+			throw new CustomParameterizedException("error.gameNotFound");
+		}
+		return gameRepository.findById(this.gameId).orElseThrow(() -> {
+			logger.error("error - game is null");
+			return new CustomParameterizedException("error.gameNotFound");
+		});
 	}
 }
