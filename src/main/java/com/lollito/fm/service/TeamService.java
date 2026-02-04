@@ -64,4 +64,8 @@ public class TeamService {
 	public void save(List<Team> teams){
 		teamRepository.saveAll(teams);
 	}
+
+	public Team findById(Long id) {
+		return teamRepository.findById(id).orElseThrow(() -> new RuntimeException("Team not found"));
+	}
 }

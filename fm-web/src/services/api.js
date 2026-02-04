@@ -72,3 +72,11 @@ export const getMatchEvents = (matchId, fromMinute = null) => {
 export const joinLiveMatch = (matchId) => api.post('/live-match/' + matchId + '/join');
 export const leaveLiveMatch = (matchId) => api.post('/live-match/' + matchId + '/leave');
 export const getActiveLiveMatches = () => api.get('/live-match/active');
+
+// Training API
+export const getTrainingPlan = (teamId) => api.get('/training/plan/' + teamId);
+export const updateTrainingPlan = (teamId, data) => api.put('/training/plan/' + teamId, data);
+export const getTrainingHistory = (teamId, page = 0, size = 20) => api.get('/training/history/' + teamId + '?page=' + page + '&size=' + size);
+export const getSessionResults = (sessionId) => api.get('/training/session/' + sessionId + '/results');
+export const createManualTrainingSession = (teamId, data) => api.post('/training/session/manual/' + teamId, data);
+export const getClub = (id) => api.get('/club/' + id);
