@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api';
+export const API_BASE_URL = 'http://localhost:8080';
+const API_URL = API_BASE_URL + '/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -46,3 +47,15 @@ export const generateReport = (clubId, data) => api.post('/finance/club/' + club
 export const getSponsorshipDeals = (clubId) => api.get('/finance/club/' + clubId + '/sponsorships');
 
 export default api;
+
+// Live Match API
+export const startLiveMatch = (matchId) => api.post('/live-match/' + matchId + '/start');
+export const getLiveMatch = (matchId) => api.get('/live-match/' + matchId);
+export const getMatchEvents = (matchId, fromMinute = null) => {
+    const params = new URLSearchParams();
+    if (fromMinute !== null) params.append('fromMinute', fromMinute);
+    return api.get('/live-match/' + matchId + '/events?' + params.toString());
+};
+export const joinLiveMatch = (matchId) => api.post('/live-match/' + matchId + '/join');
+export const leaveLiveMatch = (matchId) => api.post('/live-match/' + matchId + '/leave');
+export const getActiveLiveMatches = () => api.get('/live-match/active');
