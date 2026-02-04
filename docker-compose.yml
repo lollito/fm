@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Database
   mysql:
-    image: mysql:8.0
+    image: mysql:9.6
     container_name: fm-mysql
     restart: unless-stopped
     environment:
