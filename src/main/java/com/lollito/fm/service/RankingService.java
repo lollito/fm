@@ -30,13 +30,17 @@ public class RankingService {
 	}
 	
 	public void update(Match match){
-		Ranking rankingLineHome = rankingLineRepository.findByClubAndSeason(match.getHome(), match.getRound().getSeason());
-		rankingLineHome.updateStats(match.getHomeScore(), match.getAwayScore());
-		rankingLineRepository.save(rankingLineHome);
+		Ranking rankingLineHome = rankingLineRepository.findFirstByClubAndSeason(match.getHome(), match.getRound().getSeason());
+		if (rankingLineHome != null) {
+			rankingLineHome.updateStats(match.getHomeScore(), match.getAwayScore());
+			rankingLineRepository.save(rankingLineHome);
+		}
 		
-		Ranking rankingLineAway = rankingLineRepository.findByClubAndSeason(match.getAway(), match.getRound().getSeason());
-		rankingLineAway.updateStats(match.getAwayScore(), match.getHomeScore());
-		rankingLineRepository.save(rankingLineAway);
+		Ranking rankingLineAway = rankingLineRepository.findFirstByClubAndSeason(match.getAway(), match.getRound().getSeason());
+		if (rankingLineAway != null) {
+			rankingLineAway.updateStats(match.getAwayScore(), match.getHomeScore());
+			rankingLineRepository.save(rankingLineAway);
+		}
 	}
 	
 	public List<Ranking> load(){

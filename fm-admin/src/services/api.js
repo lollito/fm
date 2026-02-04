@@ -19,6 +19,17 @@ api.interceptors.request.use(
   }
 );
 
+export const getDebugDashboard = () => api.get('/admin/debug/dashboard');
+export const advanceSeason = (data) => api.post('/admin/debug/season/advance', data);
+export const simulateMatches = (data) => api.post('/admin/debug/matches/simulate', data);
+export const modifyPlayerStats = (data) => api.post('/admin/debug/players/modify-stats', data);
+export const adjustFinances = (data) => api.post('/admin/debug/finances/adjust', data);
+export const getSystemSnapshots = () => api.get('/admin/debug/snapshots');
+export const createSystemSnapshot = (data) => api.post('/admin/debug/snapshots', data);
+export const getTestScenarios = () => api.get('/admin/debug/test-scenarios');
+export const executeTestScenario = (id) => api.post('/admin/debug/test-scenarios/' + id + '/execute');
+export const getPerformanceMetrics = (params) => api.get('/admin/debug/metrics', { params });
+export const getDebugActions = (params) => api.get('/admin/debug/actions', { params });
 export const getAdminDashboard = () => api.get('/admin/dashboard');
 export const getClubs = () => api.get('/admin/clubs');
 export const createClub = (data) => api.post('/admin/clubs', data);

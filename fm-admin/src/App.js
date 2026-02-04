@@ -4,6 +4,7 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import UserManagement from './pages/UserManagement';
+import DebugTools from './pages/DebugTools';
 import AdminDashboard from './pages/AdminDashboard';
 import ClubManagement from './pages/ClubManagement';
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/clubs" element={<PrivateRoute><ClubManagement /></PrivateRoute>} />
           <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
+          <Route path="/debug" element={<PrivateRoute><DebugTools /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
