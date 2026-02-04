@@ -11,7 +11,8 @@ public enum Event {
 	YELLOW_CARD("%s received a yellow card,"),
 	RED_CARD("%s received a red card,"),
 	SHOT_AND_MISSED("%s shot and missed"),
-	SUBSTITUTION("%s replaces %s");
+	SUBSTITUTION("%s replaces %s"),
+	INJURY("%s is injured: %s");
 	
 	
 	private String message;
