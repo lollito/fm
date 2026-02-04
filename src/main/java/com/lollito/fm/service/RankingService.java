@@ -1,6 +1,10 @@
 package com.lollito.fm.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +47,36 @@ public class RankingService {
 		}
 	}
 	
+	public void updateAll(List<Match> matches) {
+		if (matches == null || matches.isEmpty()) {
+			return;
+		}
+
+		Season season = matches.get(0).getRound().getSeason();
+
+		List<Ranking> rankings = rankingLineRepository.findBySeason(season);
+		Map<Long, Ranking> rankingMap = rankings.stream()
+				.collect(Collectors.toMap(r -> r.getClub().getId(), r -> r));
+
+		Set<Ranking> modifiedRankings = new HashSet<>();
+
+		for (Match match : matches) {
+			Ranking rankingLineHome = rankingMap.get(match.getHome().getId());
+			if (rankingLineHome != null) {
+				rankingLineHome.updateStats(match.getHomeScore(), match.getAwayScore());
+				modifiedRankings.add(rankingLineHome);
+			}
+
+			Ranking rankingLineAway = rankingMap.get(match.getAway().getId());
+			if (rankingLineAway != null) {
+				rankingLineAway.updateStats(match.getAwayScore(), match.getHomeScore());
+				modifiedRankings.add(rankingLineAway);
+			}
+		}
+
+		rankingLineRepository.saveAll(modifiedRankings);
+	}
+
 	public List<Ranking> load(){
 		return userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRankingLines();
 	}
