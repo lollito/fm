@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -10,6 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.lollito.fm.repository.rest.GameRepository;
+
+@ExtendWith(MockitoExtension.class)
+public class GameServiceTest {
 import org.springframework.security.access.AccessDeniedException;
 
 import com.lollito.fm.model.AdminRole;
@@ -30,6 +36,11 @@ class GameServiceTest {
     private GameService gameService;
 
     @Test
+    public void testDeleteAll() {
+        gameService.deleteAll();
+        verify(gameRepository).deleteAll();
+    }
+  
     void delete_whenUserIsSuperAdmin_shouldDeleteGame() {
         Long gameId = 1L;
         User admin = new User();

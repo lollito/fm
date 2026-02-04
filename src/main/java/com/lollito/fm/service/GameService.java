@@ -143,4 +143,8 @@ public class GameService {
 		}
 		gameRepository.deleteById(gameId);
 	}
+
+	public void deleteAll(){
+		gameRepository.deleteAll();
+	}
 }
