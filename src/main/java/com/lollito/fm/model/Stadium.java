@@ -65,4 +65,10 @@ public class Stadium implements Serializable{
     	this.name = name;
     }
 
+    @Transient
+    public Integer getCapacity() {
+        return grandstandNord + grandstandSud + grandstandWest + grandstandEst +
+               grandstandNordWest + grandstandNordEst + grandstandSudWest + grandstandSudEst;
+    }
+
 }

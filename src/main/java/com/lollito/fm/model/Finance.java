@@ -2,6 +2,7 @@ package com.lollito.fm.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -34,7 +36,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class Finance implements Serializable{
+public class Finance implements Serializable {
 	
 	@Transient
 	private static final long serialVersionUID = 1L;
@@ -44,16 +46,78 @@ public class Finance implements Serializable{
 	@GenericGenerator(name = "native", strategy = "native")
 	@EqualsAndHashCode.Include
 	private Long id;
+
+    @OneToOne(mappedBy = "finance")
+    @ToString.Exclude
+    private Club club;
 	
 	@Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    @Builder.Default
+    private BigDecimal monthlyBudget = BigDecimal.ZERO;
+
+    @Builder.Default
+    private BigDecimal seasonBudget = BigDecimal.ZERO;
+
+    // Revenue tracking
+    @Builder.Default
+    private BigDecimal totalRevenue = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal matchdayRevenue = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal sponsorshipRevenue = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal merchandiseRevenue = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal transferRevenue = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal prizeMoneyRevenue = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal tvRightsRevenue = BigDecimal.ZERO;
+
+    // Expense tracking
+    @Builder.Default
+    private BigDecimal totalExpenses = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal playerSalaries = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal staffSalaries = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal facilityMaintenance = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal transferExpenses = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal operationalCosts = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal loanInterest = BigDecimal.ZERO;
+
+    // Financial health indicators
+    @Builder.Default
+    private BigDecimal netWorth = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal debt = BigDecimal.ZERO;
+    @Builder.Default
+    private Double profitMargin = 0.0;
+
+    private LocalDate lastUpdated;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn( name = "finance_id" )
 	@Builder.Default
 	@ToString.Exclude
     private List<Sponsorship> sponsorships = new ArrayList<>();
     
+    @OneToMany(mappedBy = "finance", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    private List<FinancialTransaction> transactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "finance", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    private List<FinancialReport> reports = new ArrayList<>();
+
 	public Finance(BigDecimal balance) {
 		this();
 		this.balance = balance;

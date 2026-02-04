@@ -61,6 +61,7 @@ public class UserController {
 		return ResponseEntity.ok(new JwtResponse(jwt,
 												 user.getId(),
 												 userDetails.getUsername(),
+												 user.getClub() != null ? user.getClub().getId() : null,
 												 roles));
     }
 	
@@ -83,6 +84,7 @@ public class UserController {
 		return ResponseEntity.ok(new JwtResponse(jwt,
 												 user.getId(),
 												 userDetails.getUsername(),
+												 user.getClub() != null ? user.getClub().getId() : null,
 												 roles));
     }
     
