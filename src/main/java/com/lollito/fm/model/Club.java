@@ -80,7 +80,7 @@ public class Club implements Serializable{
 	@ToString.Exclude
     private User user;
     
-    @ManyToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
 	@JoinColumn( name = "finance_id" )
 	@ToString.Exclude
 	private Finance finance;

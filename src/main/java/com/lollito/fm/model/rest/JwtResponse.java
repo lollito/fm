@@ -7,13 +7,23 @@ public class JwtResponse {
 	private String type = "Bearer";
 	private Long id;
 	private String username;
+	private Long clubId;
 	private List<String> roles;
 
-	public JwtResponse(String accessToken, Long id, String username, List<String> roles) {
+	public JwtResponse(String accessToken, Long id, String username, Long clubId, List<String> roles) {
 		this.token = accessToken;
 		this.id = id;
 		this.username = username;
+		this.clubId = clubId;
 		this.roles = roles;
+	}
+
+	public Long getClubId() {
+		return clubId;
+	}
+
+	public void setClubId(Long clubId) {
+		this.clubId = clubId;
 	}
 
 	public String getAccessToken() {

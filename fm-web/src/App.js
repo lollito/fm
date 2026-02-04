@@ -15,6 +15,7 @@ import Transfers from './pages/Transfers';
 import History from './pages/History';
 import MatchDetail from './pages/MatchDetail';
 import Player from './pages/Player';
+import Finance from './pages/Finance';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -39,6 +40,7 @@ function App() {
           <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
           <Route path="/transfers" element={<PrivateRoute><Transfers /></PrivateRoute>} />
           <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
+          <Route path="/finance" element={<PrivateRoute><Finance /></PrivateRoute>} />
           <Route path="/match/:id" element={<PrivateRoute><MatchDetail /></PrivateRoute>} />
           <Route path="/player/:id" element={<PrivateRoute><Player /></PrivateRoute>} />
         </Routes>

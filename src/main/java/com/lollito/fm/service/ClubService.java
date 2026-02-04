@@ -67,4 +67,12 @@ public class ClubService {
 	public Club save(Club club) {
 		return clubRepository.save(club);
 	}
+
+	public Club findById(Long id) {
+		return clubRepository.findById(id).orElseThrow(() -> new RuntimeException("Club not found"));
+	}
+
+	public List<Club> findAll() {
+		return clubRepository.findAll();
+	}
 }
