@@ -3,6 +3,7 @@ package com.lollito.fm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.lollito.fm.service.GameService;
@@ -14,9 +15,9 @@ public class ScheduledTasks {
 	
 	@Autowired private GameService gameService;
 	
-//    @Scheduled(cron = "0 0/1 * * * ?")
-    public void reportCurrentTime() {
-    	logger.info("OOOEEEE");
-    	gameService.next();
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void deleteAllGames() {
+	logger.info("Deleting all games");
+	gameService.deleteAll();
     }
 }
