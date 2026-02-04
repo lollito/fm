@@ -3,10 +3,7 @@ package com.lollito.fm.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -30,7 +26,7 @@ import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "sponsorship_deal")
+@Table(name = "sponsorship_offer")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -38,7 +34,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class SponsorshipDeal implements Serializable {
+public class SponsorshipOffer implements Serializable {
 
     @Transient
     private static final long serialVersionUID = 1L;
@@ -50,55 +46,37 @@ public class SponsorshipDeal implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_id")
-    @ToString.Exclude
-    private Club club;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sponsor_id")
     @ToString.Exclude
     private Sponsor sponsor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id")
+    @ToString.Exclude
+    private Club club;
+
     @Enumerated(EnumType.STRING)
     private SponsorshipType type;
 
-    private BigDecimal baseAnnualValue;
-    private BigDecimal currentAnnualValue; // Adjusted based on performance
-    private BigDecimal totalValue;
-
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private BigDecimal offeredAnnualValue;
     private Integer contractYears;
 
-    @Enumerated(EnumType.STRING)
-    private SponsorshipStatus status;
-
-    // Performance bonuses
+    // Performance bonuses offered
     private BigDecimal leaguePositionBonus;
     private BigDecimal cupProgressBonus;
     private BigDecimal attendanceBonus;
-    private BigDecimal reputationBonus;
 
-    // Contract terms
-    private String contractTerms;
-    private Boolean autoRenewal;
-    private Integer renewalYears;
-    private BigDecimal renewalBonusPercentage;
+    @Enumerated(EnumType.STRING)
+    private OfferStatus status; // PENDING, ACCEPTED, REJECTED, EXPIRED
 
-    // Performance tracking
-    private Integer currentLeaguePosition;
-    private Integer bestLeaguePosition;
-    private Integer cupRoundsReached;
-    private Double averageAttendance;
-    private Integer reputationScore;
+    private LocalDate offerDate;
+    private LocalDate expiryDate;
 
-    @OneToMany(mappedBy = "sponsorshipDeal", cascade = CascadeType.ALL)
-    @Builder.Default
-    @ToString.Exclude
-    private List<SponsorshipPayment> payments = new ArrayList<>();
+    private String terms;
+    private String specialConditions;
 
-    @OneToMany(mappedBy = "sponsorshipDeal", cascade = CascadeType.ALL)
-    @Builder.Default
-    @ToString.Exclude
-    private List<SponsorshipBonus> bonuses = new ArrayList<>();
+    // Negotiation tracking
+    private Integer negotiationRounds;
+    private BigDecimal lastCounterOffer;
+    private String rejectionReason;
 }

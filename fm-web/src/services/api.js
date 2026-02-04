@@ -45,4 +45,13 @@ export const generateReport = (clubId, data) => api.post('/finance/club/' + club
 
 export const getSponsorshipDeals = (clubId) => api.get('/finance/club/' + clubId + '/sponsorships');
 
+// Sponsorship API
+export const getSponsorshipDashboard = (clubId) => api.get('/sponsorship/club/' + clubId + '/dashboard');
+export const generateOffers = (clubId) => api.post('/sponsorship/club/' + clubId + '/generate-offers');
+export const acceptOffer = (offerId) => api.post('/sponsorship/offer/' + offerId + '/accept');
+export const rejectOffer = (offerId) => api.post('/sponsorship/offer/' + offerId + '/reject');
+export const negotiateOffer = (offerId, data) => api.post('/sponsorship/offer/' + offerId + '/negotiate', data);
+export const getActiveDeals = (clubId) => api.get('/sponsorship/club/' + clubId + '/deals');
+export const getPendingOffers = (clubId) => api.get('/sponsorship/club/' + clubId + '/offers');
+
 export default api;
