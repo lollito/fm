@@ -3,6 +3,10 @@ package com.lollito.fm.model;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,8 +17,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +61,27 @@ public class User implements Serializable {
 	
 	private String surname;
 	
+	@Column(name = "first_name")
+	private String firstName;
+
+	@Column(name = "last_name")
+	private String lastName;
+
+	@Column(name = "phone_number")
+	private String phoneNumber;
+
+	@Column(name = "date_of_birth")
+	private LocalDate dateOfBirth;
+
+	@Column(name = "country")
+	private String countryString;
+
+	@Column(name = "preferred_language")
+	private String preferredLanguage;
+
+	@Column(name = "timezone")
+	private String timezone;
+
 	private String email;
 	
 	@JsonIgnore
@@ -67,6 +95,82 @@ public class User implements Serializable {
 	@jakarta.persistence.Convert(converter = org.hibernate.type.YesNoConverter.class)
 	@Builder.Default
 	private Boolean active = Boolean.FALSE;
+
+	@Column(name = "is_active")
+	@Builder.Default
+	private Boolean isActive = true;
+
+	@Column(name = "is_verified")
+	@Builder.Default
+	private Boolean isVerified = false;
+
+	@Column(name = "is_banned")
+	@Builder.Default
+	private Boolean isBanned = false;
+
+	@Column(name = "ban_reason")
+	private String banReason;
+
+	@Column(name = "banned_until")
+	private LocalDateTime bannedUntil;
+
+	@Column(name = "banned_by")
+	private String bannedBy;
+
+	// Login tracking
+	@Column(name = "last_login_date")
+	private LocalDateTime lastLoginDate;
+
+	@Column(name = "last_login_ip")
+	private String lastLoginIp;
+
+	@Column(name = "failed_login_attempts")
+	@Builder.Default
+	private Integer failedLoginAttempts = 0;
+
+	@Column(name = "account_locked_until")
+	private LocalDateTime accountLockedUntil;
+
+	// Account creation and modification
+	@Column(name = "created_date")
+	private LocalDateTime createdDate;
+
+	@Column(name = "created_by")
+	private String createdBy;
+
+	@Column(name = "last_modified_date")
+	private LocalDateTime lastModifiedDate;
+
+	@Column(name = "last_modified_by")
+	private String lastModifiedBy;
+
+	// Password management
+	@Column(name = "password_changed_date")
+	private LocalDateTime passwordChangedDate;
+
+	@Column(name = "password_reset_token")
+	private String passwordResetToken;
+
+	@Column(name = "password_reset_token_expiry")
+	private LocalDateTime passwordResetTokenExpiry;
+
+	@Column(name = "email_verification_token")
+	private String emailVerificationToken;
+
+	@Column(name = "email_verification_token_expiry")
+	private LocalDateTime emailVerificationTokenExpiry;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@Builder.Default
+	private List<UserSession> sessions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@Builder.Default
+	private List<UserActivity> activities = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@Builder.Default
+	private List<UserNotification> notifications = new ArrayList<>();
 
 	private String activationToken;
 	
