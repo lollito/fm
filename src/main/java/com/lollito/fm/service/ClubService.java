@@ -16,6 +16,7 @@ import com.lollito.fm.model.Game;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Stadium;
 import com.lollito.fm.repository.rest.ClubRepository;
+import com.lollito.fm.service.errors.FreeClubNotFoundException;
 import com.lollito.fm.utils.RandomUtils;
 
 @Service
@@ -58,8 +59,7 @@ public class ClubService {
 		return clubRepository.count();
 	}
 	
-	//TODO exception free club not found
 	public Club findTopByLeagueCountryAndUserIsNull(Country country) {
-		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow();
+		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow(FreeClubNotFoundException::new);
 	}
 }
