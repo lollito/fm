@@ -19,4 +19,6 @@ api.interceptors.request.use(
   }
 );
 
+export const getPlayerHistory = (id) => api.get('/player-history/player/' + id);
+
 export default api;

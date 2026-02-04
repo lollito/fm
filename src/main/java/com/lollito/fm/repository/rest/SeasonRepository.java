@@ -17,4 +17,6 @@ public interface SeasonRepository extends JpaRepository<Season, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT s FROM Season s WHERE s.id = :id")
     Optional<Season> findByIdWithLock(@Param("id") Long id);
+
+    Optional<Season> findByCurrentTrue();
 }

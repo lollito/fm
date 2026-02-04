@@ -28,7 +28,17 @@ public class SeasonService {
 	@Autowired RankingService rankingService;
 	
 	public Season create(League league, LocalDateTime startDate) {
+		// Deactivate previous current season
+		seasonRepository.findByCurrentTrue().ifPresent(s -> {
+			s.setCurrent(false);
+			seasonRepository.save(s);
+		});
+
 		Season season = new Season();
+		season.setStartYear(startDate.getYear());
+		season.setEndYear(startDate.getYear() + 1);
+		season.setCurrent(true);
+
 		List<Club> clubsList = league.getClubs();
 		rankingService.create(clubsList, season);
 		int numClubs = clubsList.size();
@@ -113,5 +123,13 @@ public class SeasonService {
 			}
 			startDate = startDate.plusDays(1);
 		}
+	}
+
+	public Season getCurrentSeason() {
+		return seasonRepository.findByCurrentTrue().orElse(null);
+	}
+
+	public Season findById(Long id) {
+		return seasonRepository.findById(id).orElse(null);
 	}
 }

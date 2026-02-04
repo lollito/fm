@@ -41,6 +41,7 @@ public class SimulationMatchService {
 	@Autowired RankingService rankingService;
 	@Autowired StadiumService stadiumService;
 	@Autowired PlayerRepository playerRepository;
+	@Autowired PlayerHistoryService playerHistoryService;
 	
 	public void simulate(List<Match> matches){
 		matches.forEach(match -> simulate(match));
@@ -59,6 +60,10 @@ public class SimulationMatchService {
 		playMatch(match);
 		match.setFinish(true);
 		match.setStatus(MatchStatus.COMPLETED);
+
+		// Update player history stats
+		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
+
 		matchRepository.save(match);
 	}
 	
@@ -84,6 +89,8 @@ public class SimulationMatchService {
 			mps.setMatch(match);
 			mps.setPlayer(p);
 			mps.setPosition(getPositionLabel(homeFormation.getModule(), i));
+			mps.setStarted(true);
+			mps.setMinutesPlayed(90);
 			allPlayerStats.put(p, mps);
 		}
 		for (int i = 0; i < awayFormation.getPlayers().size(); i++) {
@@ -92,6 +99,8 @@ public class SimulationMatchService {
 			mps.setMatch(match);
 			mps.setPlayer(p);
 			mps.setPosition(getPositionLabel(awayFormation.getModule(), i));
+			mps.setStarted(true);
+			mps.setMinutesPlayed(90);
 			allPlayerStats.put(p, mps);
 		}
 
@@ -176,6 +185,7 @@ public class SimulationMatchService {
 								homeScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+								trackGoalConceded(awayFormation.getGoalKeeper(), allPlayerStats);
 								playerPosition = PlayerPosition.MIDFIELD;
 								homeFormation.setHaveBall(false);
 								awayFormation.setHaveBall(true);
@@ -187,6 +197,7 @@ public class SimulationMatchService {
 								stats.addHomeShot();
 								stats.addHomeOnTarget();
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+								trackSave(awayFormation.getGoalKeeper(), allPlayerStats);
 								events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
 								logger.info("home corner");
 							}
@@ -204,6 +215,7 @@ public class SimulationMatchService {
 								homeScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+								trackGoalConceded(awayFormation.getGoalKeeper(), allPlayerStats);
 								playerPosition = PlayerPosition.MIDFIELD;
 								homeFormation.setHaveBall(false);
 								awayFormation.setHaveBall(true);
@@ -253,6 +265,7 @@ public class SimulationMatchService {
 									homeScore++;
 									trackAction(scorer, allPlayerStats, ActionType.GOAL);
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+									trackGoalConceded(awayFormation.getGoalKeeper(), allPlayerStats);
 									playerPosition = PlayerPosition.MIDFIELD;
 									homeFormation.setHaveBall(false);
 									awayFormation.setHaveBall(true);
@@ -264,6 +277,7 @@ public class SimulationMatchService {
 									stats.addHomeShot();
 									stats.addHomeOnTarget();
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+									trackSave(awayFormation.getGoalKeeper(), allPlayerStats);
 									events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
 									logger.info("home corner");
 								}
@@ -281,6 +295,7 @@ public class SimulationMatchService {
 									homeScore++;
 									trackAction(scorer, allPlayerStats, ActionType.GOAL);
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+									trackGoalConceded(awayFormation.getGoalKeeper(), allPlayerStats);
 									playerPosition = PlayerPosition.MIDFIELD;
 									homeFormation.setHaveBall(false);
 									awayFormation.setHaveBall(true);
@@ -340,6 +355,7 @@ public class SimulationMatchService {
 								awayScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+								trackGoalConceded(homeFormation.getGoalKeeper(), allPlayerStats);
 								playerPosition = PlayerPosition.MIDFIELD;
 								homeFormation.setHaveBall(true);
 								awayFormation.setHaveBall(false);
@@ -351,6 +367,7 @@ public class SimulationMatchService {
 								stats.addAwayShot();
 								stats.addAwayOnTarget();
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+								trackSave(homeFormation.getGoalKeeper(), allPlayerStats);
 								events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
 								logger.info("home corner");
 							}
@@ -368,6 +385,7 @@ public class SimulationMatchService {
 								awayScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+								trackGoalConceded(homeFormation.getGoalKeeper(), allPlayerStats);
 								playerPosition = PlayerPosition.MIDFIELD;
 								homeFormation.setHaveBall(true);
 								awayFormation.setHaveBall(false);
@@ -413,20 +431,22 @@ public class SimulationMatchService {
 								Integer diff = scorer.getScoringAverage() - goalKeeping;
 								logger.debug("diff > {}", diff);
 								if(RandomUtils.randomPercentage(40 + (diff / 2))) {
-									homeScore++;
+									awayScore++;
 									trackAction(scorer, allPlayerStats, ActionType.GOAL);
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+									trackGoalConceded(homeFormation.getGoalKeeper(), allPlayerStats);
 									playerPosition = PlayerPosition.MIDFIELD;
-									homeFormation.setHaveBall(false);
-									awayFormation.setHaveBall(true);
+									homeFormation.setHaveBall(true);
+									awayFormation.setHaveBall(false);
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
 									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK));
-									logger.info("home gol free kick");
+									logger.info("away gol free kick");
 								} else {
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+									trackSave(homeFormation.getGoalKeeper(), allPlayerStats);
 									events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
 									logger.info("home corner");
 								}
@@ -441,16 +461,17 @@ public class SimulationMatchService {
 									events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute, Event.SHOT_AND_MISSED));
 									logger.info("shot missed");
 								} else {
-									homeScore++;
+									awayScore++;
 									trackAction(scorer, allPlayerStats, ActionType.GOAL);
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
+									trackGoalConceded(homeFormation.getGoalKeeper(), allPlayerStats);
 									playerPosition = PlayerPosition.MIDFIELD;
 									homeFormation.setHaveBall(true);
 									awayFormation.setHaveBall(false);
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
 									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK));
-									logger.info("home gol free kick");
+									logger.info("away gol free kick");
 								}
 							}
 						}
@@ -529,6 +550,22 @@ public class SimulationMatchService {
 		}
 	}
 
+	private void trackSave(Player gk, Map<Player, MatchPlayerStats> allPlayerStats) {
+		if (gk == null) return;
+		MatchPlayerStats mps = allPlayerStats.get(gk);
+		if (mps != null) {
+			mps.setSaves(mps.getSaves() + 1);
+		}
+	}
+
+	private void trackGoalConceded(Player gk, Map<Player, MatchPlayerStats> allPlayerStats) {
+		if (gk == null) return;
+		MatchPlayerStats mps = allPlayerStats.get(gk);
+		if (mps != null) {
+			mps.setGoalsConceded(mps.getGoalsConceded() + 1);
+		}
+	}
+
 	private void performSubstitution(Formation formation, Match match, List<EventHistory> events, int minute, Map<Player, MatchPlayerStats> allPlayerStats, boolean isHome) {
 		if (formation.getSubstitutes() != null && !formation.getSubstitutes().isEmpty()) {
 			Player out = RandomUtils.randomValueFromList(formation.getPlayers());
@@ -540,8 +577,14 @@ public class SimulationMatchService {
 				MatchPlayerStats mpsIn = new MatchPlayerStats();
 				mpsIn.setMatch(match);
 				mpsIn.setPlayer(in);
+				mpsIn.setStarted(false);
+				mpsIn.setMinutesPlayed(90 - minute);
+
 				MatchPlayerStats mpsOut = allPlayerStats.get(out);
-				if (mpsOut != null) mpsIn.setPosition(mpsOut.getPosition());
+				if (mpsOut != null) {
+					mpsIn.setPosition(mpsOut.getPosition());
+					mpsOut.setMinutesPlayed(minute);
+				}
 				allPlayerStats.put(in, mpsIn);
 
 				events.add(new EventHistory(String.format(Event.SUBSTITUTION.getMessage(), in.getSurname(), out.getSurname()), minute, Event.SUBSTITUTION));
