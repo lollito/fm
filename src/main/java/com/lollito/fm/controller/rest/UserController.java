@@ -49,7 +49,6 @@ public class UserController {
 				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
 
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream()
@@ -57,6 +56,8 @@ public class UserController {
 				.collect(Collectors.toList());
 
 		User user = userService.findByUsernameAndActive(request.getUsername());
+
+		String jwt = jwtUtils.generateJwtToken(user);
 
 		return ResponseEntity.ok(new JwtResponse(jwt,
 												 user.getId(),
@@ -74,7 +75,7 @@ public class UserController {
 				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
+		String jwt = jwtUtils.generateJwtToken(user);
 
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream()
