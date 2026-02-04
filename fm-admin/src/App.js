@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import UserManagement from './pages/UserManagement';
 import DebugTools from './pages/DebugTools';
+import AdminDashboard from './pages/AdminDashboard';
+import ClubManagement from './pages/ClubManagement';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -18,7 +20,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/clubs" element={<PrivateRoute><ClubManagement /></PrivateRoute>} />
           <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
           <Route path="/debug" element={<PrivateRoute><DebugTools /></PrivateRoute>} />
         </Routes>
