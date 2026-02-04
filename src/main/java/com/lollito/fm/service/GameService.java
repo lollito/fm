@@ -8,9 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.AdminRole;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
+import com.lollito.fm.model.User;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.MatchStatus;
@@ -18,6 +20,8 @@ import com.lollito.fm.model.Player;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
+import com.lollito.fm.repository.rest.SeasonRepository;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 public class GameService {
@@ -26,16 +30,19 @@ public class GameService {
 	
 	@Autowired private GameRepository gameRepository;
 	@Autowired private MatchRepository matchRepository;
+	@Autowired private SeasonRepository seasonRepository;
 	@Autowired private SeasonService seasonService;
 	@Autowired private ClubService clubService;
 	@Autowired private LeagueService leagueService;
 	@Autowired private SimulationMatchService simulationMatchService;
 	@Autowired private CountryService countryService;
 	@Autowired private PlayerService playerService;
+	@Autowired private UserService userService;
 	
 	public Game create(String gameName){
 		Game game = new Game();
 		game.setName(gameName);
+		game.setOwner(userService.getLoggedUser());
 //		LocalDate gameStartDate = LocalDate.of(2020, Month.AUGUST, 21);
 		LocalDateTime gameStartDate = LocalDateTime.now();
 		for(Country country : countryService.findByCreateLeague(true)){
@@ -62,8 +69,14 @@ public class GameService {
 		GameResponse gameResponse = new GameResponse();
 		List<Match> matches = matchRepository.findByRoundSeasonAndDateBeforeAndFinish(league.getCurrentSeason(), LocalDateTime.now(), Boolean.FALSE);
 		if(matches.isEmpty()){
-			incrementPlayersCondition(league);
-			updatePlayerSkills(league);
+			for(Club club : league.getClubs()) {
+				for(Player player : club.getTeam().getPlayers()) {
+					double increment = -((10 * player.getStamina())/99) + (1000/99);
+					player.incrementCondition(increment);
+				}
+				playerService.updateSkills(club.getTeam().getPlayers());
+				playerService.saveAll(club.getTeam().getPlayers());
+			}
 		} else {
 			for (Match match : matches) {
 				if (match.getStatus() == MatchStatus.SCHEDULED) {
@@ -73,31 +86,17 @@ public class GameService {
 			Match match =  matches.get(matches.size() -1);
 			if(match.getLast()) {
 				league.getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
+				seasonRepository.save(league.getCurrentSeason());
 				if(match.getRound().getLast()){
 					league.addSeasonHistory(league.getCurrentSeason());
 					league.setCurrentSeason(seasonService.create(league, LocalDateTime.now().plusMinutes(10)));
+					leagueService.save(league);
 				}
 			} 
 		}
 		gameResponse.setDisputatedMatch(matches);
 		
-		leagueService.save(league);
 		return gameResponse;
-	}
-
-	private void updatePlayerSkills(League league) {
-		for(Club club : league.getClubs()) {
-			playerService.updateSkills(club.getTeam().getPlayers());
-		}
-	}
-	
-	private void incrementPlayersCondition(League league) {
-		for(Club club : league.getClubs()) {
-			for(Player player : club.getTeam().getPlayers()) {
-				double increment = -((10 * player.getStamina())/99) + (1000/99);
-	        	player.incrementCondition(increment);
-			}
-		}
 	}
 	
 	public GameResponse load(){
@@ -127,7 +126,15 @@ public class GameService {
 	}
 	
 	public void delete(Long gameId){
-		//TODO security
+		User user = userService.getLoggedUser();
+		Game game = gameRepository.findById(gameId).orElseThrow(() -> new RuntimeException("Game not found"));
+
+		boolean isOwner = user.equals(game.getOwner());
+		boolean isAdmin = user.getAdminRole() == AdminRole.SUPER_ADMIN;
+
+		if (!isOwner && !isAdmin) {
+			throw new AccessDeniedException("Access denied");
+		}
 		gameRepository.deleteById(gameId);
 	}
 
