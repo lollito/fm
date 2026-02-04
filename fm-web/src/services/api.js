@@ -80,3 +80,23 @@ export const getTrainingHistory = (teamId, page = 0, size = 20) => api.get('/tra
 export const getSessionResults = (sessionId) => api.get('/training/session/' + sessionId + '/results');
 export const createManualTrainingSession = (teamId, data) => api.post('/training/session/manual/' + teamId, data);
 export const getClub = (id) => api.get('/club/' + id);
+// Scouting API
+export const getClubScouts = (clubId) => api.get('/scouting/club/' + clubId + '/scouts');
+export const assignPlayerScouting = (data) => api.post('/scouting/assignment/player', data);
+export const getClubAssignments = (clubId, status = null) => {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    return api.get('/scouting/club/' + clubId + '/assignments?' + params.toString());
+};
+export const getPlayerScoutingStatus = (playerId, clubId) => api.get('/scouting/player/' + playerId + '/status/' + clubId);
+export const getRevealedPlayerInfo = (playerId, clubId) => api.get('/scouting/player/' + playerId + '/revealed/' + clubId);
+export const getScoutingReports = (clubId, page = 0, size = 20, recommendation = null) => {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('size', size);
+    if (recommendation) params.append('recommendation', recommendation);
+    return api.get('/scouting/club/' + clubId + '/reports?' + params.toString());
+};
+export const getScoutingRecommendations = (clubId) => api.get('/scouting/club/' + clubId + '/recommendations');
+export const addToWatchlist = (reportId, notes) => api.post('/scouting/report/' + reportId + '/watchlist', { notes });
+export const cancelAssignment = (assignmentId) => api.post('/scouting/assignment/' + assignmentId + '/cancel');
