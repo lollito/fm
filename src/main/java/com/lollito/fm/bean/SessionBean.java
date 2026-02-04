@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import com.lollito.fm.controller.rest.errors.CustomParameterizedException;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.repository.rest.GameRepository;
 
@@ -30,17 +31,13 @@ public class SessionBean {
 	}
 
 	public Game getGame() {
-		Game game = null;
 		if (this.gameId == null) {
-			// TODO error
 			logger.error("error - game is null");
-		} else {
-			game = gameRepository.findById(this.gameId).get();
-			if (game == null) {
-				// TODO error
-				logger.error("error - game is null");
-			}
+			throw new CustomParameterizedException("error.gameNotFound");
 		}
-		return game;
+		return gameRepository.findById(this.gameId).orElseThrow(() -> {
+			logger.error("error - game is null");
+			return new CustomParameterizedException("error.gameNotFound");
+		});
 	}
 }
