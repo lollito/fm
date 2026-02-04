@@ -8,9 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.AdminRole;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
+import com.lollito.fm.model.User;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.MatchStatus;
@@ -18,6 +20,7 @@ import com.lollito.fm.model.Player;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 public class GameService {
@@ -32,10 +35,12 @@ public class GameService {
 	@Autowired private SimulationMatchService simulationMatchService;
 	@Autowired private CountryService countryService;
 	@Autowired private PlayerService playerService;
+	@Autowired private UserService userService;
 	
 	public Game create(String gameName){
 		Game game = new Game();
 		game.setName(gameName);
+		game.setOwner(userService.getLoggedUser());
 //		LocalDate gameStartDate = LocalDate.of(2020, Month.AUGUST, 21);
 		LocalDateTime gameStartDate = LocalDateTime.now();
 		for(Country country : countryService.findByCreateLeague(true)){
@@ -127,7 +132,15 @@ public class GameService {
 	}
 	
 	public void delete(Long gameId){
-		//TODO security
+		User user = userService.getLoggedUser();
+		Game game = gameRepository.findById(gameId).orElseThrow(() -> new RuntimeException("Game not found"));
+
+		boolean isOwner = user.equals(game.getOwner());
+		boolean isAdmin = user.getAdminRole() == AdminRole.SUPER_ADMIN;
+
+		if (!isOwner && !isAdmin) {
+			throw new AccessDeniedException("Access denied");
+		}
 		gameRepository.deleteById(gameId);
 	}
 

@@ -48,7 +48,8 @@ public class SimulationMatchService {
 	@Autowired InjuryService injuryService;
 	
 	public void simulate(List<Match> matches){
-		matches.forEach(match -> simulate(match));
+		matches.forEach(match -> simulate(match, null, false));
+		rankingService.updateAll(matches);
 	}
 	
 	public MatchResult simulate(Match match) {
@@ -56,6 +57,10 @@ public class SimulationMatchService {
 	}
 
 	public MatchResult simulate(Match match, String forcedResult) {
+		return simulate(match, forcedResult, true);
+	}
+
+	private MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		
@@ -85,10 +90,9 @@ public class SimulationMatchService {
 
 		matchRepository.save(match);
 
-		// Ranking update happens here in original code?
-		// In original code: matchRepository.save(match); } ... wait, where was rankingService.update?
-		// Ah, it was AFTER save(match) in the previous version.
-		rankingService.update(match);
+		if (updateRanking) {
+			rankingService.update(match);
+		}
 
 		return MatchResult.builder()
 				.matchId(match.getId())
