@@ -150,6 +150,27 @@ public class Player implements Serializable{
 	@ToString.Exclude
 	private List<PlayerTransferHistory> transferHistory = new ArrayList<>();
 
+	@OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+	@Builder.Default
+	@JsonIgnore
+	@ToString.Exclude
+	private List<Injury> injuries = new ArrayList<>();
+
+	@Transient
+	public boolean isInjured() {
+		return injuries.stream()
+			.anyMatch(injury -> injury.getStatus() == InjuryStatus.ACTIVE);
+	}
+
+	@Transient
+	public Double getInjuryPerformanceMultiplier() {
+		return injuries.stream()
+			.filter(injury -> injury.getStatus() == InjuryStatus.ACTIVE)
+			.mapToDouble(Injury::getPerformanceImpact)
+			.min()
+			.orElse(1.0);
+	}
+
 	@Transient
 	public PlayerSeasonStats getCurrentSeasonStats() {
 		return seasonStats.stream()

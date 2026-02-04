@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
+import InjuryList from '../components/InjuryList';
 
 const Team = () => {
   const [players, setPlayers] = useState([]);
@@ -29,9 +30,13 @@ const Team = () => {
     }
   };
 
+  const user = JSON.parse(localStorage.getItem('user'));
+  const clubId = user ? user.clubId : null;
+
   return (
     <Layout>
       <h1 className="mt-2">Team</h1>
+      {clubId && <InjuryList clubId={clubId} />}
       <table className="table table-striped">
         <thead>
           <tr>
