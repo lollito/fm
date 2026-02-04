@@ -4,6 +4,8 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import UserManagement from './pages/UserManagement';
+import AdminDashboard from './pages/AdminDashboard';
+import ClubManagement from './pages/ClubManagement';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -17,7 +19,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/clubs" element={<PrivateRoute><ClubManagement /></PrivateRoute>} />
           <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
         </Routes>
       </Router>

@@ -46,6 +46,11 @@ export const generateReport = (clubId, data) => api.post('/finance/club/' + club
 
 export const getSponsorshipDeals = (clubId) => api.get('/finance/club/' + clubId + '/sponsorships');
 
+// Injury API
+export const getTeamInjuries = (teamId) => api.get('/injuries/team/' + teamId);
+export const getClubInjuries = (clubId) => api.get('/injuries/club/' + clubId);
+export const getPlayerInjuryHistory = (playerId) => api.get('/injuries/player/' + playerId + '/history');
+
 export default api;
 
 // Live Match API

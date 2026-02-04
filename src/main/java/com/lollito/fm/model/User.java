@@ -22,6 +22,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Column;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -171,6 +173,13 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	@Builder.Default
 	private List<UserNotification> notifications = new ArrayList<>();
+
+	@Enumerated(EnumType.STRING)
+	private AdminRole adminRole;
+
+	@OneToMany(mappedBy = "adminUser", cascade = CascadeType.ALL)
+	@Builder.Default
+	private List<AdminAction> adminActions = new ArrayList<>();
 
 	private String activationToken;
 	

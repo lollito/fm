@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Event;
 import com.lollito.fm.model.EventHistory;
+import com.lollito.fm.model.Injury;
+import com.lollito.fm.model.InjuryContext;
 import com.lollito.fm.model.MatchStatus;
 import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
@@ -42,6 +44,7 @@ public class SimulationMatchService {
 	@Autowired StadiumService stadiumService;
 	@Autowired PlayerRepository playerRepository;
 	@Autowired PlayerHistoryService playerHistoryService;
+	@Autowired InjuryService injuryService;
 	
 	public void simulate(List<Match> matches){
 		matches.forEach(match -> simulate(match));
@@ -496,6 +499,16 @@ public class SimulationMatchService {
 		List<Player> players = Stream.concat(homeFormation.getPlayers().stream(), awayFormation.getPlayers().stream())
                 .collect(Collectors.toList());
 		
+		double matchIntensity = 1.0;
+		players.forEach(player -> {
+			if (injuryService.checkForInjury(player, matchIntensity)) {
+				Injury injury = injuryService.createInjury(player, InjuryContext.MATCH);
+				int injuryMinute = RandomUtils.randomValue(1, 90);
+				events.add(new EventHistory(String.format(Event.INJURY.getMessage(), player.getSurname(), injury.getDescription()), injuryMinute, Event.INJURY));
+			}
+		});
+		events.sort(Comparator.comparingInt(EventHistory::getMinute));
+
 		playerService.saveAll(players);
 		int homePosessionPerc = (homePosession * 100) / numberOfActions;
 		stats.setHomePossession(homePosessionPerc);
