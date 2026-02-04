@@ -16,6 +16,7 @@ import com.lollito.fm.model.Game;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Player;
+import com.lollito.fm.controller.rest.errors.GameNotFoundException;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
@@ -102,15 +103,11 @@ public class GameService {
 	}
 	
 	public GameResponse load(Long gameId){
-		Game game = gameRepository.findById(gameId).get();
+		Game game = gameRepository.findById(gameId)
+				.orElseThrow(() -> new GameNotFoundException("Game not found"));
 		GameResponse gameResponse = new GameResponse();
-		if (game == null){
-			//TODO error
-			logger.error("error - game is null");
-		} else {
-			sessionBean.setGameId(gameId);
-			gameResponse.setCurrentDate(game.getCurrentDate());
-		}
+		sessionBean.setGameId(gameId);
+		gameResponse.setCurrentDate(game.getCurrentDate());
 		return gameResponse;
 	}
 	
