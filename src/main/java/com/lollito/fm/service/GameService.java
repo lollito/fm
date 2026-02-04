@@ -130,4 +130,8 @@ public class GameService {
 		//TODO security
 		gameRepository.deleteById(gameId);
 	}
+
+	public void deleteAll(){
+		gameRepository.deleteAll();
+	}
 }
