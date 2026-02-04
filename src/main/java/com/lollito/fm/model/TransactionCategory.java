@@ -21,7 +21,8 @@ public enum TransactionCategory {
     OPERATIONAL_COSTS("Operational Costs"),
     LOAN_PAYMENTS("Loan Payments"),
     TAXES("Taxes"),
-    INSURANCE("Insurance");
+    INSURANCE("Insurance"),
+    SYSTEM_ACTION("System Action");
 
     private final String displayName;
 

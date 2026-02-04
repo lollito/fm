@@ -1,6 +1,7 @@
 package com.lollito.fm.utils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomUtils {
@@ -23,5 +24,20 @@ public class RandomUtils {
 	        return true;
 	    }
 	    return false;
+	}
+
+	public static <T> T weightedRandomSelection(Map<T, Double> weights) {
+		double totalWeight = weights.values().stream().mapToDouble(Double::doubleValue).sum();
+		double randomValue = ThreadLocalRandom.current().nextDouble() * totalWeight;
+
+		double currentWeight = 0.0;
+		for (Map.Entry<T, Double> entry : weights.entrySet()) {
+			currentWeight += entry.getValue();
+			if (randomValue <= currentWeight) {
+				return entry.getKey();
+			}
+		}
+		// Fallback to the last item or any item if rounding errors occur
+		return weights.keySet().iterator().next();
 	}
 }

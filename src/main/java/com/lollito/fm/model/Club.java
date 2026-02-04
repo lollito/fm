@@ -48,6 +48,8 @@ public class Club implements Serializable{
     private String name;
     
     private LocalDate foundation;
+
+    private String city;
     
     private String logoURL;
     
