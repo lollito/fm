@@ -129,10 +129,10 @@ public class FinancialController {
     private SponsorshipDealDTO convertToSponsorshipDealDTO(SponsorshipDeal s) {
         return SponsorshipDealDTO.builder()
             .id(s.getId())
-            .sponsorName(s.getSponsorName())
-            .sponsorLogo(s.getSponsorLogo())
+            .sponsorName(s.getSponsor() != null ? s.getSponsor().getName() : null)
+            .sponsorLogo(s.getSponsor() != null ? s.getSponsor().getLogo() : null)
             .type(s.getType())
-            .annualValue(s.getAnnualValue())
+            .annualValue(s.getCurrentAnnualValue())
             .totalValue(s.getTotalValue())
             .startDate(s.getStartDate())
             .endDate(s.getEndDate())

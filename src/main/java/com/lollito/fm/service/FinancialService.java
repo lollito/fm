@@ -213,13 +213,13 @@ public class FinancialService {
                 (deal.getEndDate() == null || deal.getEndDate().isAfter(LocalDate.now()))) {
 
                 // Assuming monthly payments for annual value
-                BigDecimal monthlyPayment = deal.getAnnualValue().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+                BigDecimal monthlyPayment = deal.getCurrentAnnualValue().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
 
                 processTransaction(club.getId(), CreateTransactionRequest.builder()
                     .type(TransactionType.INCOME)
                     .category(TransactionCategory.SPONSORSHIP)
                     .amount(monthlyPayment)
-                    .description("Sponsorship payment: " + deal.getSponsorName())
+                    .description("Sponsorship payment: " + (deal.getSponsor() != null ? deal.getSponsor().getName() : "Unknown"))
                     .reference("SPONSOR_" + deal.getId())
                     .effectiveDate(LocalDate.now())
                     .isRecurring(false)
