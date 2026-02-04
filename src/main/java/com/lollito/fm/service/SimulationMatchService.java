@@ -24,6 +24,7 @@ import com.lollito.fm.model.MatchPlayerStats;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
 import com.lollito.fm.model.Stats;
+import com.lollito.fm.model.dto.MatchResult;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.ModuleRepository;
 import com.lollito.fm.repository.rest.PlayerRepository;
@@ -47,7 +48,11 @@ public class SimulationMatchService {
 		matches.forEach(match -> simulate(match));
 	}
 	
-	public void simulate(Match match){
+	public MatchResult simulate(Match match) {
+		return simulate(match, null);
+	}
+
+	public MatchResult simulate(Match match, String forcedResult) {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		
@@ -58,6 +63,17 @@ public class SimulationMatchService {
 		match.setAwayFormation(match.getAway().getTeam().getFormation().copy());
 
 		playMatch(match);
+
+		if (forcedResult != null) {
+			if ("HOME_WIN".equals(forcedResult) && match.getHomeScore() <= match.getAwayScore()) {
+				match.setHomeScore(match.getAwayScore() + 1);
+			} else if ("AWAY_WIN".equals(forcedResult) && match.getAwayScore() <= match.getHomeScore()) {
+				match.setAwayScore(match.getHomeScore() + 1);
+			} else if ("DRAW".equals(forcedResult) && !match.getHomeScore().equals(match.getAwayScore())) {
+				match.setAwayScore(match.getHomeScore());
+			}
+		}
+
 		match.setFinish(true);
 		match.setStatus(MatchStatus.COMPLETED);
 
@@ -65,6 +81,23 @@ public class SimulationMatchService {
 		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
 
 		matchRepository.save(match);
+
+		// Ranking update happens here in original code?
+		// In original code: matchRepository.save(match); } ... wait, where was rankingService.update?
+		// Ah, it was AFTER save(match) in the previous version.
+		rankingService.update(match);
+
+		return MatchResult.builder()
+				.matchId(match.getId())
+				.homeScore(match.getHomeScore())
+				.awayScore(match.getAwayScore())
+				.homeTeam(match.getHome().getName())
+				.awayTeam(match.getAway().getName())
+				.build();
+	}
+
+	public MatchResult simulateMatchWithForcedResult(Match match, String forcedResult) {
+		return simulate(match, forcedResult);
 	}
 	
 	private int[] playMatch(Match match){
@@ -528,8 +561,6 @@ public class SimulationMatchService {
 		if (mvp != null) mvp.setMvp(true);
 
 		match.setPlayerStats(new ArrayList<>(allPlayerStats.values()));
-		
-		rankingService.update(match);
 		
 		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};

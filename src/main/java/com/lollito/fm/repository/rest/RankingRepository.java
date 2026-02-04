@@ -11,4 +11,6 @@ import com.lollito.fm.model.Season;
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
 	public Ranking findByClubAndSeason(Club club, Season season);
+
+	public Ranking findFirstByClubAndSeason(Club club, Season season);
 }
