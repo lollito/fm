@@ -37,9 +37,18 @@ public class FormationService {
 		formation.setModule(module);
 		formation.setMentality(formationRequest.getMentality());
 		formation.setPlayers(new ArrayList<>());
+		List<Long> ids = new ArrayList<>();
 		for (Long id : formationRequest.getPlayersId()) {
 			if(id != null) {
-				formation.addPlayer(playerService.findOne(id));
+				ids.add(id);
+			}
+		}
+		java.util.Map<Long, Player> playersMap = playerService.findAll(ids).stream()
+				.collect(java.util.stream.Collectors.toMap(Player::getId, java.util.function.Function.identity()));
+
+		for (Long id : ids) {
+			if(playersMap.containsKey(id)) {
+				formation.addPlayer(playersMap.get(id));
 			}
 		}
 		validate(formation);
