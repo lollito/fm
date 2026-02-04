@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -48,6 +49,12 @@ public class Season implements Serializable{
 	
 	private String name;
 	
+	private Integer startYear;
+	private Integer endYear;
+	@Column(name = "is_current")
+	@Builder.Default
+	private boolean current = false;
+
 	@OneToMany(mappedBy = "season", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@Builder.Default
 	@ToString.Exclude

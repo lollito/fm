@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +18,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -122,6 +127,47 @@ public class Player implements Serializable{
 	@Enumerated(EnumType.ORDINAL)
 	private Foot preferredFoot;
 	
+	@OneToOne(mappedBy = "player", cascade = CascadeType.ALL)
+	@JsonIgnore
+	@ToString.Exclude
+	private PlayerCareerStats careerStats;
+
+	@OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+	@Builder.Default
+	@JsonIgnore
+	@ToString.Exclude
+	private List<PlayerSeasonStats> seasonStats = new ArrayList<>();
+
+	@OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+	@Builder.Default
+	@JsonIgnore
+	@ToString.Exclude
+	private List<PlayerAchievement> achievements = new ArrayList<>();
+
+	@OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+	@Builder.Default
+	@JsonIgnore
+	@ToString.Exclude
+	private List<PlayerTransferHistory> transferHistory = new ArrayList<>();
+
+	@Transient
+	public PlayerSeasonStats getCurrentSeasonStats() {
+		return seasonStats.stream()
+			.filter(stats -> stats.getSeason().isCurrent())
+			.findFirst()
+			.orElse(null);
+	}
+
+	@Transient
+	public Integer getTotalCareerGoals() {
+		return careerStats != null ? careerStats.getTotalGoals() : 0;
+	}
+
+	@Transient
+	public Integer getTotalCareerMatches() {
+		return careerStats != null ? careerStats.getTotalMatchesPlayed() : 0;
+	}
+
 	public Player(String name, String surname, LocalDate birth) {
 		this();
 		this.name = name;

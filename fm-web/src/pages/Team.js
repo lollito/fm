@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
@@ -58,7 +59,9 @@ const Team = () => {
               </td>
               <td>{p.role}</td>
               <td>{p.name}</td>
-              <td>{p.surname}</td>
+              <td>
+                <Link to={'/player/' + p.id}>{p.surname}</Link>
+              </td>
               <td>{p.age}</td>
               <td>{Math.round(p.stamina)}</td>
               <td>{Math.round(p.playmaking)}</td>

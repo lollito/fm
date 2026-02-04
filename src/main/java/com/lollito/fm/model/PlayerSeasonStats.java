@@ -2,13 +2,13 @@ package com.lollito.fm.model;
 
 import java.io.Serializable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +18,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "match_player_stats")
+@Table(name = "player_season_stats")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,9 +28,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class MatchPlayerStats implements Serializable {
+public class PlayerSeasonStats implements Serializable {
 
-    @Transient
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -40,16 +38,39 @@ public class MatchPlayerStats implements Serializable {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "match_id")
-    @JsonIgnore
-    @ToString.Exclude
-    private Match match;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player_id")
     @ToString.Exclude
     private Player player;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "season_id")
+    @ToString.Exclude
+    private Season season;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id")
+    @ToString.Exclude
+    private Club club;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "league_id")
+    @ToString.Exclude
+    private League league;
+
+    // Match statistics
+    @Builder.Default
+    private Integer matchesPlayed = 0;
+    @Builder.Default
+    private Integer matchesStarted = 0;
+    @Builder.Default
+    private Integer minutesPlayed = 0;
+    @Builder.Default
+    private Integer substitutionsIn = 0;
+    @Builder.Default
+    private Integer substitutionsOut = 0;
+
+    // Performance statistics
     @Builder.Default
     private Integer goals = 0;
     @Builder.Default
@@ -59,23 +80,27 @@ public class MatchPlayerStats implements Serializable {
     @Builder.Default
     private Integer redCards = 0;
     @Builder.Default
+    private Integer cleanSheets = 0; // For goalkeepers and defenders
+
+    // Advanced statistics
+    @Builder.Default
     private Integer shots = 0;
     @Builder.Default
     private Integer shotsOnTarget = 0;
     @Builder.Default
     private Integer passes = 0;
     @Builder.Default
-    private Integer completedPasses = 0;
+    private Integer passesCompleted = 0;
     @Builder.Default
     private Integer tackles = 0;
     @Builder.Default
-    private Double rating = 6.0;
+    private Integer interceptions = 0;
     @Builder.Default
-    private Boolean mvp = false;
-    private String position;
+    private Integer foulsCommitted = 0;
+    @Builder.Default
+    private Integer foulsReceived = 0;
 
-    @Builder.Default
-    private Integer minutesPlayed = 0;
+    // Goalkeeper specific statistics
     @Builder.Default
     private Integer saves = 0;
     @Builder.Default
@@ -83,10 +108,19 @@ public class MatchPlayerStats implements Serializable {
     @Builder.Default
     private Integer penaltiesSaved = 0;
 
+    // Rating and performance
     @Builder.Default
-    private boolean started = false;
+    private Double averageRating = 0.0;
+    private Double highestRating;
+    private Double lowestRating;
+    @Builder.Default
+    private Integer manOfTheMatchAwards = 0;
 
-    public boolean isStarted() {
-        return started;
-    }
+    // Physical statistics
+    private Double averageCondition;
+    private Double averageMorale;
+    @Builder.Default
+    private Integer injuryDays = 0;
+    @Builder.Default
+    private Integer injuryCount = 0;
 }
