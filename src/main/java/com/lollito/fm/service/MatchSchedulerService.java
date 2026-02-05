@@ -20,7 +20,7 @@ public class MatchSchedulerService {
     @Autowired private MatchRepository matchRepository;
     @Autowired private MatchProcessor matchProcessor;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "${fm.match.processing.cron:0 * * * * *}")
     public void processScheduledMatches() {
         LocalDateTime now = LocalDateTime.now();
         List<Match> matchesToRun = matchRepository.findByStatusAndDateBefore(MatchStatus.SCHEDULED, now);
