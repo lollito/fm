@@ -69,6 +69,24 @@ public class Club implements Serializable{
 	@ToString.Exclude
     private Stadium stadium;
     
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
+	@JoinColumn( name = "training_facility_id" )
+    @JsonIgnore
+	@ToString.Exclude
+    private TrainingFacility trainingFacility;
+
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
+	@JoinColumn( name = "medical_center_id" )
+    @JsonIgnore
+	@ToString.Exclude
+    private MedicalCenter medicalCenter;
+
+    @OneToOne( fetch = FetchType.LAZY , cascade = CascadeType.ALL )
+	@JoinColumn( name = "youth_academy_id" )
+    @JsonIgnore
+	@ToString.Exclude
+    private YouthAcademy youthAcademy;
+
     @ManyToOne( fetch = FetchType.LAZY  )
 	@JoinColumn( name = "league_id" )
     @JsonIgnore

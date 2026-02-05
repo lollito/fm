@@ -18,6 +18,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -48,6 +50,7 @@ public class Finance implements Serializable {
 	private Long id;
 
     @OneToOne(mappedBy = "finance")
+    @JsonIgnore
     @ToString.Exclude
     private Club club;
 	

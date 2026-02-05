@@ -10,6 +10,7 @@ import Ranking from './pages/Ranking';
 import Schedule from './pages/Schedule';
 import UpcomingMatches from './pages/UpcomingMatches';
 import Stadium from './pages/Stadium';
+import Infrastructure from './pages/Infrastructure';
 import Leagues from './pages/Leagues';
 import Transfers from './pages/Transfers';
 import History from './pages/History';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/schedule" element={<PrivateRoute><Schedule /></PrivateRoute>} />
           <Route path="/upcoming-matches" element={<PrivateRoute><UpcomingMatches /></PrivateRoute>} />
           <Route path="/stadium" element={<PrivateRoute><Stadium /></PrivateRoute>} />
+          <Route path="/infrastructure" element={<PrivateRoute><Infrastructure /></PrivateRoute>} />
           <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
           <Route path="/transfers" element={<PrivateRoute><Transfers /></PrivateRoute>} />
           <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
