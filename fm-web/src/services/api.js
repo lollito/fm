@@ -149,3 +149,12 @@ export const getWatchlistNotifications = (clubId, unreadOnly = false) => api.get
 export const markNotificationAsRead = (notificationId) => api.post('/watchlist/notification/' + notificationId + '/read');
 export const getWatchlistStats = (clubId) => api.get('/watchlist/club/' + clubId + '/stats');
 export const getEntryUpdates = (entryId) => api.get('/watchlist/entry/' + entryId + '/updates');
+
+// Loan API
+export const createLoanProposal = (data) => api.post('/loans/proposal', data);
+export const acceptLoanProposal = (proposalId) => api.post('/loans/proposal/' + proposalId + '/accept');
+export const rejectLoanProposal = (proposalId, data) => api.post('/loans/proposal/' + proposalId + '/reject', data);
+export const getActiveLoans = (clubId) => api.get('/loans/club/' + clubId + '/active');
+export const recallPlayerFromLoan = (loanId, data) => api.post('/loans/agreement/' + loanId + '/recall', data);
+export const activatePurchaseOption = (loanId) => api.post('/loans/agreement/' + loanId + '/purchase');
+export const getLoanReviews = (loanId) => api.get('/loans/agreement/' + loanId + '/reviews');
