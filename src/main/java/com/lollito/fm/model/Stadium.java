@@ -49,31 +49,58 @@ public class Stadium implements Serializable {
     private Club club;
 
     private String name;
-    private Integer capacity;
-    private Integer baseCapacity; // Original capacity
+    @Builder.Default
+    private Integer capacity = 5000;
+    @Builder.Default
+    private Integer baseCapacity = 5000; // Original capacity
+
+    // Stadium capacity distribution
+    @Builder.Default
+    private Integer grandstandNord = 1250;
+    @Builder.Default
+    private Integer grandstandSud = 1250;
+    @Builder.Default
+    private Integer grandstandWest = 1250;
+    @Builder.Default
+    private Integer grandstandEst = 1250;
 
     // Stadium quality levels (1-10)
-    private Integer pitchQuality;
-    private Integer facilitiesQuality;
-    private Integer securityLevel;
-    private Integer accessibilityLevel;
+    @Builder.Default
+    private Integer pitchQuality = 5;
+    @Builder.Default
+    private Integer facilitiesQuality = 3;
+    @Builder.Default
+    private Integer securityLevel = 3;
+    @Builder.Default
+    private Integer accessibilityLevel = 3;
 
     // Stadium features
-    private Boolean hasRoof;
-    private Boolean hasUndersoilHeating;
-    private Boolean hasVipBoxes;
-    private Boolean hasMediaCenter;
-    private Boolean hasMuseum;
-    private Boolean hasMegastore;
+    @Builder.Default
+    private Boolean hasRoof = false;
+    @Builder.Default
+    private Boolean hasUndersoilHeating = false;
+    @Builder.Default
+    private Boolean hasVipBoxes = false;
+    @Builder.Default
+    private Boolean hasMediaCenter = false;
+    @Builder.Default
+    private Boolean hasMuseum = false;
+    @Builder.Default
+    private Boolean hasMegastore = false;
 
     // Financial aspects
-    private BigDecimal constructionCost;
-    private BigDecimal maintenanceCost; // Monthly
-    private BigDecimal upgradeValue; // Total invested in upgrades
+    @Builder.Default
+    private BigDecimal constructionCost = BigDecimal.ZERO;
+    @Builder.Default
+    private BigDecimal maintenanceCost = BigDecimal.valueOf(1000); // Monthly
+    @Builder.Default
+    private BigDecimal upgradeValue = BigDecimal.ZERO;
     
     // Stadium atmosphere and revenue multipliers
-    private Double atmosphereMultiplier; // Affects player performance
-    private Double revenueMultiplier; // Affects matchday revenue
+    @Builder.Default
+    private Double atmosphereMultiplier = 1.0; // Affects player performance
+    @Builder.Default
+    private Double revenueMultiplier = 1.0; // Affects matchday revenue
 
     private LocalDate lastUpgradeDate;
     private LocalDate nextMaintenanceDate;
@@ -81,23 +108,5 @@ public class Stadium implements Serializable {
     public Stadium(String name){
         this();
     	this.name = name;
-        // Defaults for new stadium
-        this.capacity = 5000;
-        this.baseCapacity = 5000;
-        this.pitchQuality = 5;
-        this.facilitiesQuality = 3;
-        this.securityLevel = 3;
-        this.accessibilityLevel = 3;
-        this.hasRoof = false;
-        this.hasUndersoilHeating = false;
-        this.hasVipBoxes = false;
-        this.hasMediaCenter = false;
-        this.hasMuseum = false;
-        this.hasMegastore = false;
-        this.constructionCost = BigDecimal.ZERO;
-        this.maintenanceCost = BigDecimal.valueOf(1000);
-        this.upgradeValue = BigDecimal.ZERO;
-        this.atmosphereMultiplier = 1.0;
-        this.revenueMultiplier = 1.0;
     }
 }
