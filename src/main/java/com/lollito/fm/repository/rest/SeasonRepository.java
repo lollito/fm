@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.lollito.fm.model.Season;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,6 @@ public interface SeasonRepository extends JpaRepository<Season, Long> {
     Optional<Season> findByIdWithLock(@Param("id") Long id);
 
     Optional<Season> findByCurrentTrue();
+
+    List<Season> findAllByCurrentTrue();
 }

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Event;
 import com.lollito.fm.model.EventHistory;
+import com.lollito.fm.model.Injury;
+import com.lollito.fm.model.InjuryContext;
 import com.lollito.fm.model.MatchStatus;
 import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
@@ -24,6 +26,7 @@ import com.lollito.fm.model.MatchPlayerStats;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
 import com.lollito.fm.model.Stats;
+import com.lollito.fm.model.dto.MatchResult;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.ModuleRepository;
 import com.lollito.fm.repository.rest.PlayerRepository;
@@ -42,12 +45,22 @@ public class SimulationMatchService {
 	@Autowired StadiumService stadiumService;
 	@Autowired PlayerRepository playerRepository;
 	@Autowired PlayerHistoryService playerHistoryService;
+	@Autowired InjuryService injuryService;
 	
 	public void simulate(List<Match> matches){
-		matches.forEach(match -> simulate(match));
+		matches.forEach(match -> simulate(match, null, false));
+		rankingService.updateAll(matches);
 	}
 	
-	public void simulate(Match match){
+	public MatchResult simulate(Match match) {
+		return simulate(match, null);
+	}
+
+	public MatchResult simulate(Match match, String forcedResult) {
+		return simulate(match, forcedResult, true);
+	}
+
+	private MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		
@@ -58,6 +71,17 @@ public class SimulationMatchService {
 		match.setAwayFormation(match.getAway().getTeam().getFormation().copy());
 
 		playMatch(match);
+
+		if (forcedResult != null) {
+			if ("HOME_WIN".equals(forcedResult) && match.getHomeScore() <= match.getAwayScore()) {
+				match.setHomeScore(match.getAwayScore() + 1);
+			} else if ("AWAY_WIN".equals(forcedResult) && match.getAwayScore() <= match.getHomeScore()) {
+				match.setAwayScore(match.getHomeScore() + 1);
+			} else if ("DRAW".equals(forcedResult) && !match.getHomeScore().equals(match.getAwayScore())) {
+				match.setAwayScore(match.getHomeScore());
+			}
+		}
+
 		match.setFinish(true);
 		match.setStatus(MatchStatus.COMPLETED);
 
@@ -65,6 +89,22 @@ public class SimulationMatchService {
 		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
 
 		matchRepository.save(match);
+
+		if (updateRanking) {
+			rankingService.update(match);
+		}
+
+		return MatchResult.builder()
+				.matchId(match.getId())
+				.homeScore(match.getHomeScore())
+				.awayScore(match.getAwayScore())
+				.homeTeam(match.getHome().getName())
+				.awayTeam(match.getAway().getName())
+				.build();
+	}
+
+	public MatchResult simulateMatchWithForcedResult(Match match, String forcedResult) {
+		return simulate(match, forcedResult);
 	}
 	
 	private int[] playMatch(Match match){
@@ -496,6 +536,16 @@ public class SimulationMatchService {
 		List<Player> players = Stream.concat(homeFormation.getPlayers().stream(), awayFormation.getPlayers().stream())
                 .collect(Collectors.toList());
 		
+		double matchIntensity = 1.0;
+		players.forEach(player -> {
+			if (injuryService.checkForInjury(player, matchIntensity)) {
+				Injury injury = injuryService.createInjury(player, InjuryContext.MATCH);
+				int injuryMinute = RandomUtils.randomValue(1, 90);
+				events.add(new EventHistory(String.format(Event.INJURY.getMessage(), player.getSurname(), injury.getDescription()), injuryMinute, Event.INJURY));
+			}
+		});
+		events.sort(Comparator.comparingInt(EventHistory::getMinute));
+
 		playerService.saveAll(players);
 		int homePosessionPerc = (homePosession * 100) / numberOfActions;
 		stats.setHomePossession(homePosessionPerc);
@@ -528,8 +578,6 @@ public class SimulationMatchService {
 		if (mvp != null) mvp.setMvp(true);
 
 		match.setPlayerStats(new ArrayList<>(allPlayerStats.values()));
-		
-		rankingService.update(match);
 		
 		logger.info("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};

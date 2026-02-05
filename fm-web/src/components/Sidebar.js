@@ -17,6 +17,7 @@ const Sidebar = () => {
         <Link to="/upcoming-matches" className="list-group-item">Upcoming Matches</Link>
         <Link to="/leagues" className="list-group-item">Leagues</Link>
         <Link to="/transfers" className="list-group-item">Transfers</Link>
+        <Link to="/scouting" className="list-group-item">Scouting</Link>
         <Link to="/finance" className="list-group-item">Finance</Link>
         <Link to="/infrastructure" className="list-group-item">Infrastructure</Link>
       </div>

@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.lollito.fm.model.User;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
@@ -35,6 +37,20 @@ public class JwtUtils {
 				.setSubject((userPrincipal.getUsername()))
 				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.signWith(key(), SignatureAlgorithm.HS256)
+				.compact();
+	}
+
+	public String generateJwtToken(User user) {
+		if (user.getId() == null || user.getUsername() == null) {
+			throw new IllegalArgumentException("User ID and Username cannot be null");
+		}
+
+		return Jwts.builder()
+				.setSubject(user.getUsername())
+				.setIssuedAt(new Date())
+				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.claim("userId", user.getId())
 				.signWith(key(), SignatureAlgorithm.HS256)
 				.compact();
 	}

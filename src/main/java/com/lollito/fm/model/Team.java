@@ -54,6 +54,15 @@ public class Team implements Serializable{
 	@JoinColumn( name = "formation_id" )
 	@ToString.Exclude
 	private Formation formation;
+
+	@OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+	@ToString.Exclude
+	private TrainingPlan currentTrainingPlan;
+
+	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+	@Builder.Default
+	@ToString.Exclude
+	private List<TrainingSession> trainingHistory = new ArrayList<>();
 	
 	@Transient
 	public void addPlayer(Player player){

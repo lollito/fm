@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
+import api, { getClub } from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
+import InjuryList from '../components/InjuryList';
+import TrainingPlan from '../components/TrainingPlan';
+import TrainingHistory from '../components/TrainingHistory';
 
 const Team = () => {
   const [players, setPlayers] = useState([]);
+  const [teamId, setTeamId] = useState(null);
+  const [activeTab, setActiveTab] = useState('squad');
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  const clubId = user ? user.clubId : null;
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -17,8 +25,23 @@ const Team = () => {
         console.error('Error fetching players', error);
       }
     };
+
+    const fetchClub = async () => {
+        if (clubId) {
+            try {
+                const response = await getClub(clubId);
+                if (response.data && response.data.team) {
+                    setTeamId(response.data.team.id);
+                }
+            } catch (error) {
+                console.error('Error fetching club', error);
+            }
+        }
+    };
+
     fetchPlayers();
-  }, []);
+    fetchClub();
+  }, [clubId]);
 
   const putOnSale = async (playerId) => {
     try {
@@ -32,48 +55,94 @@ const Team = () => {
   return (
     <Layout>
       <h1 className="mt-2">Team</h1>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Action</th>
-            <th>Role</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Age</th>
-            <th>Stamina</th>
-            <th>Playmaking</th>
-            <th>Scoring</th>
-            <th>Winger</th>
-            <th>Passing</th>
-            <th>Defending</th>
-            <th>Condition</th>
-          </tr>
-        </thead>
-        <tbody>
-          {players.map(p => (
-            <tr key={p.id}>
-              <td>
-                <button className="btn btn-link p-0" onClick={() => putOnSale(p.id)}>
-                  <i className="fa fa-exchange-alt" style={{ color: '#8c2457' }}></i>
-                </button>
-              </td>
-              <td>{p.role}</td>
-              <td>{p.name}</td>
-              <td>
-                <Link to={'/player/' + p.id}>{p.surname}</Link>
-              </td>
-              <td>{p.age}</td>
-              <td>{Math.round(p.stamina)}</td>
-              <td>{Math.round(p.playmaking)}</td>
-              <td>{Math.round(p.scoring)}</td>
-              <td>{Math.round(p.winger)}</td>
-              <td>{Math.round(p.passing)}</td>
-              <td>{Math.round(p.defending)}</td>
-              <td>{Math.round(p.condition)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <ul className="nav nav-tabs mb-3">
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'squad' ? 'active' : ''}`}
+            onClick={() => setActiveTab('squad')}
+          >
+            Squad
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'training' ? 'active' : ''}`}
+            onClick={() => setActiveTab('training')}
+          >
+            Training
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
+          >
+            Training History
+          </button>
+        </li>
+      </ul>
+
+      {activeTab === 'squad' && (
+          <>
+            {clubId && <InjuryList clubId={clubId} />}
+            <table className="table table-striped">
+                <thead>
+                <tr>
+                    <th>Action</th>
+                    <th onClick={() => requestSort('role')} style={{cursor: 'pointer'}}>Role</th>
+                    <th onClick={() => requestSort('name')} style={{cursor: 'pointer'}}>Name</th>
+                    <th onClick={() => requestSort('surname')} style={{cursor: 'pointer'}}>Surname</th>
+                    <th onClick={() => requestSort('age')} style={{cursor: 'pointer'}}>Age</th>
+                    <th onClick={() => requestSort('stamina')} style={{cursor: 'pointer'}}>Stamina</th>
+                    <th onClick={() => requestSort('playmaking')} style={{cursor: 'pointer'}}>Playmaking</th>
+                    <th onClick={() => requestSort('scoring')} style={{cursor: 'pointer'}}>Scoring</th>
+                    <th onClick={() => requestSort('winger')} style={{cursor: 'pointer'}}>Winger</th>
+                    <th onClick={() => requestSort('passing')} style={{cursor: 'pointer'}}>Passing</th>
+                    <th onClick={() => requestSort('defending')} style={{cursor: 'pointer'}}>Defending</th>
+                    <th onClick={() => requestSort('condition')} style={{cursor: 'pointer'}}>Condition</th>
+                </tr>
+                </thead>
+                <tbody>
+                {sortedPlayers.map(p => (
+                    <tr key={p.id}>
+                    <td>
+                        <button className="btn btn-link p-0" onClick={() => putOnSale(p.id)}>
+                        <i className="fa fa-exchange-alt" style={{ color: '#8c2457' }}></i>
+                        </button>
+                    </td>
+                    <td>{p.role}</td>
+                    <td>{p.name}</td>
+                    <td>
+                        <Link to={'/player/' + p.id}>{p.surname}</Link>
+                    </td>
+                    <td>{p.age}</td>
+                    <td>{Math.round(p.stamina)}</td>
+                    <td>{Math.round(p.playmaking)}</td>
+                    <td>{Math.round(p.scoring)}</td>
+                    <td>{Math.round(p.winger)}</td>
+                    <td>{Math.round(p.passing)}</td>
+                    <td>{Math.round(p.defending)}</td>
+                    <td>{Math.round(p.condition)}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+          </>
+      )}
+
+      {activeTab === 'training' && teamId && (
+          <TrainingPlan teamId={teamId} />
+      )}
+
+      {activeTab === 'history' && teamId && (
+          <TrainingHistory teamId={teamId} />
+      )}
+
+      {!teamId && activeTab !== 'squad' && (
+          <div>Loading team data...</div>
+      )}
+
     </Layout>
   );
 };

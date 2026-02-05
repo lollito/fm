@@ -11,12 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Round;
 import com.lollito.fm.model.Season;
+import com.lollito.fm.model.dto.SeasonAdvancementResult;
 import com.lollito.fm.repository.rest.SeasonRepository;
 
 @Service
@@ -26,13 +28,16 @@ public class SeasonService {
 	
 	@Autowired SeasonRepository seasonRepository;
 	@Autowired RankingService rankingService;
+	@Autowired SimulationMatchService simulationMatchService;
+	@Autowired LeagueService leagueService;
 	
 	public Season create(League league, LocalDateTime startDate) {
 		// Deactivate previous current season
-		seasonRepository.findByCurrentTrue().ifPresent(s -> {
+		List<Season> currentSeasons = seasonRepository.findAllByCurrentTrue();
+		for (Season s : currentSeasons) {
 			s.setCurrent(false);
 			seasonRepository.save(s);
-		});
+		}
 
 		Season season = new Season();
 		season.setStartYear(startDate.getYear());
@@ -126,10 +131,48 @@ public class SeasonService {
 	}
 
 	public Season getCurrentSeason() {
-		return seasonRepository.findByCurrentTrue().orElse(null);
+		List<Season> seasons = seasonRepository.findAllByCurrentTrue();
+		return seasons.isEmpty() ? null : seasons.get(0);
 	}
 
 	public Season findById(Long id) {
 		return seasonRepository.findById(id).orElse(null);
+	}
+
+	@Transactional
+	public SeasonAdvancementResult forceAdvanceSeason(boolean skipRemainingMatches, boolean generateNewPlayers, boolean processTransfers) {
+		Season currentSeason = getCurrentSeason();
+		int matchesProcessed = 0;
+
+		if (skipRemainingMatches && currentSeason != null) {
+			List<Round> rounds = currentSeason.getRounds();
+			for (Round round : rounds) {
+				for (Match match : round.getMatches()) {
+					if (!match.getFinish()) {
+						simulationMatchService.simulate(match);
+						matchesProcessed++;
+					}
+				}
+			}
+		}
+
+		if (currentSeason != null) {
+			League league = currentSeason.getLeague();
+			Season newSeason = create(league, LocalDateTime.now().plusMinutes(10));
+			league.setCurrentSeason(newSeason);
+			leagueService.save(league);
+
+			return SeasonAdvancementResult.builder()
+					.matchesProcessed(matchesProcessed)
+					.transfersProcessed(0)
+					.seasonAdvanced(true)
+					.build();
+		}
+
+		return SeasonAdvancementResult.builder()
+				.matchesProcessed(0)
+				.transfersProcessed(0)
+				.seasonAdvanced(false)
+				.build();
 	}
 }
