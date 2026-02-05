@@ -125,3 +125,18 @@ export const fireStaff = (staffId, data) => api.post('/staff/' + staffId + '/fir
 export const renewContract = (staffId, data) => api.post('/staff/' + staffId + '/renew', data);
 export const getStaffBonuses = (clubId) => api.get('/staff/club/' + clubId + '/bonuses');
 export const generateStaff = (role, count) => api.post('/staff/generate/' + role + '?count=' + count);
+
+// Contract API
+export const getPlayerContract = (playerId) => api.get('/contracts/player/' + playerId);
+export const startContractNegotiation = (data) => api.post('/contracts/negotiate', data);
+export const makeContractCounterOffer = (negotiationId, data) => api.post('/contracts/negotiate/' + negotiationId + '/offer', data);
+export const acceptContractOffer = (negotiationId) => api.post('/contracts/negotiate/' + negotiationId + '/accept');
+export const rejectContractOffer = (negotiationId, data) => api.post('/contracts/negotiate/' + negotiationId + '/reject', data);
+export const getClubNegotiations = (clubId, status = null) => {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    return api.get('/contracts/club/' + clubId + '/negotiations?' + params.toString());
+};
+export const addPerformanceBonus = (contractId, data) => api.post('/contracts/' + contractId + '/bonus', data);
+export const triggerReleaseClause = (playerId, data) => api.post('/contracts/release-clause/' + playerId, data);
+export const getExpiringContracts = (monthsAhead = 6) => api.get('/contracts/expiring?monthsAhead=' + monthsAhead);

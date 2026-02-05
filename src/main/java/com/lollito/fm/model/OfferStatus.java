@@ -8,7 +8,8 @@ public enum OfferStatus {
     ACCEPTED("Accepted"),
     REJECTED("Rejected"),
     EXPIRED("Expired"),
-    NEGOTIATING("Under Negotiation");
+    NEGOTIATING("Under Negotiation"),
+    COUNTERED("Countered");
 
     private final String displayName;
 

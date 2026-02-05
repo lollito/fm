@@ -9,7 +9,12 @@ public enum BonusType {
     ATTENDANCE("Attendance"),
     REPUTATION("Reputation"),
     GOALS_SCORED("Goals Scored"),
-    CLEAN_SHEETS("Clean Sheets");
+    CLEAN_SHEETS("Clean Sheets"),
+    GOALS("Goals Scored"),
+    ASSISTS("Assists Made"),
+    APPEARANCES("Appearances"),
+    TEAM_POSITION("League Position"),
+    INDIVIDUAL_AWARD("Individual Award");
 
     private final String displayName;
 
