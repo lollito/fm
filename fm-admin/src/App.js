@@ -10,8 +10,16 @@ import ClubManagement from './pages/ClubManagement';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
-  // Ideally check for ADMIN role here
-  return user ? children : <Navigate to="/login" />;
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!user.roles || !user.roles.includes('ROLE_ADMIN')) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
 };
 
 function App() {
