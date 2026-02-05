@@ -22,6 +22,7 @@ public enum TransactionCategory {
     LOAN_PAYMENTS("Loan Payments"),
     TAXES("Taxes"),
     INSURANCE("Insurance"),
+    SIGNING_BONUS("Signing Bonus"),
     SYSTEM_ACTION("System Action");
 
     private final String displayName;

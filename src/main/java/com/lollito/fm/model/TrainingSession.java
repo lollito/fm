@@ -19,6 +19,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -49,6 +51,7 @@ public class TrainingSession implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     @ToString.Exclude
+    @JsonIgnore
     private Team team;
 
     @Enumerated(EnumType.STRING)

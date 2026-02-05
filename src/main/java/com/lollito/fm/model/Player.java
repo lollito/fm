@@ -156,6 +156,39 @@ public class Player implements Serializable{
 	@ToString.Exclude
 	private List<Injury> injuries = new ArrayList<>();
 
+	@OneToOne(mappedBy = "player", cascade = CascadeType.ALL)
+	@JsonIgnore
+	@ToString.Exclude
+	private Contract currentContract;
+
+	@OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+	@Builder.Default
+	@JsonIgnore
+	@ToString.Exclude
+	private List<Contract> contractHistory = new ArrayList<>();
+
+	@OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+	@Builder.Default
+	@JsonIgnore
+	@ToString.Exclude
+	private List<ContractNegotiation> negotiations = new ArrayList<>();
+
+	@Transient
+	public boolean isContractExpiringSoon() {
+		if (currentContract == null) return true;
+		return currentContract.getEndDate().isBefore(LocalDate.now().plusMonths(6));
+	}
+
+	@Transient
+	public BigDecimal getWeeklySalary() {
+		return currentContract != null ? currentContract.getWeeklySalary() : BigDecimal.ZERO;
+	}
+
+	@Transient
+	public boolean hasReleaseClause() {
+		return currentContract != null && currentContract.getHasReleaseClause();
+	}
+
 	@Transient
 	public boolean isInjured() {
 		return injuries.stream()
