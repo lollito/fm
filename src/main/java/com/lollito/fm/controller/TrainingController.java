@@ -28,6 +28,7 @@ import com.lollito.fm.model.dto.TrainingSessionDTO;
 import com.lollito.fm.service.TrainingService;
 import com.lollito.fm.service.UserService;
 import com.lollito.fm.model.User;
+import com.lollito.fm.mapper.TrainingMapper;
 
 @RestController
 @RequestMapping("/api/training")
@@ -39,11 +40,14 @@ public class TrainingController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TrainingMapper trainingMapper;
+
     @GetMapping("/plan/{teamId}")
     public ResponseEntity<TrainingPlanDTO> getTrainingPlan(
             @PathVariable Long teamId) {
         TrainingPlan plan = trainingService.getTrainingPlan(teamId);
-        return ResponseEntity.ok(convertToDTO(plan));
+        return ResponseEntity.ok(trainingMapper.toDto(plan));
     }
 
     @PutMapping("/plan/{teamId}")
@@ -55,7 +59,7 @@ public class TrainingController {
             return ResponseEntity.status(403).build();
         }
         TrainingPlan plan = trainingService.updateTrainingPlan(teamId, request);
-        return ResponseEntity.ok(convertToDTO(plan));
+        return ResponseEntity.ok(trainingMapper.toDto(plan));
     }
 
     @GetMapping("/history/{teamId}")
@@ -65,7 +69,7 @@ public class TrainingController {
             @RequestParam(defaultValue = "20") int size) {
         Page<TrainingSession> sessions = trainingService
             .getTrainingHistory(teamId, PageRequest.of(page, size));
-        return ResponseEntity.ok(sessions.map(this::convertToDTO));
+        return ResponseEntity.ok(sessions.map(trainingMapper::toDto));
     }
 
     @GetMapping("/session/{sessionId}/results")
@@ -74,7 +78,7 @@ public class TrainingController {
         List<PlayerTrainingResult> results = trainingService
             .getSessionResults(sessionId);
         return ResponseEntity.ok(results.stream()
-            .map(this::convertToDTO)
+            .map(trainingMapper::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -85,65 +89,6 @@ public class TrainingController {
             @RequestBody ManualTrainingRequest request) {
         TrainingSession session = trainingService
             .createManualTrainingSession(teamId, request);
-        return ResponseEntity.ok(convertToDTO(session));
-    }
-
-    private TrainingPlanDTO convertToDTO(TrainingPlan plan) {
-        TrainingPlanDTO dto = new TrainingPlanDTO();
-        dto.setId(plan.getId());
-        dto.setTeamId(plan.getTeam().getId());
-        dto.setMondayFocus(plan.getMondayFocus());
-        dto.setTuesdayFocus(plan.getTuesdayFocus());
-        dto.setWednesdayFocus(plan.getWednesdayFocus());
-        dto.setThursdayFocus(plan.getThursdayFocus());
-        dto.setFridayFocus(plan.getFridayFocus());
-        dto.setIntensity(plan.getIntensity());
-        dto.setRestOnWeekends(plan.getRestOnWeekends());
-        dto.setLastUpdated(plan.getLastUpdated());
-        return dto;
-    }
-
-    private TrainingSessionDTO convertToDTO(TrainingSession session) {
-        TrainingSessionDTO dto = new TrainingSessionDTO();
-        dto.setId(session.getId());
-        dto.setTeamId(session.getTeam().getId());
-        dto.setFocus(session.getFocus());
-        dto.setIntensity(session.getIntensity());
-        dto.setStartDate(session.getStartDate());
-        dto.setEndDate(session.getEndDate());
-        dto.setStatus(session.getStatus());
-        dto.setEffectivenessMultiplier(session.getEffectivenessMultiplier());
-        if (session.getPlayerResults() != null) {
-            // We want to avoid full details in history list if possible, but here we don't have control over context easily.
-            // For now, mapping results is fine, but beware of LazyInitializationException if session was loaded without results.
-            // But getTrainingHistory usually loads lazily.
-            // session.getPlayerResults() is a collection. Accessing it triggers loading.
-            // If the transaction is closed, it will fail.
-            // Controllers are outside transaction usually.
-            // But `enable_lazy_load_no_trans=true` is set in memory!
-            // So it should work.
-             dto.setPlayerResults(session.getPlayerResults().stream()
-                 .map(this::convertToDTO)
-                 .collect(Collectors.toList()));
-        }
-        return dto;
-    }
-
-    private PlayerTrainingResultDTO convertToDTO(PlayerTrainingResult result) {
-        PlayerTrainingResultDTO dto = new PlayerTrainingResultDTO();
-        dto.setId(result.getId());
-        dto.setTrainingSessionId(result.getTrainingSession().getId());
-
-        PlayerTrainingResultDTO.PlayerSummaryDTO playerDTO = new PlayerTrainingResultDTO.PlayerSummaryDTO();
-        playerDTO.setId(result.getPlayer().getId());
-        playerDTO.setName(result.getPlayer().getName());
-        playerDTO.setSurname(result.getPlayer().getSurname());
-        dto.setPlayer(playerDTO);
-
-        dto.setAttendanceRate(result.getAttendanceRate());
-        dto.setImprovementGained(result.getImprovementGained());
-        dto.setFatigueGained(result.getFatigueGained());
-        dto.setPerformance(result.getPerformance());
-        return dto;
+        return ResponseEntity.ok(trainingMapper.toDto(session));
     }
 }

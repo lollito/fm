@@ -26,6 +26,7 @@ import com.lollito.fm.model.Staff;
 import com.lollito.fm.model.StaffContract;
 import com.lollito.fm.model.StaffRole;
 import com.lollito.fm.service.StaffService;
+import com.lollito.fm.mapper.StaffMapper;
 
 @RestController
 @RequestMapping("/api/staff")
@@ -34,11 +35,14 @@ public class StaffController {
     @Autowired
     private StaffService staffService;
 
+    @Autowired
+    private StaffMapper staffMapper;
+
     @GetMapping("/club/{clubId}")
     public ResponseEntity<List<StaffDTO>> getClubStaff(@PathVariable Long clubId) {
         List<Staff> staff = staffService.getClubStaff(clubId);
         return ResponseEntity.ok(staff.stream()
-            .map(this::convertToDTO)
+            .map(staffMapper::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -49,7 +53,7 @@ public class StaffController {
             @RequestParam(defaultValue = "20") int size) {
         Page<Staff> staff = staffService.getAvailableStaff(role, PageRequest.of(page, size));
         return ResponseEntity.ok(staff.getContent().stream()
-            .map(this::convertToDTO)
+            .map(staffMapper::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -60,7 +64,7 @@ public class StaffController {
             request.getStaffId(),
             request
         );
-        return ResponseEntity.ok(convertToContractDTO(contract));
+        return ResponseEntity.ok(staffMapper.toDto(contract));
     }
 
     @PostMapping("/{staffId}/fire")
@@ -76,7 +80,7 @@ public class StaffController {
             @PathVariable Long staffId,
             @RequestBody RenewContractRequest request) {
         StaffContract contract = staffService.renewContract(staffId, request);
-        return ResponseEntity.ok(convertToContractDTO(contract));
+        return ResponseEntity.ok(staffMapper.toDto(contract));
     }
 
     @GetMapping("/club/{clubId}/bonuses")
@@ -92,50 +96,7 @@ public class StaffController {
             @RequestParam(defaultValue = "10") int count) {
         List<Staff> staff = staffService.generateAvailableStaff(role, count);
         return ResponseEntity.ok(staff.stream()
-            .map(this::convertToDTO)
+            .map(staffMapper::toDto)
             .collect(Collectors.toList()));
-    }
-
-    private StaffDTO convertToDTO(Staff staff) {
-        StaffDTO dto = new StaffDTO();
-        dto.setId(staff.getId());
-        dto.setName(staff.getName());
-        dto.setSurname(staff.getSurname());
-        dto.setBirth(staff.getBirth());
-        dto.setAge(staff.getAge());
-        dto.setClubId(staff.getClub() != null ? staff.getClub().getId() : null);
-        dto.setRole(staff.getRole());
-        dto.setSpecialization(staff.getSpecialization());
-        dto.setAbility(staff.getAbility());
-        dto.setReputation(staff.getReputation());
-        dto.setMonthlySalary(staff.getMonthlySalary());
-        dto.setContractStart(staff.getContractStart());
-        dto.setContractEnd(staff.getContractEnd());
-        dto.setStatus(staff.getStatus());
-        dto.setMotivationBonus(staff.getMotivationBonus());
-        dto.setTrainingBonus(staff.getTrainingBonus());
-        dto.setInjuryPreventionBonus(staff.getInjuryPreventionBonus());
-        dto.setRecoveryBonus(staff.getRecoveryBonus());
-        dto.setScoutingBonus(staff.getScoutingBonus());
-        dto.setNationalityName(staff.getNationality() != null ? staff.getNationality().getName() : null);
-        dto.setDescription(staff.getDescription());
-        dto.setExperience(staff.getExperience());
-        return dto;
-    }
-
-    private StaffContractDTO convertToContractDTO(StaffContract contract) {
-        StaffContractDTO dto = new StaffContractDTO();
-        dto.setId(contract.getId());
-        dto.setStaffId(contract.getStaff().getId());
-        dto.setClubId(contract.getClub().getId());
-        dto.setMonthlySalary(contract.getMonthlySalary());
-        dto.setSigningBonus(contract.getSigningBonus());
-        dto.setPerformanceBonus(contract.getPerformanceBonus());
-        dto.setStartDate(contract.getStartDate());
-        dto.setEndDate(contract.getEndDate());
-        dto.setStatus(contract.getStatus());
-        dto.setTerminationClause(contract.getTerminationClause());
-        dto.setTerminationFee(contract.getTerminationFee());
-        return dto;
     }
 }

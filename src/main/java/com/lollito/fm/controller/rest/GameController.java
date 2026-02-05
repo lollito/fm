@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Game;
+import com.lollito.fm.model.dto.GameDTO;
 import com.lollito.fm.model.rest.GameResponse;
 import com.lollito.fm.service.GameService;
+import com.lollito.fm.mapper.GameMapper;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/game")
@@ -21,6 +24,7 @@ public class GameController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired private GameService gameService;
+	@Autowired private GameMapper gameMapper;
 	
 	@RequestMapping(value = "/", method = RequestMethod.POST)
     public GameResponse create(@RequestParam(required = true) String gameName) {
@@ -34,8 +38,10 @@ public class GameController {
     }
 	
 	@RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public List<Game> findAll() {
-		return gameService.findAll();
+    public List<GameDTO> findAll() {
+		return gameService.findAll().stream()
+			.map(gameMapper::toDto)
+			.collect(Collectors.toList());
     }
 	
 	@RequestMapping(value = "/next", method = RequestMethod.POST)

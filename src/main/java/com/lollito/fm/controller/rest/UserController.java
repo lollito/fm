@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.config.security.jwt.JwtUtils;
 import com.lollito.fm.model.User;
+import com.lollito.fm.model.dto.UserDTO;
 import com.lollito.fm.model.rest.JwtResponse;
 import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.service.UserService;
+import com.lollito.fm.mapper.UserMapper;
 
 @RestController
 @RequestMapping(value="/api/user")
@@ -36,6 +38,8 @@ public class UserController {
 	@Autowired private AuthenticationManager authenticationManager;
 
 	@Autowired private JwtUtils jwtUtils;
+
+	@Autowired private UserMapper userMapper;
 	
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
     public Long count() {
@@ -91,6 +95,10 @@ public class UserController {
     
     @GetMapping("/")
 	public ResponseEntity<?> findAll (  ) {
-		return ResponseEntity.ok( userService.findAll() );
+		return ResponseEntity.ok(
+            java.util.stream.StreamSupport.stream(userService.findAll().spliterator(), false)
+                .map(userMapper::toDto)
+                .collect(Collectors.toList())
+        );
 	}
 }
