@@ -125,3 +125,13 @@ export const fireStaff = (staffId, data) => api.post('/staff/' + staffId + '/fir
 export const renewContract = (staffId, data) => api.post('/staff/' + staffId + '/renew', data);
 export const getStaffBonuses = (clubId) => api.get('/staff/club/' + clubId + '/bonuses');
 export const generateStaff = (role, count) => api.post('/staff/generate/' + role + '?count=' + count);
+
+// Watchlist API
+export const getClubWatchlist = (clubId) => api.get('/watchlist/club/' + clubId);
+export const addPlayerToWatchlist = (clubId, playerId, data) => api.post('/watchlist/club/' + clubId + '/player/' + playerId, data);
+export const removeFromWatchlist = (entryId) => api.delete('/watchlist/entry/' + entryId);
+export const updateWatchlistEntry = (entryId, data) => api.put('/watchlist/entry/' + entryId, data);
+export const getWatchlistNotifications = (clubId, unreadOnly = false) => api.get('/watchlist/club/' + clubId + '/notifications?unreadOnly=' + unreadOnly);
+export const markNotificationAsRead = (notificationId) => api.post('/watchlist/notification/' + notificationId + '/read');
+export const getWatchlistStats = (clubId) => api.get('/watchlist/club/' + clubId + '/stats');
+export const getEntryUpdates = (entryId) => api.get('/watchlist/entry/' + entryId + '/updates');
