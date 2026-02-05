@@ -2,6 +2,7 @@ package com.lollito.fm.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
@@ -38,6 +39,9 @@ public class InjuryService {
     @Autowired
     private ClubRepository clubRepository;
 
+    @Autowired
+    private StaffService staffService;
+
     @Value("${fm.injury.base-probability:0.02}")
     private Double baseProbability;
 
@@ -58,9 +62,21 @@ public class InjuryService {
         boolean hasHistory = !player.getInjuries().isEmpty();
         double injuryHistoryFactor = hasHistory ? 1.3 : 1.0;
 
+        // Staff bonus
+        double injuryReduction = 0.0;
+        if (player.getTeam() != null) {
+            Optional<Club> clubOpt = clubRepository.findByTeam(player.getTeam());
+            if (clubOpt.isPresent()) {
+                var bonuses = staffService.calculateClubStaffBonuses(clubOpt.get().getId());
+                if (bonuses != null && bonuses.getInjuryPreventionBonus() != null) {
+                    injuryReduction = bonuses.getInjuryPreventionBonus();
+                }
+            }
+        }
+
         double finalProbability = baseProbability * ageFactor *
                                 conditionFactor * injuryHistoryFactor *
-                                matchIntensity;
+                                matchIntensity * (1.0 - injuryReduction);
 
         // Use ThreadLocalRandom for correct probability [0.0, 1.0)
         return ThreadLocalRandom.current().nextDouble() < finalProbability;

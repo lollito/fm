@@ -6,6 +6,7 @@ import useSortableData from '../hooks/useSortableData';
 import InjuryList from '../components/InjuryList';
 import TrainingPlan from '../components/TrainingPlan';
 import TrainingHistory from '../components/TrainingHistory';
+import StaffManagement from '../components/StaffManagement';
 
 const Team = () => {
   const [players, setPlayers] = useState([]);
@@ -81,6 +82,14 @@ const Team = () => {
             Training History
           </button>
         </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'staff' ? 'active' : ''}`}
+            onClick={() => setActiveTab('staff')}
+          >
+            Staff
+          </button>
+        </li>
       </ul>
 
       {activeTab === 'squad' && (
@@ -139,7 +148,11 @@ const Team = () => {
           <TrainingHistory teamId={teamId} />
       )}
 
-      {!teamId && activeTab !== 'squad' && (
+      {activeTab === 'staff' && clubId && (
+          <StaffManagement clubId={clubId} />
+      )}
+
+      {!teamId && activeTab !== 'squad' && activeTab !== 'staff' && (
           <div>Loading team data...</div>
       )}
 

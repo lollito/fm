@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -113,5 +114,27 @@ public class Club implements Serializable{
     @ToString.Exclude
     @JsonIgnore
     private List<Scout> scouts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    @JsonIgnore
+    private List<Staff> staff = new ArrayList<>();
+
+    @Transient
+    @JsonIgnore
+    public List<Staff> getActiveStaff() {
+        return staff.stream()
+            .filter(s -> s.getStatus() == StaffStatus.ACTIVE)
+            .collect(Collectors.toList());
+    }
+
+    @Transient
+    @JsonIgnore
+    public Double getTotalStaffSalaries() {
+        return getActiveStaff().stream()
+            .mapToDouble(s -> s.getMonthlySalary().doubleValue())
+            .sum();
+    }
     
 }

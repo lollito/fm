@@ -23,10 +23,13 @@ import com.lollito.fm.model.TrainingPlan;
 import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.model.TrainingStatus;
 import com.lollito.fm.model.dto.ManualTrainingRequest;
+import com.lollito.fm.model.Club;
 import com.lollito.fm.model.dto.TrainingPlanRequest;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
+import com.lollito.fm.repository.rest.ClubRepository;
+import java.util.Optional;
 
 @Service
 public class TrainingService {
@@ -47,6 +50,12 @@ public class TrainingService {
 
     @Autowired
     private TeamService teamService;
+
+    @Autowired
+    private StaffService staffService;
+
+    @Autowired
+    private ClubRepository clubRepository;
 
     /**
      * Process daily training for all teams
@@ -138,11 +147,14 @@ public class TrainingService {
         //     baseEffectiveness += facilities.getTrainingCenter().getBonus();
         // }
 
-        // TODO: Add staff bonuses when staff system is implemented
-        // List<Staff> coaches = team.getClub().getStaff().stream()
-        //     .filter(s -> s.getRole() == StaffRole.COACH)
-        //     .collect(Collectors.toList());
-        // baseEffectiveness += coaches.size() * 0.1;
+        // Add staff bonuses
+        Optional<Club> clubOpt = clubRepository.findByTeam(team);
+        if (clubOpt.isPresent()) {
+            var bonuses = staffService.calculateClubStaffBonuses(clubOpt.get().getId());
+            if (bonuses != null && bonuses.getTrainingBonus() != null) {
+                baseEffectiveness += bonuses.getTrainingBonus();
+            }
+        }
 
         return Math.min(2.0, baseEffectiveness); // Cap at 2x effectiveness
     }

@@ -112,3 +112,16 @@ export const getScoutingReports = (clubId, page = 0, size = 20, recommendation =
 export const getScoutingRecommendations = (clubId) => api.get('/scouting/club/' + clubId + '/recommendations');
 export const addToWatchlist = (reportId, notes) => api.post('/scouting/report/' + reportId + '/watchlist', { notes });
 export const cancelAssignment = (assignmentId) => api.post('/scouting/assignment/' + assignmentId + '/cancel');
+
+// Staff API
+export const getClubStaff = (clubId) => api.get('/staff/club/' + clubId);
+export const getAvailableStaff = (role = null) => {
+    const params = new URLSearchParams();
+    if (role) params.append('role', role);
+    return api.get('/staff/available?' + params.toString());
+};
+export const hireStaff = (data) => api.post('/staff/hire', data);
+export const fireStaff = (staffId, data) => api.post('/staff/' + staffId + '/fire', data);
+export const renewContract = (staffId, data) => api.post('/staff/' + staffId + '/renew', data);
+export const getStaffBonuses = (clubId) => api.get('/staff/club/' + clubId + '/bonuses');
+export const generateStaff = (role, count) => api.post('/staff/generate/' + role + '?count=' + count);
