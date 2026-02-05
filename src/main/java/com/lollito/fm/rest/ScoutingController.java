@@ -30,6 +30,7 @@ import com.lollito.fm.model.Scout;
 import com.lollito.fm.model.ScoutingAssignment;
 import com.lollito.fm.model.ScoutingReport;
 import com.lollito.fm.service.ScoutingService;
+import com.lollito.fm.mapper.ScoutingMapper;
 
 @RestController
 @RequestMapping("/api/scouting")
@@ -38,11 +39,14 @@ public class ScoutingController {
     @Autowired
     private ScoutingService scoutingService;
 
+    @Autowired
+    private ScoutingMapper scoutingMapper;
+
     @GetMapping("/club/{clubId}/scouts")
     public ResponseEntity<List<ScoutDTO>> getClubScouts(@PathVariable Long clubId) {
         List<Scout> scouts = scoutingService.getClubScouts(clubId);
         return ResponseEntity.ok(scouts.stream()
-            .map(this::convertToDTO)
+            .map(scoutingMapper::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -55,7 +59,7 @@ public class ScoutingController {
             request.getPriority(),
             request.getInstructions()
         );
-        return ResponseEntity.ok(convertToDTO(assignment));
+        return ResponseEntity.ok(scoutingMapper.toDto(assignment));
     }
 
     @GetMapping("/club/{clubId}/assignments")
@@ -64,7 +68,7 @@ public class ScoutingController {
             @RequestParam(required = false) AssignmentStatus status) {
         List<ScoutingAssignment> assignments = scoutingService.getClubAssignments(clubId, status);
         return ResponseEntity.ok(assignments.stream()
-            .map(this::convertToDTO)
+            .map(scoutingMapper::toDto)
             .collect(Collectors.toList()));
     }
 
@@ -73,7 +77,7 @@ public class ScoutingController {
             @PathVariable Long playerId,
             @PathVariable Long clubId) {
         PlayerScoutingStatus status = scoutingService.getPlayerScoutingStatus(playerId, clubId);
-        return ResponseEntity.ok(convertToDTO(status));
+        return ResponseEntity.ok(scoutingMapper.toDto(status));
     }
 
     @GetMapping("/player/{playerId}/revealed/{clubId}")
@@ -92,7 +96,7 @@ public class ScoutingController {
             @RequestParam(required = false) RecommendationLevel recommendation) {
         Page<ScoutingReport> reports = scoutingService.getScoutingReports(
             clubId, PageRequest.of(page, size), recommendation);
-        return ResponseEntity.ok(reports.map(this::convertToDTO));
+        return ResponseEntity.ok(reports.map(scoutingMapper::toDto));
     }
 
     @GetMapping("/club/{clubId}/recommendations")
@@ -115,103 +119,5 @@ public class ScoutingController {
     public ResponseEntity<Void> cancelAssignment(@PathVariable Long assignmentId) {
         scoutingService.cancelAssignment(assignmentId);
         return ResponseEntity.ok().build();
-    }
-
-    // Mappers
-
-    private ScoutDTO convertToDTO(Scout scout) {
-        ScoutDTO dto = new ScoutDTO();
-        dto.setId(scout.getId());
-        dto.setName(scout.getName());
-        dto.setSurname(scout.getSurname());
-        if(scout.getClub() != null) dto.setClubId(scout.getClub().getId());
-        if(scout.getScoutingRegion() != null) {
-            dto.setRegionId(scout.getScoutingRegion().getId());
-            dto.setRegionName(scout.getScoutingRegion().getName());
-        }
-        dto.setAbility(scout.getAbility());
-        dto.setReputation(scout.getReputation());
-        dto.setMonthlySalary(scout.getMonthlySalary());
-        dto.setSpecialization(scout.getSpecialization());
-        dto.setStatus(scout.getStatus());
-        dto.setContractEnd(scout.getContractEnd());
-        dto.setExperience(scout.getExperience());
-        return dto;
-    }
-
-    private ScoutingAssignmentDTO convertToDTO(ScoutingAssignment assignment) {
-        ScoutingAssignmentDTO dto = new ScoutingAssignmentDTO();
-        dto.setId(assignment.getId());
-        dto.setScout(convertToDTO(assignment.getScout()));
-        if(assignment.getTargetPlayer() != null) {
-            dto.setTargetPlayerId(assignment.getTargetPlayer().getId());
-            dto.setTargetPlayerName(assignment.getTargetPlayer().getName());
-            dto.setTargetPlayerSurname(assignment.getTargetPlayer().getSurname());
-        }
-        dto.setType(assignment.getType());
-        dto.setStatus(assignment.getStatus());
-        dto.setAssignedDate(assignment.getAssignedDate());
-        dto.setCompletionDate(assignment.getCompletionDate());
-        dto.setExpectedCompletionDate(assignment.getExpectedCompletionDate());
-        dto.setPriority(assignment.getPriority());
-        dto.setInstructions(assignment.getInstructions());
-        return dto;
-    }
-
-    private ScoutingReportDTO convertToDTO(ScoutingReport report) {
-        ScoutingReportDTO dto = new ScoutingReportDTO();
-        dto.setId(report.getId());
-        if(report.getAssignment() != null) dto.setAssignmentId(report.getAssignment().getId());
-        if(report.getPlayer() != null) {
-            dto.setPlayerId(report.getPlayer().getId());
-            dto.setPlayerName(report.getPlayer().getName());
-            dto.setPlayerSurname(report.getPlayer().getSurname());
-        }
-        if(report.getScout() != null) dto.setScout(convertToDTO(report.getScout()));
-        dto.setReportDate(report.getReportDate());
-        dto.setRevealedStamina(report.getRevealedStamina());
-        dto.setRevealedPlaymaking(report.getRevealedPlaymaking());
-        dto.setRevealedScoring(report.getRevealedScoring());
-        dto.setRevealedWinger(report.getRevealedWinger());
-        dto.setRevealedGoalkeeping(report.getRevealedGoalkeeping());
-        dto.setRevealedPassing(report.getRevealedPassing());
-        dto.setRevealedDefending(report.getRevealedDefending());
-        dto.setRevealedSetPieces(report.getRevealedSetPieces());
-        dto.setOverallRating(report.getOverallRating());
-        dto.setPotentialRating(report.getPotentialRating());
-        dto.setAccuracyLevel(report.getAccuracyLevel());
-        dto.setRecommendation(report.getRecommendation());
-        dto.setStrengths(report.getStrengths());
-        dto.setWeaknesses(report.getWeaknesses());
-        dto.setPersonalityAssessment(report.getPersonalityAssessment());
-        dto.setInjuryHistory(report.getInjuryHistory());
-        dto.setEstimatedValue(report.getEstimatedValue());
-        dto.setEstimatedWage(report.getEstimatedWage());
-        dto.setIsAvailableForTransfer(report.getIsAvailableForTransfer());
-        dto.setContractExpiry(report.getContractExpiry());
-        dto.setAdditionalNotes(report.getAdditionalNotes());
-        dto.setConfidenceLevel(report.getConfidenceLevel());
-        return dto;
-    }
-
-    private PlayerScoutingStatusDTO convertToDTO(PlayerScoutingStatus status) {
-        PlayerScoutingStatusDTO dto = new PlayerScoutingStatusDTO();
-        dto.setId(status.getId());
-        if(status.getPlayer() != null) dto.setPlayerId(status.getPlayer().getId());
-        if(status.getScoutingClub() != null) dto.setClubId(status.getScoutingClub().getId());
-        dto.setScoutingLevel(status.getScoutingLevel());
-        dto.setLastScoutedDate(status.getLastScoutedDate());
-        dto.setFirstScoutedDate(status.getFirstScoutedDate());
-        dto.setTimesScoutedThisSeason(status.getTimesScoutedThisSeason());
-        dto.setKnowledgeAccuracy(status.getKnowledgeAccuracy());
-        dto.setKnownStamina(status.getKnownStamina());
-        dto.setKnownPlaymaking(status.getKnownPlaymaking());
-        dto.setKnownScoring(status.getKnownScoring());
-        dto.setKnownWinger(status.getKnownWinger());
-        dto.setKnownGoalkeeping(status.getKnownGoalkeeping());
-        dto.setKnownPassing(status.getKnownPassing());
-        dto.setKnownDefending(status.getKnownDefending());
-        dto.setKnownSetPieces(status.getKnownSetPieces());
-        return dto;
     }
 }

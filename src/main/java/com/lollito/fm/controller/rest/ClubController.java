@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Club;
+import com.lollito.fm.model.dto.ClubDTO;
 import com.lollito.fm.repository.rest.CountryRepository;
 import com.lollito.fm.service.ClubService;
 import com.lollito.fm.service.UserService;
+import com.lollito.fm.mapper.ClubMapper;
 
 @RestController
 @RequestMapping(value="/api/club")
@@ -22,10 +24,11 @@ public class ClubController {
 	@Autowired private ClubService clubService;
 	@Autowired private UserService userService;
 	@Autowired private CountryRepository countryRepository;
+	@Autowired private ClubMapper clubMapper;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public Club club() {
-        return userService.getLoggedUser().getClub();
+    public ClubDTO club() {
+        return clubMapper.toDto(userService.getLoggedUser().getClub());
     }
    
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
@@ -34,12 +37,12 @@ public class ClubController {
     }
 	
 	@RequestMapping(value = "/findTopByLeagueCountry/{countryId}", method = RequestMethod.GET)
-    public Club findTopByLeagueCountry(@PathVariable (value = "countryId") Long countryId) {
-        return clubService.findTopByLeagueCountry(countryRepository.findById(countryId).get());
+    public ClubDTO findTopByLeagueCountry(@PathVariable (value = "countryId") Long countryId) {
+        return clubMapper.toDto(clubService.findTopByLeagueCountry(countryRepository.findById(countryId).get()));
     }
 	
 	@RequestMapping(value = "/findTopByLeagueCountryAndUserIsNull/{countryId}", method = RequestMethod.GET)
-    public Club findTopByLeagueCountryAndUserIsNull(@PathVariable (value = "countryId") Long countryId) {
-        return clubService.findTopByLeagueCountryAndUserIsNull(countryRepository.findById(countryId).get());
+    public ClubDTO findTopByLeagueCountryAndUserIsNull(@PathVariable (value = "countryId") Long countryId) {
+        return clubMapper.toDto(clubService.findTopByLeagueCountryAndUserIsNull(countryRepository.findById(countryId).get()));
     }
 }

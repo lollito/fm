@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Player;
+import com.lollito.fm.dto.PlayerDTO;
 import com.lollito.fm.model.rest.PlayerCondition;
 import com.lollito.fm.service.PlayerService;
 import com.lollito.fm.service.UserService;
+import com.lollito.fm.mapper.PlayerMapper;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/player")
@@ -25,10 +28,13 @@ public class PlayerController {
 	
 	@Autowired private UserService userService;
 	@Autowired private PlayerService playerService;
+	@Autowired private PlayerMapper playerMapper;
 	
 	@GetMapping(value = "/")
-    public List<Player> players() {
-        return userService.getLoggedUser().getClub().getTeam().getPlayers();
+    public List<PlayerDTO> players() {
+        return userService.getLoggedUser().getClub().getTeam().getPlayers().stream()
+			.map(playerMapper::toDto)
+			.collect(Collectors.toList());
     }
    
 	
@@ -38,17 +44,19 @@ public class PlayerController {
     }
 	
 	@GetMapping(value = "/onSale")
-	public List<Player> getOnSale() {
-		return playerService.findByOnSale(Boolean.TRUE);
+	public List<PlayerDTO> getOnSale() {
+		return playerService.findByOnSale(Boolean.TRUE).stream()
+			.map(playerMapper::toDto)
+			.collect(Collectors.toList());
 	}
 	
 	@PostMapping(value = "/{id}/onSale")
-	public Player onSale(@PathVariable(value="id") Long id) {
-		return playerService.onSale(id);
+	public PlayerDTO onSale(@PathVariable(value="id") Long id) {
+		return playerMapper.toDto(playerService.onSale(id));
 	}
 
 	@PostMapping(value = "/{id}/change-role")
-	public Player changeRole(@PathVariable(value="id") Long id, @RequestParam(value="role") Integer role) {
-		return playerService.changeRole(id, role);
+	public PlayerDTO changeRole(@PathVariable(value="id") Long id, @RequestParam(value="role") Integer role) {
+		return playerMapper.toDto(playerService.changeRole(id, role));
 	}
 }
