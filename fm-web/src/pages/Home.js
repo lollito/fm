@@ -102,10 +102,10 @@ const Home = () => {
                 </thead>
                 <tbody>
                   {sortedNextMatches.map((m, i) => (
-                    <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}
+                    <tr key={i} className={getRowClass(m?.home?.name) || getRowClass(m?.away?.name)}
                         onClick={() => navigate('/match/' + m.id)} style={{ cursor: 'pointer' }}>
-                      <td>{m.home.name}</td>
-                      <td>{m.away.name}</td>
+                      <td>{m?.home?.name || 'Unknown'}</td>
+                      <td>{m?.away?.name || 'Unknown'}</td>
                       <td>{m.date}</td>
                     </tr>
                   ))}
@@ -132,10 +132,10 @@ const Home = () => {
                 </thead>
                 <tbody>
                   {sortedPreviousMatches.map((m, i) => (
-                    <tr key={i} className={getRowClass(m.home.name) || getRowClass(m.away.name)}
+                    <tr key={i} className={getRowClass(m?.home?.name) || getRowClass(m?.away?.name)}
                         onClick={() => navigate('/match/' + m.id)} style={{ cursor: 'pointer' }}>
-                      <td>{m.home.name}</td>
-                      <td>{m.away.name}</td>
+                      <td>{m?.home?.name || 'Unknown'}</td>
+                      <td>{m?.away?.name || 'Unknown'}</td>
                       <td>{m.homeScore} - {m.awayScore}</td>
                     </tr>
                   ))}
@@ -164,8 +164,8 @@ const Home = () => {
                 </thead>
                 <tbody>
                   {sortedRanking.map((r, i) => (
-                    <tr key={i} className={getRowClass(r.club.name)}>
-                      <td>{r.club.name}</td>
+                    <tr key={i} className={getRowClass(r?.club?.name)}>
+                      <td>{r?.club?.name || 'Unknown'}</td>
                       <td>{r.played}</td>
                       <td>{r.points}</td>
                     </tr>

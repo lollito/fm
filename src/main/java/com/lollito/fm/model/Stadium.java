@@ -1,13 +1,18 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +32,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class Stadium implements Serializable{
+public class Stadium implements Serializable {
 	
 	@Transient
 	private static final long serialVersionUID = 1L;
@@ -38,37 +43,61 @@ public class Stadium implements Serializable{
 	@EqualsAndHashCode.Include
 	private Long id;
 	
+    @OneToOne(mappedBy = "stadium")
+    @JsonIgnore
+    @ToString.Exclude
+    private Club club;
+
     private String name;
+    private Integer capacity;
+    private Integer baseCapacity; // Original capacity
+
+    // Stadium quality levels (1-10)
+    private Integer pitchQuality;
+    private Integer facilitiesQuality;
+    private Integer securityLevel;
+    private Integer accessibilityLevel;
+
+    // Stadium features
+    private Boolean hasRoof;
+    private Boolean hasUndersoilHeating;
+    private Boolean hasVipBoxes;
+    private Boolean hasMediaCenter;
+    private Boolean hasMuseum;
+    private Boolean hasMegastore;
+
+    // Financial aspects
+    private BigDecimal constructionCost;
+    private BigDecimal maintenanceCost; // Monthly
+    private BigDecimal upgradeValue; // Total invested in upgrades
     
-	@Builder.Default
-    private Integer grandstandNord = 0;
-	@Builder.Default
-    private Integer grandstandSud = 0;
-	@Builder.Default
-    private Integer grandstandWest = 1;
-	@Builder.Default
-    private Integer grandstandEst = 0;
-	@Builder.Default
-    private Integer grandstandNordWest = 0;
-	@Builder.Default
-    private Integer grandstandNordEst = 0;
-	@Builder.Default
-    private Integer grandstandSudWest = 0;
-	@Builder.Default
-    private Integer grandstandSudEst = 0;
-  
-	@Builder.Default
-    private Integer ground = 1;
+    // Stadium atmosphere and revenue multipliers
+    private Double atmosphereMultiplier; // Affects player performance
+    private Double revenueMultiplier; // Affects matchday revenue
+
+    private LocalDate lastUpgradeDate;
+    private LocalDate nextMaintenanceDate;
     
     public Stadium(String name){
-	this();
+        this();
     	this.name = name;
+        // Defaults for new stadium
+        this.capacity = 5000;
+        this.baseCapacity = 5000;
+        this.pitchQuality = 5;
+        this.facilitiesQuality = 3;
+        this.securityLevel = 3;
+        this.accessibilityLevel = 3;
+        this.hasRoof = false;
+        this.hasUndersoilHeating = false;
+        this.hasVipBoxes = false;
+        this.hasMediaCenter = false;
+        this.hasMuseum = false;
+        this.hasMegastore = false;
+        this.constructionCost = BigDecimal.ZERO;
+        this.maintenanceCost = BigDecimal.valueOf(1000);
+        this.upgradeValue = BigDecimal.ZERO;
+        this.atmosphereMultiplier = 1.0;
+        this.revenueMultiplier = 1.0;
     }
-
-    @Transient
-    public Integer getCapacity() {
-        return grandstandNord + grandstandSud + grandstandWest + grandstandEst +
-               grandstandNordWest + grandstandNordEst + grandstandSudWest + grandstandSudEst;
-    }
-
 }

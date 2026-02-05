@@ -161,7 +161,8 @@ public class FinancialService {
         processSponsorshipPayments(club);
 
         // Process facility maintenance costs
-        processFacilityMaintenance(club);
+        // Delegated to InfrastructureService to handle detailed facility maintenance
+        // processFacilityMaintenance(club);
 
         // Generate monthly report
         generateMonthlyReport(finance);

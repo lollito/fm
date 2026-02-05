@@ -46,6 +46,18 @@ export const generateReport = (clubId, data) => api.post('/finance/club/' + club
 
 export const getSponsorshipDeals = (clubId) => api.get('/finance/club/' + clubId + '/sponsorships');
 
+// Infrastructure API
+export const getInfrastructureOverview = (clubId) => api.get('/infrastructure/club/' + clubId + '/overview');
+
+export const getAvailableUpgrades = (clubId, facilityType) => api.get('/infrastructure/club/' + clubId + '/upgrades/' + facilityType);
+
+export const startUpgrade = (clubId, data) => api.post('/infrastructure/club/' + clubId + '/upgrade/start', data);
+
+export const completeUpgrade = (upgradeId) => api.post('/infrastructure/upgrade/' + upgradeId + '/complete');
+
+export const getMaintenanceSchedule = (clubId) => api.get('/infrastructure/club/' + clubId + '/maintenance/schedule');
+
+export const scheduleMaintenance = (clubId, data) => api.post('/infrastructure/club/' + clubId + '/maintenance/schedule', data);
 // Sponsorship API
 export const getSponsorshipDashboard = (clubId) => api.get('/sponsorship/club/' + clubId + '/dashboard');
 export const generateOffers = (clubId) => api.post('/sponsorship/club/' + clubId + '/generate-offers');
