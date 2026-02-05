@@ -19,6 +19,7 @@ import Player from './pages/Player';
 import Finance from './pages/Finance';
 import LiveMatchViewer from './components/LiveMatchViewer';
 import ScoutingDashboard from './pages/ScoutingDashboard';
+import Watchlist from './pages/Watchlist';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -46,6 +47,7 @@ function App() {
           <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
           <Route path="/finance" element={<PrivateRoute><Finance /></PrivateRoute>} />
           <Route path="/scouting" element={<PrivateRoute><ScoutingDashboard /></PrivateRoute>} />
+          <Route path="/watchlist" element={<PrivateRoute><Watchlist /></PrivateRoute>} />
           <Route path="/match/:id" element={<PrivateRoute><MatchDetail /></PrivateRoute>} />
           <Route path="/match/live/:matchId" element={<PrivateRoute><LiveMatchViewer /></PrivateRoute>} />
           <Route path="/player/:id" element={<PrivateRoute><Player /></PrivateRoute>} />

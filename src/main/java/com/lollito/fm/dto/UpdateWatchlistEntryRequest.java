@@ -6,7 +6,7 @@ import com.lollito.fm.model.WatchlistPriority;
 import lombok.Data;
 
 @Data
-public class AddToWatchlistRequest {
+public class UpdateWatchlistEntryRequest {
     private String notes;
     private WatchlistPriority priority;
     private WatchlistCategory category;

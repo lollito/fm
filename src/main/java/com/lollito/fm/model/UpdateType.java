@@ -1,0 +1,6 @@
+package com.lollito.fm.model;
+
+public enum UpdateType {
+    VALUE_CHANGE, RATING_CHANGE, TRANSFER_STATUS_CHANGE,
+    INJURY_STATUS_CHANGE, CONTRACT_CHANGE, PERFORMANCE_UPDATE
+}

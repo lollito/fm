@@ -140,3 +140,12 @@ export const getClubNegotiations = (clubId, status = null) => {
 export const addPerformanceBonus = (contractId, data) => api.post('/contracts/' + contractId + '/bonus', data);
 export const triggerReleaseClause = (playerId, data) => api.post('/contracts/release-clause/' + playerId, data);
 export const getExpiringContracts = (monthsAhead = 6) => api.get('/contracts/expiring?monthsAhead=' + monthsAhead);
+// Watchlist API
+export const getClubWatchlist = (clubId) => api.get('/watchlist/club/' + clubId);
+export const addPlayerToWatchlist = (clubId, playerId, data) => api.post('/watchlist/club/' + clubId + '/player/' + playerId, data);
+export const removeFromWatchlist = (entryId) => api.delete('/watchlist/entry/' + entryId);
+export const updateWatchlistEntry = (entryId, data) => api.put('/watchlist/entry/' + entryId, data);
+export const getWatchlistNotifications = (clubId, unreadOnly = false) => api.get('/watchlist/club/' + clubId + '/notifications?unreadOnly=' + unreadOnly);
+export const markNotificationAsRead = (notificationId) => api.post('/watchlist/notification/' + notificationId + '/read');
+export const getWatchlistStats = (clubId) => api.get('/watchlist/club/' + clubId + '/stats');
+export const getEntryUpdates = (entryId) => api.get('/watchlist/entry/' + entryId + '/updates');
