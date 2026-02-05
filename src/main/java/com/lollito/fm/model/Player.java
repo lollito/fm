@@ -118,6 +118,12 @@ public class Player implements Serializable{
 	@JsonIgnore
 	@ToString.Exclude
     private Team team;
+
+	@ManyToOne( fetch = FetchType.LAZY  )
+	@JoinColumn( name = "original_team_id" )
+	@JsonIgnore
+	@ToString.Exclude
+    private Team originalTeam;
 	
 	private BigDecimal salary;
 
