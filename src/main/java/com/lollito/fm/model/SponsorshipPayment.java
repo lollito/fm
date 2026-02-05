@@ -25,6 +25,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "sponsorship_payment")
 @Getter
@@ -48,6 +50,7 @@ public class SponsorshipPayment implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sponsorship_deal_id")
     @ToString.Exclude
+    @JsonIgnore
     private SponsorshipDeal sponsorshipDeal;
 
     @Enumerated(EnumType.STRING)
@@ -66,5 +69,6 @@ public class SponsorshipPayment implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "season_id")
     @ToString.Exclude
+    @JsonIgnore
     private Season season;
 }
