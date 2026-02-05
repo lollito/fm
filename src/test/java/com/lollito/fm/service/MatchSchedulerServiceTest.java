@@ -1,13 +1,19 @@
 package com.lollito.fm.service;
 
 import com.lollito.fm.model.*;
+import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
+import com.lollito.fm.repository.rest.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,16 +28,15 @@ public class MatchSchedulerServiceTest {
     @Autowired private SeasonRepository seasonRepository;
     @Autowired private CountryService countryService;
     @Autowired private ModuleService moduleService;
+    @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
 
     @Test
     public void testProcessScheduledMatches() throws InterruptedException {
-        // Initialize data
-        if (countryService.getCount() == 0) {
-            countryService.create();
-        }
-        if (moduleService.findAll().isEmpty()) {
-            moduleService.createModules();
-        }
+        // Auth as lollito (created by DatabaseLoader)
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User("lollito", "password", Collections.emptyList());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Create a game, which creates leagues, seasons, rounds, and matches
         Game game = gameService.create("TestGameAsync");
