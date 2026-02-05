@@ -29,6 +29,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "sponsor")
 @Getter
@@ -75,11 +77,13 @@ public class Sponsor implements Serializable {
     @OneToMany(mappedBy = "sponsor", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
+    @JsonIgnore
     private List<SponsorshipDeal> deals = new ArrayList<>();
 
     @OneToMany(mappedBy = "sponsor", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
+    @JsonIgnore
     private List<SponsorshipOffer> offers = new ArrayList<>();
     
     private Boolean isActive;
