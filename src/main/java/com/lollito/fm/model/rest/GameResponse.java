@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lollito.fm.model.Match;
+import com.lollito.fm.model.dto.MatchDTO;
 
 public class GameResponse {
 
 	private LocalDateTime currentDate;
-	private List<Match> disputatedMatch = new ArrayList<>();
+	private List<MatchDTO> disputatedMatch = new ArrayList<>();
 	
 	public GameResponse() {
 	}
@@ -26,11 +26,11 @@ public class GameResponse {
 		this.currentDate = currentDate;
 	}
 	
-	public List<Match> getDisputatedMatch() {
+	public List<MatchDTO> getDisputatedMatch() {
 		return disputatedMatch;
 	}
 	
-	public void setDisputatedMatch(List<Match> disputatedMatch) {
+	public void setDisputatedMatch(List<MatchDTO> disputatedMatch) {
 		this.disputatedMatch = disputatedMatch;
 	}
 	

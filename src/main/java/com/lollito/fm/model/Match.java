@@ -104,11 +104,11 @@ public class Match implements Serializable{
 	@ToString.Exclude
     private Stats stats;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@ToString.Exclude
 	private Formation homeFormation;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@ToString.Exclude
 	private Formation awayFormation;
 

@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Match;
+import com.lollito.fm.model.dto.MatchDTO;
+import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.service.MatchService;
 import com.lollito.fm.service.SimulationMatchService;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/match")
@@ -28,42 +31,51 @@ public class MatchController {
 	
 	@Autowired private MatchService matchService;
 	@Autowired private SimulationMatchService simulationMatchService;
+	@Autowired private MatchMapper matchMapper;
 	
 	@GetMapping(value = "/")
-    public List<Match> all(Model model) {
-        return matchService.load();
+    public List<MatchDTO> all(Model model) {
+        return matchService.load().stream()
+			.map(matchMapper::toDto)
+			.collect(Collectors.toList());
     }
 	
 	@GetMapping(value = "/history")
-    public Page<Match> history(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return matchService.loadHistory(PageRequest.of(page, size));
+    public Page<MatchDTO> history(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return matchService.loadHistory(PageRequest.of(page, size)).map(matchMapper::toDto);
     }
 
 	@GetMapping ("/{id}")
-	public ResponseEntity<Match> match (@PathVariable (value = "id") Long id ) {
-		return ResponseEntity.ok( matchService.findById( id ) );
+	public ResponseEntity<MatchDTO> match (@PathVariable (value = "id") Long id ) {
+		return ResponseEntity.ok( matchMapper.toDto(matchService.findById( id )) );
 	}
 	
 	@GetMapping ("/{id}/simulate")
-	public ResponseEntity<Match> simulate (@PathVariable (value = "id") Long id ) {
+	public ResponseEntity<MatchDTO> simulate (@PathVariable (value = "id") Long id ) {
 		Match match = matchService.findById( id );
 		simulationMatchService.simulate(match);
-		return ResponseEntity.ok( match );
+		return ResponseEntity.ok( matchMapper.toDto(match) );
 	}
 	
 	@GetMapping(value = "/next")
-    public List<Match> next(Model model) {
-        return matchService.loadNext();
+    public List<MatchDTO> next(Model model) {
+        return matchService.loadNext().stream()
+			.map(matchMapper::toDto)
+			.collect(Collectors.toList());
     }
 	
 	@GetMapping(value = "/previous")
-    public List<Match> previuos(Model model) {
-        return matchService.loadPrevious();
+    public List<MatchDTO> previuos(Model model) {
+        return matchService.loadPrevious().stream()
+			.map(matchMapper::toDto)
+			.collect(Collectors.toList());
     }
 
 	@GetMapping(value = "/upcoming")
-	public List<Match> upcoming(Model model) {
-		return matchService.loadUpcomingMatchesForClub();
+	public List<MatchDTO> upcoming(Model model) {
+		return matchService.loadUpcomingMatchesForClub().stream()
+			.map(matchMapper::toDto)
+			.collect(Collectors.toList());
 	}
    
 	@RequestMapping(value = "/count", method = RequestMethod.GET)

@@ -14,6 +14,7 @@ import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Game;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.League;
+import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.MatchStatus;
 import com.lollito.fm.model.Player;
@@ -22,6 +23,7 @@ import com.lollito.fm.repository.rest.GameRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
 import org.springframework.security.access.AccessDeniedException;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -38,6 +40,7 @@ public class GameService {
 	@Autowired private CountryService countryService;
 	@Autowired private PlayerService playerService;
 	@Autowired private UserService userService;
+	@Autowired private MatchMapper matchMapper;
 	
 	public Game create(String gameName){
 		Game game = new Game();
@@ -94,7 +97,9 @@ public class GameService {
 				}
 			} 
 		}
-		gameResponse.setDisputatedMatch(matches);
+		gameResponse.setDisputatedMatch(matches.stream()
+				.map(matchMapper::toDto)
+				.collect(Collectors.toList()));
 		
 		return gameResponse;
 	}
