@@ -141,16 +141,17 @@ public class TrainingService {
     public Double calculateEffectiveness(Team team) {
         double baseEffectiveness = 1.0;
 
-        // TODO: Add facility bonuses when infrastructure system is implemented
-        // Club facilities = team.getClub().getFacilities();
-        // if (facilities.getTrainingCenter() != null) {
-        //     baseEffectiveness += facilities.getTrainingCenter().getBonus();
-        // }
-
-        // Add staff bonuses
         Optional<Club> clubOpt = clubRepository.findByTeam(team);
         if (clubOpt.isPresent()) {
-            var bonuses = staffService.calculateClubStaffBonuses(clubOpt.get().getId());
+            Club club = clubOpt.get();
+
+            // Add facility bonuses
+            if (club.getTrainingFacility() != null && club.getTrainingFacility().getOverallQuality() != null) {
+                baseEffectiveness += club.getTrainingFacility().getOverallQuality() * 0.05;
+            }
+
+            // Add staff bonuses
+            var bonuses = staffService.calculateClubStaffBonuses(club.getId());
             if (bonuses != null && bonuses.getTrainingBonus() != null) {
                 baseEffectiveness += bonuses.getTrainingBonus();
             }

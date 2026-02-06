@@ -15,11 +15,14 @@ import com.lollito.fm.model.Player;
 import com.lollito.fm.model.Team;
 import com.lollito.fm.model.TrainingFocus;
 import com.lollito.fm.model.TrainingIntensity;
+import com.lollito.fm.model.Club;
+import com.lollito.fm.model.TrainingFacility;
 import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
 import com.lollito.fm.repository.rest.ClubRepository;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
@@ -74,6 +77,25 @@ class TrainingServiceTest {
 
         verify(playerService).save(player);
         verify(playerTrainingResultRepository).save(any());
+    }
+
+    @Test
+    void testCalculateEffectivenessWithFacility() {
+        Team team = new Team();
+        team.setId(1L);
+        Club club = new Club();
+        club.setId(10L);
+        TrainingFacility facility = new TrainingFacility();
+        facility.setOverallQuality(5);
+        club.setTrainingFacility(facility);
+
+        when(clubRepository.findByTeam(team)).thenReturn(Optional.of(club));
+        when(staffService.calculateClubStaffBonuses(10L)).thenReturn(null);
+
+        Double effectiveness = trainingService.calculateEffectiveness(team);
+
+        // Base 1.0 + (5 * 0.05) = 1.25
+        assertThat(effectiveness).isEqualTo(1.25);
     }
 
     @Test
