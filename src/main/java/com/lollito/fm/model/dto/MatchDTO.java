@@ -28,6 +28,10 @@ public class MatchDTO {
     private List<EventHistoryDTO> events;
     private StatsDTO stats;
 
+    private FormationDTO homeFormation;
+    private FormationDTO awayFormation;
+    private List<MatchPlayerStatsDTO> playerStats;
+
     // Transient fields from Match entity logic
     private Integer roundNumber;
     private String competitionName;

@@ -9,7 +9,7 @@ import com.lollito.fm.model.dto.StatsDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {ClubMapper.class})
+@Mapper(componentModel = "spring", uses = {ClubMapper.class, FormationMapper.class, MatchPlayerStatsMapper.class})
 public interface MatchMapper {
 
     @Mapping(source = "number", target = "roundNumber")
