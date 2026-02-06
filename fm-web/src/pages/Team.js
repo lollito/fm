@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import api, { getClub } from '../services/api';
 import Layout from '../components/Layout';
@@ -28,8 +29,10 @@ const ROLE_NAMES = {
 };
 
 const Team = () => {
+  const { id } = useParams();
   const [players, setPlayers] = useState([]);
   const [teamId, setTeamId] = useState(null);
+  const [myTeamId, setMyTeamId] = useState(null);
   const [activeTab, setActiveTab] = useState('squad');
   const [showModal, setShowModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -42,29 +45,44 @@ const Team = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await api.get('/player/');
+        let url = '/player/';
+        if (id) {
+            url += '?teamId=' + id;
+        }
+        const response = await api.get(url);
         setPlayers(response.data);
       } catch (error) {
         console.error('Error fetching players', error);
       }
     };
 
-    const fetchClub = async () => {
+    fetchPlayers();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchMyClub = async () => {
         if (clubId) {
             try {
                 const response = await getClub(clubId);
                 if (response.data && response.data.team) {
-                    setTeamId(response.data.team.id);
+                    setMyTeamId(response.data.team.id);
+                    if (!id) {
+                        setTeamId(response.data.team.id);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching club', error);
             }
         }
     };
+    fetchMyClub();
+  }, [clubId, id]);
 
-    fetchPlayers();
-    fetchClub();
-  }, [clubId]);
+  useEffect(() => {
+      if (id) {
+          setTeamId(parseInt(id));
+      }
+  }, [id]);
 
   const handlePutOnSale = (player) => {
     setSelectedPlayer(player);
@@ -83,6 +101,7 @@ const Team = () => {
     }
   };
 
+  const isOwner = !id || (myTeamId && parseInt(id) === myTeamId);
   const getPlayerRoleName = (player) => {
     if (!player || !player.role) return '';
     let roleKey = '';
@@ -109,38 +128,43 @@ const Team = () => {
             Squad
           </button>
         </li>
-        <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === 'training' ? 'active' : ''}`}
-            onClick={() => setActiveTab('training')}
-          >
-            Training
-          </button>
-        </li>
-        <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === 'history' ? 'active' : ''}`}
-            onClick={() => setActiveTab('history')}
-          >
-            Training History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === 'staff' ? 'active' : ''}`}
-            onClick={() => setActiveTab('staff')}
-          >
-            Staff
-          </button>
-        </li>
+        {isOwner && (
+            <>
+                <li className="nav-item">
+                <button
+                    className={`nav-link ${activeTab === 'training' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('training')}
+                >
+                    Training
+                </button>
+                </li>
+                <li className="nav-item">
+                <button
+                    className={`nav-link ${activeTab === 'history' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('history')}
+                >
+                    Training History
+                </button>
+                </li>
+                <li className="nav-item">
+                <button
+                    className={`nav-link ${activeTab === 'staff' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('staff')}
+                >
+                    Staff
+                </button>
+                </li>
+            </>
+        )}
       </ul>
 
       {activeTab === 'squad' && (
           <>
-            {clubId && <InjuryList clubId={clubId} />}
-            <table className="table table-striped table-hover">
+            {clubId && isOwner && <InjuryList clubId={clubId} />}
+            <table className="table table-hover">
                 <thead>
                 <tr>
+                    {isOwner && <th>Action</th>}
                     <th onClick={() => requestSort('role')} style={{cursor: 'pointer'}}>Role</th>
                     <th onClick={() => requestSort('name')} style={{cursor: 'pointer'}}>Name</th>
                     <th onClick={() => requestSort('surname')} style={{cursor: 'pointer'}}>Surname</th>
@@ -158,6 +182,7 @@ const Team = () => {
                 <tbody>
                 {sortedPlayers.map(p => (
                     <tr key={p.id} onClick={() => navigate('/player/' + p.id)} style={{ cursor: 'pointer' }}>
+                    {isOwner && (
                         <td>{getPlayerRoleName(p)}</td>
                         <td>{p.name}</td>
                         <td>{p.surname}</td>
@@ -174,6 +199,7 @@ const Team = () => {
                                 <i className="fa fa-exchange-alt"></i>
                             </button>
                         </td>
+                    )}
                     </tr>
                 ))}
                 </tbody>
@@ -181,15 +207,15 @@ const Team = () => {
           </>
       )}
 
-      {activeTab === 'training' && teamId && (
+      {activeTab === 'training' && teamId && isOwner && (
           <TrainingPlan teamId={teamId} />
       )}
 
-      {activeTab === 'history' && teamId && (
+      {activeTab === 'history' && teamId && isOwner && (
           <TrainingHistory teamId={teamId} />
       )}
 
-      {activeTab === 'staff' && clubId && (
+      {activeTab === 'staff' && clubId && isOwner && (
           <StaffManagement clubId={clubId} />
       )}
 
