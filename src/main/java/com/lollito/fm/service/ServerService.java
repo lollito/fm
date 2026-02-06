@@ -1,6 +1,7 @@
 package com.lollito.fm.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,13 +74,17 @@ public class ServerService {
 		ServerResponse serverResponse = new ServerResponse();
 		List<Match> matches = matchRepository.findByRoundSeasonAndDateBeforeAndFinish(league.getCurrentSeason(), LocalDateTime.now(), Boolean.FALSE);
 		if(matches.isEmpty()){
+			List<Player> allPlayers = new ArrayList<>();
 			for(Club club : league.getClubs()) {
 				for(Player player : club.getTeam().getPlayers()) {
 					double increment = -((10 * player.getStamina())/99) + (1000/99);
 					player.incrementCondition(increment);
+					allPlayers.add(player);
 				}
-				playerService.updateSkills(club.getTeam().getPlayers());
-				playerService.saveAll(club.getTeam().getPlayers());
+			}
+			if(!allPlayers.isEmpty()) {
+				playerService.updateSkills(allPlayers);
+				playerService.saveAll(allPlayers);
 			}
 		} else {
 			for (Match match : matches) {
