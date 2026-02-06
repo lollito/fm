@@ -56,7 +56,8 @@ const Navbar = ({ onToggleMenu }) => {
                   const notif = JSON.parse(message.body);
                   if (notif.type === 'MATCH_STARTED') {
                       setNotification(notif);
-                      setTimeout(() => setNotification(null), 10000); // Hide after 10s
+                  } else if (notif.type === 'MATCH_ENDED') {
+                      setNotification(prev => (prev && prev.matchId === notif.matchId) ? null : prev);
                   }
               });
           },
@@ -155,7 +156,7 @@ const Navbar = ({ onToggleMenu }) => {
             setNotification(null);
         }}>
             <div className="notification-content">
-                <i className="fas fa-futbol"></i>
+                <i className="fas fa-futbol bouncing-ball"></i>
                 <span>{notification.message}</span>
             </div>
         </div>

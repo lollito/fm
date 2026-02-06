@@ -73,14 +73,14 @@ public class MatchProcessor {
         matchRepository.saveAndFlush(match);
 
         // Notify users
-        notifyUser(match.getHome().getUser(), match.getId());
-        notifyUser(match.getAway().getUser(), match.getId());
+        notifyUser(match.getHome().getUser(), match.getId(), "MATCH_STARTED", "Match Started!");
+        notifyUser(match.getAway().getUser(), match.getId(), "MATCH_STARTED", "Match Started!");
     }
 
-    private void notifyUser(User user, Long matchId) {
+    private void notifyUser(User user, Long matchId, String type, String message) {
         if (user != null) {
             messagingTemplate.convertAndSendToUser(user.getUsername(), "/queue/notifications",
-                new NotificationDTO("MATCH_STARTED", matchId, "Match Started!"));
+                new NotificationDTO(type, matchId, message));
         }
     }
 
@@ -147,6 +147,10 @@ public class MatchProcessor {
 
             rankingService.update(match);
             checkRoundAndSeasonProgression(match);
+
+            // Notify users match ended
+            notifyUser(match.getHome().getUser(), match.getId(), "MATCH_ENDED", "Match Ended!");
+            notifyUser(match.getAway().getUser(), match.getId(), "MATCH_ENDED", "Match Ended!");
 
             // Cleanup session?
             // liveMatchService.deleteSession(session); // optional
