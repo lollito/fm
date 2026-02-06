@@ -338,5 +338,10 @@ public class Player implements Serializable{
 		return ((this.setPieces == null ? 0 : this.setPieces.intValue()) +
 				(this.condition == null ? 0 : this.condition.intValue())) / 2;
 	}
+
+	@Transient
+	public BigDecimal getMarketValue() {
+		return BigDecimal.valueOf(getAverage()).multiply(BigDecimal.valueOf(10000));
+	}
 	
 }

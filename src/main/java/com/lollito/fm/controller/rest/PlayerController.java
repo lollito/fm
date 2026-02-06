@@ -22,6 +22,7 @@ import com.lollito.fm.model.User;
 import com.lollito.fm.model.rest.PlayerCondition;
 import com.lollito.fm.service.PlayerService;
 import com.lollito.fm.service.TeamService;
+import com.lollito.fm.service.TransferService;
 import com.lollito.fm.service.UserService;
 
 @RestController
@@ -34,6 +35,7 @@ public class PlayerController {
 	@Autowired private PlayerService playerService;
 	@Autowired private TeamService teamService;
 	@Autowired private PlayerMapper playerMapper;
+	@Autowired private TransferService transferService;
 	
 	@GetMapping(value = "/")
     public List<PlayerDTO> players(@RequestParam(required = false) Long teamId) {
@@ -70,6 +72,12 @@ public class PlayerController {
 	public PlayerDTO changeRole(@PathVariable(value="id") Long id, @RequestParam(value="role") Integer role) {
 		checkOwnership(id);
 		return playerMapper.toDto(playerService.changeRole(id, role));
+	}
+
+	@PostMapping(value = "/{id}/buy")
+	public PlayerDTO buy(@PathVariable(value="id") Long id) {
+		transferService.buyPlayer(id, userService.getLoggedUser().getClub().getId());
+		return playerMapper.toDto(playerService.findOne(id));
 	}
 
 	private void checkOwnership(Long playerId) {
