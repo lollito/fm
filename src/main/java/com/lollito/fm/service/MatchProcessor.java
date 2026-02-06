@@ -63,9 +63,9 @@ public class MatchProcessor {
         // Reset match to started state (scores 0-0)
         match.setHomeScore(0);
         match.setAwayScore(0);
-        match.setEvents(new ArrayList<>());
+        match.getEvents().clear();
         match.setStats(new Stats());
-        match.setPlayerStats(new ArrayList<>());
+        match.getPlayerStats().clear();
         match.setFinish(false);
         match.setStatus(MatchStatus.IN_PROGRESS);
 
@@ -95,7 +95,8 @@ public class MatchProcessor {
             // Restore Events
             List<EventHistoryDTO> eventDTOs = objectMapper.readValue(session.getEvents(), new TypeReference<List<EventHistoryDTO>>(){});
             List<EventHistory> events = eventDTOs.stream().map(matchMapper::toEntity).collect(Collectors.toList());
-            match.setEvents(events);
+            match.getEvents().clear();
+            match.getEvents().addAll(events);
 
             // Restore Stats
             StatsDTO statsDTO = objectMapper.readValue(session.getStats(), StatsDTO.class);
@@ -108,7 +109,8 @@ public class MatchProcessor {
                         .map(matchPlayerStatsMapper::toEntity)
                         .collect(Collectors.toList());
                 playerStats.forEach(mps -> mps.setMatch(match));
-                match.setPlayerStats(playerStats);
+                match.getPlayerStats().clear();
+                match.getPlayerStats().addAll(playerStats);
             }
 
             match.setFinish(true);
