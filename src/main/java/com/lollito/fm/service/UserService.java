@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.News;
+import com.lollito.fm.model.Role;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.repository.rest.CountryRepository;
@@ -45,8 +46,11 @@ public class UserService {
         club.setName(request.getClubName());
         clubService.save(club);
 		user.setClub(club);
-        //TODO temp roles
-        user.setRoles(new HashSet<>(roleRepository.findAll()));
+
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        if (userRole != null) {
+            user.getRoles().add(userRole);
+        }
         
         News news = new News(String.format("%s is the new manager of %s", user.getUsername(), user.getClub().getName()) , LocalDateTime.now());
         newsService.save(news);
