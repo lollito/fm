@@ -163,7 +163,7 @@ const Team = () => {
             <table className="table table-hover">
                 <thead>
                 <tr>
-                    {isOwner && <th>Action</th>}
+                    
                     <th onClick={() => requestSort('role')} style={{cursor: 'pointer'}}>Role</th>
                     <th onClick={() => requestSort('name')} style={{cursor: 'pointer'}}>Name</th>
                     <th onClick={() => requestSort('surname')} style={{cursor: 'pointer'}}>Surname</th>
@@ -175,7 +175,7 @@ const Team = () => {
                     <th onClick={() => requestSort('passing')} style={{cursor: 'pointer'}}>Passing</th>
                     <th onClick={() => requestSort('defending')} style={{cursor: 'pointer'}}>Defending</th>
                     <th onClick={() => requestSort('condition')} style={{cursor: 'pointer'}}>Condition</th>
-                    <th>Action</th>
+                    {isOwner && <th>Action</th>}
                 </tr>
                 </thead>
                 <tbody>
