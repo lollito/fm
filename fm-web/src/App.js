@@ -8,7 +8,7 @@ import Team from './pages/Team';
 import Formation from './pages/Formation';
 import Ranking from './pages/Ranking';
 import Schedule from './pages/Schedule';
-import UpcomingMatches from './pages/UpcomingMatches';
+import LiveMatches from './pages/LiveMatches';
 import Stadium from './pages/Stadium';
 import Infrastructure from './pages/Infrastructure';
 import Leagues from './pages/Leagues';
@@ -41,7 +41,7 @@ function App() {
           <Route path="/formation" element={<PrivateRoute><Formation /></PrivateRoute>} />
           <Route path="/ranking" element={<PrivateRoute><Ranking /></PrivateRoute>} />
           <Route path="/schedule" element={<PrivateRoute><Schedule /></PrivateRoute>} />
-          <Route path="/upcoming-matches" element={<PrivateRoute><UpcomingMatches /></PrivateRoute>} />
+          <Route path="/live-matches" element={<PrivateRoute><LiveMatches /></PrivateRoute>} />
           <Route path="/stadium" element={<PrivateRoute><Stadium /></PrivateRoute>} />
           <Route path="/infrastructure" element={<PrivateRoute><Infrastructure /></PrivateRoute>} />
           <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
