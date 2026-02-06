@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Stadium;
+import com.lollito.fm.model.dto.StadiumDTO;
 import com.lollito.fm.service.StadiumService;
 import com.lollito.fm.service.UserService;
+import com.lollito.fm.mapper.StadiumMapper;
 
 @RestController
 @RequestMapping(value="/api/stadium")
@@ -20,15 +22,16 @@ public class StadiumController {
 	
 	@Autowired private StadiumService stadiumService;
 	@Autowired private UserService userService;
+	@Autowired private StadiumMapper stadiumMapper;
 	
 	@GetMapping(value = "/")
-    public Stadium stadium() {
-        return userService.getLoggedUser().getClub().getStadium();
+    public StadiumDTO stadium() {
+        return stadiumMapper.toDto(userService.getLoggedUser().getClub().getStadium());
     }
 	
 	@GetMapping(value = "/{id}")
-    public Stadium findById(@PathVariable(value="id") Long id) {
-        return stadiumService.findById(id);
+    public StadiumDTO findById(@PathVariable(value="id") Long id) {
+        return stadiumMapper.toDto(stadiumService.findById(id));
     }
    
 }

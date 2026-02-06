@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.League;
+import com.lollito.fm.model.dto.LeagueDTO;
 import com.lollito.fm.service.LeagueService;
+import com.lollito.fm.mapper.LeagueMapper;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/league")
@@ -21,6 +24,7 @@ public class LeagueController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired private LeagueService leagueService;
+	@Autowired private LeagueMapper leagueMapper;
 	
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
     public Long game(Model model) {
@@ -28,8 +32,10 @@ public class LeagueController {
     }
 	
 	@GetMapping(value = "/")
-    public List<League> findAll(Model model) {
-        return leagueService.findAll();
+    public List<LeagueDTO> findAll(Model model) {
+        return leagueService.findAll().stream()
+			.map(leagueMapper::toDto)
+			.collect(Collectors.toList());
     }
    
 }
