@@ -39,6 +39,7 @@ public class WebSecurityConfig {
 			"/swagger-ui/**",
 			"/api/country/",
 			"/api/server/findAll",
+			"/ws/live-match/**",
 	};
 	
 	@Qualifier("userDetailsServiceImpl")
