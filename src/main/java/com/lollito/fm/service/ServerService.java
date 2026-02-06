@@ -82,11 +82,14 @@ public class ServerService {
 				playerService.saveAll(club.getTeam().getPlayers());
 			}
 		} else {
-			for (Match match : matches) {
-				if (match.getStatus() == MatchStatus.SCHEDULED) {
-					simulationMatchService.simulate(match);
-				}
+			List<Match> scheduledMatches = matches.stream()
+					.filter(match -> match.getStatus() == MatchStatus.SCHEDULED)
+					.collect(Collectors.toList());
+
+			if (!scheduledMatches.isEmpty()) {
+				simulationMatchService.simulate(scheduledMatches);
 			}
+
 			Match match =  matches.get(matches.size() -1);
 			if(match.getLast()) {
 				league.getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
