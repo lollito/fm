@@ -16,9 +16,11 @@ const TrainingHistory = ({ teamId }) => {
     const loadTrainingHistory = async () => {
         try {
             const response = await getTrainingHistory(teamId);
-            setSessions(response.data.content);
+            const content = response.data?.content || (Array.isArray(response.data) ? response.data : []);
+            setSessions(content);
         } catch (error) {
             console.error('Error loading training history:', error);
+            setSessions([]);
         } finally {
             setLoading(false);
         }
@@ -71,14 +73,14 @@ const TrainingHistory = ({ teamId }) => {
                     >
                         <div className="session-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <span className="session-date" style={{ fontWeight: 'bold' }}>
-                                {new Date(session.startDate).toLocaleDateString()}
+                                {session.startDate ? new Date(session.startDate).toLocaleDateString() : 'N/A'}
                             </span>
                             <span className="session-focus">{session.focus}</span>
                             <span className="session-intensity">{session.intensity}</span>
                         </div>
                         <div className="session-stats" style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>
                             <span style={{ marginRight: '15px' }}>Players trained: {session.playerResults ? session.playerResults.length : 'N/A'}</span>
-                            <span>Effectiveness: {Math.round(session.effectivenessMultiplier * 100)}%</span>
+                            <span>Effectiveness: {session.effectivenessMultiplier ? Math.round(session.effectivenessMultiplier * 100) : 0}%</span>
                         </div>
                     </div>
                 ))}
@@ -102,10 +104,10 @@ const TrainingHistory = ({ teamId }) => {
                             {sessionResults.map(result => (
                                 <tr key={result.id}>
                                     <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                                        {result.player.name} {result.player.surname}
+                                        {result.player ? `${result.player.name} ${result.player.surname}` : 'Unknown Player'}
                                     </td>
                                     <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                                        {Math.round(result.attendanceRate * 100)}%
+                                        {result.attendanceRate ? Math.round(result.attendanceRate * 100) : 0}%
                                     </td>
                                     <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
                                         <span style={{ color: getPerformanceColor(result.performance), fontWeight: 'bold' }}>
@@ -113,10 +115,10 @@ const TrainingHistory = ({ teamId }) => {
                                         </span>
                                     </td>
                                     <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                                        +{result.improvementGained.toFixed(4)}
+                                        +{result.improvementGained ? result.improvementGained.toFixed(4) : '0.0000'}
                                     </td>
                                     <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                                        -{result.fatigueGained.toFixed(2)}
+                                        -{result.fatigueGained ? result.fatigueGained.toFixed(2) : '0.00'}
                                     </td>
                                 </tr>
                             ))}

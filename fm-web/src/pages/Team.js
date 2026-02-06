@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api, { getClub } from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
@@ -8,6 +9,24 @@ import TrainingPlan from '../components/TrainingPlan';
 import TrainingHistory from '../components/TrainingHistory';
 import StaffManagement from '../components/StaffManagement';
 import ConfirmationModal from '../components/ConfirmationModal';
+
+const PLAYER_ROLES = {
+  GOALKEEPER: 0,
+  DEFENDER: 1,
+  WINGBACK: 2,
+  MIDFIELDER: 3,
+  WING: 4,
+  FORWARD: 5
+};
+
+const ROLE_NAMES = {
+  [PLAYER_ROLES.GOALKEEPER]: 'GK',
+  [PLAYER_ROLES.DEFENDER]: 'DEF',
+  [PLAYER_ROLES.WINGBACK]: 'WB',
+  [PLAYER_ROLES.MIDFIELDER]: 'MID',
+  [PLAYER_ROLES.WING]: 'WNG',
+  [PLAYER_ROLES.FORWARD]: 'FWD'
+};
 
 const Team = () => {
   const { id } = useParams();
@@ -18,6 +37,7 @@ const Team = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
+  const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('user'));
   const clubId = user ? user.clubId : null;
@@ -82,6 +102,18 @@ const Team = () => {
   };
 
   const isOwner = !id || (myTeamId && parseInt(id) === myTeamId);
+  const getPlayerRoleName = (player) => {
+    if (!player || !player.role) return '';
+    let roleKey = '';
+    if (typeof player.role === 'object') roleKey = player.role.name;
+    else if (typeof player.role === 'string') roleKey = player.role;
+    else if (typeof player.role === 'number') return ROLE_NAMES[player.role];
+
+    if (roleKey && PLAYER_ROLES[roleKey] !== undefined) {
+      return ROLE_NAMES[PLAYER_ROLES[roleKey]];
+    }
+    return roleKey || '';
+  };
 
   return (
     <Layout>
@@ -129,7 +161,7 @@ const Team = () => {
       {activeTab === 'squad' && (
           <>
             {clubId && isOwner && <InjuryList clubId={clubId} />}
-            <table className="table table-striped">
+            <table className="table table-hover">
                 <thead>
                 <tr>
                     {isOwner && <th>Action</th>}
@@ -144,31 +176,30 @@ const Team = () => {
                     <th onClick={() => requestSort('passing')} style={{cursor: 'pointer'}}>Passing</th>
                     <th onClick={() => requestSort('defending')} style={{cursor: 'pointer'}}>Defending</th>
                     <th onClick={() => requestSort('condition')} style={{cursor: 'pointer'}}>Condition</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 {sortedPlayers.map(p => (
-                    <tr key={p.id}>
+                    <tr key={p.id} onClick={() => navigate('/player/' + p.id)} style={{ cursor: 'pointer' }}>
                     {isOwner && (
-                        <td>
+                        <td>{getPlayerRoleName(p)}</td>
+                        <td>{p.name}</td>
+                        <td>{p.surname}</td>
+                        <td>{p.age}</td>
+                        <td>{Math.round(p.stamina)}</td>
+                        <td>{Math.round(p.playmaking)}</td>
+                        <td>{Math.round(p.scoring)}</td>
+                        <td>{Math.round(p.winger)}</td>
+                        <td>{Math.round(p.passing)}</td>
+                        <td>{Math.round(p.defending)}</td>
+                        <td>{p.condition !== null && p.condition !== undefined ? Math.round(p.condition) : '-'}</td>
+                        <td onClick={(e) => e.stopPropagation()}>
                             <button className="btn btn-icon" onClick={() => handlePutOnSale(p)} title="Put on sale">
                                 <i className="fa fa-exchange-alt"></i>
                             </button>
                         </td>
                     )}
-                    <td>{p.role}</td>
-                    <td>{p.name}</td>
-                    <td>
-                        <Link to={'/player/' + p.id}>{p.surname}</Link>
-                    </td>
-                    <td>{p.age}</td>
-                    <td>{Math.round(p.stamina)}</td>
-                    <td>{Math.round(p.playmaking)}</td>
-                    <td>{Math.round(p.scoring)}</td>
-                    <td>{Math.round(p.winger)}</td>
-                    <td>{Math.round(p.passing)}</td>
-                    <td>{Math.round(p.defending)}</td>
-                    <td>{Math.round(p.condition)}</td>
                     </tr>
                 ))}
                 </tbody>

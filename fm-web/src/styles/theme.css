@@ -107,6 +107,10 @@ h1, h2, h3, h4 {
 .text-accent { color: var(--accent); }
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
+.text-center { text-align: center; }
+.fw-bold { font-weight: 700; }
+.h4 { font-size: 1.5rem; font-weight: 700; }
+.h5 { font-size: 1.25rem; font-weight: 700; }
 
 /* Tables */
 .table {
@@ -132,6 +136,13 @@ h1, h2, h3, h4 {
 
 .table tbody tr:hover {
   background-color: rgba(161, 85, 255, 0.05);
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Buttons */
@@ -289,24 +300,39 @@ h1, h2, h3, h4 {
 
 /* Utilities (Bootstrap-like) */
 .d-flex { display: flex; }
+.flex-grow-1 { flex-grow: 1; }
 .justify-content-between { justify-content: space-between; }
 .justify-content-end { justify-content: flex-end; }
 .align-items-center { align-items: center; }
+.align-items-start { align-items: flex-start; }
 .gap-2 { gap: 8px; }
+.gap-3 { gap: 16px; }
 
 .m-0 { margin: 0; }
 .mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 16px; }
 .mt-4 { margin-top: 24px; }
 .mb-0 { margin-bottom: 0; }
 .mb-1 { margin-bottom: 4px; }
 .mb-2 { margin-bottom: 8px; }
 .mb-3 { margin-bottom: 16px; }
+.mb-4 { margin-bottom: 24px; }
 .p-0 { padding: 0; }
+.p-4 { padding: 24px; }
+.py-3 { padding-top: 16px; padding-bottom: 16px; }
+
+.me-1 { margin-right: 4px; }
+.me-2 { margin-right: 8px; }
+.me-3 { margin-right: 16px; }
+.me-4 { margin-right: 24px; }
+.mx-3 { margin-left: 16px; margin-right: 16px; }
 
 .text-white { color: white; }
 .bg-danger { background-color: var(--danger); }
 .border-danger { border: 1px solid var(--danger); }
+.border-bottom { border-bottom: 1px solid rgba(161, 85, 255, 0.1); }
 .small { font-size: 0.85rem; }
+.h-100 { height: 100%; }
 
 .badge {
   display: inline-block;

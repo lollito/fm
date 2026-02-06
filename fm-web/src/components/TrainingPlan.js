@@ -31,9 +31,10 @@ const TrainingPlan = ({ teamId }) => {
     const loadTrainingPlan = async () => {
         try {
             const response = await getTrainingPlan(teamId);
-            setPlan(response.data);
+            setPlan(response.data || null);
         } catch (error) {
             console.error('Error loading training plan:', error);
+            setPlan(null);
         } finally {
             setLoading(false);
         }
@@ -54,6 +55,7 @@ const TrainingPlan = ({ teamId }) => {
     };
 
     const handleFocusChange = (day, focus) => {
+        if (!plan) return;
         setPlan(prev => ({
             ...prev,
             [day + 'Focus']: focus
