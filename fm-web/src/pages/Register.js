@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
+import api, { getServers } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 
 const Register = () => {
@@ -11,9 +11,11 @@ const Register = () => {
     password: '',
     passwordConfirm: '',
     countryId: '',
-    clubName: ''
+    clubName: '',
+    serverId: ''
   });
   const [countries, setCountries] = useState([]);
+  const [servers, setServers] = useState([]);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -26,7 +28,19 @@ const Register = () => {
         console.error('Error fetching countries', error);
       }
     };
+    const fetchServers = async () => {
+        try {
+          const response = await getServers();
+          setServers(response.data);
+          if (response.data.length > 0) {
+              setFormData(prev => ({ ...prev, serverId: response.data[0].id }));
+          }
+        } catch (error) {
+          console.error('Error fetching servers', error);
+        }
+      };
     fetchCountries();
+    fetchServers();
   }, []);
 
   const handleChange = (e) => {
@@ -133,6 +147,21 @@ const Register = () => {
                 ))}
               </select>
             </div>
+            <div className="form-group">
+                <label>Server</label>
+                <select
+                  name="serverId"
+                  className="form-control"
+                  value={formData.serverId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Server</option>
+                  {servers.map(s => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
             <div className="form-group">
               <label>Club Name</label>
               <input

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameDTO {
+public class ServerDTO {
     private Long id;
     private String name;
     private LocalDateTime currentDate;

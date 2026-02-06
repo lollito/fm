@@ -6,15 +6,15 @@ import java.util.List;
 
 import com.lollito.fm.model.dto.MatchDTO;
 
-public class GameResponse {
+public class ServerResponse {
 
 	private LocalDateTime currentDate;
 	private List<MatchDTO> disputatedMatch = new ArrayList<>();
 	
-	public GameResponse() {
+	public ServerResponse() {
 	}
 	
-	public GameResponse(LocalDateTime currentDate) {
+	public ServerResponse(LocalDateTime currentDate) {
 		this.currentDate = currentDate;
 	}
 

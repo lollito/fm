@@ -38,6 +38,7 @@ public class WebSecurityConfig {
 			"/v3/api-docs/**",
 			"/swagger-ui/**",
 			"/api/country/",
+			"/api/server/findAll",
 	};
 	
 	@Qualifier("userDetailsServiceImpl")

@@ -158,3 +158,5 @@ export const getActiveLoans = (clubId) => api.get('/loans/club/' + clubId + '/ac
 export const recallPlayerFromLoan = (loanId, data) => api.post('/loans/agreement/' + loanId + '/recall', data);
 export const activatePurchaseOption = (loanId) => api.post('/loans/agreement/' + loanId + '/purchase');
 export const getLoanReviews = (loanId) => api.get('/loans/agreement/' + loanId + '/reviews');
+
+export const getServers = () => api.get('/server/findAll');

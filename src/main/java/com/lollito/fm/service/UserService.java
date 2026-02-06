@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.News;
 import com.lollito.fm.model.Role;
+import com.lollito.fm.model.Server;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.repository.rest.CountryRepository;
 import com.lollito.fm.repository.rest.RoleRepository;
+import com.lollito.fm.repository.rest.ServerRepository;
 import com.lollito.fm.repository.rest.UserRepository;
 
 @Service
@@ -30,6 +32,7 @@ public class UserService {
 	@Autowired NewsService newsService;
 	@Autowired RoleRepository roleRepository;
 	@Autowired CountryRepository countryRepository;
+	@Autowired ServerRepository serverRepository;
 	@Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
 	    
 	public User save(RegistrationRequest request) {
@@ -42,7 +45,21 @@ public class UserService {
 		user.setCountry(countryRepository.findById(request.getCountryId()).get());
 		user.setActive(true);
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        Club club = clubService.findTopByLeagueCountryAndUserIsNull(user.getCountry());
+
+		Server server = null;
+		if (request.getServerId() != null) {
+			server = serverRepository.findById(request.getServerId()).orElseThrow(() -> new RuntimeException("Server not found"));
+		} else {
+			java.util.List<Server> servers = serverRepository.findAll();
+			if (!servers.isEmpty()) {
+				server = servers.get(0);
+			} else {
+				throw new RuntimeException("No servers available");
+			}
+		}
+		user.setServer(server);
+
+        Club club = clubService.findTopByLeagueServerAndLeagueCountryAndUserIsNull(server, user.getCountry());
         club.setName(request.getClubName());
         clubService.save(club);
 		user.setClub(club);
