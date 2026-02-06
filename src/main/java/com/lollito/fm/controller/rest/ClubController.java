@@ -35,6 +35,11 @@ public class ClubController {
     public Long count() {
         return clubService.getCount();
     }
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ClubDTO getById(@PathVariable (value = "id") Long id) {
+        return clubMapper.toDto(clubService.findById(id));
+    }
 	
 	@RequestMapping(value = "/findTopByLeagueCountry/{countryId}", method = RequestMethod.GET)
     public ClubDTO findTopByLeagueCountry(@PathVariable (value = "countryId") Long countryId) {
