@@ -286,3 +286,41 @@ h1, h2, h3, h4 {
 .attr-fill.good { background-color: var(--success); }
 .attr-fill.avg { background-color: var(--warning); }
 .attr-fill.bad { background-color: var(--danger); }
+
+/* Tabs */
+.nav-tabs {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  border-bottom: 1px solid rgba(161, 85, 255, 0.2);
+}
+
+.nav-item {
+  margin-right: 5px;
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 20px;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background-color: rgba(161, 85, 255, 0.05);
+}
+
+.nav-link.active {
+  color: var(--primary);
+  background-color: var(--bg-card);
+  border: 1px solid rgba(161, 85, 255, 0.2);
+  border-bottom-color: var(--bg-card);
+  margin-bottom: -1px;
+}

@@ -6,28 +6,41 @@ import '../styles/FinancialDashboard.css';
 const FinancialDashboard = ({ clubId }) => {
     const [dashboard, setDashboard] = useState(null);
     const [transactions, setTransactions] = useState([]);
-    const [selectedPeriod, setSelectedPeriod] = useState('month');
     const [loading, setLoading] = useState(true);
+    const [transactionsLoading, setTransactionsLoading] = useState(false);
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const SIZE = 10;
 
     useEffect(() => {
         if (clubId) {
             loadFinancialData();
+            loadTransactions(0);
         }
-    }, [clubId, selectedPeriod]);
+    }, [clubId]);
 
     const loadFinancialData = async () => {
         try {
-            const [dashboardResponse, transactionsResponse] = await Promise.all([
-                getFinancialDashboard(clubId),
-                getTransactions(clubId, 0, 50)
-            ]);
-
+            const dashboardResponse = await getFinancialDashboard(clubId);
             setDashboard(dashboardResponse.data);
-            setTransactions(transactionsResponse.data.content);
         } catch (error) {
             console.error('Error loading financial data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadTransactions = async (pageNumber) => {
+        try {
+            setTransactionsLoading(true);
+            const response = await getTransactions(clubId, pageNumber, SIZE);
+            setTransactions(response.data.content);
+            setTotalPages(response.data.totalPages);
+            setPage(pageNumber);
+        } catch (error) {
+            console.error('Error loading transactions:', error);
+        } finally {
+            setTransactionsLoading(false);
         }
     };
 
@@ -82,16 +95,6 @@ const FinancialDashboard = ({ clubId }) => {
         <div className="financial-dashboard">
             <div className="dashboard-header">
                 <h2>Financial Overview</h2>
-                <div className="period-selector">
-                    <select
-                        value={selectedPeriod}
-                        onChange={(e) => setSelectedPeriod(e.target.value)}
-                    >
-                        <option value="month">This Month</option>
-                        <option value="quarter">This Quarter</option>
-                        <option value="year">This Year</option>
-                    </select>
-                </div>
             </div>
 
             <div className="financial-summary">
@@ -192,32 +195,61 @@ const FinancialDashboard = ({ clubId }) => {
             </div>
 
             <div className="recent-transactions">
-                <h3>Recent Transactions</h3>
-                <div className="transactions-list">
-                    {dashboard.recentTransactions && dashboard.recentTransactions.map(transaction => (
-                        <div key={transaction.id} className="transaction-item">
-                            <div className="transaction-info">
-                                <span className="transaction-description">
-                                    {transaction.description}
-                                </span>
-                                <span className="transaction-category">
-                                    {transaction.category}
-                                </span>
-                                <span className="transaction-date">
-                                    {new Date(transaction.transactionDate).toLocaleDateString()}
-                                </span>
-                            </div>
-                            <div className="transaction-amount">
-                                <span
-                                    className={'amount ' + (transaction.type === 'INCOME' ? 'positive' : 'negative')}
-                                >
-                                    {transaction.type === 'INCOME' ? '+' : '-'}
-                                    {formatCurrency(transaction.amount)}
-                                </span>
-                            </div>
+                <h3>Transactions</h3>
+                {transactionsLoading ? (
+                    <div>Loading transactions...</div>
+                ) : (
+                    <>
+                        <table className="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th className="text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {transactions.map(transaction => (
+                                    <tr key={transaction.id}>
+                                        <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
+                                        <td>{transaction.description}</td>
+                                        <td>{transaction.category}</td>
+                                        <td>
+                                            <span className={`badge ${transaction.type === 'INCOME' ? 'badge-success' : 'badge-danger'}`}>
+                                                {transaction.type}
+                                            </span>
+                                        </td>
+                                        <td className={`text-right ${transaction.type === 'INCOME' ? 'positive' : 'negative'}`}>
+                                            {transaction.type === 'INCOME' ? '+' : '-'}
+                                            {formatCurrency(transaction.amount)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div className="pagination">
+                            <button
+                                disabled={page === 0}
+                                onClick={() => loadTransactions(page - 1)}
+                                className="btn btn-secondary btn-sm"
+                            >
+                                Previous
+                            </button>
+                            <span className="page-info">
+                                Page {page + 1} of {totalPages}
+                            </span>
+                            <button
+                                disabled={page === totalPages - 1}
+                                onClick={() => loadTransactions(page + 1)}
+                                className="btn btn-secondary btn-sm"
+                            >
+                                Next
+                            </button>
                         </div>
-                    ))}
-                </div>
+                    </>
+                )}
             </div>
 
             <div className="financial-health">
