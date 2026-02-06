@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate,  useParams} from 'react-router-dom';
 import api, { getClub } from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
@@ -182,7 +181,7 @@ const Team = () => {
                 <tbody>
                 {sortedPlayers.map(p => (
                     <tr key={p.id} onClick={() => navigate('/player/' + p.id)} style={{ cursor: 'pointer' }}>
-                    {isOwner && (
+                    
                         <td>{getPlayerRoleName(p)}</td>
                         <td>{p.name}</td>
                         <td>{p.surname}</td>
@@ -194,6 +193,7 @@ const Team = () => {
                         <td>{Math.round(p.passing)}</td>
                         <td>{Math.round(p.defending)}</td>
                         <td>{p.condition !== null && p.condition !== undefined ? Math.round(p.condition) : '-'}</td>
+					{isOwner && (
                         <td onClick={(e) => e.stopPropagation()}>
                             <button className="btn btn-icon" onClick={() => handlePutOnSale(p)} title="Put on sale">
                                 <i className="fa fa-exchange-alt"></i>
