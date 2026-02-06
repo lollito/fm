@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/Layout';
+import TeamLink from '../components/TeamLink';
 
 const LiveMatches = () => {
   const [liveMatches, setLiveMatches] = useState([]);
@@ -79,7 +80,7 @@ const LiveMatches = () => {
                                   ) : (
                                     <i className="fas fa-shield-alt text-muted mr-2"></i>
                                   )}
-                                  <strong>{match.home.name}</strong>
+                                  <strong><TeamLink club={match.home} /></strong>
                                 </div>
                               </td>
                               <td className="align-middle font-weight-bold h5">
@@ -92,7 +93,7 @@ const LiveMatches = () => {
                                   ) : (
                                     <i className="fas fa-shield-alt text-muted mr-2"></i>
                                   )}
-                                  <strong>{match.away.name}</strong>
+                                  <strong><TeamLink club={match.away} /></strong>
                                 </div>
                               </td>
                               <td className="align-middle text-muted">{match.stadiumName}</td>

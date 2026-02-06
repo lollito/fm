@@ -4,6 +4,7 @@ import api from '../services/api';
 import Layout from '../components/Layout';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, Legend } from 'recharts';
 import useSortableData from '../hooks/useSortableData';
+import TeamLink from '../components/TeamLink';
 
 const MatchDetail = () => {
     const { id } = useParams();
@@ -98,13 +99,13 @@ const MatchDetail = () => {
                 <div className="card-body">
                     <div className="row align-items-center">
                         <div className="col">
-                            <h3>{match.home.name}</h3>
+                            <h3><TeamLink club={match.home} /></h3>
                         </div>
                         <div className="col-auto">
                             <h1 style={{ fontSize: '3.5rem', margin: '0 20px' }}>{match.homeScore} - {match.awayScore}</h1>
                         </div>
                         <div className="col">
-                            <h3>{match.away.name}</h3>
+                            <h3><TeamLink club={match.away} /></h3>
                         </div>
                     </div>
                     <div className="text-muted mt-2">
