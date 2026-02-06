@@ -37,6 +37,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/team" element={<PrivateRoute><Team /></PrivateRoute>} />
+          <Route path="/team/:id" element={<PrivateRoute><Team /></PrivateRoute>} />
           <Route path="/formation" element={<PrivateRoute><Formation /></PrivateRoute>} />
           <Route path="/ranking" element={<PrivateRoute><Ranking /></PrivateRoute>} />
           <Route path="/schedule" element={<PrivateRoute><Schedule /></PrivateRoute>} />
