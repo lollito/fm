@@ -2,33 +2,34 @@ package com.lollito.fm.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.model.Club;
-import com.lollito.fm.model.EventType;
 import com.lollito.fm.model.LiveMatchSession;
 import com.lollito.fm.model.Match;
-import com.lollito.fm.model.MatchEvent;
-import com.lollito.fm.model.MatchPhase;
 import com.lollito.fm.model.MatchStatus;
-import com.lollito.fm.model.Player;
-import com.lollito.fm.model.Team;
+import com.lollito.fm.model.dto.MatchDTO;
+import com.lollito.fm.model.dto.StatsDTO;
 import com.lollito.fm.repository.rest.LiveMatchSessionRepository;
-import com.lollito.fm.repository.rest.MatchEventRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
+import com.lollito.fm.service.LiveMatchService.LiveMatchData;
 
 @ExtendWith(MockitoExtension.class)
 class LiveMatchServiceTest {
@@ -37,118 +38,95 @@ class LiveMatchServiceTest {
     private LiveMatchSessionRepository liveMatchSessionRepository;
 
     @Mock
-    private MatchEventRepository matchEventRepository;
+    private MatchRepository matchRepository;
 
     @Mock
     private SimpMessagingTemplate messagingTemplate;
 
-    @Mock
-    private MatchService matchService;
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock
-    private MatchRepository matchRepository;
+    private MatchMapper matchMapper;
+
+    @Mock
+    private MatchProcessor matchProcessor;
 
     @InjectMocks
     private LiveMatchService liveMatchService;
 
-    @Test
-    void testStartLiveMatch() {
-        LiveMatchService spyService = Mockito.spy(liveMatchService);
-        ReflectionTestUtils.setField(spyService, "self", spyService);
-        doNothing().when(spyService).startMatchSimulation(any());
+    private Match match;
+    private MatchDTO matchDTO;
+    private LiveMatchSession session;
 
-        Match match = createTestMatch();
-        when(matchService.findById(1L)).thenReturn(match);
-        when(liveMatchSessionRepository.save(any(LiveMatchSession.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(matchEventRepository.save(any(MatchEvent.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        LiveMatchSession session = spyService.startLiveMatch(1L);
-
-        assertThat(session.getMatch()).isEqualTo(match);
-        assertThat(session.getCurrentPhase()).isEqualTo(MatchPhase.PRE_MATCH);
-        assertThat(session.getHomeScore()).isEqualTo(0);
-        assertThat(session.getAwayScore()).isEqualTo(0);
-
-        // Match status should be updated
-        assertThat(match.getStatus()).isEqualTo(MatchStatus.LIVE);
-        verify(matchRepository).save(match);
-    }
-
-    @Test
-    void testEventCreation() {
-        LiveMatchSession session = createTestSession();
-        Team team = session.getMatch().getHome().getTeam();
-        Player player = createTestPlayer();
-
-        when(matchEventRepository.save(any(MatchEvent.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        MatchEvent event = liveMatchService.createMatchEvent(
-            session, team, player, EventType.GOAL, 25, "Goal!", "Great goal!");
-
-        assertThat(event.getEventType()).isEqualTo(EventType.GOAL);
-        assertThat(event.getMinute()).isEqualTo(25);
-        assertThat(event.getPlayer()).isEqualTo(player);
-        assertThat(event.getSession()).isEqualTo(session);
-    }
-
-    @Test
-    void testGoalProcessing() {
-        LiveMatchSession session = createTestSession();
-        Team homeTeam = session.getMatch().getHome().getTeam();
-        MatchEvent goalEvent = createTestGoalEvent(session);
-
-        when(matchEventRepository.save(any(MatchEvent.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        liveMatchService.processGoalEvent(session, goalEvent, homeTeam);
-
-        assertThat(session.getHomeScore()).isEqualTo(1);
-    }
-
-    private Match createTestMatch() {
-        Team homeTeam = new Team();
-        homeTeam.setPlayers(new ArrayList<>());
-        homeTeam.setId(1L);
+    @BeforeEach
+    void setUp() throws Exception {
+        match = new Match();
+        match.setId(1L);
+        match.setStatus(MatchStatus.SCHEDULED);
         Club home = new Club();
-        home.setTeam(homeTeam);
-        home.setName("Home FC");
-
-        Team awayTeam = new Team();
-        awayTeam.setPlayers(new ArrayList<>());
-        awayTeam.setId(2L);
+        home.setId(1L);
+        match.setHome(home);
         Club away = new Club();
-        away.setTeam(awayTeam);
-        away.setName("Away FC");
+        away.setId(2L);
+        match.setAway(away);
 
-        return Match.builder()
-                .id(1L)
-                .home(home)
-                .away(away)
-                .status(MatchStatus.SCHEDULED)
-                .build();
-    }
+        matchDTO = new MatchDTO();
+        matchDTO.setId(1L);
+        matchDTO.setHomeScore(0);
+        matchDTO.setAwayScore(0);
+        matchDTO.setEvents(new ArrayList<>());
+        matchDTO.setStats(new StatsDTO());
+        matchDTO.setPlayerStats(new ArrayList<>());
 
-    private LiveMatchSession createTestSession() {
-        return LiveMatchSession.builder()
-                .match(createTestMatch())
+        session = LiveMatchSession.builder()
+                .matchId(1L)
+                .startTime(LocalDateTime.now().minusSeconds(10))
+                .currentMinute(0)
                 .homeScore(0)
                 .awayScore(0)
-                .events(new ArrayList<>())
+                .events("[]")
+                .stats("{}")
+                .playerStats("[]")
+                .finished(false)
                 .build();
     }
 
-    private Player createTestPlayer() {
-        Player player = new Player();
-        player.setName("John");
-        player.setSurname("Doe");
-        return player;
+    @Test
+    void testCreateSession() {
+        when(matchMapper.toDto(any(Match.class))).thenReturn(matchDTO);
+        when(liveMatchSessionRepository.save(any(LiveMatchSession.class))).thenReturn(session);
+
+        liveMatchService.createSession(match);
+
+        verify(liveMatchSessionRepository).save(any(LiveMatchSession.class));
+        verify(matchMapper).toDto(match);
     }
 
-    private MatchEvent createTestGoalEvent(LiveMatchSession session) {
-        return MatchEvent.builder()
-                .match(session.getMatch())
-                .player(createTestPlayer())
-                .eventType(EventType.GOAL)
-                .minute(10)
-                .build();
+    @Test
+    void testUpdateLiveMatches() {
+        List<LiveMatchSession> sessions = new ArrayList<>();
+        sessions.add(session);
+        when(liveMatchSessionRepository.findByFinishedFalse()).thenReturn(sessions);
+        when(liveMatchSessionRepository.save(any(LiveMatchSession.class))).thenReturn(session);
+
+        liveMatchService.updateLiveMatches();
+
+        verify(liveMatchSessionRepository).save(any(LiveMatchSession.class));
+        verify(messagingTemplate).convertAndSend(any(String.class), any(Object.class));
+    }
+
+    @Test
+    void testGetLiveMatchData() throws Exception {
+        when(liveMatchSessionRepository.findByMatchId(1L)).thenReturn(Optional.of(session));
+        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(matchMapper.toDto(match)).thenReturn(matchDTO);
+
+        Object data = liveMatchService.getLiveMatchData(1L);
+
+        assertThat(data).isInstanceOf(LiveMatchData.class);
+        LiveMatchData liveData = (LiveMatchData) data;
+        assertThat(liveData.getMatch().getId()).isEqualTo(1L);
+        assertThat(liveData.getCurrentMinute()).isEqualTo(0);
     }
 }
