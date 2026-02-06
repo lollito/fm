@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lollito.fm.mapper.MaintenanceMapper;
 import com.lollito.fm.model.FacilityType;
 import com.lollito.fm.model.MaintenanceRecord;
 import com.lollito.fm.model.dto.FacilityUpgradeDTO;
 import com.lollito.fm.model.dto.InfrastructureOverviewDTO;
+import com.lollito.fm.model.dto.MaintenanceRecordDTO;
 import com.lollito.fm.model.dto.ScheduleMaintenanceRequest;
 import com.lollito.fm.model.dto.StartUpgradeRequest;
 import com.lollito.fm.model.dto.UpgradeOptionDTO;
@@ -26,6 +28,9 @@ public class InfrastructureController {
 
     @Autowired
     private InfrastructureService infrastructureService;
+
+    @Autowired
+    private MaintenanceMapper maintenanceMapper;
 
     @GetMapping("/club/{clubId}/overview")
     public ResponseEntity<InfrastructureOverviewDTO> getInfrastructureOverview(@PathVariable Long clubId) {
@@ -56,16 +61,16 @@ public class InfrastructureController {
     }
 
     @GetMapping("/club/{clubId}/maintenance/schedule")
-    public ResponseEntity<List<MaintenanceRecord>> getMaintenanceSchedule(@PathVariable Long clubId) {
+    public ResponseEntity<List<MaintenanceRecordDTO>> getMaintenanceSchedule(@PathVariable Long clubId) {
         List<MaintenanceRecord> maintenance = infrastructureService.getMaintenanceSchedule(clubId);
-        return ResponseEntity.ok(maintenance);
+        return ResponseEntity.ok(maintenanceMapper.toDtoList(maintenance));
     }
 
     @PostMapping("/club/{clubId}/maintenance/schedule")
-    public ResponseEntity<MaintenanceRecord> scheduleMaintenance(
+    public ResponseEntity<MaintenanceRecordDTO> scheduleMaintenance(
             @PathVariable Long clubId,
             @RequestBody ScheduleMaintenanceRequest request) {
         MaintenanceRecord maintenance = infrastructureService.scheduleMaintenance(clubId, request);
-        return ResponseEntity.ok(maintenance);
+        return ResponseEntity.ok(maintenanceMapper.toDto(maintenance));
     }
 }
