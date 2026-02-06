@@ -60,7 +60,7 @@ public class SimulationMatchService {
 		return simulate(match, forcedResult, true);
 	}
 
-	private MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
+	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		
