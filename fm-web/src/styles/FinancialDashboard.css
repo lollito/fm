@@ -123,3 +123,66 @@
 .indicator .value {
   font-weight: bold;
 }
+
+/* Added styles for transaction table and pagination */
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #666;
+}
+
+.transaction-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.transaction-table .text-right {
+  text-align: right;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-danger {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.page-info {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.9em;
+}

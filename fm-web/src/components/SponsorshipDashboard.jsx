@@ -5,6 +5,8 @@ import '../styles/SponsorshipDashboard.css';
 const SponsorshipDashboard = ({ clubId }) => {
     const [dashboard, setDashboard] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     // eslint-disable-next-line no-unused-vars
     const [selectedOffer, setSelectedOffer] = useState(null);
 
@@ -14,12 +16,25 @@ const SponsorshipDashboard = ({ clubId }) => {
         }
     }, [clubId]);
 
+    const showSuccess = (message) => {
+        setSuccessMessage(message);
+        setErrorMessage('');
+        setTimeout(() => setSuccessMessage(''), 5000);
+    };
+
+    const showError = (message) => {
+        setErrorMessage(message);
+        setSuccessMessage('');
+        setTimeout(() => setErrorMessage(''), 5000);
+    };
+
     const loadSponsorshipData = async () => {
         try {
             const response = await getSponsorshipDashboard(clubId);
             setDashboard(response.data);
         } catch (error) {
             console.error('Error loading sponsorship data:', error);
+            showError('Failed to load sponsorship data.');
         } finally {
             setLoading(false);
         }
@@ -29,9 +44,11 @@ const SponsorshipDashboard = ({ clubId }) => {
         try {
             setLoading(true);
             await generateOffers(clubId);
+            showSuccess('New offers generated successfully!');
             loadSponsorshipData(); // Refresh data
         } catch (error) {
             console.error('Error generating offers:', error);
+            showError('Failed to generate offers. Please try again later.');
             setLoading(false);
         }
     };
@@ -40,9 +57,11 @@ const SponsorshipDashboard = ({ clubId }) => {
         try {
             setLoading(true);
             await acceptOffer(offerId);
+            showSuccess('Offer accepted successfully!');
             loadSponsorshipData(); // Refresh data
         } catch (error) {
             console.error('Error accepting offer:', error);
+            showError('Failed to accept offer. Please try again.');
             setLoading(false);
         }
     };
@@ -51,9 +70,11 @@ const SponsorshipDashboard = ({ clubId }) => {
         try {
             setLoading(true);
             await rejectOffer(offerId);
+            showSuccess('Offer rejected.');
             loadSponsorshipData(); // Refresh data
         } catch (error) {
             console.error('Error rejecting offer:', error);
+            showError('Failed to reject offer. Please try again.');
             setLoading(false);
         }
     };
@@ -78,6 +99,9 @@ const SponsorshipDashboard = ({ clubId }) => {
                     Generate New Offers
                 </button>
             </div>
+
+            {successMessage && <div className="alert alert-success">{successMessage}</div>}
+            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
 
             <div className="sponsorship-summary">
                 <div className="summary-card">
