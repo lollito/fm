@@ -48,40 +48,38 @@ const InjuryList = ({ teamId, clubId }) => {
 
     if (loading) return <div>Loading injuries...</div>;
 
+    if (injuries.length === 0) return null;
+
     return (
-        <div className="card mt-4">
+        <div className="card mt-4 border-danger">
             <div className="card-header bg-danger text-white">
                 <h5 className="mb-0">Team Injuries</h5>
             </div>
-            <div className="card-body">
-                {injuries.length === 0 ? (
-                    <p>No current injuries</p>
-                ) : (
-                    <div className="row">
+            <div className="card-body p-0">
+                <table className="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Type</th>
+                            <th>Severity</th>
+                            <th>Recovery</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {injuries.map(injury => (
-                            <div key={injury.id} className="col-md-6 mb-3">
-                                <div className="card border-danger">
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 className="card-title mb-0">
-                                                {getInjuryIcon(injury.severity)} {injury.playerName} {injury.playerSurname}
-                                            </h6>
-                                            <span className="badge bg-danger">{injury.status}</span>
-                                        </div>
-                                        <div className="small">
-                                            <p className="mb-1"><strong>Type:</strong> {injury.type}</p>
-                                            <p className="mb-1"><strong>Severity:</strong> {injury.severity}</p>
-                                            <p className="mb-1"><strong>Recovery:</strong> {formatRecoveryTime(injury.expectedRecoveryDate)}</p>
-                                            <p className="mb-0 text-muted">
-                                               {injury.description}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <tr key={injury.id}>
+                                <td>
+                                    {getInjuryIcon(injury.severity)} {injury.playerName} {injury.playerSurname}
+                                </td>
+                                <td>{injury.type}</td>
+                                <td>{injury.severity}</td>
+                                <td>{formatRecoveryTime(injury.expectedRecoveryDate)}</td>
+                                <td><span className="badge bg-danger">{injury.status}</span></td>
+                            </tr>
                         ))}
-                    </div>
-                )}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
