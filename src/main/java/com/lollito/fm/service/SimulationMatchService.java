@@ -61,6 +61,10 @@ public class SimulationMatchService {
 	}
 
 	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
+		return simulate(match, forcedResult, updateRanking, true);
+	}
+
+	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking, boolean saveMatch) {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		
@@ -88,7 +92,9 @@ public class SimulationMatchService {
 		// Update player history stats
 		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
 
-		matchRepository.save(match);
+		if (saveMatch) {
+			matchRepository.save(match);
+		}
 
 		if (updateRanking) {
 			rankingService.update(match);
