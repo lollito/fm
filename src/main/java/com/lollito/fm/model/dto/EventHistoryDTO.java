@@ -18,4 +18,6 @@ public class EventHistoryDTO {
     private Integer homeScore;
     private Integer awayScore;
     private String eventType;
+    private String description;
+    private Boolean isKeyEvent;
 }

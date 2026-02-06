@@ -22,6 +22,8 @@ public interface MatchMapper {
     Stats toEntity(StatsDTO statsDTO);
 
     @Mapping(target = "eventType", expression = "java(mapEventType(eventHistory.getType()))")
+    @Mapping(source = "event", target = "description")
+    @Mapping(target = "isKeyEvent", expression = "java(isKeyEvent(eventHistory.getType()))")
     EventHistoryDTO toDto(EventHistory eventHistory);
 
     EventHistory toEntity(EventHistoryDTO eventHistoryDTO);
@@ -39,6 +41,18 @@ public interface MatchMapper {
             case SUBSTITUTION: return "SUBSTITUTION";
             case INJURY: return "INJURY";
             default: return "NORMAL";
+        }
+    }
+
+    default Boolean isKeyEvent(Event event) {
+        if (event == null) return false;
+        switch (event) {
+            case HAVE_SCORED:
+            case HAVE_SCORED_FREE_KICK:
+            case RED_CARD:
+                return true;
+            default:
+                return false;
         }
     }
 }
