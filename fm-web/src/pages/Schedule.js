@@ -1,46 +1,98 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/Layout';
-import useSortableData from '../hooks/useSortableData';
 
 const Schedule = () => {
   const [schedule, setSchedule] = useState([]);
-  const { items: sortedSchedule, requestSort, sortConfig } = useSortableData(schedule);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/match/').then(res => setSchedule(res.data));
   }, []);
 
-  const getSortIcon = (key) => {
-    if (!sortConfig || sortConfig.key !== key) return <i className="fas fa-sort" style={{ marginLeft: '5px', opacity: 0.3 }}></i>;
-    return sortConfig.direction === 'ascending' ?
-        <i className="fas fa-sort-up" style={{ marginLeft: '5px' }}></i> :
-        <i className="fas fa-sort-down" style={{ marginLeft: '5px' }}></i>;
+  // Group matches by round
+  const groupedMatches = schedule.reduce((acc, match) => {
+    const round = match.roundNumber || 0;
+    if (!acc[round]) {
+      acc[round] = [];
+    }
+    acc[round].push(match);
+    return acc;
+  }, {});
+
+  // Sort rounds keys numerically
+  const rounds = Object.keys(groupedMatches).sort((a, b) => Number(a) - Number(b));
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('it-IT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
   };
 
   return (
     <Layout>
-      <h1 className="mt-2">Schedule</h1>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th onClick={() => requestSort('home.name')} style={{ cursor: 'pointer' }}>Home {getSortIcon('home.name')}</th>
-            <th onClick={() => requestSort('away.name')} style={{ cursor: 'pointer' }}>Away {getSortIcon('away.name')}</th>
-            <th onClick={() => requestSort('homeScore')} style={{ cursor: 'pointer' }}>Score {getSortIcon('homeScore')}</th>
-            <th onClick={() => requestSort('date')} style={{ cursor: 'pointer' }}>Date {getSortIcon('date')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedSchedule.map((m, i) => (
-            <tr key={i}>
-              <td>{m.home.name}</td>
-              <td>{m.away.name}</td>
-              <td>{m.homeScore} - {m.awayScore}</td>
-              <td>{m.date}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="mt-2">
+        <h1>Schedule</h1>
+        {rounds.map(round => (
+          <div key={round} className="mb-4">
+            <h3 className="p-2 border-bottom" style={{ backgroundColor: '#f8f9fa' }}>
+              Matchday {round}
+            </h3>
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th style={{ width: '25%' }}>Date</th>
+                  <th style={{ width: '30%', textAlign: 'right' }}>Home</th>
+                  <th style={{ width: '15%', textAlign: 'center' }}>Score</th>
+                  <th style={{ width: '30%', textAlign: 'left' }}>Away</th>
+                </tr>
+              </thead>
+              <tbody>
+                {groupedMatches[round].map((match) => {
+                   const isPlayed = match.finish || match.status === 'COMPLETED';
+                   const homeBold = isPlayed && match.homeScore > match.awayScore;
+                   const awayBold = isPlayed && match.awayScore > match.homeScore;
+
+                   return (
+                    <tr
+                      key={match.id}
+                      onClick={() => navigate(`/match/${match.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <td>{formatDate(match.date)}</td>
+                      <td style={{
+                        textAlign: 'right',
+                        fontWeight: homeBold ? 'bold' : 'normal',
+                        color: homeBold ? '#28a745' : 'inherit'
+                      }}>
+                        {match.home.name}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        {isPlayed ? `${match.homeScore} - ${match.awayScore}` : '-'}
+                      </td>
+                      <td style={{
+                        textAlign: 'left',
+                        fontWeight: awayBold ? 'bold' : 'normal',
+                        color: awayBold ? '#28a745' : 'inherit'
+                      }}>
+                        {match.away.name}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
     </Layout>
   );
 };
