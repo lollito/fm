@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { getLiveMatch, joinLiveMatch, leaveLiveMatch, API_BASE_URL } from '../services/api';
+import Layout from './Layout';
 import '../styles/LiveMatchViewer.css';
 
 const LiveMatchViewer = () => {
@@ -147,10 +148,11 @@ const LiveMatchViewer = () => {
         return colors[intensity] || '#666';
     };
 
-    if (loading) return <div className="live-match-loading">Loading live match...</div>;
-    if (!matchSession) return <div className="live-match-error">Match not found</div>;
+    if (loading) return <Layout><div className="live-match-loading">Loading live match...</div></Layout>;
+    if (!matchSession) return <Layout><div className="live-match-error">Match not found</div></Layout>;
 
     return (
+        <Layout>
         <div className="live-match-viewer">
             <div className="match-header">
                 <div className="connection-status">
@@ -253,6 +255,7 @@ const LiveMatchViewer = () => {
                 </div>
             </div>
         </div>
+        </Layout>
     );
 };
 

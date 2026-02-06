@@ -78,7 +78,9 @@ public class MatchProcessor {
 
     private void notifyUser(User user, Long matchId) {
         if (user != null) {
-            messagingTemplate.convertAndSendToUser(user.getUsername(), "/queue/notifications",
+            // Using a public topic because WebSocket connections are currently unauthenticated (whitelisted).
+            // TODO: Secure this by implementing WebSocket authentication and switching back to convertAndSendToUser.
+            messagingTemplate.convertAndSend("/topic/user/" + user.getId() + "/notifications",
                 new NotificationDTO("MATCH_STARTED", matchId, "Match Started!"));
         }
     }
