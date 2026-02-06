@@ -33,4 +33,5 @@ public class PlayerDTO {
     private Double passing;
     private Double defending;
     private Double setPieces;
+    private Long clubId;
 }

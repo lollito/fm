@@ -25,6 +25,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "team")
 @Getter
@@ -64,6 +66,23 @@ public class Team implements Serializable{
 	@ToString.Exclude
 	private List<TrainingSession> trainingHistory = new ArrayList<>();
 	
+	@OneToOne(mappedBy = "team", fetch = FetchType.LAZY)
+	@ToString.Exclude
+	@JsonIgnore
+	private Club club;
+
+	@OneToOne(mappedBy = "under18", fetch = FetchType.LAZY)
+	@ToString.Exclude
+	@JsonIgnore
+	private Club youthClub;
+
+	@Transient
+	public Long getOwnerClubId() {
+		if (club != null) return club.getId();
+		if (youthClub != null) return youthClub.getId();
+		return null;
+	}
+
 	@Transient
 	public void addPlayer(Player player){
 		player.setTeam(this);
