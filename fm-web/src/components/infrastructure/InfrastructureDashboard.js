@@ -7,6 +7,7 @@ const InfrastructureDashboard = ({ clubId }) => {
     const [selectedFacility, setSelectedFacility] = useState(null);
     const [availableUpgrades, setAvailableUpgrades] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [processing, setProcessing] = useState(false);
 
     useEffect(() => {
         if (clubId) {
@@ -36,20 +37,23 @@ const InfrastructureDashboard = ({ clubId }) => {
     };
 
     const handleStartUpgrade = async (upgrade) => {
+        if (processing) return;
+        setProcessing(true);
         try {
             let facilityId = null;
             let facilityType = null;
+
             if (selectedFacility === 'STADIUM') {
-                facilityId = overview.stadium.id;
+                facilityId = overview.stadium ? overview.stadium.id : null;
                 facilityType = 'STADIUM';
             } else if (selectedFacility === 'TRAINING_FACILITY') {
-                 facilityId = overview.trainingFacility.id;
+                 facilityId = overview.trainingFacility ? overview.trainingFacility.id : null;
                  facilityType = 'TRAINING_FACILITY';
             } else if (selectedFacility === 'MEDICAL_CENTER') {
-                 facilityId = overview.medicalCenter.id;
+                 facilityId = overview.medicalCenter ? overview.medicalCenter.id : null;
                  facilityType = 'MEDICAL_CENTER';
             } else if (selectedFacility === 'YOUTH_ACADEMY') {
-                 facilityId = overview.youthAcademy.id;
+                 facilityId = overview.youthAcademy ? overview.youthAcademy.id : null;
                  facilityType = 'YOUTH_ACADEMY';
             }
 
@@ -66,11 +70,14 @@ const InfrastructureDashboard = ({ clubId }) => {
             };
 
             await startUpgrade(clubId, request);
-            loadInfrastructureData();
+            await loadInfrastructureData();
             setAvailableUpgrades([]);
             setSelectedFacility(null);
         } catch (error) {
             console.error('Error starting upgrade:', error);
+            alert('Failed to start upgrade. Check funds or try again.');
+        } finally {
+            setProcessing(false);
         }
     };
 
@@ -99,11 +106,11 @@ const InfrastructureDashboard = ({ clubId }) => {
                 <h2>Infrastructure Management</h2>
                 <div className="infrastructure-summary">
                     <div className="summary-item">
-                        <span className="label">Total Value:</span>
+                        <span className="label">Total Value</span>
                         <span className="value">{formatCurrency(overview.totalInfrastructureValue)}</span>
                     </div>
                     <div className="summary-item">
-                        <span className="label">Monthly Maintenance:</span>
+                        <span className="label">Monthly Costs</span>
                         <span className="value negative">{formatCurrency(overview.totalMonthlyMaintenanceCost)}</span>
                     </div>
                 </div>
@@ -113,7 +120,10 @@ const InfrastructureDashboard = ({ clubId }) => {
                 {/* Stadium */}
                 <div className="facility-card" onClick={() => handleFacilitySelect('STADIUM')}>
                     <div className="facility-header">
-                        <h3>Stadium</h3>
+                        <div className="header-title">
+                            <span className="facility-icon">🏟️</span>
+                            <h3>Stadium</h3>
+                        </div>
                         {overview.stadium && (
                             <span className="facility-name">{overview.stadium.name}</span>
                         )}
@@ -164,9 +174,17 @@ const InfrastructureDashboard = ({ clubId }) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="facility-placeholder">
-                            <p>No stadium built</p>
-                            <button className="btn-primary">Build Stadium</button>
+                        <div className="facility-placeholder construction-zone">
+                            <div className="placeholder-icon">🚧</div>
+                            <h4>No Stadium</h4>
+                            <p>Construct a stadium to host matches and earn revenue.</p>
+                            <button
+                                className="btn-primary"
+                                onClick={(e) => { e.stopPropagation(); handleFacilitySelect('STADIUM'); }}
+                                disabled={processing}
+                            >
+                                Build Stadium
+                            </button>
                         </div>
                     )}
                 </div>
@@ -174,7 +192,10 @@ const InfrastructureDashboard = ({ clubId }) => {
                 {/* Training Facility */}
                 <div className="facility-card" onClick={() => handleFacilitySelect('TRAINING_FACILITY')}>
                     <div className="facility-header">
-                        <h3>Training Facility</h3>
+                        <div className="header-title">
+                            <span className="facility-icon">🏋️</span>
+                            <h3>Training Facility</h3>
+                        </div>
                         {overview.trainingFacility && (
                             <span className="facility-name">{overview.trainingFacility.name}</span>
                         )}
@@ -215,9 +236,17 @@ const InfrastructureDashboard = ({ clubId }) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="facility-placeholder">
-                            <p>No training facility built</p>
-                            <button className="btn-primary">Build Training Facility</button>
+                        <div className="facility-placeholder construction-zone">
+                            <div className="placeholder-icon">🚧</div>
+                            <h4>No Training Facility</h4>
+                            <p>Build a training center to improve player development.</p>
+                            <button
+                                className="btn-primary"
+                                onClick={(e) => { e.stopPropagation(); handleFacilitySelect('TRAINING_FACILITY'); }}
+                                disabled={processing}
+                            >
+                                Build Training Facility
+                            </button>
                         </div>
                     )}
                 </div>
@@ -225,7 +254,10 @@ const InfrastructureDashboard = ({ clubId }) => {
                 {/* Medical Center */}
                 <div className="facility-card" onClick={() => handleFacilitySelect('MEDICAL_CENTER')}>
                     <div className="facility-header">
-                        <h3>Medical Center</h3>
+                        <div className="header-title">
+                            <span className="facility-icon">🏥</span>
+                            <h3>Medical Center</h3>
+                        </div>
                         {overview.medicalCenter && (
                             <span className="facility-name">{overview.medicalCenter.name}</span>
                         )}
@@ -266,9 +298,17 @@ const InfrastructureDashboard = ({ clubId }) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="facility-placeholder">
-                            <p>No medical center built</p>
-                            <button className="btn-primary">Build Medical Center</button>
+                        <div className="facility-placeholder construction-zone">
+                            <div className="placeholder-icon">🚧</div>
+                            <h4>No Medical Center</h4>
+                            <p>Construct a medical center to treat injuries faster.</p>
+                            <button
+                                className="btn-primary"
+                                onClick={(e) => { e.stopPropagation(); handleFacilitySelect('MEDICAL_CENTER'); }}
+                                disabled={processing}
+                            >
+                                Build Medical Center
+                            </button>
                         </div>
                     )}
                 </div>
@@ -276,7 +316,10 @@ const InfrastructureDashboard = ({ clubId }) => {
                 {/* Youth Academy */}
                 <div className="facility-card" onClick={() => handleFacilitySelect('YOUTH_ACADEMY')}>
                     <div className="facility-header">
-                        <h3>Youth Academy</h3>
+                        <div className="header-title">
+                            <span className="facility-icon">🎓</span>
+                            <h3>Youth Academy</h3>
+                        </div>
                         {overview.youthAcademy && (
                             <span className="facility-name">{overview.youthAcademy.name}</span>
                         )}
@@ -317,9 +360,17 @@ const InfrastructureDashboard = ({ clubId }) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="facility-placeholder">
-                            <p>No youth academy built</p>
-                            <button className="btn-primary">Build Youth Academy</button>
+                        <div className="facility-placeholder construction-zone">
+                            <div className="placeholder-icon">🚧</div>
+                            <h4>No Youth Academy</h4>
+                            <p>Invest in youth to discover the next superstar.</p>
+                            <button
+                                className="btn-primary"
+                                onClick={(e) => { e.stopPropagation(); handleFacilitySelect('YOUTH_ACADEMY'); }}
+                                disabled={processing}
+                            >
+                                Build Youth Academy
+                            </button>
                         </div>
                     )}
                 </div>
@@ -328,14 +379,16 @@ const InfrastructureDashboard = ({ clubId }) => {
             {/* Ongoing Upgrades */}
             {overview.ongoingUpgrades && overview.ongoingUpgrades.length > 0 && (
                 <div className="ongoing-upgrades">
-                    <h3>Ongoing Upgrades ({overview.ongoingUpgrades.length})</h3>
+                    <h3>Ongoing Projects ({overview.ongoingUpgrades.length})</h3>
                     <div className="upgrades-list">
                         {overview.ongoingUpgrades.map(upgrade => (
                             <div key={upgrade.id} className="upgrade-card">
                                 <div className="upgrade-info">
-                                    <h4>{upgrade.upgradeName}</h4>
+                                    <div className="upgrade-title-row">
+                                        <h4>{upgrade.upgradeName}</h4>
+                                        <span className="facility-badge">{upgrade.facilityType.replace('_', ' ')}</span>
+                                    </div>
                                     <p>{upgrade.description}</p>
-                                    <span className="facility-type">{upgrade.facilityType}</span>
                                 </div>
                                 <div className="upgrade-progress">
                                     <div className="progress-bar">
@@ -362,40 +415,42 @@ const InfrastructureDashboard = ({ clubId }) => {
                 <div className="upgrades-modal">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h3>Available Upgrades - {selectedFacility.replace('_', ' ')}</h3>
+                            <h3>Available Upgrades: {selectedFacility.replace('_', ' ')}</h3>
                             <button className="close-btn" onClick={() => setSelectedFacility(null)}>×</button>
                         </div>
-                        <div className="upgrades-list">
+                        <div className="upgrades-grid">
                             {availableUpgrades.map((upgrade, index) => (
-                                <div key={index} className="upgrade-option">
-                                    <div className="upgrade-details">
+                                <div key={index} className="upgrade-option-card">
+                                    <div className="upgrade-header">
                                         <h4>{upgrade.name}</h4>
-                                        <p>{upgrade.description}</p>
-                                        <div className="upgrade-effects">
-                                            <strong>Effects:</strong> {upgrade.effects}
-                                        </div>
-                                        {upgrade.requirements && (
-                                            <div className="upgrade-requirements">
-                                                <strong>Requirements:</strong> {upgrade.requirements}
-                                            </div>
-                                        )}
+                                        <div className="upgrade-cost-badge">{formatCurrency(upgrade.cost)}</div>
                                     </div>
-                                    <div className="upgrade-specs">
-                                        <div className="spec">
-                                            <span className="label">Cost:</span>
-                                            <span className="value">{formatCurrency(upgrade.cost)}</span>
-                                        </div>
-                                        <div className="spec">
+                                    <p className="upgrade-description">{upgrade.description}</p>
+
+                                    <div className="upgrade-meta">
+                                        <div className="meta-item">
                                             <span className="label">Duration:</span>
                                             <span className="value">{upgrade.durationDays} days</span>
                                         </div>
-                                        <button
-                                            onClick={() => handleStartUpgrade(upgrade)}
-                                            className="btn-primary"
-                                        >
-                                            Start Upgrade
-                                        </button>
+                                        {upgrade.requirements && (
+                                            <div className="meta-item">
+                                                <span className="label">Requires:</span>
+                                                <span className="value">{upgrade.requirements}</span>
+                                            </div>
+                                        )}
                                     </div>
+
+                                    <div className="upgrade-effects-box">
+                                        <strong>Effects:</strong> {upgrade.effects}
+                                    </div>
+
+                                    <button
+                                        onClick={() => handleStartUpgrade(upgrade)}
+                                        className="btn-primary full-width"
+                                        disabled={processing}
+                                    >
+                                        {processing ? 'Processing...' : 'Start Project'}
+                                    </button>
                                 </div>
                             ))}
                         </div>
@@ -407,10 +462,10 @@ const InfrastructureDashboard = ({ clubId }) => {
                  <div className="upgrades-modal">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h3>Available Upgrades - {selectedFacility.replace('_', ' ')}</h3>
+                            <h3>{selectedFacility.replace('_', ' ')}</h3>
                             <button className="close-btn" onClick={() => setSelectedFacility(null)}>×</button>
                         </div>
-                        <div className="upgrades-list">
+                        <div className="empty-upgrades">
                              <p>No upgrades available for this facility at the moment.</p>
                         </div>
                     </div>

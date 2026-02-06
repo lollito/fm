@@ -1,8 +1,6 @@
 .sponsorship-dashboard {
     padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    /* Removed fixed background */
 }
 
 .dashboard-header {
@@ -20,27 +18,33 @@
 }
 
 .summary-card {
-    background: white;
+    background-color: var(--bg-card);
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(161, 85, 255, 0.05);
     text-align: center;
 }
 
 .summary-card h3 {
     margin: 0 0 10px;
     font-size: 1rem;
-    color: #6c757d;
+    color: var(--text-dim);
 }
 
 .summary-card .amount, .summary-card .count, .summary-card .score {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #212529;
+    color: var(--text-main);
 }
 
 .section {
     margin-bottom: 30px;
+}
+
+.section h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
 }
 
 .offers-list, .deals-list {
@@ -50,11 +54,12 @@
 }
 
 .offer-card, .deal-card {
-    background: white;
+    background-color: var(--bg-card);
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    border: 1px solid #dee2e6;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(161, 85, 255, 0.05);
+    color: var(--text-main);
 }
 
 .offer-header, .deal-header {
@@ -79,11 +84,12 @@
 .sponsor-info h4 {
     margin: 0;
     font-size: 1.1rem;
+    color: var(--text-main);
 }
 
 .sponsor-tier {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--text-dim);
 }
 
 .type-badge, .status-badge {
@@ -91,18 +97,18 @@
     border-radius: 4px;
     font-size: 0.8rem;
     font-weight: bold;
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: rgba(161, 85, 255, 0.1);
+    color: var(--text-main);
 }
 
 .status-badge.active {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: rgba(0, 200, 83, 0.2);
+    color: var(--success);
 }
 
 .status-badge.pending {
-    background-color: #fff3cd;
-    color: #856404;
+    background-color: rgba(255, 214, 0, 0.2);
+    color: var(--warning);
 }
 
 .offer-details, .deal-details {
@@ -114,18 +120,21 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
+    border-bottom: 1px solid rgba(161, 85, 255, 0.05);
+    padding-bottom: 4px;
 }
 
 .label {
-    color: #6c757d;
+    color: var(--text-dim);
 }
 
 .value {
     font-weight: bold;
+    color: var(--text-main);
 }
 
 .performance-bonuses {
-    background-color: #f8f9fa;
+    background-color: rgba(161, 85, 255, 0.05);
     padding: 10px;
     border-radius: 4px;
     margin-bottom: 15px;
@@ -134,11 +143,12 @@
 .performance-bonuses h5 {
     margin: 0 0 5px;
     font-size: 0.9rem;
+    color: var(--text-dim);
 }
 
 .bonus {
     font-size: 0.85rem;
-    color: #28a745;
+    color: var(--success);
 }
 
 .offer-actions {
@@ -153,13 +163,13 @@
 
 .offer-expiry {
     font-size: 0.8rem;
-    color: #dc3545;
+    color: var(--danger);
     text-align: right;
 }
 
 .progress-bar {
     height: 8px;
-    background-color: #e9ecef;
+    background-color: var(--bg-darker);
     border-radius: 4px;
     margin-bottom: 5px;
     overflow: hidden;
@@ -167,12 +177,12 @@
 
 .progress-fill {
     height: 100%;
-    background-color: #007bff;
+    background-color: var(--primary);
 }
 
 .progress-text {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--text-dim);
 }
 
 .club-attractiveness .metric {
@@ -183,11 +193,12 @@
     display: block;
     margin-bottom: 5px;
     font-size: 0.9rem;
+    color: var(--text-main);
 }
 
 .metric-bar {
     height: 10px;
-    background-color: #e9ecef;
+    background-color: var(--bg-darker);
     border-radius: 5px;
     overflow: hidden;
     margin-bottom: 2px;
@@ -195,12 +206,12 @@
 
 .metric-fill {
     height: 100%;
-    background-color: #17a2b8;
+    background-color: var(--info);
 }
 
 .metric-value {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--text-dim);
     float: right;
 }
 
@@ -213,13 +224,13 @@
 }
 
 .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: rgba(0, 200, 83, 0.2);
+    color: var(--success);
+    border: 1px solid rgba(0, 200, 83, 0.3);
 }
 
 .alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background-color: rgba(255, 23, 68, 0.2);
+    color: var(--danger);
+    border: 1px solid rgba(255, 23, 68, 0.3);
 }
