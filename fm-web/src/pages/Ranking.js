@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
+import TeamLink from '../components/TeamLink';
 
 const Ranking = () => {
   const [ranking, setRanking] = useState([]);
@@ -49,7 +50,7 @@ const Ranking = () => {
           {sortedRanking.map((r, i) => (
             <tr key={i}>
               <td>{i + 1}</td>
-              <td>{r.club.name}</td>
+              <td><TeamLink club={r.club} /></td>
               <td>{r.played}</td>
               <td>{r.won}</td>
               <td>{r.drawn}</td>

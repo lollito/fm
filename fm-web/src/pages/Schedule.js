@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/Layout';
+import TeamLink from '../components/TeamLink';
 
 const Schedule = () => {
   const [schedule, setSchedule] = useState([]);
@@ -76,7 +77,7 @@ const Schedule = () => {
                             fontWeight: homeBold ? 'bold' : 'normal'
                           }}
                         >
-                          {match.home.name}
+                          <TeamLink club={match.home} />
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           {isPlayed ? `${match.homeScore} - ${match.awayScore}` : '-'}
@@ -88,7 +89,7 @@ const Schedule = () => {
                             fontWeight: awayBold ? 'bold' : 'normal'
                           }}
                         >
-                          {match.away.name}
+                          <TeamLink club={match.away} />
                         </td>
                       </tr>
                     );

@@ -18,4 +18,5 @@ public class ClubDTO {
     private String logoURL;
     private Long leagueId;
     private Long teamId;
+    private Boolean isHuman;
 }

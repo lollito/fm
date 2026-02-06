@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 public interface ClubMapper {
     @Mapping(source = "league.id", target = "leagueId")
     @Mapping(source = "team.id", target = "teamId")
+    @Mapping(target = "isHuman", expression = "java(club.getUser() != null)")
     ClubDTO toDto(Club club);
     Club toEntity(ClubDTO dto);
 }
