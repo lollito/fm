@@ -394,14 +394,18 @@ public class UserManagementService {
 
     private void terminateAllUserSessions(Long userId, String reason) {
         List<UserSession> sessions = userSessionRepository.findByUserIdOrderByLoginTimeDesc(userId);
+        List<UserSession> sessionsToUpdate = new ArrayList<>();
         for (UserSession session : sessions) {
             if (Boolean.TRUE.equals(session.getIsActive())) {
                 session.setIsActive(false);
                 session.setStatus(SessionStatus.TERMINATED);
                 session.setTerminationReason(reason);
                 session.setLogoutTime(LocalDateTime.now());
-                userSessionRepository.save(session);
+                sessionsToUpdate.add(session);
             }
+        }
+        if (!sessionsToUpdate.isEmpty()) {
+            userSessionRepository.saveAll(sessionsToUpdate);
         }
     }
 
