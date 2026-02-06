@@ -19,6 +19,7 @@ import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
+import com.lollito.fm.repository.rest.ClubRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
@@ -37,6 +38,12 @@ class TrainingServiceTest {
 
     @Mock
     private TeamService teamService;
+
+    @Mock
+    private ClubRepository clubRepository;
+
+    @Mock
+    private StaffService staffService;
 
     @InjectMocks
     private TrainingService trainingService;
