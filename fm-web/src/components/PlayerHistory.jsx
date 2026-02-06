@@ -53,255 +53,275 @@ const PlayerHistory = ({ playerId }) => {
             YOUTH_PROMOTION: '#9c27b0',
             RETIREMENT: '#f44336'
         };
-        return colors[type] || '#666';
+        return colors[type] || '#a0a0b0';
     };
 
-    if (loading) return <div>Loading player history...</div>;
-    if (!playerHistory) return <div>Player history not found</div>;
+    if (loading) return <div className="p-4">Loading player history...</div>;
 
-    const { player, careerStats, seasonStats, achievements, transferHistory } = playerHistory;
+    // Destructure safely with fallback
+    const { player, careerStats, seasonStats, achievements, transferHistory } = playerHistory || {};
+
+    // Guard clause for missing player data to prevent runtime errors
+    if (!player) return <div className="p-4">Player history not found</div>;
+
     const chartData = getChartData();
 
     return (
-        <div className="player-history" style={{ padding: '20px' }}>
-            <div className="player-header">
+        <div className="player-history container-fluid">
+            <div className="player-header mb-4">
                 <h2>{player.name} {player.surname}</h2>
-                <div className="player-basic-info">
-                    <span style={{ marginRight: '15px' }}>Age: {player.age}</span>
-                    <span style={{ marginRight: '15px' }}>Position: {player.role}</span>
-                    <span style={{ marginRight: '15px' }}>Current Club: {playerHistory.seasonStats[0]?.club?.name || 'Unknown'}</span>
+                <div className="player-basic-info text-muted">
+                    <span className="me-3">Age: {player.age}</span>
+                    <span className="me-3">Position: {player.role}</span>
+                    <span className="me-3">Current Club: {playerHistory.seasonStats?.[0]?.club?.name || 'Unknown'}</span>
                 </div>
             </div>
 
-            <div className="career-overview" style={{ margin: '20px 0' }}>
-                <div className="career-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px' }}>
-                    <div className="stat-card" style={statCardStyle}>
-                        <h3>Career Matches</h3>
-                        <span className="stat-value">{careerStats.totalMatchesPlayed}</span>
-                    </div>
-                    <div className="stat-card" style={statCardStyle}>
-                        <h3>Career Goals</h3>
-                        <span className="stat-value">{careerStats.totalGoals}</span>
-                    </div>
-                    <div className="stat-card" style={statCardStyle}>
-                        <h3>Career Assists</h3>
-                        <span className="stat-value">{careerStats.totalAssists}</span>
-                    </div>
-                    <div className="stat-card" style={statCardStyle}>
-                        <h3>Clubs Played</h3>
-                        <span className="stat-value">{careerStats.clubsPlayed}</span>
-                    </div>
-                    <div className="stat-card" style={statCardStyle}>
-                        <h3>League Titles</h3>
-                        <span className="stat-value">{careerStats.leagueTitles}</span>
-                    </div>
-                    <div className="stat-card" style={statCardStyle}>
-                        <h3>Highest Transfer</h3>
-                        <span className="stat-value">${careerStats.highestTransferValue?.toLocaleString()}</span>
-                    </div>
+            <div className="career-overview mb-4">
+                <div className="row">
+                   <div className="col-4 col-md-2 mb-3">
+                        <div className="card text-center h-100">
+                            <div className="card-body">
+                                <h6 className="text-muted mb-2">Career Matches</h6>
+                                <span className="h4 text-primary">{careerStats.totalMatchesPlayed}</span>
+                            </div>
+                        </div>
+                   </div>
+                   <div className="col-4 col-md-2 mb-3">
+                        <div className="card text-center h-100">
+                            <div className="card-body">
+                                <h6 className="text-muted mb-2">Career Goals</h6>
+                                <span className="h4 text-primary">{careerStats.totalGoals}</span>
+                            </div>
+                        </div>
+                   </div>
+                   <div className="col-4 col-md-2 mb-3">
+                        <div className="card text-center h-100">
+                             <div className="card-body">
+                                <h6 className="text-muted mb-2">Career Assists</h6>
+                                <span className="h4 text-primary">{careerStats.totalAssists}</span>
+                            </div>
+                        </div>
+                   </div>
+                   <div className="col-4 col-md-2 mb-3">
+                        <div className="card text-center h-100">
+                             <div className="card-body">
+                                <h6 className="text-muted mb-2">Clubs Played</h6>
+                                <span className="h4 text-primary">{careerStats.clubsPlayed}</span>
+                            </div>
+                        </div>
+                   </div>
+                   <div className="col-4 col-md-2 mb-3">
+                        <div className="card text-center h-100">
+                             <div className="card-body">
+                                <h6 className="text-muted mb-2">League Titles</h6>
+                                <span className="h4 text-primary">{careerStats.leagueTitles}</span>
+                            </div>
+                        </div>
+                   </div>
+                   <div className="col-4 col-md-2 mb-3">
+                        <div className="card text-center h-100">
+                             <div className="card-body">
+                                <h6 className="text-muted mb-2">Highest Transfer</h6>
+                                <span className="h4 text-primary">${careerStats.highestTransferValue?.toLocaleString()}</span>
+                            </div>
+                        </div>
+                   </div>
                 </div>
             </div>
 
-            <div className="history-tabs" style={{ marginBottom: '20px' }}>
+            <ul className="nav nav-tabs">
                 {['overview', 'seasons', 'achievements', 'transfers'].map(tab => (
-                    <button
-                        key={tab}
-                        className={selectedTab === tab ? 'active' : ''}
-                        onClick={() => setSelectedTab(tab)}
-                        style={{
-                            padding: '10px 20px',
-                            marginRight: '10px',
-                            backgroundColor: selectedTab === tab ? '#007bff' : '#f8f9fa',
-                            color: selectedTab === tab ? 'white' : 'black',
-                            border: '1px solid #ddd',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        {tab === 'achievements' && ` (${achievements.length})`}
-                    </button>
+                    <li className="nav-item" key={tab}>
+                        <button
+                            className={`nav-link ${selectedTab === tab ? 'active' : ''}`}
+                            onClick={() => setSelectedTab(tab)}
+                        >
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            {tab === 'achievements' && ` (${achievements.length})`}
+                        </button>
+                    </li>
                 ))}
-            </div>
+            </ul>
 
-            {selectedTab === 'overview' && (
-                <div className="overview-tab">
-                    <div className="charts-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        <div className="chart-container" style={{ height: '300px' }}>
-                            <h3>Goals per Season</h3>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="season" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="goals" stroke="#8884d8" />
-                                </LineChart>
-                            </ResponsiveContainer>
+            <div className="tab-content mt-3">
+                {selectedTab === 'overview' && (
+                    <div className="overview-tab">
+                        <div className="row mb-4">
+                            <div className="col-12 col-md-6 mb-4">
+                                <div className="card h-100">
+                                    <div className="card-header">Goals per Season</div>
+                                    <div className="card-body" style={{ height: '300px' }}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={chartData}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                                                <XAxis dataKey="season" stroke="#a0a0b0" />
+                                                <YAxis stroke="#a0a0b0" />
+                                                <Tooltip
+                                                    contentStyle={{ backgroundColor: '#1e1136', border: '1px solid rgba(161, 85, 255, 0.2)', color: '#f0f0f5' }}
+                                                />
+                                                <Legend />
+                                                <Line type="monotone" dataKey="goals" stroke="#a155ff" strokeWidth={2} activeDot={{ r: 8 }} />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-12 col-md-6 mb-4">
+                                <div className="card h-100">
+                                    <div className="card-header">Performance Overview</div>
+                                    <div className="card-body" style={{ height: '300px' }}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={chartData}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                                                <XAxis dataKey="season" stroke="#a0a0b0" />
+                                                <YAxis stroke="#a0a0b0" />
+                                                <Tooltip
+                                                    contentStyle={{ backgroundColor: '#1e1136', border: '1px solid rgba(161, 85, 255, 0.2)', color: '#f0f0f5' }}
+                                                />
+                                                <Legend />
+                                                <Bar dataKey="goals" fill="#ff4081" />
+                                                <Bar dataKey="assists" fill="#a155ff" />
+                                                <Bar dataKey="matches" fill="#ffd600" />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="chart-container" style={{ height: '300px' }}>
-                            <h3>Performance Overview</h3>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="season" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="goals" fill="#ff6384" />
-                                    <Bar dataKey="assists" fill="#36a2eb" />
-                                    <Bar dataKey="matches" fill="#ffce56" />
-                                </BarChart>
-                            </ResponsiveContainer>
+                        <div className="card">
+                            <div className="card-header">Career Records</div>
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-6 col-md-3 mb-3">
+                                        <div className="text-muted small">Most Goals in Season</div>
+                                        <div className="h5">{careerStats.mostGoalsInSeason}</div>
+                                    </div>
+                                    <div className="col-6 col-md-3 mb-3">
+                                        <div className="text-muted small">Most Assists in Season</div>
+                                        <div className="h5">{careerStats.mostAssistsInSeason}</div>
+                                    </div>
+                                    <div className="col-6 col-md-3 mb-3">
+                                        <div className="text-muted small">Highest Season Rating</div>
+                                        <div className="h5">{careerStats.highestSeasonRating?.toFixed(2)}</div>
+                                    </div>
+                                    <div className="col-6 col-md-3 mb-3">
+                                        <div className="text-muted small">Longest Goal Streak</div>
+                                        <div className="h5">{careerStats.longestGoalStreak} matches</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                )}
 
-                    <div className="career-records" style={{ marginTop: '30px' }}>
-                        <h3>Career Records</h3>
-                        <div className="records-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                            <div className="record-item">
-                                <strong>Most Goals in Season: </strong>
-                                <span>{careerStats.mostGoalsInSeason}</span>
-                            </div>
-                            <div className="record-item">
-                                <strong>Most Assists in Season: </strong>
-                                <span>{careerStats.mostAssistsInSeason}</span>
-                            </div>
-                            <div className="record-item">
-                                <strong>Highest Season Rating: </strong>
-                                <span>{careerStats.highestSeasonRating?.toFixed(2)}</span>
-                            </div>
-                            <div className="record-item">
-                                <strong>Longest Goal Streak: </strong>
-                                <span>{careerStats.longestGoalStreak} matches</span>
+                {selectedTab === 'seasons' && (
+                    <div className="seasons-tab card">
+                        <div className="card-body p-0">
+                            <div className="table-responsive">
+                                <table className="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Season</th>
+                                            <th>Club</th>
+                                            <th>League</th>
+                                            <th>Matches</th>
+                                            <th>Goals</th>
+                                            <th>Assists</th>
+                                            <th>Rating</th>
+                                            <th>Cards</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {seasonStats.map(stat => (
+                                            <tr key={stat.id}>
+                                                <td>{stat.season.startYear}/{stat.season.endYear}</td>
+                                                <td>{stat.club?.name}</td>
+                                                <td>{stat.league?.name}</td>
+                                                <td>{stat.matchesPlayed}</td>
+                                                <td>{stat.goals}</td>
+                                                <td>{stat.assists}</td>
+                                                <td>{stat.averageRating?.toFixed(2)}</td>
+                                                <td>
+                                                    <span className="me-2" title="Yellow Cards">🟨 {stat.yellowCards}</span>
+                                                    <span className="text-danger" title="Red Cards">🟥 {stat.redCards}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {selectedTab === 'seasons' && (
-                <div className="seasons-tab">
-                    <table className="seasons-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid #ddd' }}>
-                                <th style={thStyle}>Season</th>
-                                <th style={thStyle}>Club</th>
-                                <th style={thStyle}>League</th>
-                                <th style={thStyle}>Matches</th>
-                                <th style={thStyle}>Goals</th>
-                                <th style={thStyle}>Assists</th>
-                                <th style={thStyle}>Rating</th>
-                                <th style={thStyle}>Cards</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {seasonStats.map(stat => (
-                                <tr key={stat.id} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={tdStyle}>{stat.season.startYear}/{stat.season.endYear}</td>
-                                    <td style={tdStyle}>{stat.club?.name}</td>
-                                    <td style={tdStyle}>{stat.league?.name}</td>
-                                    <td style={tdStyle}>{stat.matchesPlayed}</td>
-                                    <td style={tdStyle}>{stat.goals}</td>
-                                    <td style={tdStyle}>{stat.assists}</td>
-                                    <td style={tdStyle}>{stat.averageRating?.toFixed(2)}</td>
-                                    <td style={tdStyle}>
-                                        <span style={{ color: '#fbc02d', marginRight: '5px' }}>🟨{stat.yellowCards}</span>
-                                        <span style={{ color: '#d32f2f' }}>🟥{stat.redCards}</span>
-                                    </td>
-                                </tr>
+                {selectedTab === 'achievements' && (
+                    <div className="achievements-tab">
+                        <div className="row">
+                            {achievements.map(achievement => (
+                                <div key={achievement.id} className="col-12 col-md-6 col-lg-4 mb-4">
+                                    <div className="card h-100">
+                                        <div className="card-body d-flex align-items-start">
+                                            <div className="achievement-icon me-3" style={{ fontSize: '2rem' }}>
+                                                {getAchievementIcon(achievement.type)}
+                                            </div>
+                                            <div>
+                                                <h5 className="card-title mb-1">{achievement.title}</h5>
+                                                <p className="card-text text-muted small mb-2">{achievement.description}</p>
+                                                <div className="text-dim small">
+                                                    <div>{new Date(achievement.dateAchieved).toLocaleDateString()}</div>
+                                                    <div>{achievement.club?.name}</div>
+                                                    {achievement.season && <div>{achievement.season.startYear}/{achievement.season.endYear}</div>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-
-            {selectedTab === 'achievements' && (
-                <div className="achievements-tab">
-                    <div className="achievements-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
-                        {achievements.map(achievement => (
-                            <div key={achievement.id} className="achievement-card" style={cardStyle}>
-                                <div className="achievement-icon" style={{ fontSize: '2em', marginBottom: '10px' }}>
-                                    {getAchievementIcon(achievement.type)}
-                                </div>
-                                <div className="achievement-info">
-                                    <h4 style={{ margin: '0 0 5px 0' }}>{achievement.title}</h4>
-                                    <p style={{ margin: '0 0 10px 0', fontSize: '0.9em', color: '#666' }}>{achievement.description}</p>
-                                    <div className="achievement-details" style={{ fontSize: '0.8em', color: '#888' }}>
-                                        <div>{new Date(achievement.dateAchieved).toLocaleDateString()}</div>
-                                        <div>{achievement.club?.name}</div>
-                                        {achievement.season && <div>{achievement.season.startYear}/{achievement.season.endYear}</div>}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {selectedTab === 'transfers' && (
-                <div className="transfers-tab">
-                    <div className="transfers-timeline">
-                        {transferHistory.map(transfer => (
-                            <div key={transfer.id} className="transfer-item" style={{ ...cardStyle, marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-                                <div className="transfer-date" style={{ width: '100px', fontWeight: 'bold' }}>
-                                    {new Date(transfer.transferDate).toLocaleDateString()}
-                                </div>
-                                <div className="transfer-details" style={{ flex: 1 }}>
-                                    <div className="transfer-clubs" style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                        <span className="from-club">{transfer.fromClub?.name || 'Youth Academy'}</span>
-                                        <span className="transfer-arrow" style={{ margin: '0 10px' }}>→</span>
-                                        <span className="to-club">{transfer.toClub?.name}</span>
+                {selectedTab === 'transfers' && (
+                    <div className="transfers-tab">
+                        <div className="card">
+                            <div className="card-body">
+                                {transferHistory.map((transfer, index) => (
+                                    <div key={transfer.id} className={`d-flex align-items-center py-3 ${index !== transferHistory.length - 1 ? 'border-bottom' : ''}`} style={{ borderColor: 'rgba(161, 85, 255, 0.1)' }}>
+                                        <div className="me-4" style={{ minWidth: '100px', fontWeight: 'bold' }}>
+                                            {new Date(transfer.transferDate).toLocaleDateString()}
+                                        </div>
+                                        <div className="flex-grow-1">
+                                            <div className="d-flex align-items-center mb-1">
+                                                <span className="text-primary fw-bold">{transfer.fromClub?.name || 'Youth Academy'}</span>
+                                                <span className="mx-3 text-muted">→</span>
+                                                <span className="text-primary fw-bold">{transfer.toClub?.name}</span>
+                                            </div>
+                                            <div className="d-flex gap-3 small text-muted">
+                                                <span style={{ color: getTransferTypeColor(transfer.transferType), fontWeight: 'bold' }}>
+                                                    {transfer.transferType?.replace('_', ' ')}
+                                                </span>
+                                                {transfer.transferFee > 0 && (
+                                                    <span>
+                                                        ${transfer.transferFee.toLocaleString()}
+                                                    </span>
+                                                )}
+                                                <span>
+                                                    Season: {transfer.season?.startYear}/{transfer.season?.endYear}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="transfer-info" style={{ display: 'flex', gap: '15px', fontSize: '0.9em' }}>
-                                        <span
-                                            className="transfer-type"
-                                            style={{ color: getTransferTypeColor(transfer.transferType), fontWeight: 'bold' }}
-                                        >
-                                            {transfer.transferType?.replace('_', ' ')}
-                                        </span>
-                                        {transfer.transferFee > 0 && (
-                                            <span className="transfer-fee">
-                                                ${transfer.transferFee.toLocaleString()}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="transfer-season" style={{ fontSize: '0.8em', color: '#888', marginTop: '5px' }}>
-                                        Season: {transfer.season?.startYear}/{transfer.season?.endYear}
-                                    </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
-};
-
-const statCardStyle = {
-    padding: '15px',
-    backgroundColor: 'white',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    borderRadius: '8px',
-    textAlign: 'center'
-};
-
-const cardStyle = {
-    padding: '15px',
-    backgroundColor: 'white',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    borderRadius: '8px'
-};
-
-const thStyle = {
-    textAlign: 'left',
-    padding: '10px'
-};
-
-const tdStyle = {
-    padding: '10px'
 };
 
 export default PlayerHistory;
