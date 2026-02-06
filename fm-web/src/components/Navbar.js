@@ -48,11 +48,11 @@ const Navbar = ({ onToggleMenu }) => {
   useEffect(() => {
       if (!user) return;
 
-      const socket = new SockJS(API_BASE_URL + '/ws/live-match');
+      const socket = new SockJS(API_BASE_URL + '/ws/live-match?token=' + user.accessToken);
       stompClient.current = new Client({
           webSocketFactory: () => socket,
           onConnect: () => {
-              stompClient.current.subscribe('/topic/user/' + user.id + '/notifications', (message) => {
+              stompClient.current.subscribe('/user/queue/notifications', (message) => {
                   const notif = JSON.parse(message.body);
                   if (notif.type === 'MATCH_STARTED') {
                       setNotification(notif);
