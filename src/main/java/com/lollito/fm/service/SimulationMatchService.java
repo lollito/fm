@@ -107,9 +107,31 @@ public class SimulationMatchService {
 		return simulate(match, forcedResult);
 	}
 	
+	/**
+	 * Simulates the match logic step-by-step.
+	 *
+	 * The algorithm follows these phases:
+	 * 1. Initialization: Determine number of actions (15-25) and initial possession.
+	 * 2. Action Loop: Iterate through each action to determine the outcome.
+	 *    - Substitutions: Check for random substitutions at intervals.
+	 *    - Possession Phase: The team with the ball attempts to build up play.
+	 *    - Midfield Battle: Determine if the attack advances based on team stats + luck.
+	 *      - Base probability to advance is increased to reduce stalemate (draws).
+	 *    - Finishing Phase: If the attack reaches the final third, a shot is taken.
+	 *      - Scoring probability is weighed by Scorer vs Goalkeeper stats.
+	 *      - Probabilities adjusted to favour goals slightly more.
+	 *    - Defensive Phase: If the attack fails, the defense might tackle or commit a foul.
+	 * 3. Condition Update: Decrease player condition based on stamina.
+	 *    - Formula updated to be less punishing: Base decay + Stamina factor.
+	 * 4. Injury Check: Check for injuries after the match intensity.
+	 *
+	 * @param match The match to simulate.
+	 * @return An array containing [homeScore, awayScore].
+	 */
 	private int[] playMatch(Match match){
 //		Let's say you have an "action" every 5 minutes of the game, so 90/5 = 18 actions. To make it more realistic you can choose random number like:
-		Integer numberOfActions = RandomUtils.randomValue(12,22);
+		// INCREASED ACTIONS (15-25) to allow more scoring opportunities and reduce 0-0 draws.
+		Integer numberOfActions = RandomUtils.randomValue(15,25);
 		logger.debug("numberOfActions {}", numberOfActions);
 		
 		Integer homeScore = 0;
@@ -206,7 +228,9 @@ public class SimulationMatchService {
 				List<Player> aPlayers = awayPlayers.get(inversePosition.get(playerPosition));
 				int averageDiff = (playerService.getOffenceAverage(hPlayers) + (hPlayers == null ? 0 : hPlayers.size())) - (playerService.getDefenceAverage(aPlayers) + (aPlayers == null ? 0 : aPlayers.size()));
 				logger.debug("home average diff {}", averageDiff);
-				if((averageDiff > 0 && RandomUtils.randomPercentage(60 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(40 + averageDiff + luck))) {
+
+				// IMPROVED ADVANCEMENT CHANCE: 65% (was 60) and 45% (was 40) base chance.
+				if((averageDiff > 0 && RandomUtils.randomPercentage(65 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(45 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
 						logger.info("home ball -> {}", playerPosition.getvalue());
@@ -221,7 +245,8 @@ public class SimulationMatchService {
 						if(scorer.getScoringAverage()  >= goalKeeping) {
 							Integer diff = scorer.getScoringAverage() - goalKeeping;
 							logger.debug("diff > {}", diff);
-							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+							// IMPROVED SCORING CHANCE: 65% (was 60) base chance if Scorer is better.
+							if(RandomUtils.randomPercentage(65 + (diff / 2))) {
 								homeScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
@@ -244,7 +269,8 @@ public class SimulationMatchService {
 						} else {
 							Integer diff = goalKeeping - scorer.getScoringAverage();
 							logger.debug("diff < {}", diff);
-							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+							// DECREASED MISS CHANCE: 55% (was 60) base chance to miss if GK is better.
+							if(RandomUtils.randomPercentage(55 + (diff / 2))) {
 								homeFormation.setHaveBall(false);
 								awayFormation.setHaveBall(true);
 								playerPosition = inversePosition.get(playerPosition);
@@ -378,7 +404,9 @@ public class SimulationMatchService {
 				List<Player> hPlayers = homePlayers.get(inversePosition.get(playerPosition));
 				int averageDiff = (playerService.getOffenceAverage(aPlayers) + (aPlayers == null ? 0 : aPlayers.size())) - (playerService.getDefenceAverage(hPlayers) + (hPlayers == null ? 0 : hPlayers.size()));
 				logger.debug("away averageDiff {}", averageDiff);
-				if((averageDiff > 0 && RandomUtils.randomPercentage(60 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(40 + averageDiff + luck))) {
+
+				// IMPROVED ADVANCEMENT CHANCE
+				if((averageDiff > 0 && RandomUtils.randomPercentage(65 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(45 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
 						logger.info("away ball -> {}", playerPosition.getvalue());
@@ -391,7 +419,8 @@ public class SimulationMatchService {
 						if(scorer.getScoringAverage()  >= goalKeeping) {
 							Integer diff = scorer.getScoringAverage() - goalKeeping;
 							logger.debug("diff > {}", diff);
-							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+							// IMPROVED SCORING CHANCE
+							if(RandomUtils.randomPercentage(65 + (diff / 2))) {
 								awayScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
@@ -414,7 +443,8 @@ public class SimulationMatchService {
 						} else {
 							Integer diff = goalKeeping - scorer.getScoringAverage();
 							logger.debug("diff < {}", diff);
-							if(RandomUtils.randomPercentage(60 + (diff / 2))) {
+							// DECREASED MISS CHANCE
+							if(RandomUtils.randomPercentage(55 + (diff / 2))) {
 								homeFormation.setHaveBall(true);
 								awayFormation.setHaveBall(false);
 								playerPosition = inversePosition.get(playerPosition);
@@ -524,12 +554,17 @@ public class SimulationMatchService {
 					}
 				}
 			}
+
+			// NEW CONDITION DECAY LOGIC
+			// Adjusted formula to be less aggressive.
+			// Old: 5 - (5 * stamina/100) -> linear 0 to 5 drop per action.
+			// New: 0.5 + (1.5 * (100-stamina)/100) -> 0.5 to 2.0 drop per action.
 			for(Player player : homeFormation.getPlayers()) {
-	        	double d = 5 - (5 * player.getStamina()/100 );
+			double d = 0.5 + (1.5 * (100 - player.getStamina()) / 100.0);
 	        	player.decrementCondition(d);
 	        }
 			for(Player player : awayFormation.getPlayers()) {
-				double d = 5 - (5 * player.getStamina()/100 );
+				double d = 0.5 + (1.5 * (100 - player.getStamina()) / 100.0);
 	        	player.decrementCondition(d);
 	        }
 		}
