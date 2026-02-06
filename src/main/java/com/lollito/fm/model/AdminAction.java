@@ -13,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -39,6 +41,7 @@ public class AdminAction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_user_id")
     @ToString.Exclude
+    @JsonIgnore
     private User adminUser;
 
     @Enumerated(EnumType.STRING)
