@@ -27,4 +27,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
 	@Query("SELECT m FROM Match m JOIN FETCH m.home h LEFT JOIN FETCH h.stadium JOIN FETCH m.away a JOIN FETCH m.round r JOIN FETCH r.season s JOIN FETCH s.league l WHERE m.finish = false AND (m.home.id = :clubId OR m.away.id = :clubId) ORDER BY m.date ASC")
 	List<Match> findUpcomingMatchesByClub(@Param("clubId") Long clubId);
+
+	@Query("SELECT m FROM Match m JOIN FETCH m.home JOIN FETCH m.away WHERE m.round.id = :roundId ORDER BY m.date ASC")
+	List<Match> findByRoundIdWithClubs(@Param("roundId") Long roundId);
 }
