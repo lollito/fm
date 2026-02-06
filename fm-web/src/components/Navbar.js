@@ -1,9 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import '../styles/Navbar.css';
 
 const Navbar = ({ onToggleMenu }) => {
   const { user, logout } = useContext(AuthContext);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const moneyFormat = (labelValue) => {
     if (!labelValue) return '0';
@@ -16,27 +19,100 @@ const Navbar = ({ onToggleMenu }) => {
       : Math.abs(Number(labelValue));
   };
 
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <nav className="navbar">
-      <button className="btn btn-primary" onClick={onToggleMenu}>
-        <i className="fas fa-bars"></i>
-      </button>
+      {/* Left Section: Toggle & Title (Optional) */}
+      <div className="navbar-left">
+        <button className="btn btn-primary" onClick={onToggleMenu}>
+          <i className="fas fa-bars"></i>
+        </button>
+      </div>
 
-      <div style={{ marginLeft: '20px', display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-        <div className="progress" style={{ width: '150px' }}>
-          <div className="progress-bar" style={{ width: (user?.levelProgress || 0) + '%' }}>
-            Lvl. {user?.level || 0}
+      {/* Center Section: Search */}
+      <div className="navbar-search">
+        <i className="fas fa-search"></i>
+        <input type="text" placeholder="Search players, clubs, matches..." />
+      </div>
+
+      {/* Right Section: Status & User */}
+      <div className="navbar-right">
+
+        {/* Level Indicator */}
+        <div className="status-item level-display">
+          <div className="level-text">Level {user?.level || 1}</div>
+          <div className="progress-container">
+            <div
+              className="progress-bar-fill"
+              style={{ width: `${user?.levelProgress || 0}%` }}
+            ></div>
           </div>
         </div>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
-          <div style={{ color: '#4caf50', marginRight: '20px', fontWeight: 'bold' }}>
-            {moneyFormat(user?.club?.finance?.balance)} <i className="fas fa-money-bill-alt"></i>
+        {/* Money Indicator */}
+        <div className="status-item money-display">
+          <i className="fas fa-coins"></i>
+          <span>{moneyFormat(user?.club?.finance?.balance)}</span>
+        </div>
+
+        {/* Notifications */}
+        <button className="icon-btn">
+          <i className="fas fa-bell"></i>
+          <span className="badge">3</span>
+        </button>
+
+        {/* User Profile Dropdown */}
+        <div className="user-dropdown" ref={dropdownRef}>
+          <div
+            className="user-info"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            <div className="avatar">
+              {getInitials(user?.username)}
+            </div>
+            <span className="username">{user?.username}</span>
+            <i className={`fas fa-chevron-${showDropdown ? 'up' : 'down'}`} style={{ fontSize: '0.8rem', opacity: 0.7 }}></i>
           </div>
-          <div style={{ marginRight: '20px' }}>{user?.username}</div>
-          <button className="btn" style={{ backgroundColor: 'transparent', color: 'var(--text-color)' }} onClick={logout}>
-            <i className="fas fa-sign-out-alt"></i> Logout
-          </button>
+
+          {showDropdown && (
+            <div className="dropdown-menu">
+              <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                <i className="fas fa-user"></i> Profile
+              </Link>
+              <Link to="/settings" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                <i className="fas fa-cog"></i> Settings
+              </Link>
+              <div className="dropdown-divider"></div>
+              <button
+                className="dropdown-item"
+                onClick={() => {
+                  logout();
+                  setShowDropdown(false);
+                }}
+                style={{ color: 'var(--danger)' }}
+              >
+                <i className="fas fa-sign-out-alt"></i> Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
