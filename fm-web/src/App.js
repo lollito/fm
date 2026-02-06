@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import ToastContainer from './components/ToastContainer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,10 +32,12 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
+    <ToastProvider>
+      <AuthProvider>
+        <Router>
+          <ToastContainer />
+          <Routes>
+            <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/team" element={<PrivateRoute><Team /></PrivateRoute>} />
@@ -56,7 +60,8 @@ function App() {
           <Route path="/player/:id" element={<PrivateRoute><Player /></PrivateRoute>} />
         </Routes>
       </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
+import { useToast } from '../context/ToastContext';
 
 const PLAYER_ROLES = {
   GOALKEEPER: 0,
@@ -22,6 +23,7 @@ const ROLE_NAMES = {
 };
 
 const Formation = () => {
+  const { showToast } = useToast();
   const [players, setPlayers] = useState([]);
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
   const [modules, setModules] = useState([]);
@@ -131,15 +133,15 @@ const Formation = () => {
 
   const saveFormation = async () => {
     if (!formation.moduleId) {
-        alert('Please select a module.');
+        showToast('Please select a module.', 'warning');
         return;
     }
     if (!formation.mentality) {
-        alert('Please select a mentality.');
+        showToast('Please select a mentality.', 'warning');
         return;
     }
     if (formation.playersId.some(id => id === null)) {
-        alert('You must fill all 11 positions.');
+        showToast('You must fill all 11 positions.', 'warning');
         return;
     }
     const params = new URLSearchParams();
@@ -149,11 +151,11 @@ const Formation = () => {
 
     try {
         await api.post('/formation/', params);
-        alert('Formation saved');
+        showToast('Formation saved', 'success');
         fetchFormation(modules);
         fetchPlayers();
     } catch (error) {
-        alert('Error saving formation: ' + (error.response?.data?.message || error.message));
+        showToast('Error saving formation: ' + (error.response?.data?.message || error.message), 'error');
     }
   };
 
@@ -163,7 +165,7 @@ const Formation = () => {
         updateFormationState(res.data, modules);
         await fetchPlayers();
     } catch (error) {
-        alert('Error in auto select: ' + (error.response?.data?.message || error.message));
+        showToast('Error in auto select: ' + (error.response?.data?.message || error.message), 'error');
     }
   };
 

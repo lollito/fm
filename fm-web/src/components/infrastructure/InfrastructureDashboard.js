@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getInfrastructureOverview, getAvailableUpgrades, startUpgrade } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 import '../../styles/InfrastructureDashboard.css';
 
 const InfrastructureDashboard = ({ clubId }) => {
@@ -8,6 +9,7 @@ const InfrastructureDashboard = ({ clubId }) => {
     const [availableUpgrades, setAvailableUpgrades] = useState([]);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (clubId) {
@@ -73,9 +75,10 @@ const InfrastructureDashboard = ({ clubId }) => {
             await loadInfrastructureData();
             setAvailableUpgrades([]);
             setSelectedFacility(null);
+            showToast('Upgrade started successfully', 'success');
         } catch (error) {
             console.error('Error starting upgrade:', error);
-            alert('Failed to start upgrade. Check funds or try again.');
+            showToast('Failed to start upgrade. Check funds or try again.', 'error');
         } finally {
             setProcessing(false);
         }
