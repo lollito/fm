@@ -213,3 +213,41 @@
   background-color: rgba(161, 85, 255, 0.1);
   margin: 4px 0;
 }
+
+.notification-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--primary);
+  border-left: 4px solid var(--primary);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  cursor: pointer;
+  animation: slideIn 0.3s ease;
+  min-width: 300px;
+}
+
+.notification-toast:hover {
+  background-color: rgba(161, 85, 255, 0.1);
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.notification-content i {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
