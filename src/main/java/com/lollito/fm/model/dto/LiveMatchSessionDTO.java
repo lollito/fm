@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LiveMatchSessionDTO {
-    private Long id;
+    private String id;
     private Match match; // Or MatchDTO if it exists, but task uses Match
     private MatchPhase currentPhase;
     private Integer currentMinute;
