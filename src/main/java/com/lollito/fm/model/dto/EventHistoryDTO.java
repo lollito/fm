@@ -15,4 +15,7 @@ public class EventHistoryDTO {
     private String event;
     private Integer minute;
     private Event type;
+    private Integer homeScore;
+    private Integer awayScore;
+    private String eventType;
 }

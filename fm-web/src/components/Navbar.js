@@ -1,12 +1,18 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { API_BASE_URL } from '../services/api';
 import '../styles/Navbar.css';
 
 const Navbar = ({ onToggleMenu }) => {
   const { user, logout } = useContext(AuthContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const [notification, setNotification] = useState(null);
+  const navigate = useNavigate();
+  const stompClient = useRef(null);
 
   const moneyFormat = (labelValue) => {
     if (!labelValue) return '0';
@@ -37,6 +43,31 @@ const Navbar = ({ onToggleMenu }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // WebSocket for Notifications
+  useEffect(() => {
+      if (!user) return;
+
+      const socket = new SockJS(API_BASE_URL + '/ws/live-match');
+      stompClient.current = new Client({
+          webSocketFactory: () => socket,
+          onConnect: () => {
+              stompClient.current.subscribe('/user/queue/notifications', (message) => {
+                  const notif = JSON.parse(message.body);
+                  if (notif.type === 'MATCH_STARTED') {
+                      setNotification(notif);
+                      setTimeout(() => setNotification(null), 10000); // Hide after 10s
+                  }
+              });
+          },
+          onStompError: (frame) => console.error('STOMP error:', frame)
+      });
+      stompClient.current.activate();
+
+      return () => {
+          if (stompClient.current) stompClient.current.deactivate();
+      };
+  }, [user]);
 
   return (
     <nav className="navbar">
@@ -115,6 +146,19 @@ const Navbar = ({ onToggleMenu }) => {
           )}
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className="notification-toast" onClick={() => {
+            navigate(`/match/live/${notification.matchId}`);
+            setNotification(null);
+        }}>
+            <div className="notification-content">
+                <i className="fas fa-futbol"></i>
+                <span>{notification.message}</span>
+            </div>
+        </div>
+      )}
     </nav>
   );
 };

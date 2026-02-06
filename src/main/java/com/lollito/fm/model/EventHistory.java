@@ -45,6 +45,9 @@ public class EventHistory implements Serializable{
 
 	private Event type;
 	
+	private Integer homeScore;
+	private Integer awayScore;
+
 	public EventHistory(String event, Integer minute) {
 		this();
 		this.event = event;
@@ -56,5 +59,14 @@ public class EventHistory implements Serializable{
 		this.event = event;
 		this.minute = minute;
 		this.type = type;
+	}
+
+	public EventHistory(String event, Integer minute, Event type, Integer homeScore, Integer awayScore) {
+		this();
+		this.event = event;
+		this.minute = minute;
+		this.type = type;
+		this.homeScore = homeScore;
+		this.awayScore = awayScore;
 	}
 }
