@@ -2,6 +2,8 @@ package com.lollito.fm.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,6 +38,7 @@ public class Injury {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     @ToString.Exclude
+    @JsonIgnore
     private Player player;
 
     @Enumerated(EnumType.STRING)

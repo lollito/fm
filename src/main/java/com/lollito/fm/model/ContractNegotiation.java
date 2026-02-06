@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,6 +38,7 @@ public class ContractNegotiation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
+    @JsonIgnore
     private Player player;
 
     @ManyToOne(fetch = FetchType.LAZY)

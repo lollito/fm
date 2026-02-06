@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,6 +60,7 @@ public class Season implements Serializable{
 	@OneToMany(mappedBy = "season", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@Builder.Default
 	@ToString.Exclude
+	@JsonIgnore
 	private List<Round> rounds = new ArrayList<>();
 	
 	@ManyToOne( fetch = FetchType.LAZY  )
@@ -69,6 +72,7 @@ public class Season implements Serializable{
 	@OrderBy("points desc")
 	@Builder.Default
 	@ToString.Exclude
+	@JsonIgnore
 	private List<Ranking> rankingLines = new ArrayList<>();
 	
 	@Builder.Default
