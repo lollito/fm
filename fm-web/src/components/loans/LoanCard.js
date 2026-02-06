@@ -1,7 +1,9 @@
 import React from 'react';
 import { recallPlayerFromLoan, activatePurchaseOption, getLoanReviews } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 
 const LoanCard = ({ loan, type, onUpdate }) => {
+    const { showToast } = useToast();
     const isOutgoing = type === 'outgoing';
     const otherClubName = isOutgoing ? loan.loanClubName : loan.parentClubName;
 
@@ -10,9 +12,10 @@ const LoanCard = ({ loan, type, onUpdate }) => {
             try {
                 await recallPlayerFromLoan(loan.id, { reason: "Tactical decision" });
                 onUpdate();
+                showToast("Player recalled successfully", 'success');
             } catch (error) {
                 console.error("Error recalling player", error);
-                alert("Failed to recall player");
+                showToast("Failed to recall player", 'error');
             }
         }
     };
@@ -22,9 +25,10 @@ const LoanCard = ({ loan, type, onUpdate }) => {
             try {
                 await activatePurchaseOption(loan.id);
                 onUpdate();
+                showToast("Player purchased successfully", 'success');
             } catch (error) {
                 console.error("Error purchasing player", error);
-                alert("Failed to purchase player");
+                showToast("Failed to purchase player", 'error');
             }
         }
     };
@@ -82,7 +86,7 @@ const LoanCard = ({ loan, type, onUpdate }) => {
                         Buy (${loan.optionToBuyPrice?.toLocaleString()})
                     </button>
                 )}
-                <button className="review-btn" onClick={() => alert("Reviews not implemented yet")} style={{ padding: '5px 10px', cursor: 'pointer', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '4px' }}>
+                <button className="review-btn" onClick={() => showToast("Reviews not implemented yet", 'info')} style={{ padding: '5px 10px', cursor: 'pointer', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '4px' }}>
                     View Reviews
                 </button>
             </div>

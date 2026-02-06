@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
 
 const Transfers = () => {
   const { user } = useContext(AuthContext);
+  const { showToast } = useToast();
   const [playersOnSale, setPlayersOnSale] = useState([]);
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(playersOnSale);
 
@@ -16,10 +18,10 @@ const Transfers = () => {
   const buyPlayer = async (playerId) => {
     try {
       await api.post('/player/' + playerId + '/buy');
-      alert('Player bought');
+      showToast('Player bought', 'success');
       setPlayersOnSale(playersOnSale.filter(p => p.id !== playerId));
     } catch (e) {
-      alert('Error buying player');
+      showToast('Error buying player', 'error');
     }
   };
 
