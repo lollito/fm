@@ -7,11 +7,14 @@ import InjuryList from '../components/InjuryList';
 import TrainingPlan from '../components/TrainingPlan';
 import TrainingHistory from '../components/TrainingHistory';
 import StaffManagement from '../components/StaffManagement';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const Team = () => {
   const [players, setPlayers] = useState([]);
   const [teamId, setTeamId] = useState(null);
   const [activeTab, setActiveTab] = useState('squad');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -44,12 +47,20 @@ const Team = () => {
     fetchClub();
   }, [clubId]);
 
-  const putOnSale = async (playerId) => {
+  const handlePutOnSale = (player) => {
+    setSelectedPlayer(player);
+    setShowModal(true);
+  };
+
+  const confirmPutOnSale = async () => {
+    if (!selectedPlayer) return;
     try {
-      await api.post('/player/' + playerId + '/onSale');
-      alert('Player put on sale');
+      await api.post('/player/' + selectedPlayer.id + '/onSale');
+      setShowModal(false);
+      setSelectedPlayer(null);
     } catch (error) {
-      alert('Error putting player on sale');
+      console.error('Error putting player on sale', error);
+      setShowModal(false);
     }
   };
 
@@ -116,8 +127,8 @@ const Team = () => {
                 {sortedPlayers.map(p => (
                     <tr key={p.id}>
                     <td>
-                        <button className="btn btn-link p-0" onClick={() => putOnSale(p.id)}>
-                        <i className="fa fa-exchange-alt" style={{ color: '#8c2457' }}></i>
+                        <button className="btn btn-icon" onClick={() => handlePutOnSale(p)} title="Put on sale">
+                            <i className="fa fa-exchange-alt"></i>
                         </button>
                     </td>
                     <td>{p.role}</td>
@@ -155,6 +166,14 @@ const Team = () => {
       {!teamId && activeTab !== 'squad' && activeTab !== 'staff' && (
           <div>Loading team data...</div>
       )}
+
+      <ConfirmationModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={confirmPutOnSale}
+        title="Confirm Transfer List"
+        message={`Are you sure you want to put ${selectedPlayer?.name} ${selectedPlayer?.surname} on the transfer list?`}
+      />
 
     </Layout>
   );
