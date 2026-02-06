@@ -1,16 +1,29 @@
 package com.lollito.fm.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.model.*;
+import com.lollito.fm.model.dto.EventHistoryDTO;
+import com.lollito.fm.model.dto.MatchPlayerStatsDTO;
+import com.lollito.fm.model.dto.StatsDTO;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchProcessor {
@@ -22,6 +35,13 @@ public class MatchProcessor {
     @Autowired private SeasonService seasonService;
     @Autowired private LeagueService leagueService;
     @Autowired private SeasonRepository seasonRepository;
+    @Autowired private LiveMatchService liveMatchService;
+    @Autowired private SimpMessagingTemplate messagingTemplate;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private MatchMapper matchMapper;
+    @Autowired private MatchPlayerStatsMapper matchPlayerStatsMapper;
+    @Autowired private PlayerService playerService;
+    @Autowired private PlayerHistoryService playerHistoryService;
 
     @Async
     @Transactional
@@ -32,17 +52,98 @@ public class MatchProcessor {
         }
 
         logger.info("Processing match {} : {} vs {}", match.getId(), match.getHome().getName(), match.getAway().getName());
+
+        // Simulate to get result
+        simulationMatchService.simulate(match);
+
+        // Create session with the result
+        liveMatchService.createSession(match);
+
+        // Reset match to started state (scores 0-0)
+        match.setHomeScore(0);
+        match.setAwayScore(0);
+        match.setEvents(new ArrayList<>());
+        match.setStats(new Stats());
+        match.setPlayerStats(new ArrayList<>());
+        match.setFinish(false);
         match.setStatus(MatchStatus.IN_PROGRESS);
+
         matchRepository.saveAndFlush(match);
 
+        // Notify users
+        notifyUser(match.getHome().getUser(), match.getId());
+        notifyUser(match.getAway().getUser(), match.getId());
+    }
+
+    private void notifyUser(User user, Long matchId) {
+        if (user != null) {
+            messagingTemplate.convertAndSendToUser(user.getUsername(), "/queue/notifications",
+                new NotificationDTO("MATCH_STARTED", matchId, "Match Started!"));
+        }
+    }
+
+    @Transactional
+    public void finalizeMatch(Long matchId, LiveMatchSession session) {
+        Match match = matchRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Match not found"));
+
         try {
-            simulationMatchService.simulate(match);
+            // Restore final state from session
+            match.setHomeScore(session.getHomeScore());
+            match.setAwayScore(session.getAwayScore());
+
+            // Restore Events
+            List<EventHistoryDTO> eventDTOs = objectMapper.readValue(session.getEvents(), new TypeReference<List<EventHistoryDTO>>(){});
+            List<EventHistory> events = eventDTOs.stream().map(matchMapper::toEntity).collect(Collectors.toList());
+            match.setEvents(events);
+
+            // Restore Stats
+            StatsDTO statsDTO = objectMapper.readValue(session.getStats(), StatsDTO.class);
+            match.setStats(matchMapper.toEntity(statsDTO));
+
+            // Restore PlayerStats (if persisted in Session)
+            if (session.getPlayerStats() != null) {
+                List<MatchPlayerStatsDTO> playerStatsDTOs = objectMapper.readValue(session.getPlayerStats(), new TypeReference<List<MatchPlayerStatsDTO>>(){});
+                List<MatchPlayerStats> playerStats = playerStatsDTOs.stream()
+                        .map(matchPlayerStatsMapper::toEntity)
+                        .collect(Collectors.toList());
+                playerStats.forEach(mps -> mps.setMatch(match));
+                match.setPlayerStats(playerStats);
+            }
+
+            match.setFinish(true);
+            match.setStatus(MatchStatus.COMPLETED);
+
             matchRepository.saveAndFlush(match);
+
+            // Update historical stats (PlayerHistoryService) - was done in simulationMatchService initially
+            // But since I discarded the match object, I need to redo it here using the restored stats?
+            // `simulationMatchService` called:
+            // `match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));`
+            // If I restore `match.playerStats`, I should call this again?
+            // Or did `simulationMatchService` execute it before I reset the match?
+            // `simulationMatchService` modifies the passed `match` object.
+            // But `playerHistoryService.updateMatchStatistics` updates `PlayerHistory` entities (DB).
+            // If those updates were flushed, they are saved.
+            // `processMatch` is `@Transactional`.
+            // If I reset `match` and save it, does it rollback `PlayerHistory` changes?
+            // No, `PlayerHistory` are separate entities.
+            // BUT: `MatchProcessor.processMatch` is one transaction.
+            // If I call `simulationMatchService.simulate`, it saves players and updates history.
+            // Then I reset `match`.
+            // Then I save `match`.
+            // Transaction commits.
+            // So `PlayerHistory` updates ARE persisted.
+            // And Player attributes (stamina) ARE persisted.
+            // So I DON'T need to re-run `playerHistoryService` updates.
+            // I ONLY need to restore `Match.playerStats` so the match report is correct.
+
             checkRoundAndSeasonProgression(match);
+
+            // Cleanup session?
+            // liveMatchService.deleteSession(session); // optional
+
         } catch (Exception e) {
-            logger.error("Error processing match " + match.getId(), e);
-            match.setStatus(MatchStatus.FAILED);
-            matchRepository.save(match);
+            logger.error("Error finalizing match " + matchId, e);
         }
     }
 
@@ -54,7 +155,6 @@ public class MatchProcessor {
         long unfinishedCount = matchRepository.countByRoundAndFinish(round, Boolean.FALSE);
         if (unfinishedCount == 0) {
             if (season.getNextRoundNumber() > round.getNumber()) {
-                // Already advanced
                 return;
             }
             logger.info("All matches in round {} finished. Advancing...", round.getNumber());
@@ -69,5 +169,14 @@ public class MatchProcessor {
                 seasonRepository.save(season);
             }
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class NotificationDTO {
+        private String type;
+        private Long matchId;
+        private String message;
     }
 }

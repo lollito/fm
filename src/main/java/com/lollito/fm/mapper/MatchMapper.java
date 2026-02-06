@@ -1,5 +1,6 @@
 package com.lollito.fm.mapper;
 
+import com.lollito.fm.model.Event;
 import com.lollito.fm.model.EventHistory;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Stats;
@@ -20,6 +21,24 @@ public interface MatchMapper {
     StatsDTO toDto(Stats stats);
     Stats toEntity(StatsDTO statsDTO);
 
+    @Mapping(target = "eventType", expression = "java(mapEventType(eventHistory.getType()))")
     EventHistoryDTO toDto(EventHistory eventHistory);
+
     EventHistory toEntity(EventHistoryDTO eventHistoryDTO);
+
+    default String mapEventType(Event event) {
+        if (event == null) return "NORMAL";
+        switch (event) {
+            case HAVE_SCORED: return "GOAL";
+            case HAVE_SCORED_FREE_KICK: return "GOAL";
+            case HAVE_CORNER: return "CORNER";
+            case COMMITS_FAUL: return "FOUL";
+            case YELLOW_CARD: return "YELLOW_CARD";
+            case RED_CARD: return "RED_CARD";
+            case SHOT_AND_MISSED: return "SHOT_OFF_TARGET";
+            case SUBSTITUTION: return "SUBSTITUTION";
+            case INJURY: return "INJURY";
+            default: return "NORMAL";
+        }
+    }
 }

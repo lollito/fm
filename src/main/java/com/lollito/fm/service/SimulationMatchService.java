@@ -231,7 +231,7 @@ public class SimulationMatchService {
 								awayFormation.setHaveBall(true);
 								stats.addHomeShot();
 								stats.addHomeOnTarget();
-								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED));
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
 								logger.info("home gol");
 							} else {
 								stats.addHomeShot();
@@ -261,7 +261,7 @@ public class SimulationMatchService {
 								awayFormation.setHaveBall(true);
 								stats.addHomeShot();
 								stats.addHomeOnTarget();
-								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED));
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
 								logger.info("home gol");
 							}
 						}
@@ -311,7 +311,7 @@ public class SimulationMatchService {
 									awayFormation.setHaveBall(true);
 									stats.addHomeShot();
 									stats.addHomeOnTarget();
-									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK));
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
 									logger.info("home gol free kick");
 								} else {
 									stats.addHomeShot();
@@ -341,7 +341,7 @@ public class SimulationMatchService {
 									awayFormation.setHaveBall(true);
 									stats.addHomeShot();
 									stats.addHomeOnTarget();
-									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK));
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
 									logger.info("home gol free kick");
 								}
 							}
@@ -401,7 +401,7 @@ public class SimulationMatchService {
 								awayFormation.setHaveBall(false);
 								stats.addAwayShot();
 								stats.addAwayOnTarget();
-								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute, Event.HAVE_SCORED));
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
 								logger.info("away gol");
 							} else {
 								stats.addAwayShot();
@@ -431,7 +431,7 @@ public class SimulationMatchService {
 								awayFormation.setHaveBall(false);
 								stats.addAwayShot();
 								stats.addAwayOnTarget();
-								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute, Event.HAVE_SCORED));
+								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
 								logger.info("away gol");
 							}
 						}
@@ -480,7 +480,7 @@ public class SimulationMatchService {
 									awayFormation.setHaveBall(false);
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
-									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK));
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
 									logger.info("away gol free kick");
 								} else {
 									stats.addAwayShot();
@@ -510,7 +510,7 @@ public class SimulationMatchService {
 									awayFormation.setHaveBall(false);
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
-									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK));
+									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
 									logger.info("away gol free kick");
 								}
 							}
