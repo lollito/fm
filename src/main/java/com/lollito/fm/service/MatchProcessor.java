@@ -95,12 +95,15 @@ public class MatchProcessor {
             // Restore Events
             List<EventHistoryDTO> eventDTOs = objectMapper.readValue(session.getEvents(), new TypeReference<List<EventHistoryDTO>>(){});
             List<EventHistory> events = eventDTOs.stream().map(matchMapper::toEntity).collect(Collectors.toList());
+            events.forEach(e -> e.setId(null));
             match.getEvents().clear();
             match.getEvents().addAll(events);
 
             // Restore Stats
             StatsDTO statsDTO = objectMapper.readValue(session.getStats(), StatsDTO.class);
-            match.setStats(matchMapper.toEntity(statsDTO));
+            Stats stats = matchMapper.toEntity(statsDTO);
+            stats.setId(null);
+            match.setStats(stats);
 
             // Restore PlayerStats (if persisted in Session)
             if (session.getPlayerStats() != null) {
@@ -108,15 +111,16 @@ public class MatchProcessor {
                 List<MatchPlayerStats> playerStats = playerStatsDTOs.stream()
                         .map(matchPlayerStatsMapper::toEntity)
                         .collect(Collectors.toList());
-                playerStats.forEach(mps -> mps.setMatch(match));
+                playerStats.forEach(mps -> {
+                    mps.setMatch(match);
+                    mps.setId(null);
+                });
                 match.getPlayerStats().clear();
                 match.getPlayerStats().addAll(playerStats);
             }
 
             match.setFinish(true);
             match.setStatus(MatchStatus.COMPLETED);
-
-            matchRepository.saveAndFlush(match);
 
             // Update historical stats (PlayerHistoryService) - was done in simulationMatchService initially
             // But since I discarded the match object, I need to redo it here using the restored stats?
