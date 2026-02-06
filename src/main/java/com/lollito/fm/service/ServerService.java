@@ -48,7 +48,6 @@ public class ServerService {
 		Server server = new Server();
 		server.setName(serverName);
 		server.setOwner(userService.getLoggedUser());
-//		LocalDate gameStartDate = LocalDate.of(2020, Month.AUGUST, 21);
 		LocalDateTime gameStartDate = LocalDateTime.now();
 		for(Country country : countryService.findByCreateLeague(true)){
 			League league = new League();
@@ -56,7 +55,6 @@ public class ServerService {
 			league.setCountry(country);
             league.setServer(server); // Explicitly set server
 			server.addLeague(league);
-			// Pass server instead of game (assuming ClubService signature will be updated)
 			List<Club> clubs = clubService.createClubs(server, league, 10);
 			league.setClubs(clubs);
 			league.setCurrentSeason(seasonService.create(league, gameStartDate));
@@ -64,7 +62,6 @@ public class ServerService {
 		
 		server.setCurrentDate(gameStartDate);
 		server = serverRepository.save(server);
-//		sessionBean.setGameId(game.getId());
 		return server;
 	}
 	
