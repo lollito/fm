@@ -251,3 +251,12 @@
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+.bouncing-ball {
+  animation: bounce 0.6s infinite alternate;
+}
