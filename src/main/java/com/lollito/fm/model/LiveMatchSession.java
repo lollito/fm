@@ -3,21 +3,16 @@ package com.lollito.fm.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "fm_live_match_session")
+@Document(collection = "fm_live_match_session")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,10 +22,9 @@ public class LiveMatchSession implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(unique = true)
+    @Indexed(unique = true)
     private Long matchId;
 
     private LocalDateTime startTime;
@@ -44,16 +38,10 @@ public class LiveMatchSession implements Serializable {
     @Builder.Default
     private Integer awayScore = 0;
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
     private String events; // JSON of List<EventHistoryDTO>
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
     private String stats; // JSON of StatsDTO
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
     private String playerStats; // JSON of List<MatchPlayerStatsDTO>
 
     @Builder.Default

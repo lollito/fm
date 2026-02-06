@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,9 +36,8 @@ public class MatchEvent {
     @JoinColumn(name = "match_id")
     private Match match;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "session_id")
-    private LiveMatchSession session;
+    @Column(name = "session_id")
+    private String sessionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
