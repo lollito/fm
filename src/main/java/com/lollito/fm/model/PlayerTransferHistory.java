@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -46,6 +48,7 @@ public class PlayerTransferHistory implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     @ToString.Exclude
+    @JsonIgnore
     private Player player;
 
     @ManyToOne(fetch = FetchType.LAZY)

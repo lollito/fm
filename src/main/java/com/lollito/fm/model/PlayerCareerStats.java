@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,6 +50,7 @@ public class PlayerCareerStats implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     @ToString.Exclude
+    @JsonIgnore
     private Player player;
 
     // Career totals

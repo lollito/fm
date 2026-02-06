@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -41,21 +42,25 @@ public class PlayerSeasonStats implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     @ToString.Exclude
+    @JsonIgnore
     private Player player;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "season_id")
     @ToString.Exclude
+    @JsonIgnore
     private Season season;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     @ToString.Exclude
+    @JsonIgnore
     private Club club;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "league_id")
     @ToString.Exclude
+    @JsonIgnore
     private League league;
 
     // Match statistics

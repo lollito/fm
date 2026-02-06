@@ -3,6 +3,8 @@ package com.lollito.fm.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,6 +47,7 @@ public class PlayerAchievement implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     @ToString.Exclude
+    @JsonIgnore
     private Player player;
 
     @Enumerated(EnumType.STRING)
