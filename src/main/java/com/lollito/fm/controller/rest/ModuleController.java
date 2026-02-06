@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.Module;
+import com.lollito.fm.model.dto.ModuleDTO;
 import com.lollito.fm.service.ModuleService;
+import com.lollito.fm.mapper.ModuleMapper;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/module")
@@ -20,10 +23,13 @@ public class ModuleController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired private ModuleService moduleService;
+	@Autowired private ModuleMapper moduleMapper;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<Module> module(Model model) {
-        return moduleService.findAll();
+    public List<ModuleDTO> module(Model model) {
+        return moduleService.findAll().stream()
+			.map(moduleMapper::toDto)
+			.collect(Collectors.toList());
     }
    
 }

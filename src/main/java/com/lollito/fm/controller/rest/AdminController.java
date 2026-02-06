@@ -14,6 +14,9 @@ import com.lollito.fm.model.*;
 import com.lollito.fm.model.dto.*;
 import com.lollito.fm.service.AdminService;
 import com.lollito.fm.service.UserService;
+import com.lollito.fm.mapper.ClubMapper;
+import com.lollito.fm.mapper.SystemConfigurationMapper;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -24,6 +27,10 @@ public class AdminController {
     private AdminService adminService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ClubMapper clubMapper;
+    @Autowired
+    private SystemConfigurationMapper systemConfigurationMapper;
 
     @GetMapping("/dashboard")
     public ResponseEntity<AdminDashboardDTO> getDashboard() {
@@ -32,25 +39,27 @@ public class AdminController {
     }
 
     @GetMapping("/clubs")
-    public ResponseEntity<List<Club>> getClubs() {
-        return ResponseEntity.ok(adminService.getAllClubs());
+    public ResponseEntity<List<ClubDTO>> getClubs() {
+        return ResponseEntity.ok(adminService.getAllClubs().stream()
+                .map(clubMapper::toDto)
+                .collect(Collectors.toList()));
     }
 
     @PostMapping("/clubs")
-    public ResponseEntity<Club> createClub(@RequestBody CreateClubRequest request,
+    public ResponseEntity<ClubDTO> createClub(@RequestBody CreateClubRequest request,
                                             Authentication authentication) {
         User adminUser = getAdminUser(authentication);
         Club club = adminService.createClub(request, adminUser);
-        return ResponseEntity.ok(club);
+        return ResponseEntity.ok(clubMapper.toDto(club));
     }
 
     @PutMapping("/clubs/{clubId}")
-    public ResponseEntity<Club> updateClub(@PathVariable Long clubId,
+    public ResponseEntity<ClubDTO> updateClub(@PathVariable Long clubId,
                                             @RequestBody UpdateClubRequest request,
                                             Authentication authentication) {
         User adminUser = getAdminUser(authentication);
         Club club = adminService.updateClub(clubId, request, adminUser);
-        return ResponseEntity.ok(club);
+        return ResponseEntity.ok(clubMapper.toDto(club));
     }
 
     @DeleteMapping("/clubs/{clubId}")
@@ -104,14 +113,14 @@ public class AdminController {
     }
 
     @PutMapping("/config/{configId}")
-    public ResponseEntity<SystemConfiguration> updateConfiguration(
+    public ResponseEntity<SystemConfigurationDTO> updateConfiguration(
             @PathVariable Long configId,
             @RequestBody UpdateConfigRequest request,
             Authentication authentication) {
         User adminUser = getAdminUser(authentication);
         SystemConfiguration config = adminService.updateSystemConfiguration(
             configId, request.getNewValue(), adminUser);
-        return ResponseEntity.ok(config);
+        return ResponseEntity.ok(systemConfigurationMapper.toDto(config));
     }
 
     @GetMapping("/actions")
