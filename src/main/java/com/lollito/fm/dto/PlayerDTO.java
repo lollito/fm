@@ -34,4 +34,5 @@ public class PlayerDTO {
     private Double defending;
     private Double setPieces;
     private Long clubId;
+    private BigDecimal price;
 }

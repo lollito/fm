@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PlayerMapper {
     @Mapping(target = "clubId", expression = "java(player.getTeam() != null ? player.getTeam().getOwnerClubId() : null)")
+    @Mapping(target = "price", expression = "java(player.getMarketValue())")
     PlayerDTO toDto(Player player);
     Player toEntity(PlayerDTO dto);
 }

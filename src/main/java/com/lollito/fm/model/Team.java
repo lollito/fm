@@ -88,6 +88,11 @@ public class Team implements Serializable{
 		player.setTeam(this);
 		this.players.add(player);
 	}
+
+	@Transient
+	public void removePlayer(Player player){
+		this.players.remove(player);
+	}
 	
 	@Transient
 	public Integer getAverage(){
