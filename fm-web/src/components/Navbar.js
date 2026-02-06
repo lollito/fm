@@ -52,7 +52,7 @@ const Navbar = ({ onToggleMenu }) => {
       stompClient.current = new Client({
           webSocketFactory: () => socket,
           onConnect: () => {
-              stompClient.current.subscribe('/user/queue/notifications', (message) => {
+              stompClient.current.subscribe('/topic/user/' + user.id + '/notifications', (message) => {
                   const notif = JSON.parse(message.body);
                   if (notif.type === 'MATCH_STARTED') {
                       setNotification(notif);
@@ -150,6 +150,7 @@ const Navbar = ({ onToggleMenu }) => {
       {/* Toast Notification */}
       {notification && (
         <div className="notification-toast" onClick={() => {
+            // Redirect to live match on click
             navigate(`/match/live/${notification.matchId}`);
             setNotification(null);
         }}>
