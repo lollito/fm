@@ -5,12 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/live-match")
 public class LiveMatchController {
 
     @Autowired
     private LiveMatchService liveMatchService;
+
+    @GetMapping("/current")
+    public ResponseEntity<List<LiveMatchService.LiveMatchData>> getCurrentLiveMatches() {
+        return ResponseEntity.ok(liveMatchService.getAllLiveMatches());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getLiveMatch(@PathVariable Long id) {

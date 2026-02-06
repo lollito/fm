@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -140,6 +142,38 @@ public class LiveMatchService {
         liveMatchSessionRepository.save(session);
         matchProcessor.finalizeMatch(session.getMatchId(), session);
         broadcastUpdate(session); // Send final state
+    }
+
+    @Transactional(readOnly = true)
+    public List<LiveMatchData> getAllLiveMatches() {
+        List<LiveMatchSession> sessions = liveMatchSessionRepository.findByFinishedFalse();
+        if (sessions.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Long> matchIds = sessions.stream()
+                .map(LiveMatchSession::getMatchId)
+                .collect(Collectors.toList());
+
+        List<Match> matches = matchRepository.findAllById(matchIds);
+
+        Map<Long, Match> matchMap = matches.stream()
+                .collect(Collectors.toMap(Match::getId, m -> m));
+
+        return sessions.stream().map(session -> {
+            Match match = matchMap.get(session.getMatchId());
+            if (match == null) return null;
+
+            LiveMatchData data = new LiveMatchData();
+            data.setMatch(matchMapper.toDto(match));
+            data.setHomeScore(session.getHomeScore());
+            data.setAwayScore(session.getAwayScore());
+            data.setCurrentMinute(session.getCurrentMinute());
+            data.setCurrentPhase(session.getCurrentMinute() >= 90 ? "FINISHED" : (session.getCurrentMinute() >= 45 ? "SECOND_HALF" : "FIRST_HALF"));
+            return data;
+        })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
