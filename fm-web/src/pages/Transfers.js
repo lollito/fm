@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
 
 const Transfers = () => {
+  const { user } = useContext(AuthContext);
   const [playersOnSale, setPlayersOnSale] = useState([]);
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(playersOnSale);
 
@@ -47,7 +49,11 @@ const Transfers = () => {
               <td>{p.surname}</td>
               <td>{p.price}</td>
               <td>
-                <button className="btn btn-success btn-sm" onClick={() => buyPlayer(p.id)}>Buy</button>
+                {user?.clubId === p.clubId ? (
+                   <button className="btn btn-secondary btn-sm" disabled>Own Player</button>
+                ) : (
+                   <button className="btn btn-success btn-sm" onClick={() => buyPlayer(p.id)}>Buy</button>
+                )}
               </td>
             </tr>
           ))}
