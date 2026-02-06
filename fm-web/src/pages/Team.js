@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api, { getClub } from '../services/api';
 import Layout from '../components/Layout';
 import useSortableData from '../hooks/useSortableData';
@@ -9,6 +9,24 @@ import TrainingHistory from '../components/TrainingHistory';
 import StaffManagement from '../components/StaffManagement';
 import ConfirmationModal from '../components/ConfirmationModal';
 
+const PLAYER_ROLES = {
+  GOALKEEPER: 0,
+  DEFENDER: 1,
+  WINGBACK: 2,
+  MIDFIELDER: 3,
+  WING: 4,
+  FORWARD: 5
+};
+
+const ROLE_NAMES = {
+  [PLAYER_ROLES.GOALKEEPER]: 'GK',
+  [PLAYER_ROLES.DEFENDER]: 'DEF',
+  [PLAYER_ROLES.WINGBACK]: 'WB',
+  [PLAYER_ROLES.MIDFIELDER]: 'MID',
+  [PLAYER_ROLES.WING]: 'WNG',
+  [PLAYER_ROLES.FORWARD]: 'FWD'
+};
+
 const Team = () => {
   const [players, setPlayers] = useState([]);
   const [teamId, setTeamId] = useState(null);
@@ -16,6 +34,7 @@ const Team = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const { items: sortedPlayers, requestSort, sortConfig } = useSortableData(players);
+  const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('user'));
   const clubId = user ? user.clubId : null;
@@ -64,6 +83,19 @@ const Team = () => {
     }
   };
 
+  const getPlayerRoleName = (player) => {
+    if (!player || !player.role) return '';
+    let roleKey = '';
+    if (typeof player.role === 'object') roleKey = player.role.name;
+    else if (typeof player.role === 'string') roleKey = player.role;
+    else if (typeof player.role === 'number') return ROLE_NAMES[player.role];
+
+    if (roleKey && PLAYER_ROLES[roleKey] !== undefined) {
+      return ROLE_NAMES[PLAYER_ROLES[roleKey]];
+    }
+    return roleKey || '';
+  };
+
   return (
     <Layout>
       <h1 className="mt-2">Team</h1>
@@ -106,10 +138,9 @@ const Team = () => {
       {activeTab === 'squad' && (
           <>
             {clubId && <InjuryList clubId={clubId} />}
-            <table className="table table-striped">
+            <table className="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>Action</th>
                     <th onClick={() => requestSort('role')} style={{cursor: 'pointer'}}>Role</th>
                     <th onClick={() => requestSort('name')} style={{cursor: 'pointer'}}>Name</th>
                     <th onClick={() => requestSort('surname')} style={{cursor: 'pointer'}}>Surname</th>
@@ -121,29 +152,28 @@ const Team = () => {
                     <th onClick={() => requestSort('passing')} style={{cursor: 'pointer'}}>Passing</th>
                     <th onClick={() => requestSort('defending')} style={{cursor: 'pointer'}}>Defending</th>
                     <th onClick={() => requestSort('condition')} style={{cursor: 'pointer'}}>Condition</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 {sortedPlayers.map(p => (
-                    <tr key={p.id}>
-                    <td>
-                        <button className="btn btn-icon" onClick={() => handlePutOnSale(p)} title="Put on sale">
-                            <i className="fa fa-exchange-alt"></i>
-                        </button>
-                    </td>
-                    <td>{p.role}</td>
-                    <td>{p.name}</td>
-                    <td>
-                        <Link to={'/player/' + p.id}>{p.surname}</Link>
-                    </td>
-                    <td>{p.age}</td>
-                    <td>{Math.round(p.stamina)}</td>
-                    <td>{Math.round(p.playmaking)}</td>
-                    <td>{Math.round(p.scoring)}</td>
-                    <td>{Math.round(p.winger)}</td>
-                    <td>{Math.round(p.passing)}</td>
-                    <td>{Math.round(p.defending)}</td>
-                    <td>{Math.round(p.condition)}</td>
+                    <tr key={p.id} onClick={() => navigate('/player/' + p.id)} style={{ cursor: 'pointer' }}>
+                        <td>{getPlayerRoleName(p)}</td>
+                        <td>{p.name}</td>
+                        <td>{p.surname}</td>
+                        <td>{p.age}</td>
+                        <td>{Math.round(p.stamina)}</td>
+                        <td>{Math.round(p.playmaking)}</td>
+                        <td>{Math.round(p.scoring)}</td>
+                        <td>{Math.round(p.winger)}</td>
+                        <td>{Math.round(p.passing)}</td>
+                        <td>{Math.round(p.defending)}</td>
+                        <td>{p.condition !== null && p.condition !== undefined ? Math.round(p.condition) : '-'}</td>
+                        <td onClick={(e) => e.stopPropagation()}>
+                            <button className="btn btn-icon" onClick={() => handlePutOnSale(p)} title="Put on sale">
+                                <i className="fa fa-exchange-alt"></i>
+                            </button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
