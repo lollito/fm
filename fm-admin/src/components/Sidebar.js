@@ -36,6 +36,13 @@ const Sidebar = () => {
         </Link>
       </li>
 
+      <li className={'nav-item ' + (location.pathname === '/live-matches' ? 'active' : '')}>
+        <Link className="nav-link" to="/live-matches">
+          <i className="fas fa-fw fa-video"></i>
+          <span> Live Matches</span>
+        </Link>
+      </li>
+
       <hr className="sidebar-divider" />
     </ul>
   );
