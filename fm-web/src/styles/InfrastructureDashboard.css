@@ -1,126 +1,252 @@
 .infrastructure-dashboard {
     padding: 20px;
-    color: var(--text-color);
+    color: var(--text-main);
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--primary);
 }
 
 .infrastructure-summary {
     display: flex;
-    gap: 20px;
+    gap: 30px;
 }
 
 .summary-item {
-    background-color: var(--secondary-bg);
-    padding: 10px 15px;
-    border-radius: 8px;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
 }
 
 .summary-item .label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
 }
 
 .summary-item .value {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .summary-item .value.negative {
-    color: #f44336;
+    color: #ff6b6b;
 }
 
+/* Grid Layout */
 .facilities-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
 }
 
 .facility-card {
-    background-color: var(--secondary-bg);
-    border-radius: 8px;
-    padding: 20px;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    padding: 25px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(161, 85, 255, 0.05);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
 }
 
 .facility-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    border-color: var(--primary);
 }
 
+/* Facility Header */
 .facility-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(161, 85, 255, 0.1);
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.facility-icon {
+    font-size: 1.8rem;
+    background: rgba(255,255,255,0.05);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.facility-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary);
 }
 
 .facility-name {
-    font-size: 0.9rem;
-    color: var(--primary-color);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-style: italic;
 }
 
+/* Facility Details */
 .facility-details {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    flex-grow: 1;
+}
+
+.capacity {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+}
+
+.quality-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .quality-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+}
+
+.quality-item span:first-child {
+    width: 80px;
 }
 
 .quality-bar {
     flex-grow: 1;
-    height: 8px;
-    background-color: #333;
+    height: 6px;
+    background-color: rgba(255,255,255,0.1);
     margin: 0 10px;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .quality-fill {
     height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
 }
 
 .facility-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 10px;
+    gap: 8px;
+    margin-top: 5px;
 }
 
 .feature {
-    background-color: #333;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    background-color: rgba(255,255,255,0.05);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .maintenance-cost {
-    margin-top: 10px;
+    margin-top: auto;
+    padding-top: 15px;
     text-align: right;
     font-size: 0.8rem;
-    color: #f44336;
+    color: #ff6b6b;
+    border-top: 1px solid rgba(161, 85, 255, 0.1);
 }
 
-.facility-placeholder {
+/* Construction Zone */
+.facility-placeholder.construction-zone {
     text-align: center;
-    padding: 20px;
-    color: var(--text-muted);
+    padding: 30px 20px;
+    color: var(--text-dim);
+    border: 2px dashed rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 250px;
+    transition: all 0.3s;
+}
+
+.facility-placeholder.construction-zone:hover {
+    border-color: var(--primary);
+    background: rgba(0,0,0,0.3);
+}
+
+.placeholder-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+
+.construction-zone h4 {
+    color: var(--text-main);
+    margin: 0 0 10px 0;
+}
+
+.construction-zone p {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #b57eff; /* Hardcoded light primary */
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary.full-width {
+    width: 100%;
 }
 
 /* Modal */
@@ -130,109 +256,223 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.85);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background-color: var(--bg-color);
-    width: 80%;
-    max-width: 800px;
+    background-color: var(--bg-card);
+    width: 90%;
+    max-width: 1000px;
     max-height: 90vh;
     overflow-y: auto;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 30px;
     position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 1px solid rgba(161, 85, 255, 0.2);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(161, 85, 255, 0.1);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary);
 }
 
 .close-btn {
-    background: none;
+    background: rgba(255,255,255,0.1);
     border: none;
-    color: var(--text-color);
+    color: var(--text-main);
     font-size: 1.5rem;
     cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
 }
 
-.upgrade-option {
-    background-color: var(--secondary-bg);
-    padding: 15px;
+.close-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Upgrade Grid in Modal */
+.upgrades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.upgrade-option-card {
+    background-color: var(--bg-darker);
+    border: 1px solid rgba(161, 85, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+
+.upgrade-option-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.upgrade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.upgrade-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: var(--text-main);
+}
+
+.upgrade-cost-badge {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+.upgrade-description {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin: 0 0 15px 0;
+    flex-grow: 1;
+}
+
+.upgrade-meta {
+    background: rgba(255,255,255,0.03);
+    padding: 10px;
     border-radius: 8px;
     margin-bottom: 15px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.upgrade-details {
-    flex: 2;
-    padding-right: 20px;
-}
-
-.upgrade-specs {
-    flex: 1;
-    display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: flex-end;
+    gap: 5px;
 }
 
-.upgrade-effects {
-    margin-top: 5px;
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.meta-item .label {
+    color: var(--text-dim);
+}
+
+.upgrade-effects-box {
+    margin-bottom: 20px;
     font-size: 0.9rem;
     color: #4caf50;
-}
-
-.upgrade-requirements {
-    margin-top: 5px;
-    font-size: 0.9rem;
-    color: #ff9800;
+    padding-top: 10px;
+    border-top: 1px solid rgba(161, 85, 255, 0.1);
 }
 
 /* Ongoing upgrades */
 .ongoing-upgrades {
-    background-color: var(--secondary-bg);
-    padding: 20px;
-    border-radius: 8px;
+    background-color: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.upgrades-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .upgrade-card {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid var(--border-color);
+    padding: 15px;
+    background: var(--bg-darker);
+    border-radius: 8px;
+    border: 1px solid rgba(161, 85, 255, 0.1);
+}
+
+.upgrade-info {
+    flex: 2;
+}
+
+.upgrade-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.upgrade-title-row h4 {
+    margin: 0;
+}
+
+.facility-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    background: var(--primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.upgrade-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-dim);
 }
 
 .upgrade-progress {
-    flex: 1;
-    margin: 0 20px;
+    flex: 2;
+    margin: 0 30px;
 }
 
 .progress-bar {
-    height: 8px;
-    background-color: #333;
-    border-radius: 4px;
+    height: 10px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 5px;
     overflow: hidden;
+    margin-bottom: 5px;
 }
 
 .progress-fill {
     height: 100%;
-    background-color: var(--primary-color);
+    background-color: var(--primary);
+    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-size: 1rem 1rem;
+    animation: progress-bar-stripes 1s linear infinite;
 }
 
-.progress-text {
-    font-size: 0.8rem;
-    display: block;
-    text-align: center;
-    margin-top: 2px;
+@keyframes progress-bar-stripes {
+  0% { background-position: 1rem 0; }
+  100% { background-position: 0 0; }
+}
+
+.upgrade-cost {
+    font-weight: 600;
+    color: var(--text-dim);
 }
