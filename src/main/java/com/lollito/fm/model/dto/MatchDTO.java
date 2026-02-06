@@ -3,6 +3,7 @@ package com.lollito.fm.model.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lollito.fm.model.MatchStatus;
 
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class MatchDTO {
     private ClubDTO away;
     private Integer homeScore;
     private Integer awayScore;
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime date;
     private Boolean finish;
     private MatchStatus status;
