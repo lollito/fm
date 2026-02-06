@@ -24,8 +24,10 @@ import com.lollito.fm.model.User;
 import com.lollito.fm.model.dto.UserDTO;
 import com.lollito.fm.model.rest.JwtResponse;
 import com.lollito.fm.model.rest.RegistrationRequest;
+import com.lollito.fm.model.rest.LoginRequest;
 import com.lollito.fm.service.UserService;
 import com.lollito.fm.mapper.UserMapper;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value="/api/user")
@@ -47,7 +49,7 @@ public class UserController {
     }
 	
 	@PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody RegistrationRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
 		logger.info("loginRequest {}", request);
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
