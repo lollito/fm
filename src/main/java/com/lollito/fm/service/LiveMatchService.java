@@ -22,6 +22,7 @@ import com.lollito.fm.model.LiveMatchSession;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.dto.EventHistoryDTO;
 import com.lollito.fm.model.dto.MatchDTO;
+import com.lollito.fm.model.dto.LiveMatchSummaryDTO;
 import com.lollito.fm.model.dto.StatsDTO;
 import com.lollito.fm.repository.rest.LiveMatchSessionRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
@@ -172,6 +173,34 @@ public class LiveMatchService {
         } catch (Exception e) {
             throw new RuntimeException("Error parsing session data", e);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<LiveMatchSummaryDTO> getAllLiveMatchSummaries() {
+        List<LiveMatchSession> sessions = liveMatchSessionRepository.findAll();
+        // Sort by start time descending
+        sessions.sort((s1, s2) -> s2.getStartTime().compareTo(s1.getStartTime()));
+
+        return sessions.stream().map(session -> {
+            Match match = matchRepository.findById(session.getMatchId()).orElse(null);
+            String homeName = "Unknown";
+            String awayName = "Unknown";
+            if (match != null) {
+                homeName = match.getHome().getName();
+                awayName = match.getAway().getName();
+            }
+            return LiveMatchSummaryDTO.builder()
+                    .sessionId(session.getId())
+                    .matchId(session.getMatchId())
+                    .homeTeamName(homeName)
+                    .awayTeamName(awayName)
+                    .homeScore(session.getHomeScore())
+                    .awayScore(session.getAwayScore())
+                    .currentMinute(session.getCurrentMinute())
+                    .finished(session.getFinished())
+                    .startTime(session.getStartTime())
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     @Data
