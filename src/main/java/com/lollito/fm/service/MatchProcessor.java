@@ -43,6 +43,7 @@ public class MatchProcessor {
     @Autowired private MatchPlayerStatsMapper matchPlayerStatsMapper;
     @Autowired private PlayerService playerService;
     @Autowired private PlayerHistoryService playerHistoryService;
+    @Autowired private RankingService rankingService;
 
     @Async
     @Transactional
@@ -55,7 +56,7 @@ public class MatchProcessor {
         logger.info("Processing match {} : {} vs {}", match.getId(), match.getHome().getName(), match.getAway().getName());
 
         // Simulate to get result
-        simulationMatchService.simulate(match);
+        simulationMatchService.simulate(match, null, false);
 
         // Create session with the result
         liveMatchService.createSession(match);
@@ -146,6 +147,7 @@ public class MatchProcessor {
             // So I DON'T need to re-run `playerHistoryService` updates.
             // I ONLY need to restore `Match.playerStats` so the match report is correct.
 
+            rankingService.update(match);
             checkRoundAndSeasonProgression(match);
 
             // Cleanup session?
