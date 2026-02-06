@@ -150,8 +150,11 @@ const FinancialDashboard = ({ clubId }) => {
                                     <Cell key={'cell-' + index} fill={COLORS_REVENUE[index % COLORS_REVENUE.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip formatter={(value) => formatCurrency(value)} />
-                            <Legend />
+                            <Tooltip
+                                formatter={(value) => formatCurrency(value)}
+                                contentStyle={{ backgroundColor: '#1e1136', borderColor: 'rgba(161, 85, 255, 0.2)', color: '#f0f0f5' }}
+                            />
+                            <Legend wrapperStyle={{ color: '#a0a0b0' }} />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
@@ -173,8 +176,11 @@ const FinancialDashboard = ({ clubId }) => {
                                     <Cell key={'cell-' + index} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip formatter={(value) => formatCurrency(value)} />
-                            <Legend />
+                            <Tooltip
+                                formatter={(value) => formatCurrency(value)}
+                                contentStyle={{ backgroundColor: '#1e1136', borderColor: 'rgba(161, 85, 255, 0.2)', color: '#f0f0f5' }}
+                            />
+                            <Legend wrapperStyle={{ color: '#a0a0b0' }} />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
@@ -183,11 +189,14 @@ const FinancialDashboard = ({ clubId }) => {
                     <h3>Cash Flow Trend (Recent Transactions)</h3>
                     <ResponsiveContainer width="100%" height={300}>
                         <LineChart data={cashFlowData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis />
-                            <Tooltip formatter={(value) => formatCurrency(value)} />
-                            <Legend />
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(161, 85, 255, 0.1)" />
+                            <XAxis dataKey="date" stroke="#a0a0b0" />
+                            <YAxis stroke="#a0a0b0" />
+                            <Tooltip
+                                formatter={(value) => formatCurrency(value)}
+                                contentStyle={{ backgroundColor: '#1e1136', borderColor: 'rgba(161, 85, 255, 0.2)', color: '#f0f0f5' }}
+                            />
+                            <Legend wrapperStyle={{ color: '#a0a0b0' }} />
                             <Line type="monotone" dataKey="amount" stroke="#8884d8" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
