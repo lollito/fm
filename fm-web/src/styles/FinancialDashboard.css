@@ -1,6 +1,6 @@
 .financial-dashboard {
   padding: 20px;
-  background-color: #f5f5f5;
+  /* Removed fixed background-color to let Layout handle it (or use transparent) */
 }
 
 .dashboard-header {
@@ -13,7 +13,9 @@
 .period-selector select {
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(161, 85, 255, 0.2);
+  background-color: var(--bg-darker);
+  color: var(--text-main);
 }
 
 .financial-summary {
@@ -24,17 +26,18 @@
 }
 
 .summary-card {
-  background: white;
+  background-color: var(--bg-card);
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(161, 85, 255, 0.05);
   text-align: center;
 }
 
 .summary-card h3 {
   margin: 0 0 10px 0;
   font-size: 1.1em;
-  color: #666;
+  color: var(--text-dim);
 }
 
 .summary-card .amount {
@@ -42,8 +45,8 @@
   font-weight: bold;
 }
 
-.amount.positive { color: #4caf50; }
-.amount.negative { color: #f44336; }
+.amount.positive { color: var(--success); }
+.amount.negative { color: var(--danger); }
 
 .financial-charts {
   display: grid;
@@ -53,11 +56,18 @@
 }
 
 .chart-container {
-  background: white;
+  background-color: var(--bg-card);
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(161, 85, 255, 0.05);
   min-height: 300px;
+}
+
+.chart-container h3 {
+  color: var(--text-dim);
+  font-size: 1.1em;
+  margin-bottom: 1rem;
 }
 
 .chart-container.full-width {
@@ -65,18 +75,24 @@
 }
 
 .recent-transactions {
-  background: white;
+  background-color: var(--bg-card);
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(161, 85, 255, 0.05);
   margin-bottom: 30px;
+}
+
+.recent-transactions h3 {
+  color: var(--primary);
+  margin-bottom: 1rem;
 }
 
 .transaction-item {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(161, 85, 255, 0.1);
 }
 
 .transaction-item:last-child {
@@ -90,61 +106,81 @@
 
 .transaction-description {
   font-weight: bold;
+  color: var(--text-main);
 }
 
 .transaction-category {
   font-size: 0.9em;
-  color: #666;
+  color: var(--text-dim);
 }
 
 .transaction-date {
   font-size: 0.8em;
-  color: #999;
+  color: var(--text-dim);
 }
 
 .health-indicators {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  background: white;
+  background-color: var(--bg-card);
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(161, 85, 255, 0.05);
+}
+
+.health-indicators h3 {
+  grid-column: 1 / -1;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
 }
 
 .indicator {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background: #f9f9f9;
+  background-color: rgba(161, 85, 255, 0.05);
   border-radius: 4px;
+}
+
+.indicator span {
+  color: var(--text-dim);
 }
 
 .indicator .value {
   font-weight: bold;
+  color: var(--text-main);
 }
+
+.indicator .value.positive { color: var(--success); }
+.indicator .value.negative { color: var(--danger); }
 
 /* Added styles for transaction table and pagination */
 .transaction-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .transaction-table th,
 .transaction-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(161, 85, 255, 0.1);
+  color: var(--text-main);
 }
 
 .transaction-table th {
-  background-color: #f8f9fa;
+  background-color: rgba(161, 85, 255, 0.05);
   font-weight: 600;
-  color: #666;
+  color: var(--primary);
+  text-transform: uppercase;
+  font-size: 0.85em;
 }
 
 .transaction-table tr:hover {
-  background-color: #f9f9f9;
+  background-color: rgba(161, 85, 255, 0.05);
 }
 
 .transaction-table .text-right {
@@ -160,13 +196,15 @@
 }
 
 .badge-success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: rgba(0, 200, 83, 0.2);
+  color: var(--success);
+  border: 1px solid rgba(0, 200, 83, 0.3);
 }
 
 .badge-danger {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: rgba(255, 23, 68, 0.2);
+  color: var(--danger);
+  border: 1px solid rgba(255, 23, 68, 0.3);
 }
 
 .pagination {
@@ -178,7 +216,7 @@
 }
 
 .page-info {
-  color: #666;
+  color: var(--text-dim);
   font-size: 0.9em;
 }
 

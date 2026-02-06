@@ -96,7 +96,7 @@ const SponsorshipDashboard = ({ clubId }) => {
             <div className="dashboard-header">
                 <h2>Sponsorship Management</h2>
                 <button onClick={handleGenerateOffers} className="btn btn-primary">
-                    Generate New Offers
+                    Search for Sponsors
                 </button>
             </div>
 
