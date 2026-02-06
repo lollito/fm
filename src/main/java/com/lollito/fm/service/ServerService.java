@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,23 +105,22 @@ public class ServerService {
 		return serverResponse;
 	}
 	
-	public ServerResponse load(){
-		ServerResponse serverResponse = new ServerResponse();
-		//FIXME
-		Server server = new Server();
-		serverResponse.setCurrentDate(server.getCurrentDate());
-		return serverResponse;
+	public ServerResponse load() {
+		User user = userService.getLoggedUser();
+		if (user != null && user.getServer() != null) {
+			ServerResponse serverResponse = new ServerResponse();
+			serverResponse.setCurrentDate(user.getServer().getCurrentDate());
+			return serverResponse;
+		}
+		throw new EntityNotFoundException("User not assigned to any server");
 	}
 	
-	public ServerResponse load(Long serverId){
-		Server server = serverRepository.findById(serverId).get();
+	public ServerResponse load(Long serverId) {
+		Server server = serverRepository.findById(serverId)
+				.orElseThrow(() -> new EntityNotFoundException("Server not found"));
+
 		ServerResponse serverResponse = new ServerResponse();
-		if (server == null){
-			//TODO error
-			logger.error("error - server is null");
-		} else {
-			serverResponse.setCurrentDate(server.getCurrentDate());
-		}
+		serverResponse.setCurrentDate(server.getCurrentDate());
 		return serverResponse;
 	}
 	
