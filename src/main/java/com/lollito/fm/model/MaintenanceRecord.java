@@ -16,6 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -70,6 +72,7 @@ public class MaintenanceRecord implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     @ToString.Exclude
+    @JsonIgnore
     private Club club;
 
     private String contractorName;

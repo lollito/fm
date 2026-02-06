@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -39,6 +41,7 @@ public class UserSession {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
+    @JsonIgnore
     private User user;
 
     private String sessionId;
