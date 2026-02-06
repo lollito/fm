@@ -50,7 +50,9 @@ public class MatchService {
 		if(userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRounds().size() <= number) {
 			return new ArrayList<>();
 		}
-		return userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRounds().get(number).getMatches();
+		// Optimized to fetch matches with clubs in a single query
+		Long roundId = userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRounds().get(number).getId();
+		return matchRepository.findByRoundIdWithClubs(roundId);
 	}
 
 	public Long getCount() {
