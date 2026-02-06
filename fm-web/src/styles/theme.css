@@ -433,3 +433,22 @@ h1, h2, h3, h4 {
   background-color: rgba(161, 85, 255, 0.1);
   color: var(--accent);
 }
+
+/* Toast Animations */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+.toast-item.enter {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.toast-item.exit {
+  animation: slideOutRight 0.3s ease-in forwards;
+}

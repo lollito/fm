@@ -2,8 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api, { getServers } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Register = () => {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -50,11 +52,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.email !== formData.emailConfirm) {
-      alert('Emails do not match');
+      showToast('Emails do not match', 'error');
       return;
     }
     if (formData.password !== formData.passwordConfirm) {
-      alert('Passwords do not match');
+      showToast('Passwords do not match', 'error');
       return;
     }
     try {
@@ -62,7 +64,7 @@ const Register = () => {
       login(response.data);
       navigate('/');
     } catch (error) {
-      alert('Registration failed');
+      showToast('Registration failed', 'error');
     }
   };
 

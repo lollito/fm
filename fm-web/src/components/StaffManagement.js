@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getClubStaff, getAvailableStaff, hireStaff, fireStaff, getStaffBonuses } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 const StaffManagement = ({ clubId }) => {
     const [clubStaff, setClubStaff] = useState([]);
@@ -8,6 +9,7 @@ const StaffManagement = ({ clubId }) => {
     const [selectedTab, setSelectedTab] = useState('current');
     const [selectedRole, setSelectedRole] = useState('');
     const [loading, setLoading] = useState(true);
+    const { showToast } = useToast();
 
     const staffRoles = [
         'HEAD_COACH', 'ASSISTANT_COACH', 'FITNESS_COACH', 'GOALKEEPING_COACH',
@@ -53,10 +55,10 @@ const StaffManagement = ({ clubId }) => {
             });
             loadStaffData();
             loadAvailableStaff(selectedRole);
-            alert('Staff hired successfully!');
+            showToast('Staff hired successfully!', 'success');
         } catch (error) {
             console.error('Error hiring staff:', error);
-            alert('Failed to hire staff. Check funds or if staff is already hired.');
+            showToast('Failed to hire staff. Check funds or if staff is already hired.', 'error');
         }
     };
 
@@ -66,10 +68,10 @@ const StaffManagement = ({ clubId }) => {
         try {
             await fireStaff(staffId, { reason });
             loadStaffData();
-            alert('Staff fired successfully.');
+            showToast('Staff fired successfully.', 'success');
         } catch (error) {
             console.error('Error firing staff:', error);
-            alert('Failed to fire staff.');
+            showToast('Failed to fire staff.', 'error');
         }
     };
 
@@ -191,7 +193,7 @@ const StaffManagement = ({ clubId }) => {
                                 <div className="card-footer d-flex justify-content-between">
                                     <button
                                         className="btn btn-sm btn-outline-primary"
-                                        onClick={() => alert("Renew contract logic to be implemented (Modal)")}
+                                        onClick={() => showToast("Renew contract logic to be implemented (Modal)", 'info')}
                                     >
                                         Renew
                                     </button>

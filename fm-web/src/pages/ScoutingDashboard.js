@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import Layout from '../components/Layout';
 import {
     getClubScouts,
@@ -11,6 +12,7 @@ import {
 import '../styles/ScoutingDashboard.css';
 
 const ScoutingDashboard = () => {
+    const { showToast } = useToast();
     const { user } = useContext(AuthContext);
     const [scouts, setScouts] = useState([]);
     const [assignments, setAssignments] = useState([]);
@@ -69,10 +71,10 @@ const ScoutingDashboard = () => {
             setTargetPlayerId('');
             setInstructions('');
             loadScoutingData(); // Reload data
-            alert('Assignment created successfully!');
+            showToast('Assignment created successfully!', 'success');
         } catch (error) {
             console.error(error);
-            alert('Failed to assign scout: ' + (error.response?.data?.message || error.message));
+            showToast('Failed to assign scout: ' + (error.response?.data?.message || error.message), 'error');
         }
     };
 
@@ -82,10 +84,10 @@ const ScoutingDashboard = () => {
 
         try {
             await addToWatchlist(reportId, notes);
-            alert('Added to watchlist!');
+            showToast('Added to watchlist!', 'success');
         } catch (error) {
             console.error(error);
-            alert('Failed to add to watchlist');
+            showToast('Failed to add to watchlist', 'error');
         }
     };
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getTrainingPlan, updateTrainingPlan } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 const TrainingPlan = ({ teamId }) => {
     const [plan, setPlan] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const { showToast } = useToast();
 
     const trainingFocusOptions = [
         { value: 'ATTACKING', label: 'Attacking', description: 'Improves scoring, winger, passing' },
@@ -44,10 +46,10 @@ const TrainingPlan = ({ teamId }) => {
         try {
             const response = await updateTrainingPlan(teamId, plan);
             setPlan(response.data);
-            alert('Training plan saved successfully!');
+            showToast('Training plan saved successfully!', 'success');
         } catch (error) {
             console.error('Error saving training plan:', error);
-            alert('Failed to save training plan.');
+            showToast('Failed to save training plan.', 'error');
         } finally {
             setSaving(false);
         }
