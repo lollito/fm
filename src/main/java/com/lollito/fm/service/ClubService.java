@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Country;
 import com.lollito.fm.model.Finance;
-import com.lollito.fm.model.Game;
+import com.lollito.fm.model.Server;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Stadium;
 import com.lollito.fm.repository.rest.ClubRepository;
@@ -30,17 +30,17 @@ public class ClubService {
 	@Lazy @Autowired UserService userService;
 	@Autowired ClubRepository clubRepository;
 	
-	public List<Club> createClubs(Game game, League league, int clubNumber){
+	public List<Club> createClubs(Server server, League league, int clubNumber){
 		List<Club> clubs = new ArrayList<>();
 		for(int clubCreated = 0; clubCreated < clubNumber; clubCreated ++){
-			Club club = createClub(null, game);
+			Club club = createClub(null, server);
 			club.setLeague(league);
 			clubs.add(club);
 		}
 		return clubs;
 	}
 
-	private Club createClub(String clubName, Game game) {
+	private Club createClub(String clubName, Server server) {
 		Club club = new Club();
 		club.setName(clubName != null ? clubName : nameService.generateClubName());
 		club.setFoundation(LocalDate.now());
@@ -58,6 +58,10 @@ public class ClubService {
 	//TODO exception free club not found
 	public Club findTopByLeagueCountryAndUserIsNull(Country country) {
 		return clubRepository.findTopByLeagueCountryAndUserIsNull(country).orElseThrow(() -> new RuntimeException("free club not found"));
+	}
+
+	public Club findTopByLeagueServerAndLeagueCountryAndUserIsNull(Server server, Country country) {
+		return clubRepository.findTopByLeagueServerAndLeagueCountryAndUserIsNull(server, country).orElseThrow(() -> new RuntimeException("free club not found"));
 	}
 	
 	public Club findTopByLeagueCountry(Country country) {

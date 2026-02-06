@@ -44,4 +44,7 @@ export const exportData = (data) => api.post('/admin/export', data);
 export const getSystemConfiguration = (category) => api.get('/admin/config', { params: { category } });
 export const updateSystemConfiguration = (id, newValue) => api.put(`/admin/config/${id}`, { newValue });
 
+export const getServers = () => api.get('/server/findAll');
+export const createServer = (serverName) => api.post('/server/?serverName=' + serverName);
+
 export default api;

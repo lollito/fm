@@ -27,7 +27,7 @@ import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "game")
+@Table(name = "server")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,7 +35,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class Game implements Serializable{
+public class Server implements Serializable{
 	
 	@Transient
 	private static final long serialVersionUID = 1L;
@@ -56,8 +56,7 @@ public class Game implements Serializable{
     @ToString.Exclude
     private User owner;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-	@JoinColumn( name = "game_id" )
+    @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
 	@Builder.Default
 	@ToString.Exclude
     private List<League> leagues = new ArrayList<>();

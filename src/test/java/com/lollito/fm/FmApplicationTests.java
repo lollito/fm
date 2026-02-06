@@ -16,12 +16,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.lollito.fm.model.Game;
+import com.lollito.fm.model.Server;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.service.CountryService;
 import com.lollito.fm.service.FormationService;
-import com.lollito.fm.service.GameService;
+import com.lollito.fm.service.ServerService;
 import com.lollito.fm.service.ModuleService;
 import com.lollito.fm.service.UserService;
 import com.lollito.fm.repository.rest.UserRepository;
@@ -32,7 +32,7 @@ public class FmApplicationTests {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired GameService gameService;
+	@Autowired ServerService serverService;
 	@Autowired FormationService formationService;
 	@Autowired UserService userService;
 	@Autowired UserRepository userRepository;
@@ -49,13 +49,13 @@ public class FmApplicationTests {
 	
 	@Test
 	public void contextLoads() {
-		Game game = gameService.create("test");
+		Server server = serverService.create("test");
 //		sessionBean.setGameId(game.getId());
 		LocalDateTime endDate = LocalDateTime.of( 2021 , Month.AUGUST , 26, 00, 00 );
 		formationService.createPlayerFormation();
-		for (LocalDateTime date = game.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
-			logger.info("currdate {}", game.getCurrentDate());
-		    gameService.next();
+		for (LocalDateTime date = server.getCurrentDate(); date.isBefore(endDate); date = date.plusDays(1)){
+			logger.info("currdate {}", server.getCurrentDate());
+		    serverService.next();
 		}
 //		for(Player player : game.getClubs().get(0).getTeam().getPlayers()) {
 //			logger.info("player {}", player.getCondition());

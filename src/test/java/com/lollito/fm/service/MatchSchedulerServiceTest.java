@@ -24,7 +24,7 @@ public class MatchSchedulerServiceTest {
 
     @Autowired private MatchSchedulerService matchSchedulerService;
     @Autowired private MatchRepository matchRepository;
-    @Autowired private GameService gameService;
+    @Autowired private ServerService serverService;
     @Autowired private SeasonRepository seasonRepository;
     @Autowired private CountryService countryService;
     @Autowired private ModuleService moduleService;
@@ -38,9 +38,9 @@ public class MatchSchedulerServiceTest {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Create a game, which creates leagues, seasons, rounds, and matches
-        Game game = gameService.create("TestGameAsync");
-        League league = game.getLeagues().get(0);
+        // Create a server, which creates leagues, seasons, rounds, and matches
+        Server server = serverService.create("TestGameAsync");
+        League league = server.getLeagues().get(0);
         Season season = league.getCurrentSeason();
         Round round = season.getRounds().get(0);
         List<Match> matches = round.getMatches();

@@ -29,6 +29,13 @@ const Sidebar = () => {
         </Link>
       </li>
 
+      <li className={'nav-item ' + (location.pathname === '/servers' ? 'active' : '')}>
+        <Link className="nav-link" to="/servers">
+          <i className="fas fa-fw fa-server"></i>
+          <span> Server Management</span>
+        </Link>
+      </li>
+
       <hr className="sidebar-divider" />
     </ul>
   );

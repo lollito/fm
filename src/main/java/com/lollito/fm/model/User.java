@@ -188,6 +188,11 @@ public class User implements Serializable {
 	@ToString.Exclude
     private Club club;
 	
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "server_id" )
+    @ToString.Exclude
+    private Server server;
+
 	@ManyToMany
 	@Builder.Default
 	@ToString.Exclude

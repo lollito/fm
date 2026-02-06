@@ -56,6 +56,11 @@ public class League implements Serializable{
 	@ToString.Exclude
 	private Country country;
 	
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "server_id" )
+    @ToString.Exclude
+    private Server server;
+
 	@OneToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	@JoinColumn( name = "season_id" )
     @JsonIgnore

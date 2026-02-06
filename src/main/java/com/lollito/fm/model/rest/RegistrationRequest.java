@@ -48,6 +48,8 @@ public class RegistrationRequest implements Serializable{
 	@Size(min = 3, max = 15)
 	private String clubName;
 	
+	private Long serverId;
+
 	public String getName() {
 		return name;
 	}
@@ -118,6 +120,14 @@ public class RegistrationRequest implements Serializable{
 
 	public void setClubName(String clubName) {
 		this.clubName = clubName;
+	}
+
+	public Long getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(Long serverId) {
+		this.serverId = serverId;
 	}
 
 	@Override

@@ -19,7 +19,7 @@ import com.lollito.fm.repository.rest.RoleRepository;
 import com.lollito.fm.repository.rest.UserRepository;
 import com.lollito.fm.service.CountryService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.lollito.fm.service.GameService;
+import com.lollito.fm.service.ServerService;
 import com.lollito.fm.service.ModuleService;
 import com.lollito.fm.service.UserService;
 
@@ -29,7 +29,7 @@ public class DatabaseLoader implements CommandLineRunner {
 	private final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
 	
 	@Autowired private ModuleService moduleService;
-	@Autowired private GameService gameService;
+	@Autowired private ServerService serverService;
 	@Autowired private CountryService countryService;
 	@Autowired private UserService userService;
 	@Autowired private UserRepository userRepository;
@@ -51,7 +51,7 @@ public class DatabaseLoader implements CommandLineRunner {
 			roleAdmin = roleRepository.save(Role.builder().name("ROLE_ADMIN").build());
 		}
 
-		// Setup System User for Game Creation
+		// Setup System User for Server Creation
 		if (!userRepository.existsByUsername("system")) {
 			User systemUser = new User();
 			systemUser.setUsername("system");
@@ -104,7 +104,9 @@ public class DatabaseLoader implements CommandLineRunner {
 			countryService.create();
 		}
 
-		gameService.create("SystemGame");
+		if(serverService.findAll().isEmpty()) {
+			serverService.create("Alpha");
+		}
 
 		// Create default user
 		if (!userService.existsByUsername("lollito")) {
