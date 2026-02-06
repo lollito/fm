@@ -3,6 +3,7 @@ package com.lollito.fm.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lollito.fm.mapper.MatchMapper;
+import com.lollito.fm.mapper.MatchPlayerStatsMapper;
 import com.lollito.fm.model.*;
 import com.lollito.fm.model.dto.EventHistoryDTO;
 import com.lollito.fm.model.dto.MatchPlayerStatsDTO;
