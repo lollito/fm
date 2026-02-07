@@ -41,6 +41,7 @@ import com.lollito.fm.model.dto.SimulateMatchesRequest;
 import com.lollito.fm.model.dto.SystemSnapshotDTO;
 import com.lollito.fm.model.dto.TestExecutionDTO;
 import com.lollito.fm.model.dto.TestScenarioDTO;
+import com.lollito.fm.dto.PlayerDTO;
 import com.lollito.fm.service.DebugToolsService;
 import com.lollito.fm.service.UserService;
 
@@ -85,6 +86,11 @@ public class DebugToolsController {
         User adminUser = userService.getUser(authentication.getName());
         DebugActionResult result = debugToolsService.modifyPlayerStats(request, adminUser);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/players/{id}")
+    public ResponseEntity<PlayerDTO> getPlayer(@PathVariable Long id) {
+        return ResponseEntity.ok(debugToolsService.getPlayer(id));
     }
 
     @PostMapping("/finances/adjust")

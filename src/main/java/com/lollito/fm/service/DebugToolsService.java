@@ -61,6 +61,8 @@ import com.lollito.fm.repository.rest.PlayerRepository;
 import com.lollito.fm.repository.rest.SystemSnapshotRepository;
 import com.lollito.fm.repository.rest.TestExecutionRepository;
 import com.lollito.fm.repository.rest.TestScenarioRepository;
+import com.lollito.fm.dto.PlayerDTO;
+import com.lollito.fm.mapper.PlayerMapper;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -83,6 +85,7 @@ public class DebugToolsService {
     @Autowired private TestScenarioRepository testScenarioRepository;
     @Autowired private TestExecutionRepository testExecutionRepository;
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private PlayerMapper playerMapper;
 
     public DebugDashboardDTO getDebugDashboard() {
         LocalDateTime now = LocalDateTime.now();
@@ -383,6 +386,12 @@ public class DebugToolsService {
 
     public List<SystemSnapshot> getSystemSnapshots() {
         return systemSnapshotRepository.findAll();
+    }
+
+    public PlayerDTO getPlayer(Long id) {
+        return playerRepository.findById(id)
+                .map(playerMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Player not found with id: " + id));
     }
 
     public List<TestScenario> getTestScenarios() {

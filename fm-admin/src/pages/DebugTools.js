@@ -4,7 +4,8 @@ import {
     advanceSeason,
     simulateMatches,
     modifyPlayerStats,
-    adjustFinances
+    adjustFinances,
+    getPlayer
 } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import '../styles/DebugTools.css'; // Assuming I'll create some CSS
@@ -369,7 +370,140 @@ const MatchSimulation = ({ onRefresh }) => {
 };
 
 const PlayerTools = ({ onRefresh }) => {
-    return <div>Player Tools (Coming Soon)</div>;
+    const { showToast } = useToast();
+    const [searchId, setSearchId] = useState('');
+    const [player, setPlayer] = useState(null);
+    const [editValues, setEditValues] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [searching, setSearching] = useState(false);
+
+    const handleSearch = async () => {
+        if (!searchId) return;
+        setSearching(true);
+        try {
+            const response = await getPlayer(searchId);
+            setPlayer(response.data);
+            setEditValues(response.data);
+        } catch (error) {
+            console.error('Error fetching player:', error);
+            showToast('Player not found or error fetching data', 'error');
+            setPlayer(null);
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    const handleUpdate = async () => {
+        if (!player) return;
+        setLoading(true);
+
+        const statModifications = {};
+        const stats = ['stamina', 'playmaking', 'scoring', 'winger', 'goalkeeping', 'passing', 'defending', 'setPieces', 'condition', 'moral'];
+
+        stats.forEach(stat => {
+            const original = player[stat] || 0;
+            const current = parseFloat(editValues[stat]) || 0;
+            const diff = Math.round(current - original);
+            if (diff !== 0) {
+                statModifications[stat] = diff;
+            }
+        });
+
+        if (Object.keys(statModifications).length === 0) {
+            showToast('No changes detected', 'info');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const request = {
+                playerIds: [player.id],
+                statModifications: statModifications
+            };
+
+            const response = await modifyPlayerStats(request);
+            if (response.data.success) {
+                showToast('Player stats updated successfully', 'success');
+                // Refresh player data
+                const updatedPlayer = await getPlayer(player.id);
+                setPlayer(updatedPlayer.data);
+                setEditValues(updatedPlayer.data);
+                if (onRefresh) onRefresh();
+            } else {
+                showToast('Failed to update stats: ' + response.data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error updating stats:', error);
+            showToast('Error updating stats: ' + error.message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEditValues({
+            ...editValues,
+            [name]: value
+        });
+    };
+
+    return (
+        <div className="player-tools">
+            <div className="control-section">
+                <h2>Player Tools</h2>
+                <div className="search-box">
+                    <input
+                        type="number"
+                        placeholder="Enter Player ID"
+                        value={searchId}
+                        onChange={(e) => setSearchId(e.target.value)}
+                    />
+                    <button
+                        className="btn-primary"
+                        onClick={handleSearch}
+                        disabled={searching || !searchId}
+                    >
+                        {searching ? 'Searching...' : 'Search Player'}
+                    </button>
+                </div>
+
+                {player && (
+                    <div className="player-editor">
+                        <div className="player-info">
+                            <h3>{player.name} {player.surname} (ID: {player.id})</h3>
+                            <p>Role: {player.role} | Age: {player.age}</p>
+                        </div>
+
+                        <div className="stats-grid">
+                            {['stamina', 'playmaking', 'scoring', 'winger', 'goalkeeping', 'passing', 'defending', 'setPieces', 'condition', 'moral'].map(stat => (
+                                <div key={stat} className="stat-input">
+                                    <label>{stat.charAt(0).toUpperCase() + stat.slice(1).replace(/([A-Z])/g, ' $1')}</label>
+                                    <input
+                                        type="number"
+                                        name={stat}
+                                        value={editValues[stat] || 0}
+                                        onChange={handleChange}
+                                        step="0.1"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="actions">
+                            <button
+                                className="btn-success"
+                                onClick={handleUpdate}
+                                disabled={loading}
+                            >
+                                {loading ? 'Updating...' : 'Update Stats'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 };
 
 const FinancialTools = ({ onRefresh }) => {
