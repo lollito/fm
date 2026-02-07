@@ -24,6 +24,8 @@ import com.lollito.fm.dto.WatchlistStatsDTO;
 import com.lollito.fm.dto.WatchlistUpdateDTO;
 import com.lollito.fm.model.WatchlistEntry;
 import com.lollito.fm.model.WatchlistUpdate;
+import com.lollito.fm.model.User;
+import com.lollito.fm.service.UserService;
 import com.lollito.fm.service.WatchlistService;
 
 @RestController
@@ -33,8 +35,19 @@ public class WatchlistController {
     @Autowired
     private WatchlistService watchlistService;
 
+    @Autowired
+    private UserService userService;
+
+    private void checkClubAccess(Long clubId) {
+        User user = userService.getLoggedUser();
+        if (user.getClub() == null || !user.getClub().getId().equals(clubId)) {
+            throw new IllegalArgumentException("User does not have access to this club");
+        }
+    }
+
     @GetMapping("/club/{clubId}")
     public ResponseEntity<WatchlistDTO> getClubWatchlist(@PathVariable Long clubId) {
+        checkClubAccess(clubId);
         WatchlistDTO watchlist = watchlistService.getClubWatchlist(clubId);
         return ResponseEntity.ok(watchlist);
     }
@@ -44,31 +57,8 @@ public class WatchlistController {
             @PathVariable Long clubId,
             @PathVariable Long playerId,
             @RequestBody AddToWatchlistRequest request) {
+        checkClubAccess(clubId);
         WatchlistEntry entry = watchlistService.addPlayerToWatchlist(clubId, playerId, request);
-        // Note: entry is WatchlistEntry entity, but we return DTO.
-        // WatchlistService needs to expose a way to convert or return DTO.
-        // But in the snippet, addPlayerToWatchlist returns Entry entity, and controller converts it to DTO.
-        // But WatchlistService.convertToEntryDTO is private.
-        // I should probably return DTO from service or make converter public.
-        // I'll assume getClubWatchlist returns DTO using internal converter.
-        // I will re-fetch the list or add a converter method in Service to use here.
-        // Ideally Service should return DTO. But let's stick to the snippet which returns Entity.
-        // Wait, the snippet says: return ResponseEntity.ok(convertToDTO(entry));
-        // So the controller should have convertToDTO.
-
-        // I'll implement convertToDTO in Controller or delegate to Service.
-        // Since Service already has it, I'll make it public in Service or create a separate converter.
-        // I'll assume I can't change Service visibility easily right now (already written),
-        // but I can add a public method to Service: convertEntryToDTO.
-        // OR I can re-implement it here (duplication).
-        // Let's modify Service to have public helper or return DTO.
-        // But since I already wrote Service with private method, and cannot edit it easily without `replace_with_git_merge_diff`.
-        // I'll assume I can modify Service to make convertToEntryDTO public?
-        // Or I can just fetch the watchlist again which returns DTOs (inefficient).
-
-        // Actually, the snippet shows `return ResponseEntity.ok(convertToDTO(entry));` inside Controller.
-        // So `convertToDTO` is a method in Controller.
-        // I will implement it in Controller.
         return ResponseEntity.ok(convertToDTO(entry));
     }
 
@@ -90,6 +80,7 @@ public class WatchlistController {
     public ResponseEntity<List<WatchlistNotificationDTO>> getNotifications(
             @PathVariable Long clubId,
             @RequestParam(defaultValue = "false") Boolean unreadOnly) {
+        checkClubAccess(clubId);
         List<WatchlistNotificationDTO> notifications = watchlistService
             .getWatchlistNotifications(clubId, unreadOnly);
         return ResponseEntity.ok(notifications);
@@ -103,6 +94,7 @@ public class WatchlistController {
 
     @GetMapping("/club/{clubId}/stats")
     public ResponseEntity<WatchlistStatsDTO> getWatchlistStats(@PathVariable Long clubId) {
+        checkClubAccess(clubId);
         WatchlistStatsDTO stats = watchlistService.getWatchlistStats(clubId);
         return ResponseEntity.ok(stats);
     }
@@ -114,15 +106,6 @@ public class WatchlistController {
             .map(watchlistService::convertToDTO)
             .collect(Collectors.toList()));
     }
-
-    // Helper method to duplicate conversion logic or I should have exposed it in service.
-    // Given I can call watchlistService methods, I should use them.
-    // `watchlistService.convertToDTO` for Update is public in Service (I made it so? No, I made `convertToEntryDTO` private in my previous thought but maybe I should check).
-    // I can modify Service to expose these if needed.
-    // I see `public WatchlistUpdateDTO convertToDTO(WatchlistUpdate update)` at the end of Service in my previous write.
-    // But `convertToEntryDTO` was private.
-    // I'll implement `convertToDTO` here for WatchlistEntry by reusing `WatchlistEntryDTO.builder()`.
-    // I need `convertToPlayerDTO` as well.
 
     private WatchlistEntryDTO convertToDTO(WatchlistEntry entry) {
         return WatchlistEntryDTO.builder()
