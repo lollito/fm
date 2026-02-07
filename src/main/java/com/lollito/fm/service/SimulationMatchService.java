@@ -220,7 +220,12 @@ public class SimulationMatchService {
 		inversePosition.put(PlayerPosition.DEFENCE, PlayerPosition.OFFENCE);
 		inversePosition.put(PlayerPosition.MIDFIELD, PlayerPosition.MIDFIELD);
 		inversePosition.put(PlayerPosition.OFFENCE, PlayerPosition.DEFENCE);
-		int luckHome = 20;
+
+		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
+		double occupancy = (double) match.getSpectators() / stadiumCapacity;
+		int homeAdvantage = (int) (occupancy * 10);
+
+		int luckHome = 20 + homeAdvantage;
 		int luckAway = 20;
 		int homePosession = 0;
 		for (int actionNumber = 1; actionNumber <= numberOfActions; actionNumber++) {
@@ -245,12 +250,12 @@ public class SimulationMatchService {
 
 				int luck = RandomUtils.randomValue(0, luckHome);
 				if(luck > (luckHome/2)){
-					luckHome-=RandomUtils.randomValue(0, 5);
+					luckHome-=RandomUtils.randomValue(0, 3);
 					if(luckHome < 0){
 						luckHome = 10;
 					}
 				} else{
-					luckHome+=RandomUtils.randomValue(0, 5);
+					luckHome+=RandomUtils.randomValue(0, 3);
 				}
 				logger.debug("luck home {}", luck);
 				List<Player> hPlayers = homePlayers.get(playerPosition);
@@ -421,12 +426,12 @@ public class SimulationMatchService {
 
 				int luck = RandomUtils.randomValue(0, luckAway);
 				if(luck > (luckAway/2)){
-					luckAway-=RandomUtils.randomValue(0, 5);
+					luckAway-=RandomUtils.randomValue(0, 3);
 					if(luckAway < 0){
 						luckAway = 8;
 					}
 				} else{
-					luckAway+=RandomUtils.randomValue(0, 5);
+					luckAway+=RandomUtils.randomValue(0, 3);
 				}
 				logger.debug("luck away {}", luck);
 				List<Player> aPlayers = awayPlayers.get(playerPosition);
