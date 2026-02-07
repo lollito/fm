@@ -46,4 +46,16 @@ public class LiveMatchController {
         // Logic for tracking spectators could go here
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{id}/finish")
+    public ResponseEntity<Void> finishLiveMatch(@PathVariable Long id) {
+        liveMatchService.forceFinish(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/reset")
+    public ResponseEntity<Void> resetLiveMatch(@PathVariable Long id) {
+        liveMatchService.reset(id);
+        return ResponseEntity.ok().build();
+    }
 }

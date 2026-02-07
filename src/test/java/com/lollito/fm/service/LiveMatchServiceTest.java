@@ -129,4 +129,42 @@ class LiveMatchServiceTest {
         assertThat(liveData.getMatch().getId()).isEqualTo(1L);
         assertThat(liveData.getCurrentMinute()).isEqualTo(0);
     }
+
+    @Test
+    void testForceFinish() {
+        when(liveMatchSessionRepository.findByMatchId(1L)).thenReturn(Optional.of(session));
+
+        liveMatchService.forceFinish(1L);
+
+        assertThat(session.getFinished()).isTrue();
+        assertThat(session.getCurrentMinute()).isEqualTo(90);
+        verify(liveMatchSessionRepository).save(session);
+        verify(matchProcessor).finalizeMatch(1L, session);
+        verify(messagingTemplate).convertAndSend(any(String.class), any(Object.class));
+    }
+
+    @Test
+    void testReset() {
+        when(liveMatchSessionRepository.findByMatchId(1L)).thenReturn(Optional.of(session));
+        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+
+        // Setup match with some "dirty" state
+        match.setStatus(MatchStatus.IN_PROGRESS);
+        match.setHomeScore(2);
+        match.setAwayScore(1);
+        match.setFinish(true);
+
+        liveMatchService.reset(1L);
+
+        verify(liveMatchSessionRepository).delete(session);
+        verify(matchRepository).save(match);
+
+        assertThat(match.getStatus()).isEqualTo(MatchStatus.SCHEDULED);
+        assertThat(match.getHomeScore()).isNull();
+        assertThat(match.getAwayScore()).isNull();
+        assertThat(match.getFinish()).isFalse();
+        assertThat(match.getStats()).isNotNull();
+        assertThat(match.getEvents()).isEmpty();
+        assertThat(match.getPlayerStats()).isEmpty();
+    }
 }
