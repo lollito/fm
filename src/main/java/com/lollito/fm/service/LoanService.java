@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -118,9 +120,22 @@ public class LoanService {
 
     @Scheduled(cron = "0 0 9 1 * *")
     public void processMonthlyLoanReviews() {
-        List<LoanAgreement> activeLoans = loanAgreementRepository.findByStatus(LoanStatus.ACTIVE);
+        List<LoanAgreement> activeLoans = loanAgreementRepository.findWithPlayerByStatus(LoanStatus.ACTIVE);
+
+        if (activeLoans.isEmpty()) {
+            return;
+        }
+
+        List<Player> players = activeLoans.stream()
+            .map(LoanAgreement::getPlayer)
+            .collect(Collectors.toList());
+
+        Season currentSeason = seasonService.getCurrentSeason();
+        Map<Long, PlayerSeasonStats> statsMap = playerHistoryService.getSeasonStatsForPlayers(players, currentSeason);
+
         for (LoanAgreement loan : activeLoans) {
-             createPerformanceReview(loan, ReviewPeriod.MONTHLY);
+             PlayerSeasonStats stats = statsMap.get(loan.getPlayer().getId());
+             createPerformanceReview(loan, ReviewPeriod.MONTHLY, stats);
         }
     }
 
@@ -128,31 +143,7 @@ public class LoanService {
         Player player = loan.getPlayer();
         Season currentSeason = seasonService.getCurrentSeason();
         PlayerSeasonStats stats = playerHistoryService.getPlayerSeasonStats(player.getId(), currentSeason.getId());
-
-        Integer matches = stats != null ? stats.getMatchesPlayed() : 0;
-        Integer goals = stats != null ? stats.getGoals() : 0;
-
-        LoanPerformanceReview review = LoanPerformanceReview.builder()
-            .loanAgreement(loan)
-            .reviewDate(LocalDate.now())
-            .period(period)
-            .matchesPlayed(matches)
-            .goals(goals)
-            .assists(stats != null ? stats.getAssists() : 0)
-            .averageRating(stats != null ? stats.getAverageRating() : 0.0)
-            .yellowCards(stats != null ? stats.getYellowCards() : 0)
-            .redCards(stats != null ? stats.getRedCards() : 0)
-            .skillImprovement(0.0)
-            .targetsMet(false)
-            .recommendation(generateLoanRecommendation(loan, stats))
-            .build();
-
-        review = performanceReviewRepository.save(review);
-
-        loan.setActualAppearances(matches);
-        loanAgreementRepository.save(loan);
-
-        return review;
+        return createPerformanceReview(loan, period, stats);
     }
 
     public void recallPlayerFromLoan(Long loanId, String reason) {
@@ -287,6 +278,33 @@ public class LoanService {
                     .isRecurring(false)
                     .build());
         }
+    }
+
+    private LoanPerformanceReview createPerformanceReview(LoanAgreement loan, ReviewPeriod period, PlayerSeasonStats stats) {
+        Integer matches = stats != null ? stats.getMatchesPlayed() : 0;
+        Integer goals = stats != null ? stats.getGoals() : 0;
+
+        LoanPerformanceReview review = LoanPerformanceReview.builder()
+            .loanAgreement(loan)
+            .reviewDate(LocalDate.now())
+            .period(period)
+            .matchesPlayed(matches)
+            .goals(goals)
+            .assists(stats != null ? stats.getAssists() : 0)
+            .averageRating(stats != null ? stats.getAverageRating() : 0.0)
+            .yellowCards(stats != null ? stats.getYellowCards() : 0)
+            .redCards(stats != null ? stats.getRedCards() : 0)
+            .skillImprovement(0.0)
+            .targetsMet(false)
+            .recommendation(generateLoanRecommendation(loan, stats))
+            .build();
+
+        review = performanceReviewRepository.save(review);
+
+        loan.setActualAppearances(matches);
+        loanAgreementRepository.save(loan);
+
+        return review;
     }
 
     private LoanRecommendation generateLoanRecommendation(LoanAgreement loan, PlayerSeasonStats stats) {
