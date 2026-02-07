@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import api from '../services/api';
 
 export const AuthContext = createContext();
 
@@ -15,11 +16,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+    const { accessToken, ...userSafe } = userData;
+    localStorage.setItem('user', JSON.stringify(userSafe));
+    setUser(userSafe);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await api.post('/user/logout');
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
     localStorage.removeItem('user');
     setUser(null);
   };
