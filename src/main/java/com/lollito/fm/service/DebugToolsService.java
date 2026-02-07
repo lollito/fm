@@ -200,7 +200,14 @@ public class DebugToolsService {
                     player.setBirth(LocalDate.now().minusYears(Math.max(16, Math.min(45, player.getAge() + request.getAgeAdjustment()))));
                 }
 
-                // TODO: Implement stat modifications map if needed (requires mapping stat names to fields)
+                if (request.getOverallAdjustment() != null) {
+                    player.updateSkills(request.getOverallAdjustment().doubleValue());
+                    clampPlayerStats(player);
+                }
+
+                if (request.getStatModifications() != null) {
+                    request.getStatModifications().forEach((stat, value) -> applyStatModification(player, stat, value));
+                }
 
                 modifiedPlayers.add(playerRepository.save(player));
             }
@@ -522,5 +529,61 @@ public class DebugToolsService {
             .databaseConnectionsActive(0) // Mock
             .systemUptime(0.0) // Mock
             .build();
+    }
+
+    private void applyStatModification(Player player, String statName, Integer value) {
+        if (value == null) return;
+
+        switch (statName.toLowerCase()) {
+            case "stamina":
+                player.setStamina(clamp(player.getStamina(), value));
+                break;
+            case "playmaking":
+                player.setPlaymaking(clamp(player.getPlaymaking(), value));
+                break;
+            case "scoring":
+                player.setScoring(clamp(player.getScoring(), value));
+                break;
+            case "winger":
+                player.setWinger(clamp(player.getWinger(), value));
+                break;
+            case "goalkeeping":
+                player.setGoalkeeping(clamp(player.getGoalkeeping(), value));
+                break;
+            case "passing":
+                player.setPassing(clamp(player.getPassing(), value));
+                break;
+            case "defending":
+                player.setDefending(clamp(player.getDefending(), value));
+                break;
+            case "setpieces":
+            case "set_pieces":
+                player.setSetPieces(clamp(player.getSetPieces(), value));
+                break;
+            case "condition":
+                player.setCondition(clamp(player.getCondition(), value));
+                break;
+            case "moral":
+                player.setMoral(clamp(player.getMoral(), value));
+                break;
+            default:
+                log.warn("Unknown stat modification requested: {}", statName);
+        }
+    }
+
+    private Double clamp(Double currentValue, Integer modification) {
+        double val = (currentValue == null ? 0.0 : currentValue) + modification;
+        return Math.max(0.0, Math.min(100.0, val));
+    }
+
+    private void clampPlayerStats(Player player) {
+        player.setStamina(Math.max(0.0, Math.min(100.0, player.getStamina() != null ? player.getStamina() : 0.0)));
+        player.setPlaymaking(Math.max(0.0, Math.min(100.0, player.getPlaymaking() != null ? player.getPlaymaking() : 0.0)));
+        player.setScoring(Math.max(0.0, Math.min(100.0, player.getScoring() != null ? player.getScoring() : 0.0)));
+        player.setWinger(Math.max(0.0, Math.min(100.0, player.getWinger() != null ? player.getWinger() : 0.0)));
+        player.setGoalkeeping(Math.max(0.0, Math.min(100.0, player.getGoalkeeping() != null ? player.getGoalkeeping() : 0.0)));
+        player.setPassing(Math.max(0.0, Math.min(100.0, player.getPassing() != null ? player.getPassing() : 0.0)));
+        player.setDefending(Math.max(0.0, Math.min(100.0, player.getDefending() != null ? player.getDefending() : 0.0)));
+        player.setSetPieces(Math.max(0.0, Math.min(100.0, player.getSetPieces() != null ? player.getSetPieces() : 0.0)));
     }
 }

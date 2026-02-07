@@ -24,6 +24,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: production
       JAVA_OPTS: -Xmx4g -Xms2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:MaxGCPauseMillis=200
+      FM_APP_JWT_SECRET: ${JWT_SECRET}
+      FM_APP_JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
     deploy:
       resources:
         limits:
