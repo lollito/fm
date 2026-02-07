@@ -26,6 +26,10 @@ public class LeagueService {
 		return leagueRepository.findAll();
 	}
 
+	public List<League> findAllWithCurrentSeason() {
+		return leagueRepository.findAllWithCurrentSeason();
+	}
+
 	public League save(League league) {
 		return leagueRepository.save(league);
 	}
