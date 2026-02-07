@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllLiveMatches } from '../services/api';
+import { getAllLiveMatches, forceFinishMatch, resetMatch } from '../services/api';
 import Layout from '../components/Layout';
 
 const LiveMatchMonitoring = () => {
@@ -19,6 +19,30 @@ const LiveMatchMonitoring = () => {
             setError("Failed to load live matches.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleForceFinish = async (matchId) => {
+        if (window.confirm('Are you sure you want to force finish this match?')) {
+            try {
+                await forceFinishMatch(matchId);
+                fetchMatches();
+            } catch (err) {
+                console.error("Error finishing match", err);
+                alert("Failed to force finish match.");
+            }
+        }
+    };
+
+    const handleReset = async (matchId) => {
+        if (window.confirm('Are you sure you want to reset this match?')) {
+            try {
+                await resetMatch(matchId);
+                fetchMatches();
+            } catch (err) {
+                console.error("Error resetting match", err);
+                alert("Failed to reset match.");
+            }
         }
     };
 
@@ -52,7 +76,12 @@ const LiveMatchMonitoring = () => {
                         <h6 className="m-0 font-weight-bold text-primary">Live Matches ({liveMatches.length})</h6>
                     </div>
                     <div className="card-body">
-                        <MatchTable matches={liveMatches} live={true} />
+                        <MatchTable
+                            matches={liveMatches}
+                            live={true}
+                            onForceFinish={handleForceFinish}
+                            onReset={handleReset}
+                        />
                     </div>
                 </div>
 
@@ -61,7 +90,12 @@ const LiveMatchMonitoring = () => {
                         <h6 className="m-0 font-weight-bold text-success">Finished Matches ({finishedMatches.length})</h6>
                     </div>
                     <div className="card-body">
-                        <MatchTable matches={finishedMatches} live={false} />
+                        <MatchTable
+                            matches={finishedMatches}
+                            live={false}
+                            onForceFinish={handleForceFinish}
+                            onReset={handleReset}
+                        />
                     </div>
                 </div>
             </div>
@@ -69,7 +103,7 @@ const LiveMatchMonitoring = () => {
     );
 };
 
-const MatchTable = ({ matches, live }) => {
+const MatchTable = ({ matches, live, onForceFinish, onReset }) => {
     if (matches.length === 0) return <p>No matches found.</p>;
 
     return (
@@ -84,6 +118,7 @@ const MatchTable = ({ matches, live }) => {
                         <th>Away</th>
                         <th>Minute</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,6 +136,23 @@ const MatchTable = ({ matches, live }) => {
                                 ) : (
                                     <span className="badge badge-secondary">Finished</span>
                                 )}
+                            </td>
+                            <td>
+                                {live && (
+                                    <button
+                                        className="btn btn-sm btn-warning mr-2"
+                                        onClick={() => onForceFinish(match.matchId)}
+                                        style={{ marginRight: '5px' }}
+                                    >
+                                        Finish
+                                    </button>
+                                )}
+                                <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => onReset(match.matchId)}
+                                >
+                                    Reset
+                                </button>
                             </td>
                         </tr>
                     ))}

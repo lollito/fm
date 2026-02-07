@@ -5,7 +5,7 @@ import {
     simulateMatches,
     modifyPlayerStats,
     adjustFinances,
-    getPlayer
+    getPlayer,
     getClubs
 } from '../services/api';
 import { useToast } from '../context/ToastContext';

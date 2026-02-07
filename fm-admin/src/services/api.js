@@ -39,5 +39,7 @@ export const forceNextDay = () => api.post('/server/next');
 export const deleteServer = (serverId) => api.delete('/server/?serverId=' + serverId);
 
 export const getAllLiveMatches = () => api.get('/live-match/all');
+export const forceFinishMatch = (id) => api.post('/live-match/' + id + '/finish');
+export const resetMatch = (id) => api.post('/live-match/' + id + '/reset');
 
 export default api;
