@@ -20,6 +20,9 @@ import com.lollito.fm.model.Season;
 public interface MatchRepository extends JpaRepository<Match, Long> {
 	public List<Match> findByRoundSeasonAndDateBeforeAndFinish(Season season, LocalDateTime date, Boolean finish);
 
+	@Query("SELECT m FROM Match m WHERE m.round.season IN :seasons AND m.date < :date AND m.finish = :finish")
+	public List<Match> findByRoundSeasonInAndDateBeforeAndFinish(@Param("seasons") List<Season> seasons, @Param("date") LocalDateTime date, @Param("finish") Boolean finish);
+
 	@Query("SELECT m FROM Match m WHERE (m.home = :club OR m.away = :club) AND m.finish = true ORDER BY m.date DESC")
 	public Page<Match> findByClubAndFinishOrderByDateDesc(@Param("club") Club club, Pageable pageable);
 	public List<Match> findByStatusAndDateBefore(MatchStatus status, LocalDateTime date);
