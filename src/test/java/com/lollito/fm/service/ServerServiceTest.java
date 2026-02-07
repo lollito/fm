@@ -33,7 +33,15 @@ import com.lollito.fm.model.Country;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Season;
 import com.lollito.fm.model.rest.ServerResponse;
+import com.lollito.fm.model.Club;
+import com.lollito.fm.model.Team;
+import com.lollito.fm.model.Player;
 import com.lollito.fm.repository.rest.ServerRepository;
+import com.lollito.fm.repository.rest.LeagueRepository;
+import com.lollito.fm.repository.rest.MatchRepository;
+import com.lollito.fm.repository.rest.ClubRepository;
+import com.lollito.fm.repository.rest.PlayerRepository;
+import com.lollito.fm.repository.rest.SeasonRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ServerServiceTest {
@@ -55,6 +63,27 @@ class ServerServiceTest {
 
     @Mock
     private LeagueService leagueService;
+
+    @Mock
+    private LeagueRepository leagueRepository;
+
+    @Mock
+    private MatchRepository matchRepository;
+
+    @Mock
+    private ClubRepository clubRepository;
+
+    @Mock
+    private PlayerRepository playerRepository;
+
+    @Mock
+    private SimulationMatchService simulationMatchService;
+
+    @Mock
+    private PlayerService playerService;
+
+    @Mock
+    private SeasonRepository seasonRepository;
 
     @InjectMocks
     private ServerService serverService;
@@ -145,5 +174,39 @@ class ServerServiceTest {
         when(userService.getLoggedUser()).thenReturn(user);
 
         assertThrows(EntityNotFoundException.class, () -> serverService.load());
+    }
+
+    @Test
+    void testNext_NoMatches() {
+        // Setup
+        League league = new League();
+        Season season = new Season();
+        league.setCurrentSeason(season);
+
+        when(leagueRepository.findAllWithCurrentSeason()).thenReturn(Collections.singletonList(league));
+        when(matchRepository.findByRoundSeasonInAndDateBeforeAndFinish(anyList(), any(LocalDateTime.class), eq(Boolean.FALSE)))
+            .thenReturn(Collections.emptyList());
+
+        Club club = new Club();
+        Team team = new Team();
+        team.setId(1L);
+        club.setTeam(team);
+        when(clubRepository.findAllByLeagueInWithTeam(anyList())).thenReturn(Collections.singletonList(club));
+
+        Player player = new Player();
+        player.setStamina(80.0);
+        player.setCondition(100.0);
+        when(playerRepository.findByTeamIdIn(anyList())).thenReturn(Collections.singletonList(player));
+
+        // Execute
+        serverService.next();
+
+        // Verify
+        verify(leagueRepository).findAllWithCurrentSeason();
+        verify(matchRepository).findByRoundSeasonInAndDateBeforeAndFinish(anyList(), any(LocalDateTime.class), eq(Boolean.FALSE));
+        verify(clubRepository).findAllByLeagueInWithTeam(anyList());
+        verify(playerRepository).findByTeamIdIn(anyList());
+        verify(playerService).updateSkills(anyList());
+        verify(playerService).saveAll(anyList());
     }
 }

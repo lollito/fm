@@ -96,8 +96,12 @@ public class MatchProcessor {
             // Restore Events
             List<EventHistoryDTO> eventDTOs = objectMapper.readValue(session.getEvents(), new TypeReference<List<EventHistoryDTO>>(){});
             List<EventHistory> events = eventDTOs.stream().map(matchMapper::toEntity).collect(Collectors.toList());
-            events.forEach(e -> e.setId(null));
+
             match.getEvents().clear();
+            events.forEach(e -> {
+                e.setId(null);
+                e.setMatch(match);
+            });
             match.getEvents().addAll(events);
 
             // Restore Stats

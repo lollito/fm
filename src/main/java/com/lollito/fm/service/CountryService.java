@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Country;
@@ -45,6 +46,7 @@ public class CountryService {
 		return countryRepository.findAll();
 	}
 	
+	@Cacheable("countries")
 	public List<Country> findByCreateLeague(Boolean createLeague) {
 		return countryRepository.findByCreateLeague(createLeague);
 	}
