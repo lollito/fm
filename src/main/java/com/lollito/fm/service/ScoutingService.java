@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lollito.fm.dto.AddToWatchlistRequest;
 import com.lollito.fm.dto.PlayerDTO;
 import com.lollito.fm.dto.ScoutingRecommendationDTO;
 import com.lollito.fm.model.AssignmentStatus;
@@ -48,6 +49,7 @@ public class ScoutingService {
     @Autowired private PlayerScoutingStatusRepository scoutingStatusRepository;
     @Autowired private PlayerService playerService;
     @Autowired private ClubService clubService;
+    @Autowired private WatchlistService watchlistService;
 
     public List<Scout> getClubScouts(Long clubId) {
         Club club = clubService.findById(clubId);
@@ -362,7 +364,16 @@ public class ScoutingService {
     }
 
     public void addToWatchlist(Long reportId, String notes) {
-        // Stub
+        ScoutingReport report = reportRepository.findById(reportId)
+            .orElseThrow(() -> new EntityNotFoundException("Scouting report not found"));
+
+        Player player = report.getPlayer();
+        Club club = report.getScout().getClub();
+
+        AddToWatchlistRequest request = new AddToWatchlistRequest();
+        request.setNotes(notes);
+
+        watchlistService.addPlayerToWatchlist(club.getId(), player.getId(), request);
     }
 
     public void cancelAssignment(Long assignmentId) {
