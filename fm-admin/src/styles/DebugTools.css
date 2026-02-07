@@ -270,3 +270,84 @@ button:disabled {
     font-size: 1.2rem;
     color: #6c757d;
 }
+
+/* Player Tools */
+.player-tools {
+    margin-top: 20px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    flex: 1;
+    max-width: 300px;
+}
+
+.player-editor {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.player-info {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-input label {
+    font-size: 0.85rem;
+    color: #495057;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.stat-input input {
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-success:disabled {
+    background-color: #94d3a2;
+    cursor: not-allowed;
+}

@@ -18,6 +18,7 @@ export const getTestScenarios = () => api.get('/admin/debug/test-scenarios');
 export const executeTestScenario = (id) => api.post('/admin/debug/test-scenarios/' + id + '/execute');
 export const getPerformanceMetrics = (params) => api.get('/admin/debug/metrics', { params });
 export const getDebugActions = (params) => api.get('/admin/debug/actions', { params });
+export const getPlayer = (id) => api.get('/admin/debug/players/' + id);
 export const getAdminDashboard = () => api.get('/admin/dashboard');
 export const getClubs = () => api.get('/admin/clubs');
 export const createClub = (data) => api.post('/admin/clubs', data);
