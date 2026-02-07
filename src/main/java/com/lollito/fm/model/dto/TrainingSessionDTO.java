@@ -19,5 +19,6 @@ public class TrainingSessionDTO {
     private LocalDate endDate;
     private TrainingStatus status;
     private Double effectivenessMultiplier;
+    private Integer playerCount;
     private List<PlayerTrainingResultDTO> playerResults;
 }
