@@ -115,7 +115,7 @@ public class ScoutingService {
     @Transactional
     public void processDailyScoutingProgress() {
         List<ScoutingAssignment> activeAssignments = assignmentRepository
-            .findByStatus(AssignmentStatus.IN_PROGRESS);
+            .findAllWithScoutAndPlayerAndClub(AssignmentStatus.IN_PROGRESS);
 
         for (ScoutingAssignment assignment : activeAssignments) {
             processScoutingProgress(assignment);

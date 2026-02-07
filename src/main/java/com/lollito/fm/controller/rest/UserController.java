@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,14 +63,22 @@ public class UserController {
 
 		User user = userService.findByUsernameAndActive(request.getUsername());
 
-		String jwt = jwtUtils.generateJwtToken(user);
+		ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
 
-		return ResponseEntity.ok(new JwtResponse(jwt,
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+				.body(new JwtResponse(null,
 												 user.getId(),
 												 userDetails.getUsername(),
 												 user.getClub() != null ? user.getClub().getId() : null,
 												 roles));
     }
+
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout() {
+		ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+				.body("You've been signed out!");
+	}
 	
 	@PostMapping("/register")
     public ResponseEntity<?> registration(@RequestBody RegistrationRequest request) {
@@ -79,14 +89,15 @@ public class UserController {
 				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(user);
+		ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
 
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity.ok(new JwtResponse(jwt,
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+				.body(new JwtResponse(null,
 												 user.getId(),
 												 userDetails.getUsername(),
 												 user.getClub() != null ? user.getClub().getId() : null,
