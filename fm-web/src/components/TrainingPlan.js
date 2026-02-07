@@ -45,7 +45,19 @@ const TrainingPlan = ({ teamId }) => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const response = await updateTrainingPlan(teamId, plan);
+            const payload = {
+                mondayFocus: plan.mondayFocus || null,
+                tuesdayFocus: plan.tuesdayFocus || null,
+                wednesdayFocus: plan.wednesdayFocus || null,
+                thursdayFocus: plan.thursdayFocus || null,
+                fridayFocus: plan.fridayFocus || null,
+                saturdayFocus: plan.saturdayFocus || null,
+                sundayFocus: plan.sundayFocus || null,
+                intensity: plan.intensity,
+                restOnWeekends: plan.restOnWeekends || false
+            };
+
+            const response = await updateTrainingPlan(teamId, payload);
             setPlan(response.data);
             showToast('Training plan saved successfully!', 'success');
         } catch (error) {
