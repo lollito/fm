@@ -48,7 +48,7 @@ const Navbar = ({ onToggleMenu }) => {
   useEffect(() => {
       if (!user) return;
 
-      const socket = new SockJS(API_BASE_URL + '/ws/live-match?token=' + user.accessToken);
+      const socket = new SockJS(API_BASE_URL + '/ws/live-match');
       stompClient.current = new Client({
           webSocketFactory: () => socket,
           onConnect: () => {

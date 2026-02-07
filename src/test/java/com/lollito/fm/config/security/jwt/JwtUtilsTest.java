@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtUtilsTest {
 
     private JwtUtils jwtUtils;
-    private String secret = "fmSecretKeyForFootballManagerProject2026DecoupledArchitecture";
+    private String secret = "testSecretKeyForIntegrationTestingOnly";
 
     @BeforeEach
     void setUp() {
