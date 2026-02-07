@@ -25,6 +25,8 @@ import com.lollito.fm.model.TransactionType;
 import com.lollito.fm.model.UpgradeStatus;
 import com.lollito.fm.model.UpgradeType;
 import com.lollito.fm.model.YouthAcademy;
+import com.lollito.fm.mapper.FacilityMapper;
+import com.lollito.fm.mapper.StadiumMapper;
 import com.lollito.fm.model.dto.FacilityUpgradeDTO;
 import com.lollito.fm.model.dto.InfrastructureOverviewDTO;
 import com.lollito.fm.model.dto.MaintenanceRecordDTO;
@@ -72,6 +74,12 @@ public class InfrastructureService {
     @Autowired
     private ClubRepository clubRepository;
 
+    @Autowired
+    private StadiumMapper stadiumMapper;
+
+    @Autowired
+    private FacilityMapper facilityMapper;
+
     /**
      * Get infrastructure overview for a club
      */
@@ -95,10 +103,10 @@ public class InfrastructureService {
         BigDecimal totalMaintenanceCost = calculateTotalMaintenanceCost(club);
 
         return InfrastructureOverviewDTO.builder()
-            .stadium(stadium)
-            .trainingFacility(trainingFacility)
-            .medicalCenter(medicalCenter)
-            .youthAcademy(youthAcademy)
+            .stadium(stadiumMapper.toDto(stadium))
+            .trainingFacility(facilityMapper.toDto(trainingFacility))
+            .medicalCenter(facilityMapper.toDto(medicalCenter))
+            .youthAcademy(facilityMapper.toDto(youthAcademy))
             .ongoingUpgrades(ongoingUpgrades.stream().map(this::convertToDTO).collect(Collectors.toList()))
             .upcomingMaintenance(upcomingMaintenance.stream().map(this::convertToDTO).collect(Collectors.toList()))
             .totalMonthlyMaintenanceCost(totalMaintenanceCost)

@@ -27,6 +27,9 @@ import com.lollito.fm.model.rest.PlayerAchievementDTO;
 import com.lollito.fm.model.rest.PlayerCareerStatsDTO;
 import com.lollito.fm.model.rest.PlayerDTO;
 import com.lollito.fm.model.rest.PlayerHistoryDTO;
+import com.lollito.fm.mapper.ClubMapper;
+import com.lollito.fm.mapper.LeagueMapper;
+import com.lollito.fm.mapper.SeasonMapper;
 import com.lollito.fm.model.rest.PlayerSeasonStatsDTO;
 import com.lollito.fm.model.rest.PlayerTransferHistoryDTO;
 import com.lollito.fm.repository.rest.ClubRepository;
@@ -48,6 +51,10 @@ public class PlayerHistoryService {
     @Autowired private PlayerRepository playerRepository;
     @Autowired private SeasonService seasonService;
     @Autowired private ClubRepository clubRepository;
+
+    @Autowired private ClubMapper clubMapper;
+    @Autowired private SeasonMapper seasonMapper;
+    @Autowired private LeagueMapper leagueMapper;
 
     private Club getClubByPlayer(Player player) {
         if (player.getTeam() == null) return null;
@@ -461,9 +468,9 @@ public class PlayerHistoryService {
         if (stats == null) return null;
         return PlayerSeasonStatsDTO.builder()
             .id(stats.getId())
-            .season(stats.getSeason())
-            .club(stats.getClub())
-            .league(stats.getLeague())
+            .season(seasonMapper.toDto(stats.getSeason()))
+            .club(clubMapper.toDto(stats.getClub()))
+            .league(leagueMapper.toDto(stats.getLeague()))
             .matchesPlayed(stats.getMatchesPlayed())
             .matchesStarted(stats.getMatchesStarted())
             .minutesPlayed(stats.getMinutesPlayed())
@@ -484,8 +491,8 @@ public class PlayerHistoryService {
             .title(achievement.getTitle())
             .description(achievement.getDescription())
             .dateAchieved(achievement.getDateAchieved())
-            .club(achievement.getClub())
-            .season(achievement.getSeason())
+            .club(clubMapper.toDto(achievement.getClub()))
+            .season(seasonMapper.toDto(achievement.getSeason()))
             .build();
     }
 
@@ -493,12 +500,12 @@ public class PlayerHistoryService {
         if (transfer == null) return null;
         return PlayerTransferHistoryDTO.builder()
             .id(transfer.getId())
-            .fromClub(transfer.getFromClub())
-            .toClub(transfer.getToClub())
+            .fromClub(clubMapper.toDto(transfer.getFromClub()))
+            .toClub(clubMapper.toDto(transfer.getToClub()))
             .transferDate(transfer.getTransferDate())
             .transferFee(transfer.getTransferFee())
             .transferType(transfer.getTransferType())
-            .season(transfer.getSeason())
+            .season(seasonMapper.toDto(transfer.getSeason()))
             .build();
     }
 }

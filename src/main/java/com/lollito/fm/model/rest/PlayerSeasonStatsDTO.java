@@ -1,8 +1,8 @@
 package com.lollito.fm.model.rest;
 
-import com.lollito.fm.model.Club;
-import com.lollito.fm.model.League;
-import com.lollito.fm.model.Season;
+import com.lollito.fm.model.dto.ClubDTO;
+import com.lollito.fm.model.dto.LeagueDTO;
+import com.lollito.fm.model.dto.SeasonDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlayerSeasonStatsDTO {
     private Long id;
-    private Season season; // Or SeasonDTO
-    private Club club;     // Or ClubDTO
-    private League league; // Or LeagueDTO
+    private SeasonDTO season;
+    private ClubDTO club;
+    private LeagueDTO league;
 
     private Integer matchesPlayed;
     private Integer matchesStarted;

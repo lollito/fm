@@ -3,8 +3,8 @@ package com.lollito.fm.model.rest;
 import java.time.LocalDate;
 
 import com.lollito.fm.model.AchievementType;
-import com.lollito.fm.model.Club;
-import com.lollito.fm.model.Season;
+import com.lollito.fm.model.dto.ClubDTO;
+import com.lollito.fm.model.dto.SeasonDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +21,6 @@ public class PlayerAchievementDTO {
     private String title;
     private String description;
     private LocalDate dateAchieved;
-    private Club club;
-    private Season season;
+    private ClubDTO club;
+    private SeasonDTO season;
 }
