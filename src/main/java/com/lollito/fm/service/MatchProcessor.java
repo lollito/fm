@@ -56,7 +56,7 @@ public class MatchProcessor {
         logger.info("Processing match {} : {} vs {}", match.getId(), match.getHome().getName(), match.getAway().getName());
 
         // Simulate to get result
-        simulationMatchService.simulate(match, null, false);
+        simulationMatchService.simulate(match, null, false, false);
 
         // Create session with the result
         liveMatchService.createSession(match);

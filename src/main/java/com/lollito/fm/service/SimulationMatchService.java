@@ -73,6 +73,10 @@ public class SimulationMatchService {
 	}
 
 	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
+		return simulate(match, forcedResult, updateRanking, true);
+	}
+
+	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking, boolean saveMatch) {
 		simulateMatchLogic(match, forcedResult);
 
 		// Save players
@@ -124,6 +128,25 @@ public class SimulationMatchService {
 
 		match.setFinish(true);
 		match.setStatus(MatchStatus.COMPLETED);
+
+		// Update player history stats
+		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
+
+		if (saveMatch) {
+			matchRepository.save(match);
+		}
+
+		if (updateRanking) {
+			rankingService.update(match);
+		}
+
+		return MatchResult.builder()
+				.matchId(match.getId())
+				.homeScore(match.getHomeScore())
+				.awayScore(match.getAwayScore())
+				.homeTeam(match.getHome().getName())
+				.awayTeam(match.getAway().getName())
+				.build();
 	}
 
 	public MatchResult simulateMatchWithForcedResult(Match match, String forcedResult) {
