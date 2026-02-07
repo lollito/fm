@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Player;
@@ -302,11 +303,13 @@ public class TrainingService {
          return team.getCurrentTrainingPlan();
     }
 
+    @Transactional(readOnly = true)
     public Page<TrainingSession> getTrainingHistory(Long teamId, Pageable pageable) {
         Team team = teamService.findById(teamId);
         return trainingSessionRepository.findByTeam(team, pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<PlayerTrainingResult> getSessionResults(Long sessionId) {
         return trainingSessionRepository.findById(sessionId)
             .map(TrainingSession::getPlayerResults)

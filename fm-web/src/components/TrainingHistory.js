@@ -79,7 +79,7 @@ const TrainingHistory = ({ teamId }) => {
                             <span className="session-intensity">{session.intensity}</span>
                         </div>
                         <div className="session-stats" style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>
-                            <span style={{ marginRight: '15px' }}>Players trained: {session.playerResults ? session.playerResults.length : 'N/A'}</span>
+                            <span style={{ marginRight: '15px' }}>Players trained: {session.playerCount !== undefined ? session.playerCount : 'N/A'}</span>
                             <span>Effectiveness: {session.effectivenessMultiplier ? Math.round(session.effectivenessMultiplier * 100) : 0}%</span>
                         </div>
                     </div>

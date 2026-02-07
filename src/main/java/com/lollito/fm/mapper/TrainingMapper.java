@@ -17,6 +17,8 @@ public interface TrainingMapper {
     TrainingPlanDTO toDto(TrainingPlan plan);
 
     @Mapping(source = "team.id", target = "teamId")
+    @Mapping(target = "playerCount", expression = "java(session.getPlayerResults() != null ? session.getPlayerResults().size() : 0)")
+    @Mapping(target = "playerResults", ignore = true)
     TrainingSessionDTO toDto(TrainingSession session);
 
     @Mapping(source = "trainingSession.id", target = "trainingSessionId")
