@@ -30,6 +30,8 @@ const Formation = () => {
   const [mentalities, setMentalities] = useState([]);
   const [formation, setFormation] = useState({ moduleId: '', mentality: '', playersId: Array(11).fill(null) });
   const [selectedModule, setSelectedModule] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isAutoSelecting, setIsAutoSelecting] = useState(false);
 
   const fetchPlayers = useCallback(async () => {
     const res = await api.get('/player/');
@@ -149,6 +151,7 @@ const Formation = () => {
     params.append('mentality', formation.mentality);
     formation.playersId.forEach(id => params.append('playersId', id));
 
+    setIsSaving(true);
     try {
         await api.post('/formation/', params);
         showToast('Formation saved', 'success');
@@ -156,16 +159,21 @@ const Formation = () => {
         fetchPlayers();
     } catch (error) {
         showToast('Error saving formation: ' + (error.response?.data?.message || error.message), 'error');
+    } finally {
+        setIsSaving(false);
     }
   };
 
   const autoSelect = async () => {
+    setIsAutoSelecting(true);
     try {
         const res = await api.get('/formation/auto');
         updateFormationState(res.data, modules);
         await fetchPlayers();
     } catch (error) {
         showToast('Error in auto select: ' + (error.response?.data?.message || error.message), 'error');
+    } finally {
+        setIsAutoSelecting(false);
     }
   };
 
@@ -225,6 +233,10 @@ const Formation = () => {
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => onDrop(e, index)}
         onClick={() => player && unassignPlayer(index)}
+        tabIndex={0}
+        role="button"
+        aria-label={player ? `${player.surname} ${player.name ? player.name : ''}, ${label}, Press Enter to unassign` : `Empty slot ${label}`}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); player && unassignPlayer(index); } }}
         style={{ position: 'absolute', top, left, transform: 'translate(-50%, -50%)', border: isOutOfRole ? '2px solid var(--warning)' : '2px solid white' }}
       >
         {isOutOfRole && <div style={{ position: 'absolute', top: -10, right: -10, background: 'var(--warning)', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '12px' }}>!</div>}
@@ -341,8 +353,12 @@ const Formation = () => {
                 </div>
               </div>
               <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-                <button className="btn btn-outline" onClick={autoSelect}>Auto Select</button>
-                <button className="btn btn-primary" onClick={saveFormation}>Save Formation</button>
+                <button className="btn btn-outline" onClick={autoSelect} disabled={isAutoSelecting} aria-busy={isAutoSelecting}>
+                    {isAutoSelecting ? <><i className="fas fa-spinner fa-spin"></i> Auto Selecting...</> : 'Auto Select'}
+                </button>
+                <button className="btn btn-primary" onClick={saveFormation} disabled={isSaving} aria-busy={isSaving}>
+                    {isSaving ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : 'Save Formation'}
+                </button>
               </div>
             </div>
           </div>
