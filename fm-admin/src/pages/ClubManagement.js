@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { getClubs, createClub, updateClub, deleteClub } from '../services/api';
+import { useToast } from '../context/ToastContext';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const ClubManagement = () => {
+    const { showToast } = useToast();
     const [clubs, setClubs] = useState([]);
     const [selectedClub, setSelectedClub] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [confirmationModal, setConfirmationModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -28,21 +32,29 @@ const ClubManagement = () => {
             await createClub(clubData);
             loadClubs();
             setShowCreateModal(false);
+            showToast('Club created successfully', 'success');
         } catch (error) {
             console.error('Error creating club:', error);
-            alert('Error creating club: ' + error.message);
+            showToast('Error creating club: ' + error.message, 'error');
         }
     };
 
     const handleDeleteClub = async (clubId) => {
-        if (window.confirm('Are you sure you want to delete this club?')) {
-            try {
-                await deleteClub(clubId);
-                loadClubs();
-            } catch (error) {
-                console.error('Error deleting club:', error);
+        setConfirmationModal({
+            isOpen: true,
+            title: 'Delete Club',
+            message: 'Are you sure you want to delete this club?',
+            onConfirm: async () => {
+                try {
+                    await deleteClub(clubId);
+                    loadClubs();
+                    showToast('Club deleted successfully', 'success');
+                } catch (error) {
+                    console.error('Error deleting club:', error);
+                    showToast('Error deleting club', 'error');
+                }
             }
-        }
+        });
     };
 
     const filteredClubs = clubs.filter(club => {
@@ -106,6 +118,14 @@ const ClubManagement = () => {
                     onSubmit={handleCreateClub}
                 />
             )}
+
+            <ConfirmationModal
+                isOpen={confirmationModal.isOpen}
+                onClose={() => setConfirmationModal({ ...confirmationModal, isOpen: false })}
+                onConfirm={confirmationModal.onConfirm}
+                title={confirmationModal.title}
+                message={confirmationModal.message}
+            />
         </div>
     );
 };

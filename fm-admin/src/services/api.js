@@ -1,23 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
 });
-
-api.interceptors.request.use(
-  (config) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.accessToken) {
-      config.headers['Authorization'] = 'Bearer ' + user.accessToken;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 export const getDebugDashboard = () => api.get('/admin/debug/dashboard');
 export const advanceSeason = (data) => api.post('/admin/debug/season/advance', data);

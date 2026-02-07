@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { getUsers, getUserDashboard, banUser, unbanUser, resetUserPassword } from '../services/userManagementApi';
+import { useToast } from '../context/ToastContext';
 import UserDetailModal from '../components/UserDetailModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import Layout from '../components/Layout';
 
 const UserManagement = () => {
+    const { showToast } = useToast();
     const [users, setUsers] = useState([]);
     const [dashboard, setDashboard] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [confirmationModal, setConfirmationModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
         search: '',
@@ -66,14 +70,20 @@ const UserManagement = () => {
     };
 
     const handleResetPassword = async (userId) => {
-        if (window.confirm('Are you sure you want to reset this user\'s password? They will receive a temporary password via email.')) {
-            try {
-                await resetUserPassword(userId);
-                alert('Password reset successfully. User will receive temporary password via email.');
-            } catch (error) {
-                console.error('Error resetting password:', error);
+        setConfirmationModal({
+            isOpen: true,
+            title: 'Reset Password',
+            message: 'Are you sure you want to reset this user\'s password? They will receive a temporary password via email.',
+            onConfirm: async () => {
+                try {
+                    await resetUserPassword(userId);
+                    showToast('Password reset successfully. User will receive temporary password via email.', 'success');
+                } catch (error) {
+                    console.error('Error resetting password:', error);
+                    showToast('Error resetting password', 'error');
+                }
             }
-        }
+        });
     };
 
     const getStatusBadge = (user) => {
@@ -318,6 +328,14 @@ const UserManagement = () => {
                         onUpdate={loadUserData}
                     />
                 )}
+
+                <ConfirmationModal
+                    isOpen={confirmationModal.isOpen}
+                    onClose={() => setConfirmationModal({ ...confirmationModal, isOpen: false })}
+                    onConfirm={confirmationModal.onConfirm}
+                    title={confirmationModal.title}
+                    message={confirmationModal.message}
+                />
             </div>
         </Layout>
     );

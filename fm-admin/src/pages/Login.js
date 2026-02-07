@@ -2,11 +2,13 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useContext(AuthContext);
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,7 +18,7 @@ const Login = () => {
       login(response.data);
       navigate('/');
     } catch (error) {
-      alert('Login failed');
+      showToast('Login failed', 'error');
     }
   };
 

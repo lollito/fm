@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import ToastContainer from './components/ToastContainer';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import UserManagement from './pages/UserManagement';
@@ -27,18 +29,21 @@ const PrivateRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
-          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-          <Route path="/clubs" element={<PrivateRoute><ClubManagement /></PrivateRoute>} />
-          <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
-          <Route path="/servers" element={<PrivateRoute><ServerManagement /></PrivateRoute>} />
-          <Route path="/live-matches" element={<PrivateRoute><LiveMatchMonitoring /></PrivateRoute>} />
-          <Route path="/debug" element={<PrivateRoute><DebugTools /></PrivateRoute>} />
-        </Routes>
-      </Router>
+      <ToastProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+            <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+            <Route path="/clubs" element={<PrivateRoute><ClubManagement /></PrivateRoute>} />
+            <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
+            <Route path="/servers" element={<PrivateRoute><ServerManagement /></PrivateRoute>} />
+            <Route path="/live-matches" element={<PrivateRoute><LiveMatchMonitoring /></PrivateRoute>} />
+            <Route path="/debug" element={<PrivateRoute><DebugTools /></PrivateRoute>} />
+          </Routes>
+        </Router>
+        <ToastContainer />
+      </ToastProvider>
     </AuthProvider>
   );
 }
