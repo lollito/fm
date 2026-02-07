@@ -140,17 +140,17 @@ public class ServerService {
 		ServerResponse serverResponse = new ServerResponse();
 		List<Match> matches = matchRepository.findByRoundSeasonAndDateBeforeAndFinish(league.getCurrentSeason(), LocalDateTime.now(), Boolean.FALSE);
 		if(matches.isEmpty()){
-			List<Player> allPlayersToUpdate = new java.util.ArrayList<>();
+			List<Player> allPlayers = new ArrayList<>();
 			for(Club club : league.getClubs()) {
 				for(Player player : club.getTeam().getPlayers()) {
 					double increment = -((10 * player.getStamina())/99) + (1000/99);
 					player.incrementCondition(increment);
-					allPlayersToUpdate.add(player);
+					allPlayers.add(player);
 				}
 			}
-			if (!allPlayersToUpdate.isEmpty()) {
-				playerService.updateSkills(allPlayersToUpdate);
-				playerService.saveAll(allPlayersToUpdate);
+			if(!allPlayers.isEmpty()) {
+				playerService.updateSkills(allPlayers);
+				playerService.saveAll(allPlayers);
 			}
 		} else {
 			List<Match> scheduledMatches = matches.stream()
