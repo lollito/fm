@@ -9,6 +9,8 @@ import com.lollito.fm.model.dto.UserDTO;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(source = "country.name", target = "country")
+    @Mapping(source = "club.id", target = "clubId")
+    @Mapping(source = "server.id", target = "serverId")
     UserDTO toDto(User user);
 
     @Mapping(target = "country", ignore = true)
