@@ -143,10 +143,6 @@ public class RegistrationRequest implements Serializable{
 		builder.append(email);
 		builder.append(", emailConfirm=");
 		builder.append(emailConfirm);
-		builder.append(", password=");
-		builder.append(password);
-		builder.append(", passwordConfirm=");
-		builder.append(passwordConfirm);
 		builder.append(", countryId=");
 		builder.append(countryId);
 		builder.append(", clubName=");
