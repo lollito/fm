@@ -67,6 +67,7 @@ public class LiveMatchService {
             logger.info("Created LiveMatchSession for match {}", match.getId());
         } catch (Exception e) {
             logger.error("Error creating live match session", e);
+            throw new RuntimeException(e);
         }
     }
 

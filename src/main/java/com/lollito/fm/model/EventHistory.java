@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -44,6 +45,10 @@ public class EventHistory implements Serializable{
 	@EqualsAndHashCode.Include
 	private Long id;
 	
+	@EqualsAndHashCode.Include
+	@Builder.Default
+	private String uuid = UUID.randomUUID().toString();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_id")
     @JsonIgnore
