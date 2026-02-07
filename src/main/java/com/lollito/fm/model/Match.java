@@ -92,8 +92,7 @@ public class Match implements Serializable{
 	
 	public Integer spectators;
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    @JoinColumn( name = "match_id" )
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@OrderBy("minute")
 	@Builder.Default
 	@ToString.Exclude

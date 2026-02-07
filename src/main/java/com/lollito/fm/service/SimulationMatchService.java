@@ -48,7 +48,19 @@ public class SimulationMatchService {
 	@Autowired InjuryService injuryService;
 	
 	public void simulate(List<Match> matches){
-		matches.forEach(match -> simulate(match, null, false));
+		List<Player> allPlayersToSave = new ArrayList<>();
+		matches.forEach(match -> {
+			simulateMatchLogic(match, null);
+			// Collect players
+			allPlayersToSave.addAll(match.getHome().getTeam().getPlayers());
+			allPlayersToSave.addAll(match.getAway().getTeam().getPlayers());
+
+			// Update player history stats
+			match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
+		});
+
+		playerService.saveAll(allPlayersToSave);
+		matchRepository.saveAll(matches);
 		rankingService.updateAll(matches);
 	}
 	
@@ -61,6 +73,38 @@ public class SimulationMatchService {
 	}
 
 	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking) {
+		return simulate(match, forcedResult, updateRanking, true);
+	}
+
+	public MatchResult simulate(Match match, String forcedResult, boolean updateRanking, boolean saveMatch) {
+		simulateMatchLogic(match, forcedResult);
+
+		// Save players
+		List<Player> players = Stream.concat(
+				match.getHome().getTeam().getPlayers().stream(),
+				match.getAway().getTeam().getPlayers().stream())
+                .collect(Collectors.toList());
+		playerService.saveAll(players);
+
+		// Update player history stats
+		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
+
+		matchRepository.save(match);
+
+		if (updateRanking) {
+			rankingService.update(match);
+		}
+
+		return MatchResult.builder()
+				.matchId(match.getId())
+				.homeScore(match.getHomeScore())
+				.awayScore(match.getAwayScore())
+				.homeTeam(match.getHome().getName())
+				.awayTeam(match.getAway().getName())
+				.build();
+	}
+
+	private void simulateMatchLogic(Match match, String forcedResult) {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		match.setSpectators(RandomUtils.randomValue(stadiumCapacity/3, stadiumCapacity));
 		
@@ -88,7 +132,9 @@ public class SimulationMatchService {
 		// Update player history stats
 		match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
 
-		matchRepository.save(match);
+		if (saveMatch) {
+			matchRepository.save(match);
+		}
 
 		if (updateRanking) {
 			rankingService.update(match);
@@ -581,7 +627,6 @@ public class SimulationMatchService {
 		});
 		events.sort(Comparator.comparingInt(EventHistory::getMinute));
 
-		playerService.saveAll(players);
 		int homePosessionPerc = (homePosession * 100) / numberOfActions;
 		stats.setHomePossession(homePosessionPerc);
 		stats.setAwayPossession(100 - homePosessionPerc);
