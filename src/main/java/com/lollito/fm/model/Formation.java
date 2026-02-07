@@ -86,6 +86,10 @@ public class Formation implements Serializable{
 	@Builder.Default
 	private Mentality mentality = Mentality.NORMAL;
 	
+	@Enumerated(EnumType.ORDINAL)
+	@Builder.Default
+	private SubstitutionStrategy substitutionStrategy = SubstitutionStrategy.AUTO;
+
 	public void addPlayer(Player player) {
 		this.players.add(player);
 	}
@@ -94,6 +98,7 @@ public class Formation implements Serializable{
 		Formation copy = new Formation();
 		copy.setModule(this.module);
 		copy.setMentality(this.mentality);
+		copy.setSubstitutionStrategy(this.substitutionStrategy);
 		copy.setPlayers(new ArrayList<>(this.players));
 		copy.setSubstitutes(new ArrayList<>(this.substitutes));
 		return copy;

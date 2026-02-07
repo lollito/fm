@@ -24,7 +24,9 @@ import com.lollito.fm.model.MatchPlayerStats;
 import com.lollito.fm.model.MatchStatus;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
+import com.lollito.fm.model.PlayerRole;
 import com.lollito.fm.model.PlayerPosition;
+import com.lollito.fm.model.SubstitutionStrategy;
 import com.lollito.fm.model.Stats;
 import com.lollito.fm.model.dto.MatchResult;
 import com.lollito.fm.repository.rest.MatchRepository;
@@ -676,30 +678,131 @@ public class SimulationMatchService {
 	}
 
 	private void performSubstitution(Formation formation, Match match, List<EventHistory> events, int minute, Map<Player, MatchPlayerStats> allPlayerStats, boolean isHome) {
-		if (formation.getSubstitutes() != null && !formation.getSubstitutes().isEmpty()) {
-			Player out = RandomUtils.randomValueFromList(formation.getPlayers());
-			Player in = formation.getSubstitutes().remove(0);
-			int idx = formation.getPlayers().indexOf(out);
+		if (formation.getSubstitutes() == null || formation.getSubstitutes().isEmpty()) {
+			return;
+		}
+
+		SubstitutionStrategy strategy = formation.getSubstitutionStrategy();
+		if (strategy == null) strategy = SubstitutionStrategy.AUTO;
+
+		// Identify candidate OUT
+		Player candidateOut = null;
+		double maxScore = -1.0;
+
+		int homeScore = match.getHomeScore();
+		int awayScore = match.getAwayScore();
+		boolean isWinning = isHome ? homeScore > awayScore : awayScore > homeScore;
+		boolean isLosing = isHome ? homeScore < awayScore : awayScore < homeScore;
+		int scoreDiff = Math.abs(homeScore - awayScore);
+		boolean comfortableWin = isWinning && scoreDiff >= 2;
+
+		for (Player p : formation.getPlayers()) {
+			if (p.getRole() == PlayerRole.GOALKEEPER) continue;
+
+			MatchPlayerStats stats = allPlayerStats.get(p);
+			if (stats == null) continue;
+
+			double score = 0.0;
+
+			// Fatigue
+			if (p.getCondition() != null) {
+				score += (100.0 - p.getCondition()) * 1.5;
+			}
+
+			// Rating
+			if (stats.getRating() != null) {
+				score += (10.0 - stats.getRating()) * 10.0;
+			}
+
+			// Yellow Card Risk
+			if (stats.getYellowCards() > 0) {
+				if (comfortableWin) {
+					score += 50.0;
+				} else if (strategy == SubstitutionStrategy.AGGRESSIVE || strategy == SubstitutionStrategy.DEFENSIVE) {
+					score += 20.0;
+				}
+			}
+
+			// Tactics
+			if (isLosing) {
+				if (strategy == SubstitutionStrategy.AGGRESSIVE || strategy == SubstitutionStrategy.AUTO) {
+					if (p.getRole() == PlayerRole.DEFENDER || p.getRole() == PlayerRole.WINGBACK) {
+						score += 15.0;
+					}
+				}
+			} else if (isWinning) {
+				if (strategy == SubstitutionStrategy.DEFENSIVE || strategy == SubstitutionStrategy.AUTO) {
+					if (p.getRole() == PlayerRole.FORWARD || p.getRole() == PlayerRole.WING) {
+						score += 15.0;
+					}
+				}
+			}
+
+			if (score > maxScore) {
+				maxScore = score;
+				candidateOut = p;
+			}
+		}
+
+		if (candidateOut == null) {
+			// Fallback: random if no clear candidate found (unlikely given score logic)
+			candidateOut = RandomUtils.randomValueFromList(formation.getPlayers());
+		}
+
+		// Identify candidate IN
+		Player candidateIn = null;
+		List<Player> availableSubs = new ArrayList<>(formation.getSubstitutes());
+
+		if (isLosing && (strategy == SubstitutionStrategy.AGGRESSIVE || strategy == SubstitutionStrategy.AUTO)) {
+			if (candidateOut.getRole() == PlayerRole.DEFENDER || candidateOut.getRole() == PlayerRole.WINGBACK) {
+				candidateIn = findBestSubForRole(availableSubs, PlayerRole.FORWARD);
+				if (candidateIn == null) candidateIn = findBestSubForRole(availableSubs, PlayerRole.WING);
+			}
+		} else if (isWinning && (strategy == SubstitutionStrategy.DEFENSIVE || strategy == SubstitutionStrategy.AUTO)) {
+			if (candidateOut.getRole() == PlayerRole.FORWARD || candidateOut.getRole() == PlayerRole.WING) {
+				candidateIn = findBestSubForRole(availableSubs, PlayerRole.DEFENDER);
+				if (candidateIn == null) candidateIn = findBestSubForRole(availableSubs, PlayerRole.WINGBACK);
+			}
+		}
+
+		if (candidateIn == null) {
+			candidateIn = findBestSubForRole(availableSubs, candidateOut.getRole());
+		}
+
+		if (candidateIn == null && !availableSubs.isEmpty()) {
+			candidateIn = availableSubs.get(0);
+		}
+
+		if (candidateIn != null) {
+			formation.getSubstitutes().remove(candidateIn);
+			int idx = formation.getPlayers().indexOf(candidateOut);
 			if (idx != -1) {
-				formation.getPlayers().set(idx, in);
+				formation.getPlayers().set(idx, candidateIn);
 
 				MatchPlayerStats mpsIn = new MatchPlayerStats();
 				mpsIn.setMatch(match);
-				mpsIn.setPlayer(in);
+				mpsIn.setPlayer(candidateIn);
 				mpsIn.setStarted(false);
 				mpsIn.setMinutesPlayed(90 - minute);
 
-				MatchPlayerStats mpsOut = allPlayerStats.get(out);
+				MatchPlayerStats mpsOut = allPlayerStats.get(candidateOut);
 				if (mpsOut != null) {
 					mpsIn.setPosition(mpsOut.getPosition());
 					mpsOut.setMinutesPlayed(minute);
 				}
-				allPlayerStats.put(in, mpsIn);
+				allPlayerStats.put(candidateIn, mpsIn);
 
-				events.add(new EventHistory(String.format(Event.SUBSTITUTION.getMessage(), in.getSurname(), out.getSurname()), minute, Event.SUBSTITUTION));
-				logger.info("{} Substitution: {} for {}", isHome ? "Home" : "Away", in.getSurname(), out.getSurname());
+				events.add(new EventHistory(String.format(Event.SUBSTITUTION.getMessage(), candidateIn.getSurname(), candidateOut.getSurname()), minute, Event.SUBSTITUTION));
+				logger.info("{} Substitution: {} for {} (Strategy: {})", isHome ? "Home" : "Away", candidateIn.getSurname(), candidateOut.getSurname(), strategy);
 			}
 		}
+	}
+
+	private Player findBestSubForRole(List<Player> subs, PlayerRole role) {
+		return subs.stream()
+				.filter(p -> p.getRole() == role)
+				.max(Comparator.comparing(Player::getAverage))
+				.orElse(null);
 	}
 
 	private String getPositionLabel(Module module, int index) {

@@ -13,10 +13,12 @@ import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
+import com.lollito.fm.model.SubstitutionStrategy;
 import com.lollito.fm.model.Team;
 import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.repository.rest.FormationRepository;
 import com.lollito.fm.repository.rest.TeamRepository;
+import com.lollito.fm.utils.RandomUtils;
 
 @Service
 public class FormationService {
@@ -41,6 +43,9 @@ public class FormationService {
 		Module module = moduleService.findOne(formationRequest.getModuleId());
 		formation.setModule(module);
 		formation.setMentality(formationRequest.getMentality());
+		if (formation.getSubstitutionStrategy() == null) {
+			formation.setSubstitutionStrategy(SubstitutionStrategy.AUTO);
+		}
 		formation.setPlayers(new ArrayList<>());
 		for (Long id : formationRequest.getPlayersId()) {
 			if(id != null) {
@@ -75,6 +80,7 @@ public class FormationService {
 		}
 		formation.setModule(module);
 		formation.setMentality(mentalityService.random());
+		formation.setSubstitutionStrategy(SubstitutionStrategy.valueOf(RandomUtils.randomValue(0, 3)));
 		formation.setPlayers(new ArrayList<>());
 		Player goalKeeper = playerService.getBestDefensivePlayer(playersCopy, PlayerRole.GOALKEEPER);
 		if (goalKeeper == null && !playersCopy.isEmpty()) goalKeeper = playersCopy.get(0);
