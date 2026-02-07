@@ -25,8 +25,13 @@ import com.lollito.fm.model.TrainingPerformance;
 import com.lollito.fm.model.TrainingPlan;
 import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.model.TrainingStatus;
+import com.lollito.fm.model.dto.IndividualFocusDTO;
+import com.lollito.fm.model.dto.IndividualFocusRequest;
 import com.lollito.fm.model.dto.ManualTrainingRequest;
 import com.lollito.fm.model.dto.TrainingPlanRequest;
+import com.lollito.fm.model.IndividualTrainingFocus;
+import com.lollito.fm.model.PlayerTrainingFocus;
+import com.lollito.fm.repository.PlayerTrainingFocusRepository;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
@@ -42,6 +47,9 @@ public class TrainingService {
 
     @Autowired
     private PlayerTrainingResultRepository playerTrainingResultRepository;
+
+    @Autowired
+    private PlayerTrainingFocusRepository playerTrainingFocusRepository;
 
     @Autowired
     private TrainingPlanRepository trainingPlanRepository;
@@ -121,11 +129,20 @@ public class TrainingService {
 
         session = trainingSessionRepository.save(session);
 
-        // Process each player's training
+        // Fetch active individual focuses for the team
         List<Player> players = team.getPlayers();
+        LocalDate today = LocalDate.now();
+        List<PlayerTrainingFocus> activeFocuses = playerTrainingFocusRepository.findActiveFocusForPlayers(players, today);
+
+        // Process each player's training
         for (Player player : players) {
             if (!player.isInjured() && player.getCondition() > 20) {
-                PlayerTrainingResult result = processPlayerTraining(player, session);
+                PlayerTrainingFocus individualFocus = activeFocuses.stream()
+                    .filter(f -> f.getPlayer().equals(player))
+                    .findFirst()
+                    .orElse(null);
+
+                PlayerTrainingResult result = processPlayerTraining(player, session, individualFocus);
                 session.getPlayerResults().add(result);
             }
         }
@@ -165,7 +182,8 @@ public class TrainingService {
      * Process individual player training
      */
     private PlayerTrainingResult processPlayerTraining(Player player,
-                                                     TrainingSession session) {
+                                                     TrainingSession session,
+                                                     PlayerTrainingFocus individualFocus) {
         // Calculate attendance based on player condition and morale
         double attendanceRate = calculateAttendanceRate(player);
 
@@ -180,12 +198,31 @@ public class TrainingService {
                            session.getEffectivenessMultiplier() *
                            attendanceRate;
 
-        // Apply improvement to relevant skills
+        // Apply improvement to relevant skills (Team Focus)
         applySkillImprovement(player, session.getFocus(), improvement);
 
-        // Calculate and apply fatigue
+        // Calculate and apply fatigue (Team Focus)
         double fatigue = session.getIntensity().getFatigueMultiplier() *
                         attendanceRate * 10; // 10 condition points base
+
+        // Apply Individual Focus if exists
+        if (individualFocus != null) {
+            // Extra improvement for specific attribute
+            double individualImprovement = baseImprovement *
+                                         individualFocus.getIntensity().getImprovementMultiplier() *
+                                         performance.getMultiplier() *
+                                         session.getEffectivenessMultiplier() *
+                                         attendanceRate;
+
+            applyIndividualSkillImprovement(player, individualFocus.getFocus(), individualImprovement);
+
+            // Extra fatigue
+            double individualFatigue = individualFocus.getIntensity().getFatigueMultiplier() *
+                                     attendanceRate * 10;
+
+            fatigue += individualFatigue;
+            improvement += individualImprovement; // Total improvement gained tracking
+        }
 
         // Handle negative fatigue (recovery)
         if (fatigue > 0) {
@@ -228,6 +265,19 @@ public class TrainingService {
         if (roll < 0.6) return TrainingPerformance.AVERAGE;
         if (roll < 0.9) return TrainingPerformance.GOOD;
         return TrainingPerformance.EXCELLENT;
+    }
+
+    private void applyIndividualSkillImprovement(Player player, IndividualTrainingFocus focus, double improvement) {
+        switch (focus) {
+            case SCORING -> player.setScoring(Math.min(99.0, player.getScoring() + improvement));
+            case WINGER -> player.setWinger(Math.min(99.0, player.getWinger() + improvement));
+            case PASSING -> player.setPassing(Math.min(99.0, player.getPassing() + improvement));
+            case DEFENDING -> player.setDefending(Math.min(99.0, player.getDefending() + improvement));
+            case PLAYMAKING -> player.setPlaymaking(Math.min(99.0, player.getPlaymaking() + improvement));
+            case STAMINA -> player.setStamina(Math.min(99.0, player.getStamina() + improvement));
+            case GOALKEEPING -> player.setGoalkeeping(Math.min(99.0, player.getGoalkeeping() + improvement));
+            case SET_PIECES -> player.setSetPieces(Math.min(99.0, player.getSetPieces() + improvement));
+        }
     }
 
     /**
@@ -319,6 +369,60 @@ public class TrainingService {
     public TrainingSession createManualTrainingSession(Long teamId, ManualTrainingRequest request) {
         Team team = teamService.findById(teamId);
         return processTeamTraining(team, request.getFocus(), request.getIntensity());
+    }
+
+    public PlayerTrainingFocus assignIndividualFocus(Long playerId, IndividualFocusRequest request) {
+        Player player = playerService.findOne(playerId);
+
+        if (playerTrainingFocusRepository.existsOverlappingFocus(player, request.getStartDate(), request.getEndDate())) {
+            throw new IllegalArgumentException("Player already has an active focus during this period");
+        }
+
+        PlayerTrainingFocus focus = PlayerTrainingFocus.builder()
+            .player(player)
+            .focus(request.getFocus())
+            .intensity(request.getIntensity())
+            .startDate(request.getStartDate())
+            .endDate(request.getEndDate())
+            .build();
+
+        return playerTrainingFocusRepository.save(focus);
+    }
+
+    public void removeIndividualFocus(Long playerId) {
+        Player player = playerService.findOne(playerId);
+        LocalDate today = LocalDate.now();
+        List<PlayerTrainingFocus> activeFocuses = playerTrainingFocusRepository.findActiveFocus(player, today);
+
+        for (PlayerTrainingFocus focus : activeFocuses) {
+            if (focus.getStartDate().isEqual(today)) {
+                playerTrainingFocusRepository.delete(focus);
+            } else {
+                focus.setEndDate(today.minusDays(1)); // End yesterday
+                playerTrainingFocusRepository.save(focus);
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<IndividualFocusDTO> getTeamIndividualFocuses(Long teamId) {
+        Team team = teamService.findById(teamId);
+        List<Player> players = team.getPlayers();
+        LocalDate today = LocalDate.now();
+
+        List<PlayerTrainingFocus> activeFocuses = playerTrainingFocusRepository.findActiveFocusForPlayers(players, today);
+
+        return activeFocuses.stream()
+            .map(f -> IndividualFocusDTO.builder()
+                .id(f.getId())
+                .playerId(f.getPlayer().getId())
+                .playerName(f.getPlayer().getName() + " " + f.getPlayer().getSurname())
+                .focus(f.getFocus())
+                .intensity(f.getIntensity())
+                .startDate(f.getStartDate())
+                .endDate(f.getEndDate())
+                .build())
+            .toList();
     }
 
 }
