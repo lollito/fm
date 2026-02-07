@@ -1,7 +1,6 @@
 package com.lollito.fm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -9,15 +8,15 @@ import org.springframework.stereotype.Component;
 import com.lollito.fm.service.ServerService;
 
 @Component
+@Slf4j
 public class ScheduledTasks {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 	@Autowired private ServerService serverService;
 	
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(initialDelayString = "${fm.scheduling.general.initial-delay}", fixedRateString = "${fm.scheduling.general.fixed-rate}")
     public void deleteAllServers() {
-	logger.info("Deleting all servers");
-	serverService.deleteAll();
+        log.info("Starting deleteAllServers...");
+	    serverService.deleteAll();
+        log.info("Finished deleteAllServers.");
     }
 }

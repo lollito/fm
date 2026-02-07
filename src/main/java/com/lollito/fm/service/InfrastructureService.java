@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ import com.lollito.fm.repository.rest.YouthAcademyRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
+@Slf4j
 public class InfrastructureService {
 
     @Autowired
@@ -389,14 +391,16 @@ public class InfrastructureService {
         youthAcademyRepository.save(facility);
     }
 
-    @Scheduled(cron = "0 0 10 1 * *")
+    @Scheduled(initialDelayString = "${fm.scheduling.infrastructure.initial-delay}", fixedRateString = "${fm.scheduling.infrastructure.fixed-rate}")
     @Transactional
     public void processMonthlyMaintenance() {
+        log.info("Starting processMonthlyMaintenance...");
         List<Club> allClubs = clubService.findAll();
 
         for (Club club : allClubs) {
             processClubMaintenance(club);
         }
+        log.info("Finished processMonthlyMaintenance.");
     }
 
     private void processClubMaintenance(Club club) {

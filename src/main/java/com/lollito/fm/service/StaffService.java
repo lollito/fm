@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
+@Slf4j
 public class StaffService {
 
     @Autowired
@@ -312,9 +314,10 @@ public class StaffService {
             .build();
     }
 
-    @Scheduled(cron = "${fm.staff.salary.processing.cron:0 0 8 1 * *}")
+    @Scheduled(initialDelayString = "${fm.scheduling.staff.initial-delay}", fixedRateString = "${fm.scheduling.staff.fixed-rate}")
     @Transactional
     public void processMonthlyStaffSalaries() {
+        log.info("Starting processMonthlyStaffSalaries...");
         List<Staff> activeStaff = staffRepository.findByStatus(StaffStatus.ACTIVE);
 
         for (Staff staff : activeStaff) {
@@ -329,6 +332,7 @@ public class StaffService {
                 }
             }
         }
+        log.info("Finished processMonthlyStaffSalaries.");
     }
 
     @Transactional

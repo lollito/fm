@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,6 +43,7 @@ import com.lollito.fm.repository.WatchlistUpdateRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
+@Slf4j
 public class WatchlistService {
 
     @Autowired
@@ -186,13 +188,15 @@ public class WatchlistService {
     /**
      * Process daily watchlist updates
      */
-    @Scheduled(cron = "0 0 8 * * *") // Daily at 8 AM
+    @Scheduled(initialDelayString = "${fm.scheduling.watchlist.initial-delay}", fixedRateString = "${fm.scheduling.watchlist.fixed-rate}")
     public void processDailyWatchlistUpdates() {
+        log.info("Starting processDailyWatchlistUpdates...");
         List<WatchlistEntry> allEntries = watchlistEntryRepository.findAllActive();
 
         for (WatchlistEntry entry : allEntries) {
             processWatchlistEntryUpdates(entry);
         }
+        log.info("Finished processDailyWatchlistUpdates.");
     }
 
     /**

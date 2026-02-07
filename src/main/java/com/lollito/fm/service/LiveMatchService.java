@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -33,9 +32,8 @@ import com.lollito.fm.repository.rest.MatchRepository;
 import lombok.Data;
 
 @Service
+@Slf4j
 public class LiveMatchService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired private LiveMatchSessionRepository liveMatchSessionRepository;
     @Autowired private MatchRepository matchRepository;
@@ -66,14 +64,14 @@ public class LiveMatchService {
                     .build();
 
             liveMatchSessionRepository.save(session);
-            logger.info("Created LiveMatchSession for match {}", match.getId());
+            log.info("Created LiveMatchSession for match {}", match.getId());
         } catch (Exception e) {
-            logger.error("Error creating live match session", e);
+            log.error("Error creating live match session", e);
             throw new RuntimeException(e);
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(initialDelayString = "${fm.scheduling.live-match.initial-delay}", fixedRateString = "${fm.scheduling.live-match.fixed-rate}")
     @Transactional
     public void updateLiveMatches() {
         List<LiveMatchSession> sessions = liveMatchSessionRepository.findByFinishedFalse();
@@ -102,7 +100,7 @@ public class LiveMatchService {
                     finishMatch(session);
                 }
             } catch (Exception e) {
-                logger.error("Error updating session {}", session.getId(), e);
+                log.error("Error updating session {}", session.getId(), e);
             }
         }
     }

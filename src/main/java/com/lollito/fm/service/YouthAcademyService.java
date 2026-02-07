@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,9 +28,8 @@ import com.lollito.fm.utils.RandomUtils;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
+@Slf4j
 public class YouthAcademyService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired private YouthAcademyRepository youthAcademyRepository;
     @Autowired private YouthCandidateRepository youthCandidateRepository;
@@ -46,10 +44,10 @@ public class YouthAcademyService {
     @Value("${fm.youth.quality.multiplier:1.0}")
     private Double qualityMultiplier;
 
-    @Scheduled(cron = "${fm.youth.generation.cron:0 0 12 * * MON}")
+    @Scheduled(initialDelayString = "${fm.scheduling.youth.initial-delay}", fixedRateString = "${fm.scheduling.youth.fixed-rate}")
     @Transactional
     public void generateYouthCandidates() {
-        logger.info("Starting scheduled youth candidate generation...");
+        log.info("Starting scheduled youth candidate generation...");
         List<YouthAcademy> academies = youthAcademyRepository.findAll();
 
         for (YouthAcademy academy : academies) {
@@ -64,10 +62,10 @@ public class YouthAcademyService {
                      createCandidate(academy);
                 }
             } catch (Exception e) {
-                logger.error("Error generating candidates for academy {}", academy.getId(), e);
+                log.error("Error generating candidates for academy {}", academy.getId(), e);
             }
         }
-        logger.info("Completed youth candidate generation.");
+        log.info("Completed youth candidate generation.");
     }
 
     private YouthCandidate createCandidate(YouthAcademy academy) {

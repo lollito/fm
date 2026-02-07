@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,9 +38,8 @@ import com.lollito.fm.repository.TrainingSessionRepository;
 import com.lollito.fm.repository.rest.ClubRepository;
 
 @Service
+@Slf4j
 public class TrainingService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TrainingService.class);
 
     @Autowired
     private TrainingSessionRepository trainingSessionRepository;
@@ -70,9 +68,9 @@ public class TrainingService {
     /**
      * Process daily training for all teams
      */
-    @Scheduled(cron = "${fm.training.schedule.cron:0 0 10 * * MON-FRI}")
+    @Scheduled(initialDelayString = "${fm.scheduling.training.initial-delay}", fixedRateString = "${fm.scheduling.training.fixed-rate}")
     public void processDailyTraining() {
-        logger.info("Starting daily training processing");
+        log.info("Starting daily training processing");
         List<TrainingPlan> activePlans = trainingPlanRepository.findAll();
 
         for (TrainingPlan plan : activePlans) {
@@ -84,10 +82,10 @@ public class TrainingService {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Error processing training for team {}", plan.getTeam().getId(), e);
+                log.error("Error processing training for team {}", plan.getTeam().getId(), e);
             }
         }
-        logger.info("Completed daily training processing");
+        log.info("Completed daily training processing");
     }
 
     private TrainingFocus getTodaysFocus(TrainingPlan plan) {

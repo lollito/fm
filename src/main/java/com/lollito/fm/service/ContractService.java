@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Transactional
+@Slf4j
 public class ContractService {
 
     @Autowired
@@ -371,8 +373,9 @@ public class ContractService {
         contractRepository.save(contract);
     }
 
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(initialDelayString = "${fm.scheduling.contract.bonuses.initial-delay}", fixedRateString = "${fm.scheduling.contract.bonuses.fixed-rate}")
     public void processPerformanceBonuses() {
+        log.info("Starting processPerformanceBonuses...");
         List<Contract> activeContracts = contractRepository.findByStatus(ContractStatus.ACTIVE);
 
         for (Contract contract : activeContracts) {
@@ -387,10 +390,12 @@ public class ContractService {
             }
             contractRepository.save(contract);
         }
+        log.info("Finished processPerformanceBonuses.");
     }
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(initialDelayString = "${fm.scheduling.contract.expiry.initial-delay}", fixedRateString = "${fm.scheduling.contract.expiry.fixed-rate}")
     public void processContractExpiries() {
+        log.info("Starting processContractExpiries...");
         List<Contract> expiringContracts = contractRepository
             .findByStatusAndEndDateBefore(ContractStatus.ACTIVE, LocalDate.now());
 
@@ -409,6 +414,7 @@ public class ContractService {
                 createContractExpiryNews(contract);
             }
         }
+        log.info("Finished processContractExpiries.");
     }
 
     private boolean checkBonusCondition(PerformanceBonus bonus) {
