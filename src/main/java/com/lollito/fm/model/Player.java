@@ -237,6 +237,7 @@ public class Player implements Serializable{
 
 	@Transient
 	public void decrementCondition(Double decrement) {
+		if (this.condition == null) this.condition = 100.0;
 		if(this.condition - decrement < 0){
 			this.condition = 0.0;
 		} else {
@@ -246,6 +247,7 @@ public class Player implements Serializable{
 	
 	@Transient
 	public void incrementCondition(Double increment) {
+		if (this.condition == null) this.condition = 0.0;
 		if(this.condition + increment > 100){
 			this.condition = 100.0;
 		} else {

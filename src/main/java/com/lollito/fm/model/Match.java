@@ -152,10 +152,12 @@ public class Match implements Serializable{
 	}
 
 	public void addEvents(List<EventHistory> events) {
+		events.forEach(e -> e.setMatch(this));
 		this.events.addAll(events);
 	}
 	
 	public void addEvent(EventHistory event) {
+		event.setMatch(this);
 		this.events.add(event);
 	}
 	
