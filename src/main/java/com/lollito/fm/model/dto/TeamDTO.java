@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TeamDTO {
     private Long id;
+    private Long formationId;
 }

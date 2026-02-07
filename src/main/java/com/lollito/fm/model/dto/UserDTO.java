@@ -34,4 +34,10 @@ public class UserDTO {
     private LocalDateTime createdDate;
     private LocalDateTime lastLoginDate;
     private Set<Role> roles;
+    private Long clubId;
+    private Long serverId;
+    private Double experience;
+    private Integer level;
+    private Double levelToExp;
+    private Double levelProgress;
 }

@@ -12,4 +12,7 @@ import lombok.NoArgsConstructor;
 public class LeagueDTO {
     private Long id;
     private String name;
+    private Integer promotion;
+    private Integer relegation;
+    private Integer euroCup;
 }

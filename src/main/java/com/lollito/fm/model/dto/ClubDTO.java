@@ -20,4 +20,9 @@ public class ClubDTO {
     private Long leagueId;
     private Long teamId;
     private Boolean isHuman;
+    private Long stadiumId;
+    private Long trainingFacilityId;
+    private Long medicalCenterId;
+    private Long youthAcademyId;
+    private Long financeId;
 }
