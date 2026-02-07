@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getServers, createServer } from '../services/api';
+import { getServers, createServer, forceNextDay, deleteServer } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Layout from '../components/Layout';
 
@@ -34,9 +34,33 @@ const ServerManagement = () => {
     }
   }
 
+  const handleNextDay = async () => {
+    try {
+        await forceNextDay();
+        showToast('Forced next day successfully', 'success');
+        fetchServers();
+    } catch(e) {
+        showToast('Error forcing next day', 'error');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if(!window.confirm('Are you sure you want to delete this server?')) return;
+    try {
+        await deleteServer(id);
+        showToast('Server deleted successfully', 'success');
+        fetchServers();
+    } catch(e) {
+        showToast('Error deleting server', 'error');
+    }
+  };
+
   return (
     <Layout>
-      <h1 style={{ color: 'var(--text)', marginBottom: '32px' }}>Server Management</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 style={{ color: 'var(--text)', marginBottom: 0 }}>Server Management</h1>
+        <button className="btn btn-warning" onClick={handleNextDay}>Force Next Day</button>
+      </div>
 
       <div className="card mb-4">
         <div className="card-header">Create Server</div>
@@ -65,6 +89,7 @@ const ServerManagement = () => {
                         <th>ID</th>
                         <th>Name</th>
                         <th>Current Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,6 +98,9 @@ const ServerManagement = () => {
                             <td>{s.id}</td>
                             <td>{s.name}</td>
                             <td>{s.currentDate}</td>
+                            <td>
+                                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(s.id)}>Delete</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

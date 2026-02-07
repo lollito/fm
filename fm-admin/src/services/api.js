@@ -34,6 +34,8 @@ export const updateSystemConfiguration = (id, newValue) => api.put(`/admin/confi
 
 export const getServers = () => api.get('/server/findAll');
 export const createServer = (serverName) => api.post('/server/?serverName=' + serverName);
+export const forceNextDay = () => api.post('/server/next');
+export const deleteServer = (serverId) => api.delete('/server/?serverId=' + serverId);
 
 export const getAllLiveMatches = () => api.get('/live-match/all');
 
