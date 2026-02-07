@@ -222,27 +222,131 @@ public class ScoutingService {
     }
 
     private Integer calculateOverallRating(ScoutingReport report) {
-        double sum = report.getRevealedStamina() + report.getRevealedPlaymaking() +
-                     report.getRevealedScoring() + report.getRevealedWinger() +
-                     report.getRevealedGoalkeeping() + report.getRevealedPassing() +
-                     report.getRevealedDefending() + report.getRevealedSetPieces();
+        if (report.getPlayer().getRole() == null) return calculateSimpleAverage(report);
+
+        double weightedSum = 0;
+        double totalWeight = 0;
+
+        // Weights
+        double staminaW = 1.0;
+        double playmakingW = 1.0;
+        double scoringW = 1.0;
+        double wingerW = 1.0;
+        double goalkeepingW = 1.0;
+        double passingW = 1.0;
+        double defendingW = 1.0;
+        double setPiecesW = 1.0;
+
+        switch (report.getPlayer().getRole()) {
+            case GOALKEEPER:
+                goalkeepingW = 5.0;
+                defendingW = 2.0;
+                setPiecesW = 1.5;
+                break;
+            case DEFENDER:
+                defendingW = 4.0;
+                staminaW = 2.0;
+                playmakingW = 1.5;
+                passingW = 1.5;
+                break;
+            case WINGBACK:
+                defendingW = 3.0;
+                wingerW = 3.0;
+                staminaW = 2.5;
+                passingW = 2.0;
+                playmakingW = 1.5;
+                break;
+            case MIDFIELDER:
+                playmakingW = 4.0;
+                passingW = 3.5;
+                defendingW = 2.5;
+                staminaW = 2.5;
+                scoringW = 2.0;
+                break;
+            case WING:
+                wingerW = 4.0;
+                playmakingW = 3.0;
+                passingW = 2.5;
+                staminaW = 2.0;
+                scoringW = 2.0;
+                break;
+            case FORWARD:
+                scoringW = 5.0;
+                passingW = 2.0;
+                playmakingW = 2.0;
+                wingerW = 1.5;
+                break;
+        }
+
+        weightedSum += (report.getRevealedStamina() != null ? report.getRevealedStamina() : 0) * staminaW;
+        weightedSum += (report.getRevealedPlaymaking() != null ? report.getRevealedPlaymaking() : 0) * playmakingW;
+        weightedSum += (report.getRevealedScoring() != null ? report.getRevealedScoring() : 0) * scoringW;
+        weightedSum += (report.getRevealedWinger() != null ? report.getRevealedWinger() : 0) * wingerW;
+        weightedSum += (report.getRevealedGoalkeeping() != null ? report.getRevealedGoalkeeping() : 0) * goalkeepingW;
+        weightedSum += (report.getRevealedPassing() != null ? report.getRevealedPassing() : 0) * passingW;
+        weightedSum += (report.getRevealedDefending() != null ? report.getRevealedDefending() : 0) * defendingW;
+        weightedSum += (report.getRevealedSetPieces() != null ? report.getRevealedSetPieces() : 0) * setPiecesW;
+
+        totalWeight = staminaW + playmakingW + scoringW + wingerW + goalkeepingW + passingW + defendingW + setPiecesW;
+
+        return (int) (weightedSum / totalWeight);
+    }
+
+    private Integer calculateSimpleAverage(ScoutingReport report) {
+        double sum = (report.getRevealedStamina() != null ? report.getRevealedStamina() : 0) +
+                     (report.getRevealedPlaymaking() != null ? report.getRevealedPlaymaking() : 0) +
+                     (report.getRevealedScoring() != null ? report.getRevealedScoring() : 0) +
+                     (report.getRevealedWinger() != null ? report.getRevealedWinger() : 0) +
+                     (report.getRevealedGoalkeeping() != null ? report.getRevealedGoalkeeping() : 0) +
+                     (report.getRevealedPassing() != null ? report.getRevealedPassing() : 0) +
+                     (report.getRevealedDefending() != null ? report.getRevealedDefending() : 0) +
+                     (report.getRevealedSetPieces() != null ? report.getRevealedSetPieces() : 0);
         return (int) (sum / 8);
     }
 
     private Integer calculatePotentialRating(Player player, double accuracy) {
-        double base = player.getAverage();
-        if (player.getAge() < 21) base += 20;
-        else if (player.getAge() < 25) base += 10;
-        else if (player.getAge() > 30) base -= 5;
+        Double actualPotential = player.getPotential();
+        if (actualPotential == null) {
+            // Fallback if potential not set (e.g. legacy data)
+            actualPotential = player.getAverage() + (player.getAge() < 21 ? 20.0 : 5.0);
+        }
 
-        return (int) addScoutingVariance(base, (1.0 - accuracy) * 20);
+        // Variance based on accuracy. Lower accuracy -> larger range.
+        double variance = (1.0 - accuracy) * 20.0;
+        return (int) addScoutingVariance(actualPotential, variance);
     }
 
     private void generatePlayerAssessment(ScoutingReport report, Player player, double accuracy) {
-        report.setStrengths("Good physical condition.");
-        report.setWeaknesses("Need to improve passing.");
-        report.setPersonalityAssessment("Professional.");
+        java.util.List<String> strengths = new java.util.ArrayList<>();
+        java.util.List<String> weaknesses = new java.util.ArrayList<>();
+
+        // Analyze stats
+        analyzeStat(report.getRevealedStamina(), "Stamina", strengths, weaknesses);
+        analyzeStat(report.getRevealedPlaymaking(), "Playmaking", strengths, weaknesses);
+        analyzeStat(report.getRevealedScoring(), "Scoring", strengths, weaknesses);
+        analyzeStat(report.getRevealedWinger(), "Winger", strengths, weaknesses);
+        analyzeStat(report.getRevealedGoalkeeping(), "Goalkeeping", strengths, weaknesses);
+        analyzeStat(report.getRevealedPassing(), "Passing", strengths, weaknesses);
+        analyzeStat(report.getRevealedDefending(), "Defending", strengths, weaknesses);
+        analyzeStat(report.getRevealedSetPieces(), "Set Pieces", strengths, weaknesses);
+
+        // Add hidden potential hint if scout is good enough
+        if (accuracy > 0.8 && report.getPotentialRating() > report.getOverallRating() + 10) {
+            strengths.add("Has significant room for improvement.");
+        }
+
+        report.setStrengths(String.join("|", strengths));
+        report.setWeaknesses(String.join("|", weaknesses));
+        report.setPersonalityAssessment("Professional."); // Placeholder for now or random
         report.setRecommendation(calculateRecommendation(report, player));
+    }
+
+    private void analyzeStat(Double value, String name, java.util.List<String> strengths, java.util.List<String> weaknesses) {
+        if (value == null) return;
+        if (value >= 80) strengths.add("Excellent " + name);
+        else if (value >= 60) strengths.add("Good " + name);
+        else if (value <= 20) weaknesses.add("Poor " + name);
+        else if (value <= 40) weaknesses.add("Weak " + name);
     }
 
     private void generateMarketAssessment(ScoutingReport report, Player player, double accuracy) {

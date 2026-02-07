@@ -103,6 +103,8 @@ public class Player implements Serializable{
 // 	Il risultato delle punizioni e dei rigori dipende da quanto è abile il tuo specialista in calci piazzati. 
 	private Double setPieces;
 
+	private Double potential;
+
 	@Column(name = "cndtion")
 	@Builder.Default
 	private Double condition = 100.0;

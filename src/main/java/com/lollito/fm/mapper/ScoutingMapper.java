@@ -28,7 +28,16 @@ public interface ScoutingMapper {
     @Mapping(source = "player.id", target = "playerId")
     @Mapping(source = "player.name", target = "playerName")
     @Mapping(source = "player.surname", target = "playerSurname")
+    @Mapping(target = "strengthsList", expression = "java(mapStringToList(report.getStrengths()))")
+    @Mapping(target = "weaknessesList", expression = "java(mapStringToList(report.getWeaknesses()))")
     ScoutingReportDTO toDto(ScoutingReport report);
+
+    default java.util.List<String> mapStringToList(String value) {
+        if (value == null || value.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        return java.util.Arrays.asList(value.split("\\|"));
+    }
 
     @Mapping(source = "player.id", target = "playerId")
     @Mapping(source = "scoutingClub.id", target = "clubId")

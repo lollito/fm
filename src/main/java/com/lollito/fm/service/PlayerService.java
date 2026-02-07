@@ -38,6 +38,7 @@ public class PlayerService {
 		player.setDefending(RandomUtils.randomValue(30D, 80D));
 		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.GOALKEEPER);
+		player.setPotential(Math.min(99.0, player.getAverage() + RandomUtils.randomValue(10.0, 30.0)));
 		return player;
 	}
 	
@@ -51,6 +52,7 @@ public class PlayerService {
 		player.setDefending(RandomUtils.randomValue(40D, 99D));
 		player.setSetPieces(RandomUtils.randomValue(20D, 80D));
 		player.setRole(PlayerRole.DEFENDER);
+		player.setPotential(Math.min(99.0, player.getAverage() + RandomUtils.randomValue(10.0, 30.0)));
 		return player;
 	}
 	
@@ -64,6 +66,7 @@ public class PlayerService {
 		player.setDefending(RandomUtils.randomValue(40D, 80D));
 		player.setSetPieces(RandomUtils.randomValue(20D, 99D));
 		player.setRole(PlayerRole.WINGBACK);
+		player.setPotential(Math.min(99.0, player.getAverage() + RandomUtils.randomValue(10.0, 30.0)));
 		return player;
 	}
 	
@@ -77,6 +80,7 @@ public class PlayerService {
 		player.setDefending(RandomUtils.randomValue(35D, 80D));
 		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.MIDFIELDER);
+		player.setPotential(Math.min(99.0, player.getAverage() + RandomUtils.randomValue(10.0, 30.0)));
 		return player;
 	}
 	
@@ -90,6 +94,7 @@ public class PlayerService {
 		player.setDefending(RandomUtils.randomValue(20D, 60D));
 		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.WING);
+		player.setPotential(Math.min(99.0, player.getAverage() + RandomUtils.randomValue(10.0, 30.0)));
 		return player;
 	}
 	
@@ -103,6 +108,7 @@ public class PlayerService {
 		player.setDefending(RandomUtils.randomValue(10D, 50D));
 		player.setSetPieces(RandomUtils.randomValue(40D, 99D));
 		player.setRole(PlayerRole.FORWARD);
+		player.setPotential(Math.min(99.0, player.getAverage() + RandomUtils.randomValue(10.0, 30.0)));
 		return player;
 	}
 	
