@@ -4,21 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,19 +27,13 @@ import com.lollito.fm.model.LoanProposal;
 import com.lollito.fm.model.LoanStatus;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.ProposalStatus;
-import com.lollito.fm.model.LoanStatus;
-import com.lollito.fm.model.Player;
 import com.lollito.fm.model.Team;
 import com.lollito.fm.model.TransactionCategory;
 import com.lollito.fm.model.TransactionType;
 import com.lollito.fm.model.TransferType;
-import com.lollito.fm.model.rest.CreateTransactionRequest;
-import com.lollito.fm.model.dto.TransferOfferDTO;
-import com.lollito.fm.repository.rest.LoanAgreementRepository;
-import com.lollito.fm.model.LoanProposal;
-import com.lollito.fm.model.Player;
-import com.lollito.fm.model.Team;
 import com.lollito.fm.model.dto.CreateLoanProposalRequest;
+import com.lollito.fm.model.dto.TransferOfferDTO;
+import com.lollito.fm.model.rest.CreateTransactionRequest;
 import com.lollito.fm.repository.rest.ClubRepository;
 import com.lollito.fm.repository.rest.LoanAgreementRepository;
 import com.lollito.fm.repository.rest.LoanPerformanceReviewRepository;
@@ -68,6 +49,12 @@ public class LoanServiceTest {
     @Mock private FinancialService financialService;
     @Mock private PlayerService playerService;
     @Mock private PlayerHistoryService playerHistoryService;
+    @Mock private LoanProposalRepository loanProposalRepository;
+    @Mock private LoanPerformanceReviewRepository performanceReviewRepository;
+    @Mock private ClubService clubService;
+    @Mock private ClubRepository clubRepository;
+    @Mock private SeasonService seasonService;
+    @Mock private NewsService newsService;
 
     @Test
     public void activatePurchaseOption_Success() {
@@ -90,12 +77,6 @@ public class LoanServiceTest {
         player.setName("Player Name");
         Team originalTeam = new Team();
         originalTeam.setId(300L);
-        // Assuming originalTeam is set to what player was before loan or parent club team?
-        // In LoanService logic:
-        // player.setTeam(loan.getLoanClub().getTeam());
-        // player.setOriginalTeam(null);
-        // So player currently belongs to loanClub (loanTeam) but has originalTeam set (parentClub team usually).
-        // Let's assume player is currently on loan, so team is loanTeam, and originalTeam is parentTeam.
         player.setTeam(loanTeam);
         player.setOriginalTeam(originalTeam);
 
@@ -113,34 +94,27 @@ public class LoanServiceTest {
 
         TransferOfferDTO result = loanService.activatePurchaseOption(loanId);
 
-        // Verify financial transactions
-        // Loan club pays (Expense)
         verify(financialService).processTransaction(eq(loanClub.getId()), argThat(request ->
             request.getType() == TransactionType.EXPENSE &&
             request.getCategory() == TransactionCategory.TRANSFER_FEES &&
             request.getAmount().equals(optionPrice)
         ));
 
-        // Parent club receives (Income)
         verify(financialService).processTransaction(eq(parentClub.getId()), argThat(request ->
             request.getType() == TransactionType.INCOME &&
             request.getCategory() == TransactionCategory.TRANSFER_INCOME &&
             request.getAmount().equals(optionPrice)
         ));
 
-        // Verify player update
         assertEquals(loanTeam, player.getTeam());
         assertEquals(null, player.getOriginalTeam());
         verify(playerService).save(player);
 
-        // Verify history record
         verify(playerHistoryService).recordTransfer(eq(player), eq(parentClub), eq(loanClub), eq(optionPrice), eq(TransferType.PURCHASE));
 
-        // Verify loan status update
         assertEquals(LoanStatus.COMPLETED, loan.getStatus());
         verify(loanAgreementRepository).save(loan);
 
-        // Verify result
         assertNotNull(result);
         assertEquals(player.getId(), result.getPlayerId());
         assertEquals(loanClub.getId(), result.getBuyingClubId());
@@ -160,7 +134,6 @@ public class LoanServiceTest {
     @Test
     public void activatePurchaseOption_NoOptionToBuy() {
         Long loanId = 1L;
-        // Create loan with hasOptionToBuy = false
         LoanAgreement loan = LoanAgreement.builder()
                 .id(loanId)
                 .hasOptionToBuy(false)
@@ -170,21 +143,156 @@ public class LoanServiceTest {
 
         assertThrows(IllegalStateException.class, () -> loanService.activatePurchaseOption(loanId));
     }
-    @Mock private LoanProposalRepository loanProposalRepository;
-    @Mock private LoanPerformanceReviewRepository performanceReviewRepository;
-    @Mock private PlayerService playerService;
-    @Mock private ClubService clubService;
-    @Mock private ClubRepository clubRepository;
-    @Mock private FinancialService financialService;
-    @Mock private PlayerHistoryService playerHistoryService;
-    @Mock private SeasonService seasonService;
-    @Mock private NewsService newsService;
 
     @Test
-    public void createLoanProposal_ShouldThrowException_WhenPlayerAlreadyOnLoan() {
-        // Arrange
+    public void createLoanProposal_Success() {
         Long playerId = 1L;
         Long proposingClubId = 2L;
+        Long targetClubId = 3L;
+
+        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
+        request.setPlayerId(playerId);
+        request.setProposingClubId(proposingClubId);
+        request.setStartDate(LocalDate.now().plusDays(1));
+        request.setEndDate(LocalDate.now().plusMonths(6));
+        request.setLoanFee(new BigDecimal("100000"));
+        request.setSalaryShare(0.5);
+        request.setRecallClause(true);
+        request.setOptionToBuy(true);
+        request.setOptionPrice(new BigDecimal("2000000"));
+        request.setMessage("Please give us this player");
+
+        Player player = new Player();
+        player.setId(playerId);
+        Team playerTeam = new Team();
+        playerTeam.setId(10L);
+        player.setTeam(playerTeam);
+        player.setOriginalTeam(null);
+
+        Club proposingClub = new Club();
+        proposingClub.setId(proposingClubId);
+
+        Club targetClub = new Club();
+        targetClub.setId(targetClubId);
+        targetClub.setTeam(playerTeam);
+        playerTeam.setClub(targetClub);
+
+        when(playerService.findOne(playerId)).thenReturn(player);
+        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
+        when(clubRepository.findByTeam(playerTeam)).thenReturn(Optional.of(targetClub));
+
+        when(loanProposalRepository.save(any(LoanProposal.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        LoanProposal result = loanService.createLoanProposal(request);
+
+        assertNotNull(result);
+        assertEquals(player, result.getPlayer());
+        assertEquals(proposingClub, result.getProposingClub());
+        assertEquals(targetClub, result.getTargetClub());
+        assertEquals(request.getStartDate(), result.getProposedStartDate());
+        assertEquals(request.getEndDate(), result.getProposedEndDate());
+        assertEquals(request.getLoanFee(), result.getProposedLoanFee());
+        assertEquals(request.getSalaryShare(), result.getProposedSalaryShare());
+        assertEquals(request.getRecallClause(), result.getProposedRecallClause());
+        assertEquals(request.getOptionToBuy(), result.getProposedOptionToBuy());
+        assertEquals(request.getOptionPrice(), result.getProposedOptionPrice());
+        assertEquals(request.getMessage(), result.getProposalMessage());
+
+        verify(loanProposalRepository).save(any(LoanProposal.class));
+    }
+
+    @Test
+    public void createLoanProposal_TargetClubNotFound() {
+        Long playerId = 1L;
+        Long proposingClubId = 2L;
+
+        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
+        request.setPlayerId(playerId);
+        request.setProposingClubId(proposingClubId);
+
+        Player player = new Player();
+        player.setId(playerId);
+        Team playerTeam = new Team();
+        playerTeam.setId(10L);
+        player.setTeam(playerTeam);
+
+        Club proposingClub = new Club();
+        proposingClub.setId(proposingClubId);
+
+        when(playerService.findOne(playerId)).thenReturn(player);
+        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
+        when(clubRepository.findByTeam(playerTeam)).thenReturn(Optional.empty());
+        when(clubRepository.findByUnder18(playerTeam)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> loanService.createLoanProposal(request));
+    }
+
+    @Test
+    public void createLoanProposal_PlayerAlreadyOnLoan() {
+        Long playerId = 1L;
+        Long proposingClubId = 2L;
+
+        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
+        request.setPlayerId(playerId);
+        request.setProposingClubId(proposingClubId);
+
+        Player player = new Player();
+        player.setId(playerId);
+        Team currentTeam = new Team();
+        currentTeam.setId(10L);
+        player.setTeam(currentTeam);
+
+        Team originalTeam = new Team();
+        originalTeam.setId(11L);
+        player.setOriginalTeam(originalTeam);
+
+        Club proposingClub = new Club();
+        proposingClub.setId(proposingClubId);
+
+        // Even if target club found, it should fail
+        Club targetClub = new Club();
+        targetClub.setId(3L);
+
+        when(playerService.findOne(playerId)).thenReturn(player);
+        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
+        when(clubRepository.findByTeam(currentTeam)).thenReturn(Optional.of(targetClub));
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+            loanService.createLoanProposal(request);
+        });
+        assertEquals("Player is already on loan", exception.getMessage());
+    }
+
+    @Test
+    public void createLoanProposal_LoanOwnPlayer() {
+        Long playerId = 1L;
+        Long proposingClubId = 2L;
+
+        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
+        request.setPlayerId(playerId);
+        request.setProposingClubId(proposingClubId);
+
+        Player player = new Player();
+        player.setId(playerId);
+        Team playerTeam = new Team();
+        playerTeam.setId(10L);
+        player.setTeam(playerTeam);
+        player.setOriginalTeam(null);
+
+        Club proposingClub = new Club();
+        proposingClub.setId(proposingClubId);
+
+        Club targetClub = new Club();
+        targetClub.setId(proposingClubId);
+
+        when(playerService.findOne(playerId)).thenReturn(player);
+        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
+        when(clubRepository.findByTeam(playerTeam)).thenReturn(Optional.of(targetClub));
+
+        assertThrows(IllegalStateException.class, () -> loanService.createLoanProposal(request), "Cannot loan own player");
+    }
+
+    @Test
     public void acceptLoanProposal_Success() {
         Long proposalId = 1L;
         Long playerId = 100L;
@@ -200,7 +308,7 @@ public class LoanServiceTest {
 
         Team originalTeam = new Team();
         originalTeam.setId(11L);
-        player.setOriginalTeam(originalTeam); // Player is already on loan
+        player.setOriginalTeam(originalTeam);
         Team parentTeam = new Team();
         parentTeam.setId(201L);
         Club parentClub = new Club();
@@ -234,7 +342,6 @@ public class LoanServiceTest {
 
         LoanAgreement agreement = loanService.acceptLoanProposal(proposalId);
 
-        // Verify agreement creation
         assertNotNull(agreement);
         assertEquals(LoanStatus.ACTIVE, agreement.getStatus());
         assertEquals(player, agreement.getPlayer());
@@ -242,18 +349,15 @@ public class LoanServiceTest {
         assertEquals(loanClub, agreement.getLoanClub());
         assertEquals(proposal.getProposedLoanFee(), agreement.getLoanFee());
 
-        // Verify proposal status update
         assertEquals(ProposalStatus.ACCEPTED, proposal.getStatus());
         assertNotNull(proposal.getResponseDate());
         verify(loanProposalRepository).save(proposal);
 
-        // Verify player transfer
         assertEquals(loanTeam, player.getTeam());
         assertEquals(parentTeam, player.getOriginalTeam());
         verify(playerService).save(player);
         verify(playerHistoryService).recordTransfer(eq(player), eq(parentClub), eq(loanClub), eq(BigDecimal.ZERO), eq(TransferType.LOAN));
 
-        // Verify financial transactions
         verify(financialService).processTransaction(eq(loanClubId), any(CreateTransactionRequest.class));
         verify(financialService).processTransaction(eq(parentClubId), any(CreateTransactionRequest.class));
     }
@@ -276,213 +380,5 @@ public class LoanServiceTest {
         when(loanProposalRepository.findById(proposalId)).thenReturn(Optional.of(proposal));
 
         assertThrows(IllegalStateException.class, () -> loanService.acceptLoanProposal(proposalId));
-    public void createLoanProposal_Success() {
-        // Setup
-        Long playerId = 1L;
-        Long proposingClubId = 2L;
-        Long targetClubId = 3L;
-
-        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
-        request.setPlayerId(playerId);
-        request.setProposingClubId(proposingClubId);
-        request.setStartDate(LocalDate.now().plusDays(1));
-        request.setEndDate(LocalDate.now().plusMonths(6));
-        request.setLoanFee(new BigDecimal("100000"));
-        request.setSalaryShare(0.5);
-        request.setRecallClause(true);
-        request.setOptionToBuy(true);
-        request.setOptionPrice(new BigDecimal("2000000"));
-        request.setMessage("Please give us this player");
-
-        Player player = new Player();
-        player.setId(playerId);
-        Team playerTeam = new Team();
-        playerTeam.setId(10L);
-        player.setTeam(playerTeam);
-        // Ensure player is not on loan
-        player.setOriginalTeam(null);
-
-        Club proposingClub = new Club();
-        proposingClub.setId(proposingClubId);
-
-        Club targetClub = new Club();
-        targetClub.setId(3L);
-        targetClub.setId(targetClubId);
-        // Link target club to player's team
-        targetClub.setTeam(playerTeam);
-        playerTeam.setClub(targetClub);
-
-        when(playerService.findOne(playerId)).thenReturn(player);
-        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
-        when(clubRepository.findByTeam(playerTeam)).thenReturn(Optional.of(targetClub));
-
-        when(loanProposalRepository.save(any(LoanProposal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Execute
-        LoanProposal result = loanService.createLoanProposal(request);
-
-        // Verify
-        assertNotNull(result);
-        assertEquals(player, result.getPlayer());
-        assertEquals(proposingClub, result.getProposingClub());
-        assertEquals(targetClub, result.getTargetClub());
-        assertEquals(request.getStartDate(), result.getProposedStartDate());
-        assertEquals(request.getEndDate(), result.getProposedEndDate());
-        assertEquals(request.getLoanFee(), result.getProposedLoanFee());
-        assertEquals(request.getSalaryShare(), result.getProposedSalaryShare());
-        assertEquals(request.getRecallClause(), result.getProposedRecallClause());
-        assertEquals(request.getOptionToBuy(), result.getProposedOptionToBuy());
-        assertEquals(request.getOptionPrice(), result.getProposedOptionPrice());
-        assertEquals(request.getMessage(), result.getProposalMessage());
-
-        verify(loanProposalRepository).save(any(LoanProposal.class));
-    }
-
-    @Test
-    public void createLoanProposal_TargetClubNotFound() {
-        // Setup
-        Long playerId = 1L;
-        Long proposingClubId = 2L;
-
-        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
-        request.setPlayerId(playerId);
-        request.setProposingClubId(proposingClubId);
-
-        when(playerService.findOne(playerId)).thenReturn(player);
-        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
-        when(clubRepository.findByTeam(currentTeam)).thenReturn(Optional.of(targetClub));
-
-        // Act & Assert
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            loanService.createLoanProposal(request);
-        });
-
-        assertEquals("Player is already on loan", exception.getMessage());
-    }
-
-    @Test
-    public void createLoanProposal_Success() {
-        // Arrange
-        Long playerId = 1L;
-        Long proposingClubId = 2L;
-
-        Player player = new Player();
-        player.setId(playerId);
-
-        Team currentTeam = new Team();
-        currentTeam.setId(10L);
-        player.setTeam(currentTeam);
-        player.setOriginalTeam(null); // Player is NOT on loan
-        Player player = new Player();
-        player.setId(playerId);
-        Team playerTeam = new Team();
-        playerTeam.setId(10L);
-        player.setTeam(playerTeam);
-
-        Club proposingClub = new Club();
-        proposingClub.setId(proposingClubId);
-
-        when(playerService.findOne(playerId)).thenReturn(player);
-        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
-        // Both findByTeam and findByUnder18 return empty
-        when(clubRepository.findByTeam(playerTeam)).thenReturn(Optional.empty());
-        when(clubRepository.findByUnder18(playerTeam)).thenReturn(Optional.empty());
-
-        // Execute & Verify
-        assertThrows(EntityNotFoundException.class, () -> loanService.createLoanProposal(request));
-    }
-
-    @Test
-    public void createLoanProposal_PlayerAlreadyOnLoan() {
-        // Setup
-        Long playerId = 1L;
-        Long proposingClubId = 2L;
-
-        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
-        request.setPlayerId(playerId);
-        request.setProposingClubId(proposingClubId);
-
-        Player player = new Player();
-        player.setId(playerId);
-        Team currentTeam = new Team();
-        currentTeam.setId(10L);
-        player.setTeam(currentTeam);
-
-        // Player is on loan because originalTeam is set
-        Team originalTeam = new Team();
-        originalTeam.setId(11L);
-        player.setOriginalTeam(originalTeam);
-
-        Club proposingClub = new Club();
-        proposingClub.setId(proposingClubId);
-
-        Club targetClub = new Club();
-        targetClub.setId(3L);
-
-        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
-        request.setPlayerId(playerId);
-        request.setProposingClubId(proposingClubId);
-        request.setStartDate(LocalDate.now());
-        request.setEndDate(LocalDate.now().plusMonths(6));
-        request.setLoanFee(BigDecimal.valueOf(1000));
-        request.setSalaryShare(0.5);
-
-        when(playerService.findOne(playerId)).thenReturn(player);
-        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
-        when(clubRepository.findByTeam(currentTeam)).thenReturn(Optional.of(targetClub));
-        when(loanProposalRepository.save(any(LoanProposal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        LoanProposal result = loanService.createLoanProposal(request);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(player, result.getPlayer());
-        assertEquals(proposingClub, result.getProposingClub());
-        assertEquals(targetClub, result.getTargetClub());
-
-        verify(loanProposalRepository).save(any(LoanProposal.class));
-        // Target club exists
-        Club targetClub = new Club();
-        targetClub.setId(3L);
-
-        when(playerService.findOne(playerId)).thenReturn(player);
-        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
-        when(clubRepository.findByTeam(currentTeam)).thenReturn(Optional.of(targetClub));
-
-        // Execute & Verify
-        assertThrows(IllegalStateException.class, () -> loanService.createLoanProposal(request), "Player is already on loan");
-    }
-
-    @Test
-    public void createLoanProposal_LoanOwnPlayer() {
-        // Setup
-        Long playerId = 1L;
-        Long proposingClubId = 2L;
-
-        CreateLoanProposalRequest request = new CreateLoanProposalRequest();
-        request.setPlayerId(playerId);
-        request.setProposingClubId(proposingClubId);
-
-        Player player = new Player();
-        player.setId(playerId);
-        Team playerTeam = new Team();
-        playerTeam.setId(10L);
-        player.setTeam(playerTeam);
-        player.setOriginalTeam(null); // Not on loan
-
-        Club proposingClub = new Club();
-        proposingClub.setId(proposingClubId);
-
-        // Target club is the same as proposing club
-        Club targetClub = new Club();
-        targetClub.setId(proposingClubId); // Same ID
-
-        when(playerService.findOne(playerId)).thenReturn(player);
-        when(clubService.findById(proposingClubId)).thenReturn(proposingClub);
-        when(clubRepository.findByTeam(playerTeam)).thenReturn(Optional.of(targetClub));
-
-        // Execute & Verify
-        assertThrows(IllegalStateException.class, () -> loanService.createLoanProposal(request), "Cannot loan own player");
     }
 }

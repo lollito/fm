@@ -1,37 +1,31 @@
 package com.lollito.fm.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Round;
 import com.lollito.fm.model.Season;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
-import com.lollito.fm.model.Club;
-import com.lollito.fm.model.Match;
 import com.lollito.fm.model.User;
 import com.lollito.fm.repository.rest.MatchRepository;
 
@@ -43,6 +37,9 @@ class MatchServiceTest {
 
     @Mock
     private MatchRepository matchRepository;
+
+    @Mock
+    private Page<Match> matchPage;
 
     @InjectMocks
     private MatchService matchService;
@@ -112,8 +109,7 @@ class MatchServiceTest {
         // Assert
         assertThat(actualMatches).isEmpty();
         verifyNoInteractions(matchRepository);
-    @Mock
-    private Page<Match> matchPage;
+    }
 
     @Test
     public void loadHistory_shouldReturnPageOfMatches() {
