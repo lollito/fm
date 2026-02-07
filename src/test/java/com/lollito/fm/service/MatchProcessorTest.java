@@ -84,7 +84,7 @@ class MatchProcessorTest {
         matchProcessor.processMatch(100L);
 
         // Verify simulation call
-        verify(simulationMatchService).simulate(eq(match), any(), eq(false));
+        verify(simulationMatchService).simulate(eq(match), any(), eq(false), eq(false));
 
         // Verify notifications sent to users via user-specific destination
         verify(messagingTemplate).convertAndSendToUser(

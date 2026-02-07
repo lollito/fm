@@ -61,6 +61,8 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${DDL_AUTO:-update}
       JAVA_OPTS: ${JAVA_OPTS:--Xmx1g -Xms512m}
       SERVER_PORT: 8080
+      FM_APP_JWT_SECRET: ${JWT_SECRET}
+      FM_APP_JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
     ports:
       - "8080:8080"
     volumes:
