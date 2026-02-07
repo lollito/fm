@@ -56,7 +56,7 @@ public class MatchProcessor {
         logger.info("Processing match {} : {} vs {}", match.getId(), match.getHome().getName(), match.getAway().getName());
 
         // Simulate to get result
-        simulationMatchService.simulate(match, null, false);
+        simulationMatchService.simulate(match, null, false, false);
 
         // Create session with the result
         liveMatchService.createSession(match);
@@ -96,8 +96,12 @@ public class MatchProcessor {
             // Restore Events
             List<EventHistoryDTO> eventDTOs = objectMapper.readValue(session.getEvents(), new TypeReference<List<EventHistoryDTO>>(){});
             List<EventHistory> events = eventDTOs.stream().map(matchMapper::toEntity).collect(Collectors.toList());
-            events.forEach(e -> e.setId(null));
+
             match.getEvents().clear();
+            events.forEach(e -> {
+                e.setId(null);
+                e.setMatch(match);
+            });
             match.getEvents().addAll(events);
 
             // Restore Stats

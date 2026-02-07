@@ -1,24 +1,12 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://localhost:8080';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const API_URL = API_BASE_URL + '/api';
 
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
 });
-
-api.interceptors.request.use(
-  (config) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.accessToken) {
-      config.headers['Authorization'] = 'Bearer ' + user.accessToken;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 export const getPlayerHistory = (id) => api.get('/player-history/player/' + id);
 
