@@ -83,7 +83,7 @@ public class DatabaseLoader implements CommandLineRunner {
 		if (!userRepository.existsByUsername("admin")) {
 			User adminUser = new User();
 			adminUser.setUsername("admin");
-			adminUser.setPassword(bCryptPasswordEncoder.encode("admin"));
+			adminUser.setPassword(bCryptPasswordEncoder.encode("Admin1!"));
 			adminUser.setEmail("admin@admin.com");
 			adminUser.setActive(true);
 			adminUser.setAdminRole(AdminRole.SUPER_ADMIN);
@@ -112,7 +112,7 @@ public class DatabaseLoader implements CommandLineRunner {
 		if (!userService.existsByUsername("lollito")) {
 			RegistrationRequest registration = new RegistrationRequest();
 			registration.setEmail("ciao");
-			registration.setPassword("ciao");
+			registration.setPassword("Ciao1!");
 			registration.setPasswordConfirm("ciao");
 			registration.setUsername("lollito");
 			registration.setClubName("Roma");
