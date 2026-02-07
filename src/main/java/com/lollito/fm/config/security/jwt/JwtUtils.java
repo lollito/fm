@@ -2,12 +2,17 @@ package com.lollito.fm.config.security.jwt;
 
 import java.util.Date;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 
 import com.lollito.fm.model.User;
 
@@ -25,8 +30,28 @@ public class JwtUtils {
 	@Value("${fm.app.jwtExpirationMs}")
 	private int jwtExpirationMs;
 
+	private String jwtCookie = "fm_jwt";
+
 	private javax.crypto.SecretKey key() {
 		return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+	}
+
+	public String getJwtFromCookies(HttpServletRequest request) {
+		Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+		if (cookie != null) {
+			return cookie.getValue();
+		} else {
+			return null;
+		}
+	}
+
+	public ResponseCookie generateJwtCookie(User user) {
+		String jwt = generateJwtToken(user);
+		return ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(jwtExpirationMs / 1000).httpOnly(true).sameSite("Strict").build();
+	}
+
+	public ResponseCookie getCleanJwtCookie() {
+		return ResponseCookie.from(jwtCookie, null).path("/").build();
 	}
 
 	public String generateJwtToken(Authentication authentication) {
