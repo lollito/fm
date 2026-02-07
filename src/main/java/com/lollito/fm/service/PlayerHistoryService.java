@@ -2,7 +2,9 @@ package com.lollito.fm.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -330,6 +332,15 @@ public class PlayerHistoryService {
 
         return playerSeasonStatsRepository.findByPlayerAndSeason(player, season)
                 .orElseThrow(() -> new EntityNotFoundException("Stats not found"));
+    }
+
+    public Map<Long, PlayerSeasonStats> getSeasonStatsForPlayers(List<Player> players, Season season) {
+        if (players == null || players.isEmpty()) {
+            return new HashMap<>();
+        }
+        List<PlayerSeasonStats> statsList = playerSeasonStatsRepository.findBySeasonAndPlayerIn(season, players);
+        return statsList.stream()
+                .collect(Collectors.toMap(stats -> stats.getPlayer().getId(), stats -> stats));
     }
 
     public List<PlayerAchievement> getPlayerAchievements(Long playerId) {
