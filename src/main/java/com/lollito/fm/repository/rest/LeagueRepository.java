@@ -12,6 +12,6 @@ import com.lollito.fm.model.League;
 public interface LeagueRepository extends JpaRepository<League, Long> {
 	
 	@Query("SELECT DISTINCT l FROM League l LEFT JOIN FETCH l.currentSeason")
-	List<League> findAllWithCurrentSeason();
+	public java.util.List<League> findAllWithCurrentSeason();
 
 }
