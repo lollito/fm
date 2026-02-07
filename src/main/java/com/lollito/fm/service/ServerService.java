@@ -66,27 +66,34 @@ public class ServerService {
 	}
 	
 	public ServerResponse next() {
-		leagueService.findAll().forEach(league -> next(league));
+		leagueService.findAllWithCurrentSeason().forEach(league -> next(league));
 		return  new ServerResponse();
 	}
 	public ServerResponse next(League league){
 		ServerResponse serverResponse = new ServerResponse();
 		List<Match> matches = matchRepository.findByRoundSeasonAndDateBeforeAndFinish(league.getCurrentSeason(), LocalDateTime.now(), Boolean.FALSE);
 		if(matches.isEmpty()){
+			List<Player> allPlayersToUpdate = new java.util.ArrayList<>();
 			for(Club club : league.getClubs()) {
 				for(Player player : club.getTeam().getPlayers()) {
 					double increment = -((10 * player.getStamina())/99) + (1000/99);
 					player.incrementCondition(increment);
+					allPlayersToUpdate.add(player);
 				}
-				playerService.updateSkills(club.getTeam().getPlayers());
-				playerService.saveAll(club.getTeam().getPlayers());
+			}
+			if (!allPlayersToUpdate.isEmpty()) {
+				playerService.updateSkills(allPlayersToUpdate);
+				playerService.saveAll(allPlayersToUpdate);
 			}
 		} else {
-			for (Match match : matches) {
-				if (match.getStatus() == MatchStatus.SCHEDULED) {
-					simulationMatchService.simulate(match);
-				}
+			List<Match> scheduledMatches = matches.stream()
+					.filter(match -> match.getStatus() == MatchStatus.SCHEDULED)
+					.collect(Collectors.toList());
+
+			if (!scheduledMatches.isEmpty()) {
+				simulationMatchService.simulate(scheduledMatches);
 			}
+
 			Match match =  matches.get(matches.size() -1);
 			if(match.getLast()) {
 				league.getCurrentSeason().setNextRoundNumber(match.getRound().getNumber() + 1);
