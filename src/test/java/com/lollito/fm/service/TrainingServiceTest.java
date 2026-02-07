@@ -18,6 +18,8 @@ import com.lollito.fm.model.TrainingIntensity;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.TrainingFacility;
 import com.lollito.fm.model.TrainingSession;
+import com.lollito.fm.dto.StaffBonusesDTO;
+import com.lollito.fm.repository.PlayerTrainingFocusRepository;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
@@ -29,6 +31,9 @@ class TrainingServiceTest {
 
     @Mock
     private TrainingSessionRepository trainingSessionRepository;
+
+    @Mock
+    private PlayerTrainingFocusRepository playerTrainingFocusRepository;
 
     @Mock
     private PlayerTrainingResultRepository playerTrainingResultRepository;
@@ -92,7 +97,7 @@ class TrainingServiceTest {
         when(clubRepository.findByTeam(team)).thenReturn(Optional.of(club));
         when(staffService.calculateClubStaffBonuses(10L)).thenReturn(null);
 
-        Double effectiveness = trainingService.calculateEffectiveness(team);
+        Double effectiveness = trainingService.calculateEffectiveness(team, TrainingFocus.ATTACKING);
 
         // Base 1.0 + (5 * 0.05) = 1.25
         assertThat(effectiveness).isEqualTo(1.25);
@@ -101,8 +106,40 @@ class TrainingServiceTest {
     @Test
     void testCalculateEffectiveness() {
         Team team = new Team();
-        Double effectiveness = trainingService.calculateEffectiveness(team);
+        Double effectiveness = trainingService.calculateEffectiveness(team, TrainingFocus.BALANCED);
         assertThat(effectiveness).isEqualTo(1.0); // Base value
+    }
+
+    @Test
+    void testCalculateEffectivenessWithSpecificBonuses() {
+        Team team = new Team();
+        team.setId(1L);
+        Club club = new Club();
+        club.setId(10L);
+
+        when(clubRepository.findByTeam(team)).thenReturn(Optional.of(club));
+
+        StaffBonusesDTO bonuses = StaffBonusesDTO.builder()
+            .goalkeepingBonus(0.2)
+            .attackingBonus(0.3)
+            .build();
+
+        when(staffService.calculateClubStaffBonuses(10L)).thenReturn(bonuses);
+
+        // Test Goalkeeping Focus
+        Double effectivenessGK = trainingService.calculateEffectiveness(team, TrainingFocus.GOALKEEPING);
+        // Base 1.0 + 0.2 = 1.2
+        assertThat(effectivenessGK).isEqualTo(1.2);
+
+        // Test Attacking Focus
+        Double effectivenessAtt = trainingService.calculateEffectiveness(team, TrainingFocus.ATTACKING);
+        // Base 1.0 + 0.3 = 1.3
+        assertThat(effectivenessAtt).isEqualTo(1.3);
+
+        // Test Unrelated Focus (e.g. Defending - should be 0 from bonus if null)
+        Double effectivenessDef = trainingService.calculateEffectiveness(team, TrainingFocus.DEFENDING);
+        // Base 1.0 + 0.0 = 1.0
+        assertThat(effectivenessDef).isEqualTo(1.0);
     }
 
     @Test

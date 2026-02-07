@@ -67,6 +67,8 @@ public class TrainingSession implements Serializable {
 
     private Double effectivenessMultiplier; // Based on facilities, staff, etc.
 
+    private Double appliedBonus; // The specific staff bonus that was applied
+
     @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude

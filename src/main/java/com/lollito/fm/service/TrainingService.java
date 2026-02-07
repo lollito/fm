@@ -25,6 +25,7 @@ import com.lollito.fm.model.TrainingPerformance;
 import com.lollito.fm.model.TrainingPlan;
 import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.model.TrainingStatus;
+import com.lollito.fm.dto.StaffBonusesDTO;
 import com.lollito.fm.model.dto.IndividualFocusDTO;
 import com.lollito.fm.model.dto.IndividualFocusRequest;
 import com.lollito.fm.model.dto.ManualTrainingRequest;
@@ -118,13 +119,24 @@ public class TrainingService {
      */
     public TrainingSession processTeamTraining(Team team, TrainingFocus focus,
                                              TrainingIntensity intensity) {
+        double effectiveness = calculateEffectiveness(team, focus);
+
+        // Calculate applied bonus for history
+        double appliedBonus = 0.0;
+        Optional<Club> clubOpt = clubRepository.findByTeam(team);
+        if (clubOpt.isPresent()) {
+            StaffBonusesDTO bonuses = staffService.calculateClubStaffBonuses(clubOpt.get().getId());
+            appliedBonus = getBonusForFocus(bonuses, focus);
+        }
+
         TrainingSession session = TrainingSession.builder()
             .team(team)
             .focus(focus)
             .intensity(intensity)
             .startDate(LocalDate.now())
             .status(TrainingStatus.ACTIVE)
-            .effectivenessMultiplier(calculateEffectiveness(team))
+            .effectivenessMultiplier(effectiveness)
+            .appliedBonus(appliedBonus)
             .build();
 
         session = trainingSessionRepository.save(session);
@@ -156,7 +168,7 @@ public class TrainingService {
     /**
      * Calculate training effectiveness based on facilities and staff
      */
-    public Double calculateEffectiveness(Team team) {
+    public Double calculateEffectiveness(Team team, TrainingFocus focus) {
         double baseEffectiveness = 1.0;
 
         Optional<Club> clubOpt = clubRepository.findByTeam(team);
@@ -170,12 +182,32 @@ public class TrainingService {
 
             // Add staff bonuses
             var bonuses = staffService.calculateClubStaffBonuses(club.getId());
-            if (bonuses != null && bonuses.getTrainingBonus() != null) {
-                baseEffectiveness += bonuses.getTrainingBonus();
-            }
+            baseEffectiveness += getBonusForFocus(bonuses, focus);
         }
 
         return Math.min(2.0, baseEffectiveness); // Cap at 2x effectiveness
+    }
+
+    private Double getBonusForFocus(StaffBonusesDTO bonuses, TrainingFocus focus) {
+        if (bonuses == null) return 0.0;
+
+        Double bonus = switch (focus) {
+            case ATTACKING -> bonuses.getAttackingBonus();
+            case DEFENDING -> bonuses.getDefendingBonus();
+            case PHYSICAL -> bonuses.getFitnessBonus();
+            case TECHNICAL -> bonuses.getTacticalBonus();
+            case GOALKEEPING -> bonuses.getGoalkeepingBonus();
+            case BALANCED -> {
+                double total = 0.0;
+                total += bonuses.getAttackingBonus() != null ? bonuses.getAttackingBonus() : 0.0;
+                total += bonuses.getDefendingBonus() != null ? bonuses.getDefendingBonus() : 0.0;
+                total += bonuses.getFitnessBonus() != null ? bonuses.getFitnessBonus() : 0.0;
+                total += bonuses.getTacticalBonus() != null ? bonuses.getTacticalBonus() : 0.0;
+                yield total / 4.0;
+            }
+        };
+
+        return bonus != null ? bonus : 0.0;
     }
 
     /**

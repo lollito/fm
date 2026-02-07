@@ -245,25 +245,57 @@ public class StaffService {
         Club club = clubService.findById(clubId);
         List<Staff> activeStaff = club.getActiveStaff();
 
-        double totalMotivationBonus = activeStaff.stream()
-            .mapToDouble(s -> s.getMotivationBonus() != null ? s.getMotivationBonus() : 0.0)
-            .sum();
+        double totalMotivationBonus = 0.0;
+        double totalTrainingBonus = 0.0; // Keep generic training bonus for backward compatibility or general fitness
+        double totalInjuryPreventionBonus = 0.0;
+        double totalRecoveryBonus = 0.0;
+        double totalScoutingBonus = 0.0;
 
-        double totalTrainingBonus = activeStaff.stream()
-            .mapToDouble(s -> s.getTrainingBonus() != null ? s.getTrainingBonus() : 0.0)
-            .sum();
+        double totalGoalkeepingBonus = 0.0;
+        double totalDefendingBonus = 0.0;
+        double totalAttackingBonus = 0.0;
+        double totalFitnessBonus = 0.0;
+        double totalTacticalBonus = 0.0;
 
-        double totalInjuryPreventionBonus = activeStaff.stream()
-            .mapToDouble(s -> s.getInjuryPreventionBonus() != null ? s.getInjuryPreventionBonus() : 0.0)
-            .sum();
+        for (Staff staff : activeStaff) {
+            double abilityMultiplier = staff.getAbility() / 20.0;
 
-        double totalRecoveryBonus = activeStaff.stream()
-            .mapToDouble(s -> s.getRecoveryBonus() != null ? s.getRecoveryBonus() : 0.0)
-            .sum();
+            // Existing bonuses accumulation
+            if (staff.getMotivationBonus() != null) totalMotivationBonus += staff.getMotivationBonus();
+            if (staff.getTrainingBonus() != null) totalTrainingBonus += staff.getTrainingBonus();
+            if (staff.getInjuryPreventionBonus() != null) totalInjuryPreventionBonus += staff.getInjuryPreventionBonus();
+            if (staff.getRecoveryBonus() != null) totalRecoveryBonus += staff.getRecoveryBonus();
+            if (staff.getScoutingBonus() != null) totalScoutingBonus += staff.getScoutingBonus();
 
-        double totalScoutingBonus = activeStaff.stream()
-            .mapToDouble(s -> s.getScoutingBonus() != null ? s.getScoutingBonus() : 0.0)
-            .sum();
+            // Specific Coaching Bonuses Calculation
+            switch (staff.getRole()) {
+                case HEAD_COACH:
+                    totalTacticalBonus += abilityMultiplier * 0.2;
+                    totalAttackingBonus += abilityMultiplier * 0.1;
+                    totalDefendingBonus += abilityMultiplier * 0.1;
+                    break;
+                case ASSISTANT_COACH:
+                    totalTacticalBonus += abilityMultiplier * 0.15;
+                    totalAttackingBonus += abilityMultiplier * 0.1;
+                    totalDefendingBonus += abilityMultiplier * 0.1;
+                    break;
+                case FITNESS_COACH:
+                    totalFitnessBonus += abilityMultiplier * 0.25;
+                    break;
+                case GOALKEEPING_COACH:
+                    totalGoalkeepingBonus += abilityMultiplier * 0.4;
+                    break;
+                case YOUTH_COACH:
+                    totalAttackingBonus += abilityMultiplier * 0.1;
+                    totalDefendingBonus += abilityMultiplier * 0.1;
+                    break;
+                case ANALYST:
+                    totalTacticalBonus += abilityMultiplier * 0.15;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         return StaffBonusesDTO.builder()
             .motivationBonus(Math.min(1.0, totalMotivationBonus))
@@ -271,6 +303,12 @@ public class StaffService {
             .injuryPreventionBonus(Math.min(0.8, totalInjuryPreventionBonus))
             .recoveryBonus(Math.min(1.0, totalRecoveryBonus))
             .scoutingBonus(Math.min(1.0, totalScoutingBonus))
+            // New specific bonuses
+            .goalkeepingBonus(Math.min(1.0, totalGoalkeepingBonus))
+            .defendingBonus(Math.min(1.0, totalDefendingBonus))
+            .attackingBonus(Math.min(1.0, totalAttackingBonus))
+            .fitnessBonus(Math.min(1.0, totalFitnessBonus))
+            .tacticalBonus(Math.min(1.0, totalTacticalBonus))
             .build();
     }
 
