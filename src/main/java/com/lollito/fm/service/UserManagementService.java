@@ -24,6 +24,7 @@ import com.lollito.fm.model.NotificationPriority;
 import com.lollito.fm.model.NotificationType;
 import com.lollito.fm.model.PasswordResetRequest;
 import com.lollito.fm.model.ResetRequestStatus;
+import com.lollito.fm.model.Role;
 import com.lollito.fm.model.SessionStatus;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.UserActivity;
@@ -31,6 +32,7 @@ import com.lollito.fm.model.UserNotification;
 import com.lollito.fm.model.UserSession;
 import com.lollito.fm.model.dto.BanUserRequest;
 import com.lollito.fm.model.dto.CreateUserRequest;
+import com.lollito.fm.model.dto.RoleDTO;
 import com.lollito.fm.model.dto.UpdateUserRequest;
 import com.lollito.fm.model.dto.UserActivityDTO;
 import com.lollito.fm.model.dto.UserDTO;
@@ -38,6 +40,7 @@ import com.lollito.fm.model.dto.UserFilter;
 import com.lollito.fm.model.dto.UserManagementDashboardDTO;
 import com.lollito.fm.model.dto.UserSessionDTO;
 import com.lollito.fm.repository.rest.PasswordResetRequestRepository;
+import com.lollito.fm.repository.rest.RoleRepository;
 import com.lollito.fm.repository.rest.UserActivityRepository;
 import com.lollito.fm.repository.rest.UserNotificationRepository;
 import com.lollito.fm.repository.rest.UserRepository;
@@ -51,6 +54,9 @@ public class UserManagementService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private UserSessionRepository userSessionRepository;
@@ -126,7 +132,16 @@ public class UserManagementService {
             .build();
 
         if (request.getRoles() != null && !request.getRoles().isEmpty()) {
-            user.setRoles(request.getRoles());
+            java.util.Set<Role> roles = request.getRoles().stream()
+                    .map(roleDTO -> {
+                        if (roleDTO.getId() != null) {
+                            return roleRepository.findById(roleDTO.getId()).orElse(null);
+                        }
+                        return roleRepository.findByName(roleDTO.getName());
+                    })
+                    .filter(java.util.Objects::nonNull)
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
         }
 
         user = userRepository.save(user);
@@ -165,7 +180,18 @@ public class UserManagementService {
         if (request.getCountry() != null) user.setCountryString(request.getCountry());
         if (request.getPreferredLanguage() != null) user.setPreferredLanguage(request.getPreferredLanguage());
         if (request.getTimezone() != null) user.setTimezone(request.getTimezone());
-        if (request.getRoles() != null) user.setRoles(request.getRoles());
+        if (request.getRoles() != null) {
+            java.util.Set<Role> roles = request.getRoles().stream()
+                    .map(roleDTO -> {
+                        if (roleDTO.getId() != null) {
+                            return roleRepository.findById(roleDTO.getId()).orElse(null);
+                        }
+                        return roleRepository.findByName(roleDTO.getName());
+                    })
+                    .filter(java.util.Objects::nonNull)
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
+        }
 
         user.setLastModifiedDate(LocalDateTime.now());
         user.setLastModifiedBy(adminUser.getUsername());
@@ -493,7 +519,12 @@ public class UserManagementService {
             .bannedUntil(user.getBannedUntil())
             .createdDate(user.getCreatedDate())
             .lastLoginDate(user.getLastLoginDate())
-            .roles(user.getRoles())
+            .roles(user.getRoles().stream()
+                    .map(role -> RoleDTO.builder()
+                            .id(role.getId())
+                            .name(role.getName())
+                            .build())
+                    .collect(Collectors.toSet()))
             .build();
     }
 

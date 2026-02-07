@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import com.lollito.fm.model.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +31,7 @@ public class UserDTO {
     private LocalDateTime bannedUntil;
     private LocalDateTime createdDate;
     private LocalDateTime lastLoginDate;
-    private Set<Role> roles;
+    private Set<RoleDTO> roles;
     private Long clubId;
     private Long serverId;
     private Double experience;
