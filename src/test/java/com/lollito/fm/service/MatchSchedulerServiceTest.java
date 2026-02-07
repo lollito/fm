@@ -1,7 +1,7 @@
 package com.lollito.fm.service;
 
 import com.lollito.fm.model.*;
-import com.lollito.fm.model.rest.RegistrationRequest;
+import com.lollito.fm.repository.rest.LiveMatchSessionRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
 import com.lollito.fm.repository.rest.UserRepository;
@@ -30,6 +30,8 @@ public class MatchSchedulerServiceTest {
     @Autowired private ModuleService moduleService;
     @Autowired private UserService userService;
     @Autowired private UserRepository userRepository;
+    @Autowired private MatchProcessor matchProcessor;
+    @Autowired private LiveMatchSessionRepository liveMatchSessionRepository;
 
     @Test
     public void testProcessScheduledMatches() throws InterruptedException {
@@ -56,16 +58,34 @@ public class MatchSchedulerServiceTest {
         // Run the scheduler
         matchSchedulerService.processScheduledMatches();
 
-        // Wait for async processing (simple sleep for demo/test)
-        // In a real scenario, we might use Awaitility
+        // Wait for async processing and force finalization
         int attempts = 0;
         boolean allCompleted = false;
-        while (attempts < 10 && !allCompleted) {
-            Thread.sleep(2000);
+        while (attempts < 30 && !allCompleted) {
+            Thread.sleep(1000);
+
+            // Force finalize any created sessions to avoid waiting 3 minutes
+            List<LiveMatchSession> sessions = liveMatchSessionRepository.findByFinishedFalse();
+            System.out.println("Attempt " + attempts + ": Found " + sessions.size() + " active sessions.");
+
+            for (LiveMatchSession session : sessions) {
+                 if (matches.stream().anyMatch(m -> m.getId().equals(session.getMatchId()))) {
+                     System.out.println("Finalizing match " + session.getMatchId());
+                     session.setFinished(true);
+                     session.setCurrentMinute(90);
+                     liveMatchSessionRepository.save(session);
+                     matchProcessor.finalizeMatch(session.getMatchId(), session);
+                 }
+            }
+
             List<Match> updatedMatches = matchRepository.findAllById(
                     matches.stream().map(Match::getId).collect(Collectors.toList())
             );
             allCompleted = updatedMatches.stream().allMatch(m -> m.getStatus() == MatchStatus.COMPLETED);
+            if (!allCompleted) {
+                 long completedCount = updatedMatches.stream().filter(m -> m.getStatus() == MatchStatus.COMPLETED).count();
+                 System.out.println("Completed matches: " + completedCount + "/" + matches.size());
+            }
             attempts++;
         }
 

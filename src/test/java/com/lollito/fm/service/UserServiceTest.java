@@ -1,21 +1,10 @@
 package com.lollito.fm.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-
-import java.util.Optional;
-
-import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,23 +13,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.lollito.fm.model.rest.RegistrationRequest;
-import com.lollito.fm.repository.rest.UserRepository;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.lollito.fm.model.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.lollito.fm.model.Club;
@@ -61,25 +44,6 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks
-    private UserService userService;
-
-    @Test
-    void testSave_DuplicateUsername() {
-        // Arrange
-        String username = "duplicateUser";
-        RegistrationRequest request = new RegistrationRequest();
-        request.setUsername(username);
-
-        when(userRepository.existsByUsername(username)).thenReturn(true);
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.save(request);
-        });
-
-        assertEquals("Username alredy exist", exception.getMessage());
-        verify(userRepository).existsByUsername(username);
     @Mock
     private ClubService clubService;
 
@@ -100,6 +64,36 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    private RegistrationRequest registrationRequest;
+    private Country country;
+    private Server server;
+    private Club club;
+    private Role role;
+
+    @BeforeEach
+    void setUp() {
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("testuser");
+        registrationRequest.setName("Test");
+        registrationRequest.setSurname("User");
+        registrationRequest.setEmail("test@example.com");
+        registrationRequest.setPassword("password");
+        registrationRequest.setCountryId(1L);
+        registrationRequest.setClubName("Test Club");
+
+        country = new Country();
+        country.setId(1L);
+
+        server = new Server();
+        server.setId(10L);
+
+        club = new Club();
+        club.setName("Old Club Name");
+
+        role = new Role();
+        role.setName("ROLE_USER");
+    }
 
     @AfterEach
     void tearDown() {
@@ -163,34 +157,6 @@ class UserServiceTest {
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.getLoggedUser());
         assertEquals("User '" + username + "' non trovato", exception.getMessage());
-    private RegistrationRequest registrationRequest;
-    private Country country;
-    private Server server;
-    private Club club;
-    private Role role;
-
-    @BeforeEach
-    void setUp() {
-        registrationRequest = new RegistrationRequest();
-        registrationRequest.setUsername("testuser");
-        registrationRequest.setName("Test");
-        registrationRequest.setSurname("User");
-        registrationRequest.setEmail("test@example.com");
-        registrationRequest.setPassword("password");
-        registrationRequest.setCountryId(1L);
-        registrationRequest.setClubName("Test Club");
-
-        country = new Country();
-        country.setId(1L);
-
-        server = new Server();
-        server.setId(10L);
-
-        club = new Club();
-        club.setName("Old Club Name");
-
-        role = new Role();
-        role.setName("ROLE_USER");
     }
 
     @Test

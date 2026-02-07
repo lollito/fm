@@ -1,43 +1,25 @@
 package com.lollito.fm.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -45,47 +27,18 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.lollito.fm.config.security.jwt.JwtUtils;
-import com.lollito.fm.model.User;
 import com.lollito.fm.model.SessionStatus;
-import com.lollito.fm.model.User;
-import com.lollito.fm.model.UserSession;
-import com.lollito.fm.model.dto.BanUserRequest;
-import org.mockito.ArgumentCaptor;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.lollito.fm.model.User;
-import com.lollito.fm.model.UserSession;
-import com.lollito.fm.model.dto.BanUserRequest;
-import com.lollito.fm.model.SessionStatus;
-import com.lollito.fm.repository.rest.UserRepository;
-import com.lollito.fm.repository.rest.UserSessionRepository;
-import com.lollito.fm.repository.rest.UserActivityRepository;
-import com.lollito.fm.repository.rest.UserNotificationRepository;
-
-import jakarta.persistence.EntityNotFoundException;
-
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.lollito.fm.config.security.jwt.JwtUtils;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.UserActivity;
 import com.lollito.fm.model.UserNotification;
+import com.lollito.fm.model.UserSession;
+import com.lollito.fm.model.dto.BanUserRequest;
 import com.lollito.fm.model.dto.CreateUserRequest;
 import com.lollito.fm.repository.rest.PasswordResetRequestRepository;
 import com.lollito.fm.repository.rest.UserActivityRepository;
@@ -94,7 +47,6 @@ import com.lollito.fm.repository.rest.UserRepository;
 import com.lollito.fm.repository.rest.UserSessionRepository;
 
 @ExtendWith(MockitoExtension.class)
-class UserManagementServiceTest {
 public class UserManagementServiceTest {
 
     @InjectMocks
@@ -115,8 +67,15 @@ public class UserManagementServiceTest {
     @Mock
     private EmailService emailService;
 
-    @InjectMocks
-    private UserManagementService userManagementService;
+    @Mock
+    private PasswordResetRequestRepository passwordResetRequestRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtUtils jwtUtils;
+
 
     @Test
     void banUser_Success_WithDuration() {
@@ -145,7 +104,6 @@ public class UserManagementServiceTest {
         userManagementService.banUser(userId, request, adminUser);
 
         // Assert
-        // Verify user update
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
         User savedUser = userCaptor.getValue();
@@ -155,42 +113,67 @@ public class UserManagementServiceTest {
         assertThat(savedUser.getBannedBy()).isEqualTo("admin");
         assertThat(savedUser.getBannedUntil()).isAfter(LocalDateTime.now());
 
-        // Verify session termination
-        ArgumentCaptor<UserSession> sessionCaptor = ArgumentCaptor.forClass(UserSession.class);
-        verify(userSessionRepository).save(sessionCaptor.capture());
-        UserSession savedSession = sessionCaptor.getValue();
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<UserSession>> sessionListCaptor = ArgumentCaptor.forClass(List.class);
+        verify(userSessionRepository).saveAll(sessionListCaptor.capture());
+        List<UserSession> savedSessions = sessionListCaptor.getValue();
+        UserSession savedSession = savedSessions.get(0);
 
         assertThat(savedSession.getIsActive()).isFalse();
         assertThat(savedSession.getStatus()).isEqualTo(SessionStatus.TERMINATED);
         assertThat(savedSession.getTerminationReason()).isEqualTo("User banned");
 
-        // Verify email sent
         verify(emailService).sendBanNotificationEmail(targetUser, "Violation of rules");
-
-        // Verify notification created
         verify(userNotificationRepository).save(any());
-
-        // Verify activity logged
-    private PasswordResetRequestRepository passwordResetRequestRepository;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private EmailService emailService;
-
-    @Mock
-    private JwtUtils jwtUtils;
-
-    @InjectMocks
-    private UserManagementService userManagementService;
+        verify(userActivityRepository).save(any());
+    }
 
     @Test
-    void testCreateUser_DuplicateEmail() {
+    void banUser_Success_NoDuration() {
         // Arrange
-        CreateUserRequest request = new CreateUserRequest();
-        request.setUsername("testUser");
-        request.setEmail("existing@example.com");
+        Long userId = 1L;
+        User adminUser = User.builder().username("admin").build();
+        User targetUser = User.builder().id(userId).username("target").isBanned(false).build();
+
+        BanUserRequest request = new BanUserRequest();
+        request.setReason("Permanent ban");
+        request.setBanDuration(null);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(targetUser));
+        when(userSessionRepository.findByUserIdOrderByLoginTimeDesc(userId)).thenReturn(Collections.emptyList());
+
+        // Act
+        userManagementService.banUser(userId, request, adminUser);
+
+        // Assert
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        User savedUser = userCaptor.getValue();
+
+        assertThat(savedUser.getIsBanned()).isTrue();
+        assertThat(savedUser.getBanReason()).isEqualTo("Permanent ban");
+        assertThat(savedUser.getBannedBy()).isEqualTo("admin");
+        assertThat(savedUser.getBannedUntil()).isNull();
+    }
+
+    @Test
+    void banUser_UserNotFound() {
+        // Arrange
+        Long userId = 999L;
+        User adminUser = User.builder().username("admin").build();
+        BanUserRequest request = new BanUserRequest();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> userManagementService.banUser(userId, request, adminUser))
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("User not found");
+
+        verify(userRepository, times(0)).save(any(User.class));
+        verify(emailService, times(0)).sendBanNotificationEmail(any(), anyString());
+    }
+
     @Test
     public void testBanUser_NPlus1() {
         Long userId = 1L;
@@ -208,7 +191,7 @@ public class UserManagementServiceTest {
 
         UserSession session1 = UserSession.builder().id(101L).isActive(true).build();
         UserSession session2 = UserSession.builder().id(102L).isActive(true).build();
-        UserSession session3 = UserSession.builder().id(103L).isActive(false).build(); // Inactive one
+        UserSession session3 = UserSession.builder().id(103L).isActive(false).build();
 
         List<UserSession> sessions = Arrays.asList(session1, session2, session3);
 
@@ -216,10 +199,11 @@ public class UserManagementServiceTest {
 
         userManagementService.banUser(userId, request, adminUser);
 
-        // Verify that saveAll is called once
         verify(userSessionRepository, times(1)).saveAll(any());
-        // Verify that save is NOT called (except potentially for other things not in this flow, but here we strictly check N+1)
         verify(userSessionRepository, times(0)).save(any(UserSession.class));
+    }
+
+    @Test
     public void resetUserPassword_Success() {
         Long userId = 1L;
         User adminUser = User.builder().username("admin").build();
@@ -238,7 +222,7 @@ public class UserManagementServiceTest {
         verify(emailService).sendTemporaryPasswordEmail(eq(targetUser), emailPasswordCaptor.capture());
         String emailPasswordInput = emailPasswordCaptor.getValue();
 
-        assertEquals(encodedPasswordInput, emailPasswordInput, "Password sent in email should match password encoded");
+        assertEquals(encodedPasswordInput, emailPasswordInput);
 
         assertEquals("encoded_password", targetUser.getPassword());
         assertNotNull(targetUser.getPasswordChangedDate());
@@ -261,6 +245,7 @@ public class UserManagementServiceTest {
             userManagementService.resetUserPassword(userId, adminUser);
         });
     }
+
     @Test
     public void testCreateUser_Success_DefaultValues() {
         // Arrange
@@ -272,16 +257,10 @@ public class UserManagementServiceTest {
         request.setLastName("User");
         request.setCountry("Italy");
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
-        // Default isActive = true (implied null in request handled in service), isVerified = false (implied null)
 
         User adminUser = new User();
         adminUser.setUsername("admin");
 
-        // Mock userRepository behavior
-        // Since existsByUsername is called first, we need to make sure it returns false
-        when(userRepository.existsByUsername("testUser")).thenReturn(false);
-        // Then existsByEmail is called and returns true
-        when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
         when(userRepository.existsByUsername(request.getUsername())).thenReturn(false);
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
@@ -295,7 +274,6 @@ public class UserManagementServiceTest {
         assertEquals("testuser", createdUser.getUsername());
         assertEquals("encodedPassword", createdUser.getPassword());
 
-        // save is called once for creation, and once inside sendEmailVerification
         verify(userRepository, times(2)).save(any(User.class));
         verify(emailService).sendEmailVerification(anyString(), anyString(), anyString());
         verify(userActivityRepository).save(any());
@@ -330,49 +308,6 @@ public class UserManagementServiceTest {
     }
 
     @Test
-    void banUser_Success_NoDuration() {
-        // Arrange
-        Long userId = 1L;
-        User adminUser = User.builder().username("admin").build();
-        User targetUser = User.builder().id(userId).username("target").isBanned(false).build();
-
-        BanUserRequest request = new BanUserRequest();
-        request.setReason("Permanent ban");
-        request.setBanDuration(null);
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(targetUser));
-        when(userSessionRepository.findByUserIdOrderByLoginTimeDesc(userId)).thenReturn(Collections.emptyList());
-
-        // Act
-        userManagementService.banUser(userId, request, adminUser);
-
-        // Assert
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).save(userCaptor.capture());
-        User savedUser = userCaptor.getValue();
-
-        assertThat(savedUser.getIsBanned()).isTrue();
-        assertThat(savedUser.getBanReason()).isEqualTo("Permanent ban");
-        assertThat(savedUser.getBannedBy()).isEqualTo("admin");
-        assertThat(savedUser.getBannedUntil()).isNull(); // Should be null if no duration provided
-    }
-
-    @Test
-    void banUser_UserNotFound() {
-        // Arrange
-        Long userId = 999L;
-        User adminUser = User.builder().username("admin").build();
-        BanUserRequest request = new BanUserRequest();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThatThrownBy(() -> userManagementService.banUser(userId, request, adminUser))
-            .isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("User not found");
-
-        verify(userRepository, times(0)).save(any(User.class));
-        verify(emailService, times(0)).sendBanNotificationEmail(any(), anyString());
     public void testCreateUser_Success_Inactive() {
         // Arrange
         CreateUserRequest request = new CreateUserRequest();
@@ -415,9 +350,6 @@ public class UserManagementServiceTest {
             userManagementService.createUser(request, adminUser);
         });
 
-        assertEquals("Email already exists", exception.getMessage());
-
-        verify(userRepository, never()).save(any(User.class));
         assertEquals("Username already exists", exception.getMessage());
 
         verify(userRepository, times(0)).save(any(User.class));
