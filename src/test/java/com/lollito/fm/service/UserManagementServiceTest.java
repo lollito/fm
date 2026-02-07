@@ -1,5 +1,7 @@
 package com.lollito.fm.service;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -58,6 +60,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.lollito.fm.config.security.jwt.JwtUtils;
+import com.lollito.fm.model.User;
 import com.lollito.fm.model.SessionStatus;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.UserSession;
@@ -76,8 +79,6 @@ import com.lollito.fm.repository.rest.UserNotificationRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
-@ExtendWith(MockitoExtension.class)
-class UserManagementServiceTest {
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -93,6 +94,7 @@ import com.lollito.fm.repository.rest.UserRepository;
 import com.lollito.fm.repository.rest.UserSessionRepository;
 
 @ExtendWith(MockitoExtension.class)
+class UserManagementServiceTest {
 public class UserManagementServiceTest {
 
     @InjectMocks
@@ -180,6 +182,15 @@ public class UserManagementServiceTest {
     @Mock
     private JwtUtils jwtUtils;
 
+    @InjectMocks
+    private UserManagementService userManagementService;
+
+    @Test
+    void testCreateUser_DuplicateEmail() {
+        // Arrange
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername("testUser");
+        request.setEmail("existing@example.com");
     @Test
     public void testBanUser_NPlus1() {
         Long userId = 1L;
@@ -266,6 +277,11 @@ public class UserManagementServiceTest {
         User adminUser = new User();
         adminUser.setUsername("admin");
 
+        // Mock userRepository behavior
+        // Since existsByUsername is called first, we need to make sure it returns false
+        when(userRepository.existsByUsername("testUser")).thenReturn(false);
+        // Then existsByEmail is called and returns true
+        when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
         when(userRepository.existsByUsername(request.getUsername())).thenReturn(false);
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
@@ -398,6 +414,10 @@ public class UserManagementServiceTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userManagementService.createUser(request, adminUser);
         });
+
+        assertEquals("Email already exists", exception.getMessage());
+
+        verify(userRepository, never()).save(any(User.class));
         assertEquals("Username already exists", exception.getMessage());
 
         verify(userRepository, times(0)).save(any(User.class));
