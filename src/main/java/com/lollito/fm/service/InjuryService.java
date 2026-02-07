@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,9 +25,8 @@ import com.lollito.fm.repository.rest.PlayerRepository;
 import com.lollito.fm.utils.RandomUtils;
 
 @Service
+@Slf4j
 public class InjuryService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private InjuryRepository injuryRepository;
@@ -132,8 +130,9 @@ public class InjuryService {
         return injuryRepository.save(injury);
     }
 
-    @Scheduled(cron = "0 0 6 * * *") // Daily at 6 AM
+    @Scheduled(initialDelayString = "${fm.scheduling.injury.initial-delay}", fixedRateString = "${fm.scheduling.injury.fixed-rate}")
     public void processInjuryRecovery() {
+        log.info("Starting processInjuryRecovery...");
         List<Injury> activeInjuries = injuryRepository.findByStatus(InjuryStatus.ACTIVE);
 
         for (Injury injury : activeInjuries) {
@@ -144,10 +143,11 @@ public class InjuryService {
                     injury.setActualRecoveryDate(LocalDate.now());
                     injuryRepository.save(injury);
 
-                    logger.info("Player {} {} recovered from {}", injury.getPlayer().getName(), injury.getPlayer().getSurname(), injury.getType());
+                    log.info("Player {} {} recovered from {}", injury.getPlayer().getName(), injury.getPlayer().getSurname(), injury.getType());
                 }
             }
         }
+        log.info("Finished processInjuryRecovery.");
     }
 
     public List<Injury> getTeamInjuries(Long teamId) {

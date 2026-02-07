@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,9 +38,8 @@ import com.lollito.fm.utils.RandomUtils;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
+@Slf4j
 public class ScoutingService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired private ScoutRepository scoutRepository;
     @Autowired private ScoutingAssignmentRepository assignmentRepository;
@@ -113,15 +111,17 @@ public class ScoutingService {
         return scout.getStatus() == ScoutStatus.ACTIVE;
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(initialDelayString = "${fm.scheduling.scouting.initial-delay}", fixedRateString = "${fm.scheduling.scouting.fixed-rate}")
     @Transactional
     public void processDailyScoutingProgress() {
+        log.info("Starting processDailyScoutingProgress...");
         List<ScoutingAssignment> activeAssignments = assignmentRepository
             .findAllWithScoutAndPlayerAndClub(AssignmentStatus.IN_PROGRESS);
 
         for (ScoutingAssignment assignment : activeAssignments) {
             processScoutingProgress(assignment);
         }
+        log.info("Finished processDailyScoutingProgress.");
     }
 
     private void processScoutingProgress(ScoutingAssignment assignment) {

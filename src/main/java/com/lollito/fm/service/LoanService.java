@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Transactional
+@Slf4j
 public class LoanService {
 
     @Autowired private LoanAgreementRepository loanAgreementRepository;
@@ -131,11 +133,13 @@ public class LoanService {
         loanProposalRepository.save(proposal);
     }
 
-    @Scheduled(cron = "0 0 9 1 * *")
+    @Scheduled(initialDelayString = "${fm.scheduling.loans.initial-delay}", fixedRateString = "${fm.scheduling.loans.fixed-rate}")
     public void processMonthlyLoanReviews() {
+        log.info("Starting processMonthlyLoanReviews...");
         List<LoanAgreement> activeLoans = loanAgreementRepository.findWithPlayerByStatus(LoanStatus.ACTIVE);
 
         if (activeLoans.isEmpty()) {
+            log.info("No active loans found.");
             return;
         }
 
@@ -150,6 +154,7 @@ public class LoanService {
              PlayerSeasonStats stats = statsMap.get(loan.getPlayer().getId());
              createPerformanceReview(loan, ReviewPeriod.MONTHLY, stats);
         }
+        log.info("Finished processMonthlyLoanReviews.");
     }
 
     public LoanPerformanceReview createPerformanceReview(LoanAgreement loan, ReviewPeriod period) {

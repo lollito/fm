@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,9 +49,8 @@ import com.lollito.fm.repository.rest.SponsorshipPaymentRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
+@Slf4j
 public class SponsorshipService {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SponsorRepository sponsorRepository;
@@ -374,9 +372,10 @@ public class SponsorshipService {
     /**
      * Process monthly sponsorship payments
      */
-    @Scheduled(cron = "0 0 9 1 * *") // First day of month at 9 AM
+    @Scheduled(initialDelayString = "${fm.scheduling.sponsorship.initial-delay}", fixedRateString = "${fm.scheduling.sponsorship.fixed-rate}")
     @Transactional
     public void processMonthlyPayments() {
+        log.info("Starting processMonthlyPayments...");
         LocalDate today = LocalDate.now();
 
         // Get all pending payments due today or overdue
@@ -398,6 +397,7 @@ public class SponsorshipService {
 
         // Generate next month payments for active deals
         generateNextMonthPayments();
+        log.info("Finished processMonthlyPayments.");
     }
 
     private void generateNextMonthPayments() {

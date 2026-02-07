@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,9 +42,8 @@ import com.lollito.fm.repository.rest.FinancialTransactionRepository;
 import com.lollito.fm.repository.rest.SponsorshipDealRepository;
 
 @Service
+@Slf4j
 public class FinancialService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private FinanceRepository financeRepository;
@@ -125,18 +123,20 @@ public class FinancialService {
         return transaction;
     }
 
-    @Scheduled(cron = "0 0 8 1 * *") // First day of month at 8 AM
+    @Scheduled(initialDelayString = "${fm.scheduling.finance.initial-delay}", fixedRateString = "${fm.scheduling.finance.fixed-rate}")
     @Transactional
     public void processMonthlyFinancials() {
+        log.info("Starting processMonthlyFinancials...");
         List<Club> allClubs = clubService.findAll();
 
         for (Club club : allClubs) {
             try {
                 processClubMonthlyFinancials(club);
             } catch (Exception e) {
-                logger.error("Error processing monthly financials for club " + club.getId(), e);
+                log.error("Error processing monthly financials for club " + club.getId(), e);
             }
         }
+        log.info("Finished processMonthlyFinancials.");
     }
 
     @Transactional
@@ -458,13 +458,13 @@ public class FinancialService {
     private void checkFinancialAlerts(Finance finance) {
          if (finance.getBalance().compareTo(BigDecimal.valueOf(100000)) < 0) {
              String message = "Low Balance Alert: Club balance is below $100,000 for club " + finance.getClub().getName();
-             logger.warn(message);
+             log.warn(message);
              newsService.save(new com.lollito.fm.model.News(message, LocalDateTime.now()));
          }
 
          if (finance.getBalance().compareTo(BigDecimal.ZERO) < 0) {
              String message = "Negative Balance Alert: Club is in debt: " + finance.getClub().getName();
-             logger.error(message);
+             log.error(message);
              newsService.save(new com.lollito.fm.model.News(message, LocalDateTime.now()));
          }
     }
