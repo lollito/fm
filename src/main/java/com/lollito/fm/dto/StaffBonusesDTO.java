@@ -17,4 +17,11 @@ public class StaffBonusesDTO implements Serializable {
     private Double injuryPreventionBonus;
     private Double recoveryBonus;
     private Double scoutingBonus;
+
+    // Specific training bonuses
+    private Double goalkeepingBonus;
+    private Double defendingBonus;
+    private Double attackingBonus;
+    private Double fitnessBonus;
+    private Double tacticalBonus;
 }

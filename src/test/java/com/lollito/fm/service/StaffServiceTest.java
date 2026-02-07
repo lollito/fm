@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.lollito.fm.dto.request.HireStaffRequest;
+import com.lollito.fm.dto.StaffBonusesDTO;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.ContractStatus;
 import com.lollito.fm.model.Country;
@@ -133,5 +134,53 @@ public class StaffServiceTest {
 
         // Balance reduced by termination fee
         assertEquals(new BigDecimal("970000"), club.getFinance().getBalance());
+    }
+
+    @Test
+    public void testCalculateClubStaffBonuses() {
+        Staff headCoach = new Staff();
+        headCoach.setRole(StaffRole.HEAD_COACH);
+        headCoach.setAbility(15);
+        headCoach.setStatus(StaffStatus.ACTIVE);
+        headCoach.setTrainingBonus(0.1);
+
+        Staff fitnessCoach = new Staff();
+        fitnessCoach.setRole(StaffRole.FITNESS_COACH);
+        fitnessCoach.setAbility(20);
+        fitnessCoach.setStatus(StaffStatus.ACTIVE);
+        fitnessCoach.setTrainingBonus(0.2);
+
+        Staff goalkeepingCoach = new Staff();
+        goalkeepingCoach.setRole(StaffRole.GOALKEEPING_COACH);
+        goalkeepingCoach.setAbility(10);
+        goalkeepingCoach.setStatus(StaffStatus.ACTIVE);
+        goalkeepingCoach.setTrainingBonus(0.1);
+
+        club.setStaff(List.of(headCoach, fitnessCoach, goalkeepingCoach));
+
+        when(clubService.findById(1L)).thenReturn(club);
+
+        StaffBonusesDTO bonuses = staffService.calculateClubStaffBonuses(1L);
+
+        // Head Coach: Ability 15. Multiplier = 0.75.
+        // Tactical = 0.75 * 0.2 = 0.15
+        // Attacking = 0.75 * 0.1 = 0.075
+        // Defending = 0.75 * 0.1 = 0.075
+
+        // Fitness Coach: Ability 20. Multiplier = 1.0.
+        // Fitness = 1.0 * 0.25 = 0.25
+
+        // GK Coach: Ability 10. Multiplier = 0.5.
+        // Goalkeeping = 0.5 * 0.4 = 0.20
+
+        assertEquals(0.15, bonuses.getTacticalBonus(), 0.0001, "Tactical bonus mismatch");
+        assertEquals(0.075, bonuses.getAttackingBonus(), 0.0001, "Attacking bonus mismatch");
+        assertEquals(0.075, bonuses.getDefendingBonus(), 0.0001, "Defending bonus mismatch");
+        assertEquals(0.25, bonuses.getFitnessBonus(), 0.0001, "Fitness bonus mismatch");
+        assertEquals(0.20, bonuses.getGoalkeepingBonus(), 0.0001, "Goalkeeping bonus mismatch");
+
+        // Also check legacy fields
+        // TrainingBonus: 0.1 + 0.2 + 0.1 = 0.4
+        assertEquals(0.4, bonuses.getTrainingBonus(), 0.0001, "Training bonus mismatch");
     }
 }
