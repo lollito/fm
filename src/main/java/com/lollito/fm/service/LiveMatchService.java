@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.model.LiveMatchSession;
 import com.lollito.fm.model.Match;
+import com.lollito.fm.model.MatchStatus;
+import com.lollito.fm.model.Stats;
 import com.lollito.fm.model.dto.EventHistoryDTO;
 import com.lollito.fm.model.dto.LiveMatchSummaryDTO;
 import com.lollito.fm.model.dto.MatchDTO;
@@ -236,6 +238,35 @@ public class LiveMatchService {
                     .startTime(session.getStartTime())
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void forceFinish(Long matchId) {
+        LiveMatchSession session = liveMatchSessionRepository.findByMatchId(matchId)
+                .orElseThrow(() -> new RuntimeException("Live match session not found for match " + matchId));
+
+        finishMatch(session);
+    }
+
+    @Transactional
+    public void reset(Long matchId) {
+        LiveMatchSession session = liveMatchSessionRepository.findByMatchId(matchId).orElse(null);
+        if (session != null) {
+            liveMatchSessionRepository.delete(session);
+        }
+
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new RuntimeException("Match not found"));
+
+        match.setStatus(MatchStatus.SCHEDULED);
+        match.setHomeScore(null);
+        match.setAwayScore(null);
+        match.setFinish(false);
+        match.getEvents().clear();
+        match.getPlayerStats().clear();
+        match.setStats(new Stats());
+
+        matchRepository.save(match);
     }
 
     @Data
