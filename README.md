@@ -1,100 +1,118 @@
 # Football Manager
-[![Build Status](https://api.travis-ci.org/lollito/fm.svg?branch=master)](https://travis-ci.org/lollito/fm/branches)
-[![codecov.io](https://codecov.io/gh/lollito/fm/branch/master/graphs/badge.svg)](https://codecov.io/gh/lollito/fm/branch/master)
-[![License](https://img.shields.io/github/license/lollito/fm.svg)](LICENSE.md)
-[![Maintainability](https://api.codeclimate.com/v1/badges/b9a51647ded9b4784955/maintainability)](https://codeclimate.com/github/lollito/fm/maintainability)
-[![Renovate enabled](https://badges.renovateapi.com/github/lollito/fm)](https://renovatebot.com/)
 
-A Football Manager online game
+A comprehensive online Football Manager simulation game.
+
+## AI-Driven Development
+
+This project is now entirely developed and maintained by **Generative AI and Autonomous Agents**. Special recognition goes to the following agents for their continuous contributions to the codebase, architecture, and feature implementation:
+
+*   **Jules**
+*   **Kiro**
+*   **Antigravity**
+
+## Overview
+
+Football Manager is a full-stack application that simulates the management of a football club. It features a robust backend for match simulation, player transfers, training, and financial management, coupled with a modern React frontend for user interaction.
+
+## Tech Stack
+
+### Backend
+*   **Java 21**
+*   **Spring Boot 3.5.10**
+*   **MySQL 8.0** (Primary Database)
+*   **MongoDB** (NoSQL Data)
+*   **Redis 7** (Caching)
+*   **Spring Security** (Authentication & Authorization)
+*   **WebSocket** (Real-time updates)
+
+### Frontend
+*   **React 18**
+*   **Axios**
+*   **SockJS & Stomp** (WebSocket Client)
+*   **Recharts** (Data Visualization)
+
+### Infrastructure & DevOps
+*   **Docker & Docker Compose**
+*   **Nginx** (Reverse Proxy)
+*   **Prometheus & Grafana** (Monitoring)
 
 ## Getting Started
 
-```
-cd /project-path/fm
-mvn clean package
-java -jar /target/fm.jar
-```
-
 ### Prerequisites
 
-java jdk 1.8
+*   **Docker** and **Docker Compose** (Recommended)
+*   **Java 21 JDK** (For manual backend build)
+*   **Node.js 18+** (For manual frontend build)
 
-```
-Give examples
-```
+### Running with Docker (Recommended)
 
-### Installing
+The easiest way to run the application is using Docker Compose.
 
-A step by step series of examples that tell you have to get a development env running
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/lollito/fm.git
+    cd fm
+    ```
 
-Say what the step will be
+2.  Start the application stack:
+    ```bash
+    docker-compose up -d --build
+    ```
 
-```
-Give the example
-```
+This will start the following services:
+*   **MySQL**: `localhost:3306`
+*   **Redis**: `localhost:6379`
+*   **Backend**: `http://localhost:8080`
+*   **Frontend**: `http://localhost:3000`
+*   **Admin Panel**: `http://localhost:3001`
 
-And repeat
+### Manual Installation
 
-```
-until finished
-```
+#### Backend
 
-End with an example of getting some data out of the system or using it for a little demo
+1.  Navigate to the project root:
+    ```bash
+    cd fm
+    ```
+2.  Build and run the application:
+    ```bash
+    mvn spring-boot:run
+    ```
 
-## Running the tests
+#### Frontend (`fm-web`)
 
-Explain how to run the automated tests for this system
+1.  Navigate to the frontend directory:
+    ```bash
+    cd fm-web
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the development server:
+    ```bash
+    npm start
+    ```
 
-### Break down into end to end tests
+The frontend will be available at `http://localhost:3000`.
 
-Explain what these tests test and why
+## Project Structure
 
-```
-Give an example
-```
+*   `src/`: Backend source code (Java/Spring Boot).
+*   `fm-web/`: Frontend source code (React).
+*   `fm-admin/`: Admin panel source code (React).
+*   `docker/`: Docker configuration files for MySQL, Redis, Nginx, Prometheus, and Grafana.
 
-### And coding style tests
+## Database Schema
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-
-## Db Schema
-
-<img width="880" alt="DB Schema" src="https://user-images.githubusercontent.com/26112857/58509700-771dd780-8197-11e9-9eff-a854bc1b82a5.png">
-
-## Built With
-
-* [Springboot](https://projects.spring.io/spring-boot/) - Java Framework
-* [Maven](https://maven.apache.org/) - Dependency Management
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [Git](https://git-scm.com/) for versioning.  
-
-## Authors
-
-* **Lorenzo Cunto** - *Initial work - 31/08/2017* [@Lollito](https://github.com/lollito)
-
+*(Legacy Schema Diagram)*
+![DB Schema](https://user-images.githubusercontent.com/26112857/58509700-771dd780-8197-11e9-9eff-a854bc1b82a5.png)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Acknowledgments
+## Authors
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
-
+*   **Lorenzo Cunto** - *Initial work* - [@Lollito](https://github.com/lollito)
+*   **AI Agents (Jules, Kiro, Antigravity)** - *Current Development*
