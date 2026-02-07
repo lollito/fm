@@ -1,11 +1,11 @@
 package com.lollito.fm.service;
 
-import java.time.LocalDateTime;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -23,11 +23,11 @@ import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.model.LiveMatchSession;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.dto.EventHistoryDTO;
-import com.lollito.fm.model.dto.MatchDTO;
 import com.lollito.fm.model.dto.LiveMatchSummaryDTO;
-import com.lollito.fm.model.dto.StatsDTO;
+import com.lollito.fm.model.dto.MatchDTO;
 import com.lollito.fm.repository.rest.LiveMatchSessionRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
+
 import lombok.Data;
 
 @Service

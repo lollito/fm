@@ -23,6 +23,7 @@ import com.lollito.fm.dto.ScoutDTO;
 import com.lollito.fm.dto.ScoutingAssignmentDTO;
 import com.lollito.fm.dto.ScoutingRecommendationDTO;
 import com.lollito.fm.dto.ScoutingReportDTO;
+import com.lollito.fm.mapper.ScoutingMapper;
 import com.lollito.fm.model.AssignmentStatus;
 import com.lollito.fm.model.PlayerScoutingStatus;
 import com.lollito.fm.model.RecommendationLevel;
@@ -30,7 +31,6 @@ import com.lollito.fm.model.Scout;
 import com.lollito.fm.model.ScoutingAssignment;
 import com.lollito.fm.model.ScoutingReport;
 import com.lollito.fm.service.ScoutingService;
-import com.lollito.fm.mapper.ScoutingMapper;
 
 @RestController
 @RequestMapping("/api/scouting")

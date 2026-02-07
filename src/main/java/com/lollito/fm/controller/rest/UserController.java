@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.config.security.jwt.JwtUtils;
-import com.lollito.fm.model.User;
-import com.lollito.fm.model.dto.UserDTO;
-import com.lollito.fm.model.rest.JwtResponse;
-import com.lollito.fm.model.rest.RegistrationRequest;
-import com.lollito.fm.model.rest.LoginRequest;
-import com.lollito.fm.service.UserService;
 import com.lollito.fm.mapper.UserMapper;
+import com.lollito.fm.model.User;
+import com.lollito.fm.model.rest.JwtResponse;
+import com.lollito.fm.model.rest.LoginRequest;
+import com.lollito.fm.model.rest.RegistrationRequest;
+import com.lollito.fm.service.UserService;
+
 import jakarta.validation.Valid;
 
 @RestController

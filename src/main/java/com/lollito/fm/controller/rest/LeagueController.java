@@ -1,6 +1,7 @@
 package com.lollito.fm.controller.rest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.model.League;
+import com.lollito.fm.mapper.LeagueMapper;
 import com.lollito.fm.model.dto.LeagueDTO;
 import com.lollito.fm.service.LeagueService;
-import com.lollito.fm.mapper.LeagueMapper;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/league")

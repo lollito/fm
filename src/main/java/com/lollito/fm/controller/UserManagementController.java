@@ -19,7 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.User;
-import com.lollito.fm.model.dto.*;
+import com.lollito.fm.model.dto.BanUserRequest;
+import com.lollito.fm.model.dto.CreateUserRequest;
+import com.lollito.fm.model.dto.UpdateUserRequest;
+import com.lollito.fm.model.dto.UserActivityDTO;
+import com.lollito.fm.model.dto.UserDTO;
+import com.lollito.fm.model.dto.UserFilter;
+import com.lollito.fm.model.dto.UserManagementDashboardDTO;
+import com.lollito.fm.model.dto.UserSessionDTO;
 import com.lollito.fm.service.UserManagementService;
 import com.lollito.fm.service.UserService;
 

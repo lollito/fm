@@ -1,10 +1,10 @@
 package com.lollito.fm.model.dto;
 
-import lombok.Data;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.Valid;
+import lombok.Data;
 
 @Data
 public class CreateClubRequest {

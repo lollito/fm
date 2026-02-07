@@ -1,9 +1,10 @@
 package com.lollito.fm.mapper;
 
-import com.lollito.fm.model.YouthCandidate;
-import com.lollito.fm.model.dto.YouthCandidateDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.lollito.fm.model.YouthCandidate;
+import com.lollito.fm.model.dto.YouthCandidateDTO;
 
 @Mapper(componentModel = "spring")
 public interface YouthCandidateMapper {

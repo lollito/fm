@@ -5,14 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +18,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lollito.fm.config.security.jwt.JwtUtils;
-import com.lollito.fm.model.*;
-import com.lollito.fm.model.dto.*;
-import com.lollito.fm.repository.rest.*;
+import com.lollito.fm.model.ActivitySeverity;
+import com.lollito.fm.model.ActivityType;
+import com.lollito.fm.model.NotificationPriority;
+import com.lollito.fm.model.NotificationType;
+import com.lollito.fm.model.PasswordResetRequest;
+import com.lollito.fm.model.ResetRequestStatus;
+import com.lollito.fm.model.SessionStatus;
+import com.lollito.fm.model.User;
+import com.lollito.fm.model.UserActivity;
+import com.lollito.fm.model.UserNotification;
+import com.lollito.fm.model.UserSession;
+import com.lollito.fm.model.dto.BanUserRequest;
+import com.lollito.fm.model.dto.CreateUserRequest;
+import com.lollito.fm.model.dto.UpdateUserRequest;
+import com.lollito.fm.model.dto.UserActivityDTO;
+import com.lollito.fm.model.dto.UserDTO;
+import com.lollito.fm.model.dto.UserFilter;
+import com.lollito.fm.model.dto.UserManagementDashboardDTO;
+import com.lollito.fm.model.dto.UserSessionDTO;
+import com.lollito.fm.repository.rest.PasswordResetRequestRepository;
+import com.lollito.fm.repository.rest.UserActivityRepository;
+import com.lollito.fm.repository.rest.UserNotificationRepository;
+import com.lollito.fm.repository.rest.UserRepository;
+import com.lollito.fm.repository.rest.UserSessionRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class UserManagementService {

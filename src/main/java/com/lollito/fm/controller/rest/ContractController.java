@@ -17,7 +17,15 @@ import com.lollito.fm.model.Contract;
 import com.lollito.fm.model.ContractNegotiation;
 import com.lollito.fm.model.NegotiationOffer;
 import com.lollito.fm.model.NegotiationStatus;
-import com.lollito.fm.model.dto.*;
+import com.lollito.fm.model.dto.AddPerformanceBonusRequest;
+import com.lollito.fm.model.dto.ContractDTO;
+import com.lollito.fm.model.dto.ContractNegotiationDTO;
+import com.lollito.fm.model.dto.CounterOfferRequest;
+import com.lollito.fm.model.dto.NegotiationOfferDTO;
+import com.lollito.fm.model.dto.RejectOfferRequest;
+import com.lollito.fm.model.dto.StartNegotiationRequest;
+import com.lollito.fm.model.dto.TransferOfferDTO;
+import com.lollito.fm.model.dto.TriggerReleaseClauseRequest;
 import com.lollito.fm.service.ContractService;
 
 @RestController

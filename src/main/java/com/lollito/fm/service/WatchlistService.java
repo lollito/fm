@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,6 +38,8 @@ import com.lollito.fm.repository.WatchlistEntryRepository;
 import com.lollito.fm.repository.WatchlistNotificationRepository;
 import com.lollito.fm.repository.WatchlistRepository;
 import com.lollito.fm.repository.WatchlistUpdateRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class WatchlistService {

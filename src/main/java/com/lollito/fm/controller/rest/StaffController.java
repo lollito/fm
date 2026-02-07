@@ -22,11 +22,11 @@ import com.lollito.fm.dto.StaffDTO;
 import com.lollito.fm.dto.request.FireStaffRequest;
 import com.lollito.fm.dto.request.HireStaffRequest;
 import com.lollito.fm.dto.request.RenewContractRequest;
+import com.lollito.fm.mapper.StaffMapper;
 import com.lollito.fm.model.Staff;
 import com.lollito.fm.model.StaffContract;
 import com.lollito.fm.model.StaffRole;
 import com.lollito.fm.service.StaffService;
-import com.lollito.fm.mapper.StaffMapper;
 
 @RestController
 @RequestMapping("/api/staff")

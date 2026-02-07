@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,8 @@ import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.PlayerRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
 import com.lollito.fm.repository.rest.ServerRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ServerService {

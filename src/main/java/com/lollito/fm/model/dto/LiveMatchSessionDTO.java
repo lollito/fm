@@ -3,9 +3,9 @@ package com.lollito.fm.model.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.lollito.fm.model.Match;
 import com.lollito.fm.model.MatchIntensity;
 import com.lollito.fm.model.MatchPhase;
-import com.lollito.fm.model.Match;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

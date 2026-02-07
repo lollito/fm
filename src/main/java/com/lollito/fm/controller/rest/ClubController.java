@@ -8,12 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.model.Club;
+import com.lollito.fm.mapper.ClubMapper;
 import com.lollito.fm.model.dto.ClubDTO;
 import com.lollito.fm.repository.rest.CountryRepository;
 import com.lollito.fm.service.ClubService;
 import com.lollito.fm.service.UserService;
-import com.lollito.fm.mapper.ClubMapper;
 
 @RestController
 @RequestMapping(value="/api/club")

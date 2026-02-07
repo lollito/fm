@@ -3,9 +3,9 @@ package com.lollito.fm.model.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.lollito.fm.model.MedicalCenter;
 import com.lollito.fm.model.Stadium;
 import com.lollito.fm.model.TrainingFacility;
-import com.lollito.fm.model.MedicalCenter;
 import com.lollito.fm.model.YouthAcademy;
 
 import lombok.Builder;

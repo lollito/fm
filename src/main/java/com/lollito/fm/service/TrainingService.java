@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerTrainingResult;
 import com.lollito.fm.model.Team;
@@ -23,13 +25,11 @@ import com.lollito.fm.model.TrainingPlan;
 import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.model.TrainingStatus;
 import com.lollito.fm.model.dto.ManualTrainingRequest;
-import com.lollito.fm.model.Club;
 import com.lollito.fm.model.dto.TrainingPlanRequest;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
 import com.lollito.fm.repository.rest.ClubRepository;
-import java.util.Optional;
 
 @Service
 public class TrainingService {

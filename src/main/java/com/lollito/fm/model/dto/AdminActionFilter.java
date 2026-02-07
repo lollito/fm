@@ -1,7 +1,8 @@
 package com.lollito.fm.model.dto;
+import com.lollito.fm.model.AdminActionType;
+
 import lombok.Builder;
 import lombok.Data;
-import com.lollito.fm.model.AdminActionType;
 
 @Data
 @Builder

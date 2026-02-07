@@ -1,8 +1,6 @@
 package com.lollito.fm.model.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import com.lollito.fm.model.Foot;
 import com.lollito.fm.model.PlayerRole;

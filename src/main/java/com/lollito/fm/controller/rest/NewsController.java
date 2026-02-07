@@ -1,6 +1,7 @@
 package com.lollito.fm.controller.rest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.model.News;
+import com.lollito.fm.mapper.NewsMapper;
 import com.lollito.fm.model.dto.NewsDTO;
 import com.lollito.fm.service.NewsService;
-import com.lollito.fm.mapper.NewsMapper;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/news")

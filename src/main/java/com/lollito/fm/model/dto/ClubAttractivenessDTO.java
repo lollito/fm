@@ -1,6 +1,7 @@
 package com.lollito.fm.model.dto;
 
 import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -7,14 +7,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lollito.fm.model.*;
+import com.lollito.fm.model.Club;
+import com.lollito.fm.model.LoanAgreement;
+import com.lollito.fm.model.LoanPerformanceReview;
+import com.lollito.fm.model.LoanProposal;
+import com.lollito.fm.model.LoanRecommendation;
+import com.lollito.fm.model.LoanStatus;
+import com.lollito.fm.model.Player;
+import com.lollito.fm.model.PlayerSeasonStats;
+import com.lollito.fm.model.ProposalStatus;
+import com.lollito.fm.model.ReviewPeriod;
+import com.lollito.fm.model.Season;
+import com.lollito.fm.model.TransactionCategory;
+import com.lollito.fm.model.TransactionType;
+import com.lollito.fm.model.TransferType;
 import com.lollito.fm.model.dto.CreateLoanProposalRequest;
 import com.lollito.fm.model.dto.TransferOfferDTO;
 import com.lollito.fm.model.rest.CreateTransactionRequest;
@@ -22,6 +33,8 @@ import com.lollito.fm.repository.rest.ClubRepository;
 import com.lollito.fm.repository.rest.LoanAgreementRepository;
 import com.lollito.fm.repository.rest.LoanPerformanceReviewRepository;
 import com.lollito.fm.repository.rest.LoanProposalRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Transactional

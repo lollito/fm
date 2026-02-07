@@ -1,14 +1,16 @@
 package com.lollito.fm.model.rest;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 import java.math.BigDecimal;
-import com.lollito.fm.model.TransferType;
+import java.time.LocalDate;
+
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Season;
+import com.lollito.fm.model.TransferType;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

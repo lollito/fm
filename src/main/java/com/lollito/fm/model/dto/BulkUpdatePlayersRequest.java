@@ -1,7 +1,8 @@
 package com.lollito.fm.model.dto;
 
-import java.util.List;
 import java.math.BigDecimal;
+import java.util.List;
+
 import lombok.Data;
 
 @Data

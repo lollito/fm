@@ -2,7 +2,9 @@ package com.lollito.fm.model.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import com.lollito.fm.model.MetricType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

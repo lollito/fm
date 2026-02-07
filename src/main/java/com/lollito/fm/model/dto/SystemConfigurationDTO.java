@@ -1,9 +1,11 @@
 package com.lollito.fm.model.dto;
-import lombok.Builder;
-import lombok.Data;
+import java.time.LocalDateTime;
+
 import com.lollito.fm.model.ConfigCategory;
 import com.lollito.fm.model.ConfigType;
-import java.time.LocalDateTime;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

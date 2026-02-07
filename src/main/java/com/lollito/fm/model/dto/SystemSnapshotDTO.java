@@ -2,9 +2,11 @@ package com.lollito.fm.model.dto;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
 import com.lollito.fm.model.SnapshotScope;
 import com.lollito.fm.model.SnapshotStatus;
 import com.lollito.fm.model.SnapshotType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

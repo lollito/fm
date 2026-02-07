@@ -1,18 +1,9 @@
 package com.lollito.fm.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lollito.fm.mapper.MatchMapper;
-import com.lollito.fm.mapper.MatchPlayerStatsMapper;
-import com.lollito.fm.model.*;
-import com.lollito.fm.model.dto.EventHistoryDTO;
-import com.lollito.fm.model.dto.MatchPlayerStatsDTO;
-import com.lollito.fm.model.dto.StatsDTO;
-import com.lollito.fm.repository.rest.MatchRepository;
-import com.lollito.fm.repository.rest.SeasonRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +12,29 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lollito.fm.mapper.MatchMapper;
+import com.lollito.fm.mapper.MatchPlayerStatsMapper;
+import com.lollito.fm.model.EventHistory;
+import com.lollito.fm.model.League;
+import com.lollito.fm.model.LiveMatchSession;
+import com.lollito.fm.model.Match;
+import com.lollito.fm.model.MatchPlayerStats;
+import com.lollito.fm.model.MatchStatus;
+import com.lollito.fm.model.Round;
+import com.lollito.fm.model.Season;
+import com.lollito.fm.model.Stats;
+import com.lollito.fm.model.User;
+import com.lollito.fm.model.dto.EventHistoryDTO;
+import com.lollito.fm.model.dto.MatchPlayerStatsDTO;
+import com.lollito.fm.model.dto.StatsDTO;
+import com.lollito.fm.repository.rest.MatchRepository;
+import com.lollito.fm.repository.rest.SeasonRepository;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Service
 public class MatchProcessor {

@@ -4,22 +4,38 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lollito.fm.model.*;
-import com.lollito.fm.model.dto.*;
+import com.lollito.fm.model.BonusType;
+import com.lollito.fm.model.Club;
+import com.lollito.fm.model.Contract;
+import com.lollito.fm.model.ContractNegotiation;
+import com.lollito.fm.model.ContractStatus;
+import com.lollito.fm.model.NegotiationOffer;
+import com.lollito.fm.model.NegotiationStatus;
+import com.lollito.fm.model.NegotiationType;
+import com.lollito.fm.model.OfferSide;
+import com.lollito.fm.model.PerformanceBonus;
+import com.lollito.fm.model.Player;
+import com.lollito.fm.model.PlayerRole;
+import com.lollito.fm.model.PlayerSeasonStats;
+import com.lollito.fm.model.TransactionCategory;
+import com.lollito.fm.model.TransactionType;
+import com.lollito.fm.model.dto.ContractDemands;
+import com.lollito.fm.model.dto.ContractOfferRequest;
+import com.lollito.fm.model.dto.OfferResponse;
+import com.lollito.fm.model.dto.TransferOfferDTO;
 import com.lollito.fm.model.rest.CreateTransactionRequest;
 import com.lollito.fm.repository.rest.ContractNegotiationRepository;
 import com.lollito.fm.repository.rest.ContractRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Transactional

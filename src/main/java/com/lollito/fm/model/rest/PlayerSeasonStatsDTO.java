@@ -1,12 +1,13 @@
 package com.lollito.fm.model.rest;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import com.lollito.fm.model.Season;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.League;
+import com.lollito.fm.model.Season;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

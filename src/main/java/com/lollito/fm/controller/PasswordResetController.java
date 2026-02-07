@@ -1,7 +1,5 @@
 package com.lollito.fm.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lollito.fm.model.dto.CompletePasswordResetRequest;
 import com.lollito.fm.service.UserManagementService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 
 @RestController

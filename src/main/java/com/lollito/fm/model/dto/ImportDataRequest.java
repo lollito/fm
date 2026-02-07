@@ -1,7 +1,9 @@
 package com.lollito.fm.model.dto;
-import lombok.Data;
 import java.util.Map;
+
 import com.lollito.fm.model.AdminDataType;
+
+import lombok.Data;
 
 @Data
 public class ImportDataRequest {

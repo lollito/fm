@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.util.List;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

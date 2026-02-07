@@ -1,8 +1,9 @@
 package com.lollito.fm.mapper;
 
+import org.mapstruct.Mapper;
+
 import com.lollito.fm.model.Stadium;
 import com.lollito.fm.model.dto.StadiumDTO;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface StadiumMapper {

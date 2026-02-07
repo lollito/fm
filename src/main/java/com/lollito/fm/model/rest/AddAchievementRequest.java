@@ -1,9 +1,10 @@
 package com.lollito.fm.model.rest;
 
+import com.lollito.fm.model.AchievementType;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import com.lollito.fm.model.AchievementType;
 
 @Data
 @NoArgsConstructor

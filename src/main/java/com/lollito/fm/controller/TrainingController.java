@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lollito.fm.mapper.TrainingMapper;
 import com.lollito.fm.model.PlayerTrainingResult;
 import com.lollito.fm.model.TrainingPlan;
 import com.lollito.fm.model.TrainingSession;
+import com.lollito.fm.model.User;
 import com.lollito.fm.model.dto.ManualTrainingRequest;
 import com.lollito.fm.model.dto.PlayerTrainingResultDTO;
 import com.lollito.fm.model.dto.TrainingPlanDTO;
@@ -27,8 +29,6 @@ import com.lollito.fm.model.dto.TrainingPlanRequest;
 import com.lollito.fm.model.dto.TrainingSessionDTO;
 import com.lollito.fm.service.TrainingService;
 import com.lollito.fm.service.UserService;
-import com.lollito.fm.model.User;
-import com.lollito.fm.mapper.TrainingMapper;
 
 @RestController
 @RequestMapping("/api/training")

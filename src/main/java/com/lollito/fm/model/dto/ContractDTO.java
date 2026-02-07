@@ -2,7 +2,6 @@ package com.lollito.fm.model.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import com.lollito.fm.model.ContractStatus;
 

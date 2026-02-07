@@ -1,11 +1,12 @@
 package com.lollito.fm.mapper;
 
-import com.lollito.fm.model.Staff;
-import com.lollito.fm.model.StaffContract;
-import com.lollito.fm.dto.StaffDTO;
-import com.lollito.fm.dto.StaffContractDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.lollito.fm.dto.StaffContractDTO;
+import com.lollito.fm.dto.StaffDTO;
+import com.lollito.fm.model.Staff;
+import com.lollito.fm.model.StaffContract;
 
 @Mapper(componentModel = "spring")
 public interface StaffMapper {

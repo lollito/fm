@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.model.Stadium;
+import com.lollito.fm.mapper.StadiumMapper;
 import com.lollito.fm.model.dto.StadiumDTO;
 import com.lollito.fm.service.StadiumService;
 import com.lollito.fm.service.UserService;
-import com.lollito.fm.mapper.StadiumMapper;
 
 @RestController
 @RequestMapping(value="/api/stadium")

@@ -1,12 +1,17 @@
 package com.lollito.fm.controller;
 
-import com.lollito.fm.model.dto.LiveMatchSummaryDTO;
-import com.lollito.fm.service.LiveMatchService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.lollito.fm.model.dto.LiveMatchSummaryDTO;
+import com.lollito.fm.service.LiveMatchService;
 
 @RestController
 @RequestMapping("/api/live-match")

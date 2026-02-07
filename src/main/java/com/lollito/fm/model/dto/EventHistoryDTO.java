@@ -1,6 +1,7 @@
 package com.lollito.fm.model.dto;
 
 import com.lollito.fm.model.Event;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

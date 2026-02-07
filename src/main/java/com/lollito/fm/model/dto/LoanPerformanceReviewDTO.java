@@ -1,8 +1,10 @@
 package com.lollito.fm.model.dto;
 
 import java.time.LocalDate;
-import com.lollito.fm.model.ReviewPeriod;
+
 import com.lollito.fm.model.LoanRecommendation;
+import com.lollito.fm.model.ReviewPeriod;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

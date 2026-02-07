@@ -1,8 +1,9 @@
 package com.lollito.fm.mapper;
 
+import org.mapstruct.Mapper;
+
 import com.lollito.fm.model.Team;
 import com.lollito.fm.model.dto.TeamDTO;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface TeamMapper {

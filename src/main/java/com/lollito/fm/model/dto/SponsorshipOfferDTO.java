@@ -3,8 +3,9 @@ package com.lollito.fm.model.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import com.lollito.fm.model.SponsorshipType;
+
 import com.lollito.fm.model.OfferStatus;
+import com.lollito.fm.model.SponsorshipType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

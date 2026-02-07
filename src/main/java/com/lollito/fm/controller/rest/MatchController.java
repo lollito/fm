@@ -1,6 +1,7 @@
 package com.lollito.fm.controller.rest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.dto.MatchDTO;
-import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.service.MatchService;
 import com.lollito.fm.service.SimulationMatchService;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api/match")

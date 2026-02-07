@@ -1,9 +1,10 @@
 package com.lollito.fm.mapper;
 
-import com.lollito.fm.model.Club;
-import com.lollito.fm.model.dto.ClubDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.lollito.fm.model.Club;
+import com.lollito.fm.model.dto.ClubDTO;
 
 @Mapper(componentModel = "spring")
 public interface ClubMapper {

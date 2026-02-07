@@ -1,6 +1,7 @@
 package com.lollito.fm.model.dto;
 
 import java.io.Serializable;
+
 import com.lollito.fm.model.SponsorTier;
 
 import lombok.AllArgsConstructor;

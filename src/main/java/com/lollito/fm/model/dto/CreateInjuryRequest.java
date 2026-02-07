@@ -2,6 +2,7 @@ package com.lollito.fm.model.dto;
 
 import com.lollito.fm.model.InjurySeverity;
 import com.lollito.fm.model.InjuryType;
+
 import lombok.Data;
 
 @Data

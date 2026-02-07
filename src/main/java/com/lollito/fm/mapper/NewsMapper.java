@@ -1,8 +1,9 @@
 package com.lollito.fm.mapper;
 
+import org.mapstruct.Mapper;
+
 import com.lollito.fm.model.News;
 import com.lollito.fm.model.dto.NewsDTO;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface NewsMapper {

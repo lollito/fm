@@ -6,9 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +26,9 @@ import com.lollito.fm.model.StaffStatus;
 import com.lollito.fm.repository.StaffContractRepository;
 import com.lollito.fm.repository.StaffRepository;
 import com.lollito.fm.utils.RandomUtils;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class StaffService {

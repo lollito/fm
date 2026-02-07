@@ -5,17 +5,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.model.Formation;
+import com.lollito.fm.mapper.FormationMapper;
 import com.lollito.fm.model.dto.FormationDTO;
 import com.lollito.fm.model.rest.FormationRequest;
 import com.lollito.fm.service.FormationService;
 import com.lollito.fm.service.UserService;
-import com.lollito.fm.mapper.FormationMapper;
 
 @RestController
 @RequestMapping(value="/api/formation")

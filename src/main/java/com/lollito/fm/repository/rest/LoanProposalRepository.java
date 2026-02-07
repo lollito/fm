@@ -1,11 +1,13 @@
 package com.lollito.fm.repository.rest;
 
 import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.lollito.fm.model.Club;
 import com.lollito.fm.model.LoanProposal;
 import com.lollito.fm.model.ProposalStatus;
-import com.lollito.fm.model.Club;
 
 @Repository
 public interface LoanProposalRepository extends JpaRepository<LoanProposal, Long> {

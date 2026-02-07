@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lollito.fm.model.dto.RankingDTO;
 import com.lollito.fm.mapper.RankingMapper;
+import com.lollito.fm.model.dto.RankingDTO;
 import com.lollito.fm.service.RankingService;
 
 @RestController

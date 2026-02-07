@@ -5,12 +5,23 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.model.LoanAgreement;
 import com.lollito.fm.model.LoanPerformanceReview;
 import com.lollito.fm.model.LoanProposal;
-import com.lollito.fm.model.dto.*;
+import com.lollito.fm.model.dto.CreateLoanProposalRequest;
+import com.lollito.fm.model.dto.LoanAgreementDTO;
+import com.lollito.fm.model.dto.LoanPerformanceReviewDTO;
+import com.lollito.fm.model.dto.LoanProposalDTO;
+import com.lollito.fm.model.dto.RecallPlayerRequest;
+import com.lollito.fm.model.dto.RejectProposalRequest;
+import com.lollito.fm.model.dto.TransferOfferDTO;
 import com.lollito.fm.service.LoanService;
 
 @RestController

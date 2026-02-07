@@ -1,6 +1,7 @@
 package com.lollito.fm.model.dto;
 
 import com.lollito.fm.model.TrainingPerformance;
+
 import lombok.Data;
 
 @Data

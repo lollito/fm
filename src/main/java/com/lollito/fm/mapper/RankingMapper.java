@@ -1,8 +1,9 @@
 package com.lollito.fm.mapper;
 
+import org.mapstruct.Mapper;
+
 import com.lollito.fm.model.Ranking;
 import com.lollito.fm.model.dto.RankingDTO;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {ClubMapper.class})
 public interface RankingMapper {

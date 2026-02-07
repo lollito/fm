@@ -1,9 +1,10 @@
 package com.lollito.fm.mapper;
 
-import com.lollito.fm.model.Player;
-import com.lollito.fm.dto.PlayerDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.lollito.fm.dto.PlayerDTO;
+import com.lollito.fm.model.Player;
 
 @Mapper(componentModel = "spring")
 public interface PlayerMapper {

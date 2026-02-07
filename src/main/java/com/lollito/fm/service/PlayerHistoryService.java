@@ -8,15 +8,35 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.lollito.fm.model.*;
-import com.lollito.fm.model.rest.*;
-import com.lollito.fm.repository.rest.*;
+import com.lollito.fm.model.AchievementType;
+import com.lollito.fm.model.Club;
+import com.lollito.fm.model.MatchPlayerStats;
+import com.lollito.fm.model.Player;
+import com.lollito.fm.model.PlayerAchievement;
+import com.lollito.fm.model.PlayerCareerStats;
+import com.lollito.fm.model.PlayerRole;
+import com.lollito.fm.model.PlayerSeasonStats;
+import com.lollito.fm.model.PlayerTransferHistory;
+import com.lollito.fm.model.Season;
+import com.lollito.fm.model.TransferType;
+import com.lollito.fm.model.rest.PlayerAchievementDTO;
+import com.lollito.fm.model.rest.PlayerCareerStatsDTO;
+import com.lollito.fm.model.rest.PlayerDTO;
+import com.lollito.fm.model.rest.PlayerHistoryDTO;
+import com.lollito.fm.model.rest.PlayerSeasonStatsDTO;
+import com.lollito.fm.model.rest.PlayerTransferHistoryDTO;
+import com.lollito.fm.repository.rest.ClubRepository;
+import com.lollito.fm.repository.rest.PlayerAchievementRepository;
+import com.lollito.fm.repository.rest.PlayerCareerStatsRepository;
+import com.lollito.fm.repository.rest.PlayerRepository;
+import com.lollito.fm.repository.rest.PlayerSeasonStatsRepository;
+import com.lollito.fm.repository.rest.PlayerTransferHistoryRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PlayerHistoryService {

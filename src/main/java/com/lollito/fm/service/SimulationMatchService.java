@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service;
 
 import com.lollito.fm.model.Event;
 import com.lollito.fm.model.EventHistory;
+import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Injury;
 import com.lollito.fm.model.InjuryContext;
-import com.lollito.fm.model.MatchStatus;
-import com.lollito.fm.model.Formation;
 import com.lollito.fm.model.Match;
-import com.lollito.fm.model.Module;
 import com.lollito.fm.model.MatchPlayerStats;
+import com.lollito.fm.model.MatchStatus;
+import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerPosition;
 import com.lollito.fm.model.Stats;

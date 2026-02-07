@@ -1,15 +1,16 @@
 package com.lollito.fm.mapper;
 
-import com.lollito.fm.model.Scout;
-import com.lollito.fm.model.ScoutingAssignment;
-import com.lollito.fm.model.ScoutingReport;
-import com.lollito.fm.model.PlayerScoutingStatus;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import com.lollito.fm.dto.PlayerScoutingStatusDTO;
 import com.lollito.fm.dto.ScoutDTO;
 import com.lollito.fm.dto.ScoutingAssignmentDTO;
 import com.lollito.fm.dto.ScoutingReportDTO;
-import com.lollito.fm.dto.PlayerScoutingStatusDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.lollito.fm.model.PlayerScoutingStatus;
+import com.lollito.fm.model.Scout;
+import com.lollito.fm.model.ScoutingAssignment;
+import com.lollito.fm.model.ScoutingReport;
 
 @Mapper(componentModel = "spring")
 public interface ScoutingMapper {

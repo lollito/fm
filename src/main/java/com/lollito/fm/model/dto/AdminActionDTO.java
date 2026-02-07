@@ -1,8 +1,10 @@
 package com.lollito.fm.model.dto;
 
 import java.time.LocalDateTime;
-import com.lollito.fm.model.AdminActionType;
+
 import com.lollito.fm.model.ActionStatus;
+import com.lollito.fm.model.AdminActionType;
+
 import lombok.Builder;
 import lombok.Data;
 

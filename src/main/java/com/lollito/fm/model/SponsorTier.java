@@ -1,6 +1,7 @@
 package com.lollito.fm.model;
 
 import java.math.BigDecimal;
+
 import lombok.Getter;
 
 @Getter

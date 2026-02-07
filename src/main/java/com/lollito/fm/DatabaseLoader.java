@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.lollito.fm.model.AdminRole;
@@ -18,9 +19,8 @@ import com.lollito.fm.model.rest.RegistrationRequest;
 import com.lollito.fm.repository.rest.RoleRepository;
 import com.lollito.fm.repository.rest.UserRepository;
 import com.lollito.fm.service.CountryService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.lollito.fm.service.ServerService;
 import com.lollito.fm.service.ModuleService;
+import com.lollito.fm.service.ServerService;
 import com.lollito.fm.service.UserService;
 
 @Component

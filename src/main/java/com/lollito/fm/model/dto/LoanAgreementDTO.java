@@ -3,7 +3,9 @@ package com.lollito.fm.model.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import com.lollito.fm.model.LoanStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
