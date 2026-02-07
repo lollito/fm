@@ -6,6 +6,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Login from './Login';
 import { AuthContext } from '../context/AuthContext';
+import { ToastProvider } from '../context/ToastContext';
+import ToastContainer from '../components/ToastContainer';
 import api from '../services/api';
 
 // Mock react-router-dom
@@ -37,7 +39,10 @@ describe('Login Page', () => {
   const renderComponent = () => {
     render(
       <AuthContext.Provider value={{ login: mockLoginContext }}>
-        <Login />
+        <ToastProvider>
+          <Login />
+          <ToastContainer />
+        </ToastProvider>
       </AuthContext.Provider>
     );
   };
@@ -81,7 +86,10 @@ describe('Login Page', () => {
       expect(api.post).toHaveBeenCalled();
     });
 
-    expect(window.alert).toHaveBeenCalledWith('Login failed');
+    await waitFor(() => {
+      expect(screen.getByText('Login failed')).toBeInTheDocument();
+    });
+
     expect(mockLoginContext).not.toHaveBeenCalled();
     expect(mockedNavigate).not.toHaveBeenCalled();
   });

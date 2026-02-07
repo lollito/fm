@@ -6,6 +6,7 @@ import {
     modifyPlayerStats,
     adjustFinances
 } from '../services/api';
+import { useToast } from '../context/ToastContext';
 import '../styles/DebugTools.css'; // Assuming I'll create some CSS
 
 const DebugTools = () => {
@@ -205,6 +206,7 @@ const DebugOverview = ({ dashboard }) => {
 };
 
 const SeasonControl = ({ onRefresh }) => {
+    const { showToast } = useToast();
     const [advanceForm, setAdvanceForm] = useState({
         skipRemainingMatches: false,
         generateNewPlayers: true,
@@ -221,14 +223,14 @@ const SeasonControl = ({ onRefresh }) => {
         try {
             const response = await advanceSeason(advanceForm);
             if (response.data.success) {
-                alert('Season advanced successfully!');
+                showToast('Season advanced successfully!', 'success');
                 onRefresh();
             } else {
-                alert('Failed to advance season: ' + response.data.message);
+                showToast('Failed to advance season: ' + response.data.message, 'error');
             }
         } catch (error) {
             console.error('Error advancing season:', error);
-            alert('Error advancing season: ' + error.message);
+            showToast('Error advancing season: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -290,19 +292,20 @@ const SeasonControl = ({ onRefresh }) => {
 };
 
 const MatchSimulation = ({ onRefresh }) => {
+    const { showToast } = useToast();
     const [matchIds, setMatchIds] = useState('');
     const [forceResult, setForceResult] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSimulateMatches = async () => {
         if (!matchIds.trim()) {
-            alert('Please enter match IDs');
+            showToast('Please enter match IDs', 'warning');
             return;
         }
 
         const ids = matchIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
         if (ids.length === 0) {
-            alert('Please enter valid match IDs');
+            showToast('Please enter valid match IDs', 'warning');
             return;
         }
 
@@ -315,14 +318,14 @@ const MatchSimulation = ({ onRefresh }) => {
 
             const response = await simulateMatches(request);
             if (response.data.success) {
-                alert('Successfully simulated ' + ids.length + ' matches!');
+                showToast('Successfully simulated ' + ids.length + ' matches!', 'success');
                 onRefresh();
             } else {
-                alert('Failed to simulate matches: ' + response.data.message);
+                showToast('Failed to simulate matches: ' + response.data.message, 'error');
             }
         } catch (error) {
             console.error('Error simulating matches:', error);
-            alert('Error simulating matches: ' + error.message);
+            showToast('Error simulating matches: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }

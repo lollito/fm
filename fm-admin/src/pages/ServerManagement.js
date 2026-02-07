@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getServers, createServer } from '../services/api';
+import { useToast } from '../context/ToastContext';
 import Layout from '../components/Layout';
 
 const ServerManagement = () => {
+  const { showToast } = useToast();
   const [servers, setServers] = useState([]);
   const [newServerName, setNewServerName] = useState('');
 
@@ -26,8 +28,9 @@ const ServerManagement = () => {
         await createServer(newServerName);
         setNewServerName('');
         fetchServers();
+        showToast('Server created successfully', 'success');
     } catch(e) {
-        alert('Error creating server');
+        showToast('Error creating server', 'error');
     }
   }
 
