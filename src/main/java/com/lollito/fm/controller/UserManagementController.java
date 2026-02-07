@@ -1,6 +1,7 @@
 package com.lollito.fm.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.dto.BanUserRequest;
 import com.lollito.fm.model.dto.CreateUserRequest;
+import com.lollito.fm.model.dto.RoleDTO;
 import com.lollito.fm.model.dto.UpdateUserRequest;
 import com.lollito.fm.model.dto.UserActivityDTO;
 import com.lollito.fm.model.dto.UserDTO;
@@ -162,7 +164,12 @@ public class UserManagementController {
             .bannedUntil(user.getBannedUntil())
             .createdDate(user.getCreatedDate())
             .lastLoginDate(user.getLastLoginDate())
-            .roles(user.getRoles())
+            .roles(user.getRoles().stream()
+                    .map(role -> RoleDTO.builder()
+                            .id(role.getId())
+                            .name(role.getName())
+                            .build())
+                    .collect(Collectors.toSet()))
             .build();
     }
 }

@@ -3,8 +3,6 @@ package com.lollito.fm.model.dto;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.lollito.fm.model.Role;
-
 import lombok.Data;
 
 @Data
@@ -21,5 +19,5 @@ public class CreateUserRequest {
     private String password;
     private Boolean isActive;
     private Boolean isVerified;
-    private Set<Role> roles;
+    private Set<RoleDTO> roles;
 }
