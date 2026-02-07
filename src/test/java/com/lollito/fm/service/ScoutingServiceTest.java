@@ -65,4 +65,45 @@ class ScoutingServiceTest {
 
         verify(watchlistService).addPlayerToWatchlist(eq(100L), eq(10L), any(AddToWatchlistRequest.class));
     }
+
+    @Test
+    void testGenerateScoutingReport_Assessment() {
+        Scout scout = new Scout();
+        scout.setAbility(20);
+        scout.setExperience(100);
+        scout.setSpecialization(com.lollito.fm.model.ScoutSpecialization.GENERAL);
+
+        Club club = new Club();
+        club.setId(1L);
+        scout.setClub(club);
+
+        Player player = new Player();
+        player.setId(10L);
+        player.setRole(com.lollito.fm.model.PlayerRole.FORWARD);
+        player.setScoring(90.0);
+        player.setPassing(80.0);
+        player.setPlaymaking(70.0);
+        player.setWinger(60.0);
+        player.setGoalkeeping(10.0);
+        player.setDefending(20.0);
+        player.setSetPieces(50.0);
+        player.setStamina(80.0);
+        player.setPotential(95.0);
+        player.setBirth(java.time.LocalDate.now().minusYears(20));
+
+        com.lollito.fm.model.ScoutingAssignment assignment = new com.lollito.fm.model.ScoutingAssignment();
+        assignment.setScout(scout);
+        assignment.setTargetPlayer(player);
+
+        when(reportRepository.save(any(ScoutingReport.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        ScoutingReport report = scoutingService.generateScoutingReport(assignment);
+
+        assertThat(report).isNotNull();
+        assertThat(report.getStrengths()).containsAnyOf("Excellent Scoring", "Good Scoring");
+        assertThat(report.getWeaknesses()).containsAnyOf("Poor Goalkeeping", "Weak Goalkeeping");
+        assertThat(report.getPotentialRating()).isNotNull();
+        assertThat(report.getOverallRating()).isGreaterThan(60);
+        assertThat(report.getStrengths()).isNotEmpty();
+    }
 }

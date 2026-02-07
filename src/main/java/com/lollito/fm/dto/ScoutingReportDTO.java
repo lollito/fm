@@ -30,6 +30,8 @@ public class ScoutingReportDTO {
     private RecommendationLevel recommendation;
     private String strengths;
     private String weaknesses;
+    private java.util.List<String> strengthsList;
+    private java.util.List<String> weaknessesList;
     private String personalityAssessment;
     private String injuryHistory;
     private BigDecimal estimatedValue;
