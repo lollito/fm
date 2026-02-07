@@ -4,7 +4,8 @@ import {
     advanceSeason,
     simulateMatches,
     modifyPlayerStats,
-    adjustFinances
+    adjustFinances,
+    getClubs
 } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import '../styles/DebugTools.css'; // Assuming I'll create some CSS
@@ -373,7 +374,100 @@ const PlayerTools = ({ onRefresh }) => {
 };
 
 const FinancialTools = ({ onRefresh }) => {
-    return <div>Financial Tools (Coming Soon)</div>;
+    const { showToast } = useToast();
+    const [clubs, setClubs] = useState([]);
+    const [selectedClubId, setSelectedClubId] = useState('');
+    const [amount, setAmount] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [loadingClubs, setLoadingClubs] = useState(true);
+
+    useEffect(() => {
+        loadClubs();
+    }, []);
+
+    const loadClubs = async () => {
+        try {
+            const response = await getClubs();
+            setClubs(response.data);
+        } catch (error) {
+            console.error('Error loading clubs:', error);
+            showToast('Failed to load clubs', 'error');
+        } finally {
+            setLoadingClubs(false);
+        }
+    };
+
+    const handleTransaction = async () => {
+        if (!selectedClubId || !amount) {
+            showToast('Please select a club and enter an amount', 'warning');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const payload = {
+                clubId: parseInt(selectedClubId),
+                balanceAdjustment: parseFloat(amount)
+            };
+            const response = await adjustFinances(payload);
+            if (response.data && response.data.success) {
+                showToast('Transaction processed successfully', 'success');
+                setAmount('');
+                if (onRefresh) onRefresh();
+            } else {
+                showToast('Transaction failed: ' + (response.data?.message || 'Unknown error'), 'error');
+            }
+        } catch (error) {
+            console.error('Error processing transaction:', error);
+            showToast('Error processing transaction: ' + error.message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="financial-tools">
+            <div className="control-section">
+                <h2>Financial Management</h2>
+                <div className="form-group">
+                    <label>Club</label>
+                    {loadingClubs ? (
+                        <div>Loading clubs...</div>
+                    ) : (
+                        <select
+                            value={selectedClubId}
+                            onChange={(e) => setSelectedClubId(e.target.value)}
+                            disabled={loading}
+                        >
+                            <option value="">Select a club</option>
+                            {clubs.map(club => (
+                                <option key={club.id} value={club.id}>
+                                    {club.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                </div>
+                <div className="form-group">
+                    <label>Amount (positive to add, negative to remove)</label>
+                    <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder="e.g. 500000 or -200000"
+                        disabled={loading}
+                    />
+                </div>
+                <button
+                    className="btn-primary"
+                    onClick={handleTransaction}
+                    disabled={loading || !selectedClubId || !amount}
+                >
+                    {loading ? 'Processing...' : 'Process Transaction'}
+                </button>
+            </div>
+        </div>
+    );
 };
 
 const TestingTools = ({ dashboard }) => {
