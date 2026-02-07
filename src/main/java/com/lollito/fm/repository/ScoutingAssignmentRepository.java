@@ -22,6 +22,16 @@ public interface ScoutingAssignmentRepository extends JpaRepository<ScoutingAssi
 
     List<ScoutingAssignment> findByStatus(AssignmentStatus status);
 
+    @Query("SELECT DISTINCT sa FROM ScoutingAssignment sa " +
+            "JOIN FETCH sa.scout s " +
+            "LEFT JOIN FETCH s.club c " +
+            "LEFT JOIN FETCH c.user " +
+            "LEFT JOIN FETCH sa.targetPlayer tp " +
+            "LEFT JOIN FETCH tp.careerStats " +
+            "LEFT JOIN FETCH tp.currentContract " +
+            "WHERE sa.status = :status")
+    List<ScoutingAssignment> findAllWithScoutAndPlayerAndClub(@Param("status") AssignmentStatus status);
+
     @Query("SELECT sa FROM ScoutingAssignment sa WHERE sa.scout.club.id = :clubId")
     List<ScoutingAssignment> findByClubId(@Param("clubId") Long clubId);
 

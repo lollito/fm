@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import jakarta.validation.Valid;
+
 import com.lollito.fm.model.*;
 import com.lollito.fm.model.dto.*;
 import com.lollito.fm.service.AdminService;
@@ -46,7 +48,7 @@ public class AdminController {
     }
 
     @PostMapping("/clubs")
-    public ResponseEntity<ClubDTO> createClub(@RequestBody CreateClubRequest request,
+    public ResponseEntity<ClubDTO> createClub(@Valid @RequestBody CreateClubRequest request,
                                             Authentication authentication) {
         User adminUser = getAdminUser(authentication);
         Club club = adminService.createClub(request, adminUser);
@@ -55,7 +57,7 @@ public class AdminController {
 
     @PutMapping("/clubs/{clubId}")
     public ResponseEntity<ClubDTO> updateClub(@PathVariable Long clubId,
-                                            @RequestBody UpdateClubRequest request,
+                                            @Valid @RequestBody UpdateClubRequest request,
                                             Authentication authentication) {
         User adminUser = getAdminUser(authentication);
         Club club = adminService.updateClub(clubId, request, adminUser);

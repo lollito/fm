@@ -18,6 +18,8 @@ public interface PlayerSeasonStatsRepository extends JpaRepository<PlayerSeasonS
 
     Optional<PlayerSeasonStats> findByPlayerAndSeason(Player player, Season season);
 
+    List<PlayerSeasonStats> findBySeasonAndPlayerIn(Season season, List<Player> players);
+
     List<PlayerSeasonStats> findByPlayer(Player player);
 
     List<PlayerSeasonStats> findByPlayerOrderBySeasonDesc(Player player);
