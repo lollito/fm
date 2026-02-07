@@ -15,7 +15,9 @@ import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Ranking;
 import com.lollito.fm.model.Season;
+import com.lollito.fm.model.User;
 import com.lollito.fm.repository.rest.RankingRepository;
+import java.util.Collections;
 
 @Service
 public class RankingService {
@@ -78,6 +80,10 @@ public class RankingService {
 	}
 
 	public List<Ranking> load(){
-		return userService.getLoggedUser().getClub().getLeague().getCurrentSeason().getRankingLines();
+		User user = userService.getLoggedUser();
+		if (user != null && user.getClub() != null) {
+			return user.getClub().getLeague().getCurrentSeason().getRankingLines();
+		}
+		return Collections.emptyList();
 	}
 }
