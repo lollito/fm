@@ -68,23 +68,38 @@ public class MatchProcessor {
         // Simulate to get result
         simulationMatchService.simulate(match, null, false, false);
 
-        // Create session with the result
-        liveMatchService.createSession(match);
+        try {
+            // Create session with the result
+            liveMatchService.createSession(match);
 
-        // Reset match to started state (scores 0-0)
-        match.setHomeScore(0);
-        match.setAwayScore(0);
-        match.getEvents().clear();
-        match.setStats(new Stats());
-        match.getPlayerStats().clear();
-        match.setFinish(false);
-        match.setStatus(MatchStatus.IN_PROGRESS);
+            // Reset match to started state (scores 0-0)
+            match.setHomeScore(0);
+            match.setAwayScore(0);
+            match.getEvents().clear();
+            match.setStats(new Stats());
+            match.getPlayerStats().clear();
+            match.setFinish(false);
+            match.setStatus(MatchStatus.IN_PROGRESS);
 
-        matchRepository.saveAndFlush(match);
+            matchRepository.saveAndFlush(match);
 
-        // Notify users
-        notifyUser(match.getHome().getUser(), match.getId(), "MATCH_STARTED", "Match Started!");
-        notifyUser(match.getAway().getUser(), match.getId(), "MATCH_STARTED", "Match Started!");
+            // Notify users
+            notifyUser(match.getHome().getUser(), match.getId(), "MATCH_STARTED", "Match Started!");
+            notifyUser(match.getAway().getUser(), match.getId(), "MATCH_STARTED", "Match Started!");
+        } catch (Exception e) {
+            logger.error("Failed to create live session for match {}. Saving as COMPLETED.", match.getId(), e);
+
+            match.setFinish(true);
+            match.setStatus(MatchStatus.COMPLETED);
+
+            rankingService.update(match);
+            checkRoundAndSeasonProgression(match);
+
+            matchRepository.saveAndFlush(match);
+
+            notifyUser(match.getHome().getUser(), match.getId(), "MATCH_ENDED", "Match Ended (Simulated)!");
+            notifyUser(match.getAway().getUser(), match.getId(), "MATCH_ENDED", "Match Ended (Simulated)!");
+        }
     }
 
     private void notifyUser(User user, Long matchId, String type, String message) {

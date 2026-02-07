@@ -125,7 +125,7 @@ public class Match implements Serializable{
 
 	@Transient
 	public Integer getNumber() {
-		return round.getNumber();
+		return round != null ? round.getNumber() : null;
 	}
 
 	@Transient
