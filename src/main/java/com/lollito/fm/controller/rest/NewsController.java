@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lollito.fm.mapper.NewsMapper;
@@ -30,7 +31,12 @@ public class NewsController {
     }
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<NewsDTO> findAll(Model model) {
+    public List<NewsDTO> findAll(@RequestParam(required = false) Integer limit, Model model) {
+        if (limit != null && limit > 0) {
+            return newsService.findLatest(limit).stream()
+                .map(newsMapper::toDto)
+                .collect(Collectors.toList());
+        }
         return newsService.findAll().stream()
 			.map(newsMapper::toDto)
 			.collect(Collectors.toList());

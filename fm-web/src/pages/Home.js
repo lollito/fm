@@ -22,7 +22,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const [newsRes, nextRes, prevRes, rankRes] = await Promise.all([
-          api.get('/news/'),
+          api.get('/news/', { params: { limit: 3 } }),
           api.get('/match/next'),
           api.get('/match/previous'),
           api.get('/ranking/')
