@@ -33,6 +33,7 @@ import com.lollito.fm.model.Stadium;
 import com.lollito.fm.model.TransactionCategory;
 import com.lollito.fm.model.TransactionStatus;
 import com.lollito.fm.model.TransactionType;
+import com.lollito.fm.model.ManagerPerk;
 import com.lollito.fm.model.rest.CreateTransactionRequest;
 import com.lollito.fm.model.rest.FinancialDashboardDTO;
 import com.lollito.fm.model.rest.FinancialTransactionDTO;
@@ -72,6 +73,9 @@ public class FinancialService {
 
     @Autowired
     private AchievementService achievementService;
+
+    @Autowired
+    private ManagerProgressionService managerProgressionService;
 
     @Transactional
     public void addIncome(Club club, BigDecimal amount, TransactionCategory category) {
@@ -165,6 +169,31 @@ public class FinancialService {
         log.info("Finished processMonthlyFinancials.");
     }
 
+    @Scheduled(initialDelayString = "${fm.scheduling.finance.interest.initial-delay:5m}", fixedRateString = "${fm.scheduling.finance.interest.fixed-rate:604800000}")
+    public void processWeeklyInterest() {
+        log.info("Starting processWeeklyInterest...");
+        List<Club> allClubs = clubService.findAll();
+
+        for (Club club : allClubs) {
+            try {
+                if (club.getUser() != null) {
+                    if (managerProgressionService.hasPerk(club.getUser(), ManagerPerk.INVESTOR)) {
+                        Finance finance = club.getFinance();
+                        if (finance != null && finance.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                            BigDecimal interest = finance.getBalance().multiply(BigDecimal.valueOf(0.0005)); // 0.05%
+                            // Use SYSTEM_ACTION or similar for interest income
+                            addIncome(club, interest, TransactionCategory.SYSTEM_ACTION);
+                            log.info("Applied interest {} to club {}", interest, club.getName());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error processing weekly interest for club " + club.getId(), e);
+            }
+        }
+        log.info("Finished processWeeklyInterest.");
+    }
+
     @Transactional
     public void processClubMonthlyFinancials(Club club) {
         Finance finance = club.getFinance();
@@ -239,6 +268,12 @@ public class FinancialService {
 
                 // Assuming monthly payments for annual value
                 BigDecimal monthlyPayment = deal.getCurrentAnnualValue().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+
+                if (club.getUser() != null) {
+                    if (managerProgressionService.hasPerk(club.getUser(), ManagerPerk.MARKETING_GURU)) {
+                        monthlyPayment = monthlyPayment.multiply(BigDecimal.valueOf(1.05));
+                    }
+                }
 
                 processTransaction(club.getId(), CreateTransactionRequest.builder()
                     .type(TransactionType.INCOME)

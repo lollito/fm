@@ -24,6 +24,7 @@ import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerScoutingStatus;
 import com.lollito.fm.model.RecommendationLevel;
+import com.lollito.fm.model.ManagerPerk;
 import com.lollito.fm.model.Scout;
 import com.lollito.fm.model.ScoutSpecialization;
 import com.lollito.fm.model.ScoutStatus;
@@ -51,6 +52,7 @@ public class ScoutingService {
     @Autowired private ClubService clubService;
     @Autowired private WatchlistService watchlistService;
     @Autowired private ApplicationEventPublisher eventPublisher;
+    @Autowired private ManagerProgressionService managerProgressionService;
 
     public List<Scout> getClubScouts(Long clubId) {
         Club club = clubService.findById(clubId);
@@ -89,6 +91,12 @@ public class ScoutingService {
         }
 
         int daysToComplete = calculateScoutingDuration(scout, player, ScoutingType.PLAYER);
+
+        if (scout.getClub() != null && scout.getClub().getUser() != null) {
+            if (managerProgressionService.hasPerk(scout.getClub().getUser(), ManagerPerk.HAWK_EYE)) {
+                daysToComplete = (int) (daysToComplete * 0.9);
+            }
+        }
 
         ScoutingAssignment assignment = ScoutingAssignment.builder()
             .scout(scout)

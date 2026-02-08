@@ -22,6 +22,7 @@ import com.lollito.fm.model.InjuryContext;
 import com.lollito.fm.model.Match;
 import com.lollito.fm.model.MatchPlayerStats;
 import com.lollito.fm.model.MatchStatus;
+import com.lollito.fm.model.ManagerPerk;
 import com.lollito.fm.model.Module;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerRole;
@@ -49,6 +50,7 @@ public class SimulationMatchService {
 	@Autowired PlayerHistoryService playerHistoryService;
 	@Autowired InjuryService injuryService;
 	@Autowired AchievementService achievementService;
+	@Autowired ManagerProgressionService managerProgressionService;
 	
 	public void simulate(List<Match> matches){
 		List<Player> allPlayersToSave = new ArrayList<>();
@@ -132,6 +134,8 @@ public class SimulationMatchService {
 				match.setAwayScore(match.getHomeScore());
 			}
 		}
+
+		updateMorale(match);
 
 		match.setFinish(true);
 		match.setStatus(MatchStatus.COMPLETED);
@@ -229,6 +233,12 @@ public class SimulationMatchService {
 		Integer stadiumCapacity = stadiumService.getCapacity(match.getHome().getStadium());
 		double occupancy = (double) match.getSpectators() / stadiumCapacity;
 		int homeAdvantage = (int) (occupancy * 10);
+
+		if (match.getHome().getUser() != null) {
+			if (managerProgressionService.hasPerk(match.getHome().getUser(), ManagerPerk.FORTRESS)) {
+				homeAdvantage += 2;
+			}
+		}
 
 		int luckHome = 20 + homeAdvantage;
 		int luckAway = 20;
@@ -826,6 +836,42 @@ public class SimulationMatchService {
 
 	private enum ActionType {
 		SHOT, SHOT_ON_TARGET, GOAL, PASS, COMPLETED_PASS, TACKLE, YELLOW_CARD, RED_CARD
+	}
+
+	private void updateMorale(Match match) {
+		boolean homeWin = match.getHomeScore() > match.getAwayScore();
+		boolean awayWin = match.getAwayScore() > match.getHomeScore();
+		boolean draw = match.getHomeScore().equals(match.getAwayScore());
+
+		// Home Team
+		for (Player p : match.getHome().getTeam().getPlayers()) {
+			if (homeWin) {
+				p.incrementMoral(2.0);
+			} else if (draw) {
+				p.incrementMoral(0.5);
+			} else {
+				double decrement = 5.0;
+				if (match.getHome().getUser() != null && managerProgressionService.hasPerk(match.getHome().getUser(), ManagerPerk.MOTIVATOR)) {
+					decrement *= 0.9;
+				}
+				p.decrementMoral(decrement);
+			}
+		}
+
+		// Away Team
+		for (Player p : match.getAway().getTeam().getPlayers()) {
+			if (awayWin) {
+				p.incrementMoral(2.0);
+			} else if (draw) {
+				p.incrementMoral(0.5);
+			} else {
+				double decrement = 5.0;
+				if (match.getAway().getUser() != null && managerProgressionService.hasPerk(match.getAway().getUser(), ManagerPerk.MOTIVATOR)) {
+					decrement *= 0.9;
+				}
+				p.decrementMoral(decrement);
+			}
+		}
 	}
 	
 }
