@@ -12,6 +12,7 @@ public enum TransactionCategory {
     PRIZE_MONEY("Prize Money"),
     TV_RIGHTS("TV Rights"),
     LOAN_INCOME("Loan Income"),
+    QUEST_REWARD("Quest Reward"),
 
     // Expense categories
     PLAYER_SALARIES("Player Salaries"),
