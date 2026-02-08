@@ -2,6 +2,7 @@ package com.lollito.fm.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,8 +81,11 @@ class TrainingServiceTest {
         assertThat(session.getFocus()).isEqualTo(TrainingFocus.ATTACKING);
         assertThat(session.getIntensity()).isEqualTo(TrainingIntensity.MODERATE);
 
-        verify(playerService).save(player);
-        verify(playerTrainingResultRepository).save(any());
+        verify(playerService).saveAll(any());
+        verify(playerService, times(0)).save(any());
+        verify(playerTrainingResultRepository, times(0)).save(any());
+
+        assertThat(session.getPlayerResults()).hasSize(1);
     }
 
     @Test

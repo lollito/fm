@@ -3,6 +3,7 @@ package com.lollito.fm.service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,6 +145,8 @@ public class TrainingService {
         LocalDate today = LocalDate.now();
         List<PlayerTrainingFocus> activeFocuses = playerTrainingFocusRepository.findActiveFocusForPlayers(players, today);
 
+        List<Player> playersToSave = new ArrayList<>();
+
         // Process each player's training
         for (Player player : players) {
             if (!player.isInjured() && player.getCondition() > 20) {
@@ -154,12 +157,19 @@ public class TrainingService {
 
                 PlayerTrainingResult result = processPlayerTraining(player, session, individualFocus);
                 session.getPlayerResults().add(result);
+                playersToSave.add(player);
             }
+        }
+
+        // Batch save all updated players
+        if (!playersToSave.isEmpty()) {
+            playerService.saveAll(playersToSave);
         }
 
         session.setStatus(TrainingStatus.COMPLETED);
         session.setEndDate(LocalDate.now());
 
+        // Session save will cascade save the new results added to playerResults
         return trainingSessionRepository.save(session);
     }
 
@@ -262,11 +272,11 @@ public class TrainingService {
              player.incrementCondition(-fatigue);
         }
 
-        // Save player changes
-        playerService.save(player);
+        // Player is not saved here anymore, collected for batch save in processTeamTraining
 
         // Create training result record
-        PlayerTrainingResult result = PlayerTrainingResult.builder()
+        // Result is returned transient and will be saved via cascade from session
+        return PlayerTrainingResult.builder()
             .player(player)
             .trainingSession(session)
             .attendanceRate(attendanceRate)
@@ -274,8 +284,6 @@ public class TrainingService {
             .fatigueGained(fatigue)
             .performance(performance)
             .build();
-
-        return playerTrainingResultRepository.save(result);
     }
 
     private double calculateAttendanceRate(Player player) {
