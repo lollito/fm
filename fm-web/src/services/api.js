@@ -148,3 +148,16 @@ export const activatePurchaseOption = (loanId) => api.post('/loans/agreement/' +
 export const getLoanReviews = (loanId) => api.get('/loans/agreement/' + loanId + '/reviews');
 
 export const getServers = () => api.get('/server/findAll');
+
+// Manager Progression API
+export const getManagerProfile = () => api.get('/manager/profile');
+export const unlockPerk = (perkId) => api.post('/manager/unlock-perk', { perkId });
+
+// Quest API
+export const getQuests = () => api.get('/quests');
+export const claimQuest = (id) => api.post('/quests/' + id + '/claim');
+
+// Notification API
+export const getUnreadNotifications = () => api.get('/notifications/unread');
+export const markSystemNotificationRead = (id) => api.post('/notifications/' + id + '/read');
+export const markAllNotificationsRead = () => api.post('/notifications/mark-all-read');

@@ -42,6 +42,9 @@ public class AchievementServiceTest {
     @Mock
     private FinancialService financialService;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private AchievementService achievementService;
 

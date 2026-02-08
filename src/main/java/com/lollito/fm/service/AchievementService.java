@@ -37,6 +37,9 @@ public class AchievementService {
     @Autowired
     private FinancialService financialService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Transactional
     public void checkAndUnlock(User user, AchievementType achievement) {
         if (user == null || achievement == null) {
@@ -57,7 +60,7 @@ public class AchievementService {
         managerProgressionService.addXp(user, achievement.getXpReward());
 
         logger.info("Achievement Unlocked: {} for User {}", achievement.getName(), user.getUsername());
-        // TODO: Publish AchievementUnlockedEvent if needed
+        notificationService.createNotification(user, com.lollito.fm.model.NotificationType.ACHIEVEMENT_UNLOCKED, "Achievement Unlocked", "You unlocked: " + achievement.getName(), com.lollito.fm.model.NotificationPriority.HIGH);
     }
 
     @Transactional

@@ -17,6 +17,7 @@ import java.util.HashSet;
 public class ManagerProgressionService {
 
     private final ManagerProfileRepository managerProfileRepository;
+    private final NotificationService notificationService;
 
     public static final long XP_WIN = 100;
     public static final long XP_DRAW = 50;
@@ -69,6 +70,7 @@ public class ManagerProgressionService {
             profile.setTalentPoints(talentPoints + 1);
 
             log.info("User {} leveled up to level {}", profile.getUser().getUsername(), level);
+            notificationService.createNotification(profile.getUser(), com.lollito.fm.model.NotificationType.LEVEL_UP, "Level Up!", "You reached level " + level + "!", com.lollito.fm.model.NotificationPriority.HIGH);
             xpNeeded = xpForNextLevel(level);
         }
 

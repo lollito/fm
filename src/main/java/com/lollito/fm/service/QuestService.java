@@ -49,6 +49,9 @@ public class QuestService {
     @Lazy
     private QuestService self;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Transactional
     public void generateDailyQuests(User user) {
         List<Quest> dailyQuests = new ArrayList<>();
@@ -112,6 +115,7 @@ public class QuestService {
             if (quest.getUser().getClub() != null) {
                 financialService.addIncome(quest.getUser().getClub(), quest.getRewardMoney(), TransactionCategory.QUEST_REWARD);
             }
+            notificationService.createNotification(quest.getUser(), com.lollito.fm.model.NotificationType.QUEST_COMPLETED, "Quest Reward Claimed", "You claimed reward for: " + quest.getDescription(), com.lollito.fm.model.NotificationPriority.LOW);
         }
     }
 
@@ -120,6 +124,7 @@ public class QuestService {
         if (quest.getStatus() == QuestStatus.ACTIVE && quest.getCurrentValue() >= quest.getTargetValue()) {
             quest.setStatus(QuestStatus.COMPLETED);
             questRepository.save(quest);
+            notificationService.createNotification(quest.getUser(), com.lollito.fm.model.NotificationType.QUEST_COMPLETED, "Quest Completed", "You completed: " + quest.getDescription(), com.lollito.fm.model.NotificationPriority.MEDIUM);
         }
     }
 

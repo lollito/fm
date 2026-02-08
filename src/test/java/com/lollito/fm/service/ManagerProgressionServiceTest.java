@@ -25,6 +25,9 @@ public class ManagerProgressionServiceTest {
     @Mock
     private ManagerProfileRepository managerProfileRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private ManagerProgressionService managerProgressionService;
 
