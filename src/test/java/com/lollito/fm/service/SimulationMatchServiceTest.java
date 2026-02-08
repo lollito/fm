@@ -53,6 +53,7 @@ public class SimulationMatchServiceTest {
     @Mock private PlayerRepository playerRepository;
     @Mock private PlayerHistoryService playerHistoryService;
     @Mock private InjuryService injuryService;
+    @Mock private AchievementService achievementService;
 
     @Test
     public void testSimulateMatch() {

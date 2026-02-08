@@ -70,6 +70,9 @@ public class FinancialService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private AchievementService achievementService;
+
     @Transactional
     public void addIncome(Club club, BigDecimal amount, TransactionCategory category) {
         if (club == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -140,6 +143,9 @@ public class FinancialService {
         // Check for financial alerts
         checkFinancialAlerts(finance);
 
+        // Check for achievements
+        achievementService.checkFinancialAchievements(finance);
+
         return transaction;
     }
 
@@ -186,6 +192,8 @@ public class FinancialService {
         // Update financial health indicators
         updateFinancialHealthIndicators(finance);
         financeRepository.save(finance);
+
+        achievementService.checkFinancialAchievements(finance);
     }
 
     private void processPlayerSalaries(Club club) {

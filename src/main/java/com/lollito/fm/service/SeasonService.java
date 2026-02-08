@@ -30,11 +30,15 @@ public class SeasonService {
 	@Autowired RankingService rankingService;
 	@Autowired SimulationMatchService simulationMatchService;
 	@Autowired LeagueService leagueService;
+	@Autowired AchievementService achievementService;
 	
 	public Season create(League league, LocalDateTime startDate) {
 		// Deactivate previous current season
 		List<Season> currentSeasons = seasonRepository.findAllByCurrentTrue();
 		for (Season s : currentSeasons) {
+			// Check achievements for the ending season
+			achievementService.checkSeasonAchievements(s);
+
 			s.setCurrent(false);
 			seasonRepository.save(s);
 		}
