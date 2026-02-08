@@ -14,5 +14,7 @@ import com.lollito.fm.model.QuestStatus;
 public interface QuestRepository extends JpaRepository<Quest, Long> {
     List<Quest> findByUserIdAndStatusAndExpirationDateAfter(Long userId, QuestStatus status, LocalDateTime now);
     List<Quest> findByUserIdAndFrequency(Long userId, QuestFrequency frequency);
+    List<Quest> findByUserIdAndStatus(Long userId, QuestStatus status);
+    List<Quest> findByUserId(Long userId);
     void deleteByExpirationDateBefore(LocalDateTime now);
 }
