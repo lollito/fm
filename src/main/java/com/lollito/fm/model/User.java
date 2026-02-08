@@ -174,6 +174,10 @@ public class User implements Serializable {
 	@Builder.Default
 	private List<UserNotification> notifications = new ArrayList<>();
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@Builder.Default
+	private List<Quest> quests = new ArrayList<>();
+
 	@Enumerated(EnumType.STRING)
 	private AdminRole adminRole;
 
