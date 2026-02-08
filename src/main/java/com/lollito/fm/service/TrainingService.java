@@ -9,12 +9,14 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lollito.fm.event.TrainingCompletedEvent;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.PlayerTrainingResult;
@@ -68,6 +70,7 @@ public class TrainingService {
     private ClubRepository clubRepository;
 
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
     private ManagerProgressionService managerProgressionService;
 
     /**
@@ -174,7 +177,11 @@ public class TrainingService {
         session.setEndDate(LocalDate.now());
 
         // Session save will cascade save the new results added to playerResults
-        return trainingSessionRepository.save(session);
+        session = trainingSessionRepository.save(session);
+
+        eventPublisher.publishEvent(new TrainingCompletedEvent(this, session));
+
+        return session;
     }
 
     /**

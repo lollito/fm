@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lollito.fm.event.MatchFinishedEvent;
 import com.lollito.fm.mapper.MatchMapper;
 import com.lollito.fm.mapper.MatchPlayerStatsMapper;
 import com.lollito.fm.model.EventHistory;
@@ -54,6 +56,7 @@ public class MatchProcessor {
     @Autowired private PlayerService playerService;
     @Autowired private PlayerHistoryService playerHistoryService;
     @Autowired private RankingService rankingService;
+    @Autowired private ApplicationEventPublisher eventPublisher;
 
     @Async
     @Transactional
@@ -176,6 +179,8 @@ public class MatchProcessor {
 
             rankingService.update(match);
             checkRoundAndSeasonProgression(match);
+
+            eventPublisher.publishEvent(new MatchFinishedEvent(this, match));
 
             // Notify users match ended
             notifyUser(match.getHome().getUser(), match.getId(), "MATCH_ENDED", "Match Ended!");
