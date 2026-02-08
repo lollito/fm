@@ -6,9 +6,11 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lollito.fm.event.TransferCompletedEvent;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.TransactionCategory;
@@ -24,6 +26,7 @@ public class TransferService {
     @Autowired private FinancialService financialService;
     @Autowired private ClubService clubService;
     @Autowired private TeamService teamService;
+    @Autowired private ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void buyPlayer(Long playerId, Long buyerClubId) {
@@ -74,5 +77,7 @@ public class TransferService {
         player.setOnSale(false);
 
         playerService.save(player);
+
+        eventPublisher.publishEvent(new TransferCompletedEvent(this, player, buyerClub, sellerClub, price));
     }
 }

@@ -8,12 +8,14 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lollito.fm.event.ScoutingCompletedEvent;
 import com.lollito.fm.dto.AddToWatchlistRequest;
 import com.lollito.fm.dto.PlayerDTO;
 import com.lollito.fm.dto.ScoutingRecommendationDTO;
@@ -48,6 +50,7 @@ public class ScoutingService {
     @Autowired private PlayerService playerService;
     @Autowired private ClubService clubService;
     @Autowired private WatchlistService watchlistService;
+    @Autowired private ApplicationEventPublisher eventPublisher;
 
     public List<Scout> getClubScouts(Long clubId) {
         Club club = clubService.findById(clubId);
@@ -150,6 +153,8 @@ public class ScoutingService {
                                  assignment.getScout().getClub(), report);
 
         assignmentRepository.save(assignment);
+
+        eventPublisher.publishEvent(new ScoutingCompletedEvent(this, assignment));
     }
 
     public ScoutingReport generateScoutingReport(ScoutingAssignment assignment) {
