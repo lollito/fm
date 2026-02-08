@@ -198,6 +198,10 @@ public class User implements Serializable {
 	@ToString.Exclude
 	private Set<Role> roles = new HashSet<>();
 	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@ToString.Exclude
+	private ManagerProfile managerProfile;
+
 	@Builder.Default
 	private double experience = 0; 
 	 
