@@ -45,6 +45,7 @@ public class SimulationMatchServiceEventTest {
     @Mock private PlayerHistoryService playerHistoryService;
     @Mock private InjuryService injuryService;
     @Mock private RankingService rankingService;
+    @Mock private AchievementService achievementService;
 
     private Match match;
     private Player playerWithNullCondition;

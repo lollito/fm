@@ -46,6 +46,7 @@ public class SimulationMatchServiceHomeAdvantageTest {
     @Mock private PlayerRepository playerRepository;
     @Mock private PlayerHistoryService playerHistoryService;
     @Mock private InjuryService injuryService;
+    @Mock private AchievementService achievementService;
 
     @Test
     public void testHomeAdvantage_FullStadium() {

@@ -48,6 +48,7 @@ public class SimulationMatchService {
 	@Autowired PlayerRepository playerRepository;
 	@Autowired PlayerHistoryService playerHistoryService;
 	@Autowired InjuryService injuryService;
+	@Autowired AchievementService achievementService;
 	
 	public void simulate(List<Match> matches){
 		List<Player> allPlayersToSave = new ArrayList<>();
@@ -64,6 +65,8 @@ public class SimulationMatchService {
 		playerService.saveAll(allPlayersToSave);
 		matchRepository.saveAll(matches);
 		rankingService.updateAll(matches);
+
+		matches.forEach(match -> achievementService.checkMatchAchievements(match));
 	}
 	
 	public MatchResult simulate(Match match) {
@@ -96,6 +99,8 @@ public class SimulationMatchService {
 		if (updateRanking) {
 			rankingService.update(match);
 		}
+
+		achievementService.checkMatchAchievements(match);
 
 		return MatchResult.builder()
 				.matchId(match.getId())

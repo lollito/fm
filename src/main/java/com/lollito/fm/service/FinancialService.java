@@ -69,6 +69,9 @@ public class FinancialService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private AchievementService achievementService;
+
     @Transactional
     public FinancialTransaction processTransaction(Long clubId, CreateTransactionRequest request) {
         Club club = clubService.findById(clubId);
@@ -120,6 +123,9 @@ public class FinancialService {
         // Check for financial alerts
         checkFinancialAlerts(finance);
 
+        // Check for achievements
+        achievementService.checkFinancialAchievements(finance);
+
         return transaction;
     }
 
@@ -166,6 +172,8 @@ public class FinancialService {
         // Update financial health indicators
         updateFinancialHealthIndicators(finance);
         financeRepository.save(finance);
+
+        achievementService.checkFinancialAchievements(finance);
     }
 
     private void processPlayerSalaries(Club club) {
