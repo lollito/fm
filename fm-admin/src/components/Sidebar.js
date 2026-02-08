@@ -43,6 +43,13 @@ const Sidebar = () => {
         </Link>
       </li>
 
+      <li className={'nav-item ' + (location.pathname === '/manager' ? 'active' : '')}>
+        <Link className="nav-link" to="/manager">
+          <i className="fas fa-fw fa-user-tie"></i>
+          <span> Manager Profile</span>
+        </Link>
+      </li>
+
       <hr className="sidebar-divider" />
     </ul>
   );
