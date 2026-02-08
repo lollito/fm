@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.lollito.fm.model.AchievementType;
+import com.lollito.fm.model.PlayerAchievementType;
 import com.lollito.fm.model.Club;
 import com.lollito.fm.model.MatchPlayerStats;
 import com.lollito.fm.model.Player;
@@ -242,14 +242,14 @@ public class PlayerHistoryService {
         return transfer;
     }
 
-    public PlayerAchievement addAchievement(Long playerId, AchievementType type,
+    public PlayerAchievement addAchievement(Long playerId, PlayerAchievementType type,
                                           String title, String description) {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new EntityNotFoundException("Player not found"));
         return addAchievement(player, type, title, description);
     }
 
-    public PlayerAchievement addAchievement(Player player, AchievementType type,
+    public PlayerAchievement addAchievement(Player player, PlayerAchievementType type,
                                           String title, String description) {
         Season currentSeason = seasonService.getCurrentSeason();
 
@@ -273,14 +273,14 @@ public class PlayerHistoryService {
         }
 
         if (player.getCareerStats().getFirstGoal() == null && matchStats.getGoals() > 0) {
-            addAchievement(player, AchievementType.MILESTONE, "First Goal",
+            addAchievement(player, PlayerAchievementType.MILESTONE, "First Goal",
                          "Scored first professional goal");
             player.getCareerStats().setFirstGoal(LocalDate.now());
             playerCareerStatsRepository.save(player.getCareerStats());
         }
 
         if (matchStats.getGoals() >= 3) {
-            addAchievement(player, AchievementType.PERFORMANCE, "Hat-trick",
+            addAchievement(player, PlayerAchievementType.PERFORMANCE, "Hat-trick",
                          "Scored 3 or more goals in a single match");
         }
 
@@ -292,14 +292,14 @@ public class PlayerHistoryService {
             // "totalGoals" is already updated in updateCareerStats.
             // If I had 9 goals, scored 2, now 11. 10 is missed.
             // But let's stick to task logic mostly.
-            addAchievement(player, AchievementType.MILESTONE,
+            addAchievement(player, PlayerAchievementType.MILESTONE,
                          totalGoals + " Career Goals",
                          "Reached " + totalGoals + " career goals");
         }
 
         int totalMatches = player.getCareerStats().getTotalMatchesPlayed();
         if (totalMatches == 50 || totalMatches == 100 || totalMatches == 200 || totalMatches == 500) {
-            addAchievement(player, AchievementType.MILESTONE,
+            addAchievement(player, PlayerAchievementType.MILESTONE,
                          totalMatches + " Career Matches",
                          "Played " + totalMatches + " professional matches");
 
@@ -310,14 +310,14 @@ public class PlayerHistoryService {
         }
 
         if (seasonStats.getGoals() == 20 || seasonStats.getGoals() == 30) {
-             addAchievement(player, AchievementType.PERFORMANCE,
+             addAchievement(player, PlayerAchievementType.PERFORMANCE,
                          seasonStats.getGoals() + " Goals in Season",
                          "Scored " + seasonStats.getGoals() + " goals in a single season");
         }
 
         if (player.getRole() == PlayerRole.GOALKEEPER && seasonStats.getCleanSheets() == 15) {
              // Use == 15 to avoid spamming every match after 15
-             addAchievement(player, AchievementType.PERFORMANCE,
+             addAchievement(player, PlayerAchievementType.PERFORMANCE,
                          "Clean Sheet Specialist",
                          "Kept " + seasonStats.getCleanSheets() + " clean sheets in a season");
         }

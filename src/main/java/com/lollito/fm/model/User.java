@@ -200,6 +200,10 @@ public class User implements Serializable {
 	
 	@Builder.Default
 	private double experience = 0; 
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@Builder.Default
+	private List<UserAchievement> achievements = new ArrayList<>();
 	 
 	public User(String username, String name, String surname, String email, String password) {
 		this();
