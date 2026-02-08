@@ -11,6 +11,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ClubManagement from './pages/ClubManagement';
 import ServerManagement from './pages/ServerManagement';
 import LiveMatchMonitoring from './pages/LiveMatchMonitoring';
+import ManagerProfile from './pages/ManagerProfile';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -39,6 +40,7 @@ function App() {
             <Route path="/users" element={<PrivateRoute><UserManagement /></PrivateRoute>} />
             <Route path="/servers" element={<PrivateRoute><ServerManagement /></PrivateRoute>} />
             <Route path="/live-matches" element={<PrivateRoute><LiveMatchMonitoring /></PrivateRoute>} />
+            <Route path="/manager" element={<PrivateRoute><ManagerProfile /></PrivateRoute>} />
             <Route path="/debug" element={<PrivateRoute><DebugTools /></PrivateRoute>} />
           </Routes>
         </Router>
