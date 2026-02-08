@@ -1,6 +1,6 @@
 package com.lollito.fm.model.rest;
 
-import com.lollito.fm.model.AchievementType;
+import com.lollito.fm.model.PlayerAchievementType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddAchievementRequest {
-    private AchievementType type;
+    private PlayerAchievementType type;
     private String title;
     private String description;
 }

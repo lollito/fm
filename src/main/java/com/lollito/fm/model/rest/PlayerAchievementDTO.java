@@ -2,7 +2,7 @@ package com.lollito.fm.model.rest;
 
 import java.time.LocalDate;
 
-import com.lollito.fm.model.AchievementType;
+import com.lollito.fm.model.PlayerAchievementType;
 import com.lollito.fm.model.dto.ClubDTO;
 import com.lollito.fm.model.dto.SeasonDTO;
 
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlayerAchievementDTO {
     private Long id;
-    private AchievementType type;
+    private PlayerAchievementType type;
     private String title;
     private String description;
     private LocalDate dateAchieved;
