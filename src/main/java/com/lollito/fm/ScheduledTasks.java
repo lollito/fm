@@ -13,7 +13,7 @@ public class ScheduledTasks {
 
 	@Autowired private ServerService serverService;
 	
-    @Scheduled(initialDelayString = "${fm.scheduling.general.initial-delay}", fixedRateString = "${fm.scheduling.general.fixed-rate}")
+//    @Scheduled(initialDelayString = "${fm.scheduling.general.initial-delay}", fixedRateString = "${fm.scheduling.general.fixed-rate}")
     public void deleteAllServers() {
         log.info("Starting deleteAllServers...");
 	    serverService.deleteAll();
