@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,6 +69,25 @@ public class FinancialService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Transactional
+    public void addIncome(Club club, BigDecimal amount, TransactionCategory category) {
+        if (club == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+
+        CreateTransactionRequest request = CreateTransactionRequest.builder()
+            .type(TransactionType.INCOME)
+            .category(category)
+            .amount(amount)
+            .description(category.getDisplayName())
+            .reference("QUEST_" + UUID.randomUUID().toString()) // Simple reference
+            .effectiveDate(LocalDate.now())
+            .isRecurring(false)
+            .build();
+
+        processTransaction(club.getId(), request);
+    }
 
     @Transactional
     public FinancialTransaction processTransaction(Long clubId, CreateTransactionRequest request) {
