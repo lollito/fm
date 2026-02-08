@@ -28,6 +28,7 @@ import com.lollito.fm.model.PlayerRole;
 import com.lollito.fm.model.PlayerSeasonStats;
 import com.lollito.fm.model.TransactionCategory;
 import com.lollito.fm.model.TransactionType;
+import com.lollito.fm.model.ManagerPerk;
 import com.lollito.fm.model.dto.ContractDemands;
 import com.lollito.fm.model.dto.ContractOfferRequest;
 import com.lollito.fm.model.dto.OfferResponse;
@@ -61,6 +62,9 @@ public class ContractService {
     @Autowired
     private NewsService newsService;
 
+    @Autowired
+    private ManagerProgressionService managerProgressionService;
+
     public ContractNegotiation startNegotiation(Long playerId, Long clubId,
                                               NegotiationType type, ContractOfferRequest initialOffer) {
         Player player = playerService.findOne(playerId);
@@ -73,7 +77,7 @@ public class ContractService {
             throw new IllegalStateException("Negotiation already in progress");
         }
 
-        ContractDemands playerDemands = calculatePlayerDemands(player, type);
+        ContractDemands playerDemands = calculatePlayerDemands(player, club, type);
 
         ContractNegotiation negotiation = ContractNegotiation.builder()
             .player(player)
@@ -218,7 +222,7 @@ public class ContractService {
         return contractRepository.findByStatusAndEndDateBefore(ContractStatus.ACTIVE, LocalDate.now().plusMonths(monthsAhead));
     }
 
-    private ContractDemands calculatePlayerDemands(Player player, NegotiationType type) {
+    private ContractDemands calculatePlayerDemands(Player player, Club club, NegotiationType type) {
         BigDecimal baseWeeklySalary = calculateBaseWeeklySalary(player);
 
         double multiplier = switch (type) {
@@ -226,6 +230,12 @@ public class ContractService {
             case RENEWAL -> 1.1;
             case RENEGOTIATION -> 1.2;
         };
+
+        if (club.getUser() != null) {
+            if (managerProgressionService.hasPerk(club.getUser(), ManagerPerk.NEGOTIATOR)) {
+                multiplier *= 0.95;
+            }
+        }
 
         BigDecimal demandedSalary = baseWeeklySalary.multiply(BigDecimal.valueOf(multiplier));
 
