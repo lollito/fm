@@ -29,9 +29,13 @@ import com.lollito.fm.repository.PlayerTrainingFocusRepository;
 import com.lollito.fm.repository.PlayerTrainingResultRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
 import com.lollito.fm.repository.rest.ClubRepository;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class IndividualTrainingTest {
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @Mock
     private TrainingSessionRepository trainingSessionRepository;
@@ -167,10 +171,11 @@ class IndividualTrainingTest {
 
         trainingService.processTeamTraining(team, TrainingFocus.BALANCED, TrainingIntensity.MODERATE);
 
-        ArgumentCaptor<Player> playerCaptor = ArgumentCaptor.forClass(Player.class);
-        verify(playerService).save(playerCaptor.capture());
+        ArgumentCaptor<List<Player>> playerListCaptor = ArgumentCaptor.forClass(List.class);
+        verify(playerService).saveAll(playerListCaptor.capture());
 
-        Player savedPlayer = playerCaptor.getValue();
+        List<Player> savedPlayers = playerListCaptor.getValue();
+        Player savedPlayer = savedPlayers.get(0);
 
         // Check if passing improved (it started at 10.0)
         // With random factor, it *might* be 10.0 if improvement is 0, but baseImprovement is 0.1

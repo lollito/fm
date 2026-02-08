@@ -21,6 +21,7 @@ import com.lollito.fm.model.Club;
 import com.lollito.fm.model.Finance;
 import com.lollito.fm.model.Player;
 import com.lollito.fm.model.Team;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 public class TransferServiceTest {
@@ -28,6 +29,7 @@ public class TransferServiceTest {
     @InjectMocks
     private TransferService transferService;
 
+    @Mock private ApplicationEventPublisher eventPublisher;
     @Mock private PlayerService playerService;
     @Mock private FinancialService financialService;
     @Mock private ClubService clubService;

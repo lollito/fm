@@ -164,6 +164,9 @@ describe('FinancialDashboard Component', () => {
             expect(screen.getByText('Financial Overview')).toBeInTheDocument();
             expect(screen.getByText('$1,500,000')).toBeInTheDocument(); // Current Balance
             expect(screen.getByText('Sponsorship Payment')).toBeInTheDocument();
+        });
+    });
+
     test('renders financial data correctly', async () => {
         // Mocks are already set in beforeEach
 

@@ -2,6 +2,15 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { AuthContext, AuthProvider } from './AuthContext';
+import api from '../services/api';
+
+jest.mock('../services/api', () => ({
+  post: jest.fn(),
+  create: jest.fn(() => ({
+    get: jest.fn(),
+    post: jest.fn(),
+  })),
+}));
 
 // Mock localStorage
 const localStorageMock = {

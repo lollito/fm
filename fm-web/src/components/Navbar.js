@@ -3,14 +3,18 @@ import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { API_BASE_URL } from '../services/api';
+import { API_BASE_URL, getUnreadNotifications, markSystemNotificationRead, getManagerProfile } from '../services/api';
 import '../styles/Navbar.css';
 
 const Navbar = ({ onToggleMenu }) => {
   const { user, logout } = useContext(AuthContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const notificationRef = useRef(null);
   const [notification, setNotification] = useState(null);
+  const [unreadNotifications, setUnreadNotifications] = useState([]);
+  const [managerProfile, setManagerProfile] = useState(null);
   const navigate = useNavigate();
   const stompClient = useRef(null);
 
@@ -36,6 +40,9 @@ const Navbar = ({ onToggleMenu }) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotificationDropdown(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -43,6 +50,31 @@ const Navbar = ({ onToggleMenu }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const fetchNotifications = async () => {
+      try {
+          const response = await getUnreadNotifications();
+          setUnreadNotifications(response.data);
+      } catch (err) {
+          console.error("Failed to fetch notifications", err);
+      }
+  };
+
+  const fetchManagerProfile = async () => {
+      try {
+          const response = await getManagerProfile();
+          setManagerProfile(response.data);
+      } catch (err) {
+          console.error("Failed to fetch manager profile", err);
+      }
+  };
+
+  useEffect(() => {
+      if (user) {
+          fetchNotifications();
+          fetchManagerProfile();
+      }
+  }, [user]);
 
   // WebSocket for Notifications
   useEffect(() => {
@@ -58,6 +90,17 @@ const Navbar = ({ onToggleMenu }) => {
                       setNotification(notif);
                   } else if (notif.type === 'MATCH_ENDED') {
                       setNotification(prev => (prev && prev.matchId === notif.matchId) ? null : prev);
+                  } else {
+                      // Handle generic notifications (quests, etc)
+                      // If it's a persistent notification, add to unread list and show toast
+                      // Assuming backend sends UserNotification object structure here too, or similar
+                      // For now, just re-fetch unread list to be safe
+                      fetchNotifications();
+                      fetchManagerProfile(); // Update XP if needed
+
+                      // Show a temporary toast for non-match notifications
+                      setNotification({ message: notif.message, type: 'GENERIC' });
+                      setTimeout(() => setNotification(null), 5000);
                   }
               });
           },
@@ -69,6 +112,25 @@ const Navbar = ({ onToggleMenu }) => {
           if (stompClient.current) stompClient.current.deactivate();
       };
   }, [user]);
+
+  const handleMarkRead = async (id, e) => {
+      e.stopPropagation();
+      try {
+          await markSystemNotificationRead(id);
+          setUnreadNotifications(prev => prev.filter(n => n.id !== id));
+      } catch (err) {
+          console.error("Failed to mark read", err);
+      }
+  };
+
+  const calculateLevelProgress = () => {
+      if (!managerProfile) return 0;
+      // Example calculation: currentXp / xpForNextLevel * 100
+      // But API returns pre-calculated or raw values?
+      // DTO has: currentXp, xpForNextLevel
+      if (managerProfile.xpForNextLevel === 0) return 100;
+      return (managerProfile.currentXp / managerProfile.xpForNextLevel) * 100;
+  };
 
   return (
     <nav className="navbar">
@@ -90,11 +152,11 @@ const Navbar = ({ onToggleMenu }) => {
 
         {/* Level Indicator */}
         <div className="status-item level-display">
-          <div className="level-text">Level {user?.level || 1}</div>
+          <div className="level-text">Level {managerProfile?.level || user?.level || 1}</div>
           <div className="progress-container">
             <div
               className="progress-bar-fill"
-              style={{ width: `${user?.levelProgress || 0}%` }}
+              style={{ width: `${calculateLevelProgress()}%` }}
             ></div>
           </div>
         </div>
@@ -106,10 +168,41 @@ const Navbar = ({ onToggleMenu }) => {
         </div>
 
         {/* Notifications */}
-        <button className="icon-btn">
-          <i className="fas fa-bell"></i>
-          <span className="badge">3</span>
-        </button>
+        <div className="notification-dropdown-container" ref={notificationRef}>
+            <button className="icon-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
+            <i className="fas fa-bell"></i>
+            {unreadNotifications.length > 0 && <span className="badge">{unreadNotifications.length}</span>}
+            </button>
+
+            {showNotificationDropdown && (
+                <div className="dropdown-menu notification-menu show">
+                    <div className="dropdown-header">Notifications</div>
+                    <div className="notification-list">
+                        {unreadNotifications.length === 0 ? (
+                            <div className="dropdown-item text-muted">No new notifications</div>
+                        ) : (
+                            unreadNotifications.map(notif => (
+                                <div key={notif.id} className="dropdown-item notification-item" onClick={() => {
+                                    if (notif.actionUrl) navigate(notif.actionUrl);
+                                }}>
+                                    <div className="notif-content">
+                                        <div className="notif-title">{notif.title}</div>
+                                        <div className="notif-message">{notif.message}</div>
+                                        <small className="text-muted">{new Date(notif.createdAt).toLocaleTimeString()}</small>
+                                    </div>
+                                    <button className="btn btn-sm btn-link text-muted" onClick={(e) => handleMarkRead(notif.id, e)}>
+                                        <i className="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                    <div className="dropdown-footer">
+                        <Link to="/notifications" onClick={() => setShowNotificationDropdown(false)}>View All</Link>
+                    </div>
+                </div>
+            )}
+        </div>
 
         {/* User Profile Dropdown */}
         <div className="user-dropdown" ref={dropdownRef}>
@@ -125,12 +218,12 @@ const Navbar = ({ onToggleMenu }) => {
           </div>
 
           {showDropdown && (
-            <div className="dropdown-menu">
-              <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
-                <i className="fas fa-user"></i> Profile
+            <div className="dropdown-menu show">
+              <Link to="/manager" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                <i className="fas fa-user-tie"></i> Manager Profile
               </Link>
-              <Link to="/settings" className="dropdown-item" onClick={() => setShowDropdown(false)}>
-                <i className="fas fa-cog"></i> Settings
+              <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                <i className="fas fa-user"></i> User Settings
               </Link>
               <div className="dropdown-divider"></div>
               <button
@@ -151,12 +244,13 @@ const Navbar = ({ onToggleMenu }) => {
       {/* Toast Notification */}
       {notification && (
         <div className="notification-toast" onClick={() => {
-            // Redirect to live match on click
-            navigate(`/match/live/${notification.matchId}`);
+            if (notification.matchId) {
+                navigate(`/match/live/${notification.matchId}`);
+            }
             setNotification(null);
         }}>
             <div className="notification-content">
-                <i className="fas fa-futbol bouncing-ball"></i>
+                {notification.matchId ? <i className="fas fa-futbol bouncing-ball"></i> : <i className="fas fa-info-circle"></i>}
                 <span>{notification.message}</span>
             </div>
         </div>

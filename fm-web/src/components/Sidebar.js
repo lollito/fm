@@ -21,6 +21,7 @@ const Sidebar = () => {
         <Link to="/scouting" className="list-group-item">Scouting</Link>
         <Link to="/finance" className="list-group-item">Finance</Link>
         <Link to="/infrastructure" className="list-group-item">Infrastructure</Link>
+        <Link to="/manager" className="list-group-item">Manager Profile</Link>
       </div>
     </div>
   );

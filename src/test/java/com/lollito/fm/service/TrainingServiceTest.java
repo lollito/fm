@@ -26,9 +26,13 @@ import com.lollito.fm.repository.TrainingPlanRepository;
 import com.lollito.fm.repository.TrainingSessionRepository;
 import com.lollito.fm.repository.rest.ClubRepository;
 import java.util.Optional;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @Mock
     private TrainingSessionRepository trainingSessionRepository;

@@ -38,6 +38,9 @@ public class QuestServiceTest {
     @Mock
     private FinancialService financialService;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private QuestService questService;
 

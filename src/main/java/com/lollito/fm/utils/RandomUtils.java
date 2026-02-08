@@ -10,6 +10,7 @@ public class RandomUtils {
 	}
 	
 	public static <T> T randomValueFromList(List<T> list){
+        if (list == null || list.isEmpty()) return null;
         return list.get(randomValue(0, list.size() - 1));
 	}
 	
