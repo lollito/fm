@@ -25,6 +25,7 @@ import com.lollito.fm.model.TrainingPerformance;
 import com.lollito.fm.model.TrainingPlan;
 import com.lollito.fm.model.TrainingSession;
 import com.lollito.fm.model.TrainingStatus;
+import com.lollito.fm.model.ManagerPerk;
 import com.lollito.fm.dto.StaffBonusesDTO;
 import com.lollito.fm.model.dto.IndividualFocusDTO;
 import com.lollito.fm.model.dto.IndividualFocusRequest;
@@ -65,6 +66,9 @@ public class TrainingService {
 
     @Autowired
     private ClubRepository clubRepository;
+
+    @Autowired
+    private ManagerProgressionService managerProgressionService;
 
     /**
      * Process daily training for all teams
@@ -323,6 +327,14 @@ public class TrainingService {
      */
     private void applySkillImprovement(Player player, TrainingFocus focus,
                                      double improvement) {
+        if (focus == TrainingFocus.TECHNICAL || focus == TrainingFocus.BALANCED) {
+            if (player.getTeam() != null && player.getTeam().getClub() != null && player.getTeam().getClub().getUser() != null) {
+                if (managerProgressionService.hasPerk(player.getTeam().getClub().getUser(), ManagerPerk.VIDEO_ANALYST)) {
+                    improvement *= 1.05;
+                }
+            }
+        }
+
         List<String> affectedSkills = focus.getAffectedSkills();
         double improvementPerSkill = improvement / affectedSkills.size();
 

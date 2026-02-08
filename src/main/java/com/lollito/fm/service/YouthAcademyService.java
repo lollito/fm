@@ -16,6 +16,7 @@ import com.lollito.fm.model.Contract;
 import com.lollito.fm.model.ContractStatus;
 import com.lollito.fm.model.Foot;
 import com.lollito.fm.model.Player;
+import com.lollito.fm.model.ManagerPerk;
 import com.lollito.fm.model.PlayerRole;
 import com.lollito.fm.model.Team;
 import com.lollito.fm.model.YouthAcademy;
@@ -37,6 +38,7 @@ public class YouthAcademyService {
     @Autowired private PlayerService playerService;
     @Autowired private ContractRepository contractRepository;
     @Autowired private ClubService clubService;
+    @Autowired private ManagerProgressionService managerProgressionService;
 
     @Value("${fm.youth.generation.count:3}")
     private Integer generationCount;
@@ -79,6 +81,12 @@ public class YouthAcademyService {
 
         double base = 20.0 + ((academy.getOverallQuality() != null ? academy.getOverallQuality() : 1) * 3.0);
         base *= qualityMultiplier;
+
+        if (academy.getClub() != null && academy.getClub().getUser() != null) {
+            if (managerProgressionService.hasPerk(academy.getClub().getUser(), ManagerPerk.GLOBAL_NETWORK)) {
+                base += 5.0;
+            }
+        }
 
         YouthCandidate candidate = YouthCandidate.builder()
             .name(name)
