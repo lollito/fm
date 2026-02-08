@@ -42,4 +42,7 @@ export const getAllLiveMatches = () => api.get('/live-match/all');
 export const forceFinishMatch = (id) => api.post('/live-match/' + id + '/finish');
 export const resetMatch = (id) => api.post('/live-match/' + id + '/reset');
 
+export const getQuests = (status) => api.get('/quests', { params: { status } });
+export const claimQuest = (id) => api.post('/quests/' + id + '/claim');
+
 export default api;
