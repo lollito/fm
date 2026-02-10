@@ -136,7 +136,7 @@ const Navbar = ({ onToggleMenu }) => {
     <nav className="navbar">
       {/* Left Section: Toggle & Title (Optional) */}
       <div className="navbar-left">
-        <button className="btn btn-primary" onClick={onToggleMenu}>
+        <button className="btn btn-primary" onClick={onToggleMenu} aria-label="Toggle menu">
           <i className="fas fa-bars"></i>
         </button>
       </div>
@@ -144,7 +144,7 @@ const Navbar = ({ onToggleMenu }) => {
       {/* Center Section: Search */}
       <div className="navbar-search">
         <i className="fas fa-search"></i>
-        <input type="text" placeholder="Search players, clubs, matches..." />
+        <input type="text" placeholder="Search players, clubs, matches..." aria-label="Search players, clubs, matches..." />
       </div>
 
       {/* Right Section: Status & User */}
@@ -153,7 +153,14 @@ const Navbar = ({ onToggleMenu }) => {
         {/* Level Indicator */}
         <div className="status-item level-display">
           <div className="level-text">Level {managerProfile?.level || user?.level || 1}</div>
-          <div className="progress-container">
+          <div
+            className="progress-container"
+            role="progressbar"
+            aria-valuenow={calculateLevelProgress()}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-label="Level Progress"
+          >
             <div
               className="progress-bar-fill"
               style={{ width: `${calculateLevelProgress()}%` }}
@@ -169,7 +176,7 @@ const Navbar = ({ onToggleMenu }) => {
 
         {/* Notifications */}
         <div className="notification-dropdown-container" ref={notificationRef}>
-            <button className="icon-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
+            <button className="icon-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)} aria-label="Notifications">
             <i className="fas fa-bell"></i>
             {unreadNotifications.length > 0 && <span className="badge">{unreadNotifications.length}</span>}
             </button>
@@ -208,7 +215,17 @@ const Navbar = ({ onToggleMenu }) => {
         <div className="user-dropdown" ref={dropdownRef}>
           <div
             className="user-info"
+            role="button"
+            tabIndex="0"
+            aria-haspopup="true"
+            aria-expanded={showDropdown}
             onClick={() => setShowDropdown(!showDropdown)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setShowDropdown(!showDropdown);
+              }
+            }}
           >
             <div className="avatar">
               {getInitials(user?.username)}
