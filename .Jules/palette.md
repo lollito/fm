@@ -9,3 +9,7 @@
 ## 2025-02-19 - Missing Utility Classes
 **Learning:** Projects ported from frameworks like Bootstrap might leave behind class names (e.g., `spinner-border`) without the underlying CSS, leading to broken UI elements that are hard to spot visually (invisible spinners).
 **Action:** When auditing UI, check if "standard" utility classes are actually defined. Re-implementing them in the global theme can fix widespread issues instantly.
+
+## 2025-02-19 - Accessible Navigation Patterns
+**Learning:** Icon-only buttons (like hamburger menus or notifications) are common but often completely inaccessible to screen readers if they lack `aria-label`. Interactive elements like user dropdowns implemented with `div`s break keyboard navigation (Tab/Enter) unless explicitly given `role="button"`, `tabIndex="0"`, and key handlers.
+**Action:** Always add `aria-label` to icon buttons. For custom interactive components, ensure they are keyboard accessible or replace them with native `<button>` elements where possible to get accessibility for free.
