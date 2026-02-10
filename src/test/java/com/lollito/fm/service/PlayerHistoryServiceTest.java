@@ -102,7 +102,14 @@ public class PlayerHistoryServiceTest {
         when(playerSeasonStatsRepository.findByPlayerAndSeason(player, season)).thenReturn(Optional.empty());
         when(clubRepository.findByTeam(team)).thenReturn(Optional.of(club));
         when(playerSeasonStatsRepository.save(any(PlayerSeasonStats.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(playerSeasonStatsRepository.findByPlayer(player)).thenReturn(java.util.Collections.emptyList());
+
+        // Setup existing career stats to test incremental update
+        com.lollito.fm.model.PlayerCareerStats careerStats = com.lollito.fm.model.PlayerCareerStats.builder()
+                .player(player)
+                .totalGoals(10)
+                .firstGoal(java.time.LocalDate.now().minusDays(100)) // Prevent "First Goal" logic from triggering extra save
+                .build();
+        player.setCareerStats(careerStats);
 
         com.lollito.fm.model.MatchPlayerStats matchStats = com.lollito.fm.model.MatchPlayerStats.builder()
                 .player(player)
@@ -113,8 +120,16 @@ public class PlayerHistoryServiceTest {
 
         playerHistoryService.updateMatchStatistics(player, matchStats);
 
-        // Verification is tricky with save(any), but we can verify calls
+        // Verify findByPlayer (slow path) was NOT called
+        org.mockito.Mockito.verify(playerSeasonStatsRepository, org.mockito.Mockito.never()).findByPlayer(player);
+
+        // Verify stats were saved (season stats)
         org.mockito.Mockito.verify(playerSeasonStatsRepository, org.mockito.Mockito.times(2)).save(any(PlayerSeasonStats.class));
-        org.mockito.Mockito.verify(playerCareerStatsRepository, org.mockito.Mockito.atLeast(1)).save(any(com.lollito.fm.model.PlayerCareerStats.class));
+
+        // Verify career stats saved
+        org.mockito.Mockito.verify(playerCareerStatsRepository, org.mockito.Mockito.times(1)).save(careerStats);
+
+        // Verify incremental update happened (10 + 1 = 11 goals)
+        assertEquals(11, careerStats.getTotalGoals());
     }
 }

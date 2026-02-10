@@ -154,10 +154,48 @@ public class PlayerHistoryService {
         playerSeasonStatsRepository.save(seasonStats);
 
         // Update career stats
-        updateCareerStats(player);
+        updateCareerStatsIncremental(player, seasonStats, matchStats);
 
         // Check for achievements
         checkForAchievements(player, seasonStats, matchStats);
+    }
+
+    private void updateCareerStatsIncremental(Player player, PlayerSeasonStats seasonStats, MatchPlayerStats matchStats) {
+        PlayerCareerStats careerStats = player.getCareerStats();
+
+        // If career stats are missing, fallback to full recalculation
+        if (careerStats == null) {
+            updateCareerStats(player);
+            return;
+        }
+
+        // Incrementally update career stats
+        careerStats.setTotalMatchesPlayed(careerStats.getTotalMatchesPlayed() + 1);
+        careerStats.setTotalGoals(careerStats.getTotalGoals() + (matchStats.getGoals() != null ? matchStats.getGoals() : 0));
+        careerStats.setTotalAssists(careerStats.getTotalAssists() + (matchStats.getAssists() != null ? matchStats.getAssists() : 0));
+        careerStats.setTotalYellowCards(careerStats.getTotalYellowCards() + (matchStats.getYellowCards() != null ? matchStats.getYellowCards() : 0));
+        careerStats.setTotalRedCards(careerStats.getTotalRedCards() + (matchStats.getRedCards() != null ? matchStats.getRedCards() : 0));
+
+        if (player.getRole() == PlayerRole.GOALKEEPER) {
+            if (matchStats.getGoalsConceded() != null && matchStats.getGoalsConceded() == 0) {
+                careerStats.setTotalCleanSheets(careerStats.getTotalCleanSheets() + 1);
+            }
+        }
+
+        // Update season records
+        if (seasonStats.getGoals() > careerStats.getMostGoalsInSeason()) {
+            careerStats.setMostGoalsInSeason(seasonStats.getGoals());
+        }
+        if (seasonStats.getAssists() > careerStats.getMostAssistsInSeason()) {
+            careerStats.setMostAssistsInSeason(seasonStats.getAssists());
+        }
+        if (seasonStats.getAverageRating() > careerStats.getHighestSeasonRating()) {
+            careerStats.setHighestSeasonRating(seasonStats.getAverageRating());
+        }
+
+        checkCareerMilestones(careerStats);
+
+        playerCareerStatsRepository.save(careerStats);
     }
 
     public void updateCareerStats(Player player) {
