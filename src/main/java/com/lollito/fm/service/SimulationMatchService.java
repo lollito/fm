@@ -54,17 +54,22 @@ public class SimulationMatchService {
 	
 	public void simulate(List<Match> matches){
 		List<Player> allPlayersToSave = new ArrayList<>();
+		List<MatchPlayerStats> allMatchStats = new ArrayList<>();
 		matches.forEach(match -> {
 			simulateMatchLogic(match, null);
 			// Collect players
 			allPlayersToSave.addAll(match.getHome().getTeam().getPlayers());
 			allPlayersToSave.addAll(match.getAway().getTeam().getPlayers());
 
-			// Update player history stats
-			match.getPlayerStats().forEach(stats -> playerHistoryService.updateMatchStatistics(stats.getPlayer(), stats));
+			// Collect match stats for batch update
+			allMatchStats.addAll(match.getPlayerStats());
 		});
 
 		playerService.saveAll(allPlayersToSave);
+
+		// Batch update player history stats
+		playerHistoryService.updateMatchStatisticsBatch(allMatchStats);
+
 		matchRepository.saveAll(matches);
 		rankingService.updateAll(matches);
 

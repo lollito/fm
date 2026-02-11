@@ -2,10 +2,13 @@ package com.lollito.fm.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +75,12 @@ public class PlayerHistoryService {
             return existing.get();
         }
 
+        return playerSeasonStatsRepository.save(createSeasonStats(player, season));
+    }
+
+    private PlayerSeasonStats createSeasonStats(Player player, Season season) {
         Club club = getClubByPlayer(player);
-        PlayerSeasonStats seasonStats = PlayerSeasonStats.builder()
+        return PlayerSeasonStats.builder()
             .player(player)
             .season(season)
             .club(club)
@@ -91,8 +98,6 @@ public class PlayerHistoryService {
             .injuryDays(0)
             .injuryCount(0)
             .build();
-
-        return playerSeasonStatsRepository.save(seasonStats);
     }
 
     private PlayerSeasonStats getOrCreateSeasonStats(Player player, Season season) {
@@ -105,6 +110,92 @@ public class PlayerHistoryService {
 
         PlayerSeasonStats seasonStats = getOrCreateSeasonStats(player, currentSeason);
 
+        updateSeasonStatsInternal(seasonStats, matchStats);
+
+        playerSeasonStatsRepository.save(seasonStats);
+
+        // Update career stats
+        updateCareerStatsIncremental(player, seasonStats, matchStats);
+
+        // Check for achievements
+        checkForAchievements(player, seasonStats, matchStats);
+    }
+
+    public void updateMatchStatisticsBatch(List<MatchPlayerStats> allMatchStats) {
+        if (allMatchStats.isEmpty()) return;
+
+        Season currentSeason = seasonService.getCurrentSeason();
+        if (currentSeason == null) return;
+
+        // 1. Collect Players
+        Set<Player> players = allMatchStats.stream().map(MatchPlayerStats::getPlayer).collect(Collectors.toSet());
+        List<Player> playerList = new ArrayList<>(players);
+
+        // 2. Bulk Fetch Season Stats
+        Map<Long, PlayerSeasonStats> seasonStatsMap = playerSeasonStatsRepository.findBySeasonAndPlayerIn(currentSeason, playerList)
+                .stream().collect(Collectors.toMap(s -> s.getPlayer().getId(), s -> s));
+
+        // 3. Bulk Fetch Career Stats
+        Map<Long, PlayerCareerStats> careerStatsMap = playerCareerStatsRepository.findByPlayerIn(playerList)
+                .stream().collect(Collectors.toMap(c -> c.getPlayer().getId(), c -> c));
+
+        List<PlayerSeasonStats> seasonStatsToSave = new ArrayList<>();
+        List<PlayerCareerStats> careerStatsToSave = new ArrayList<>();
+        Set<Long> processedSeasonStatsIds = new HashSet<>();
+        Set<Long> processedCareerStatsIds = new HashSet<>();
+
+        for (MatchPlayerStats matchStats : allMatchStats) {
+            Player player = matchStats.getPlayer();
+
+            // Season Stats
+            PlayerSeasonStats seasonStats = seasonStatsMap.get(player.getId());
+            if (seasonStats == null) {
+                 seasonStats = createSeasonStats(player, currentSeason);
+                 seasonStatsMap.put(player.getId(), seasonStats);
+            }
+
+            updateSeasonStatsInternal(seasonStats, matchStats);
+            if (!processedSeasonStatsIds.contains(player.getId())) {
+                seasonStatsToSave.add(seasonStats);
+                processedSeasonStatsIds.add(player.getId());
+            }
+
+            // Career Stats
+            PlayerCareerStats careerStats = careerStatsMap.get(player.getId());
+            if (careerStats == null) {
+                // Fallback to existing heavy logic or initialize empty.
+                // Since updateCareerStats saves immediately, we use it for safety but it breaks batching for this player.
+                // However, getting null here means data inconsistency or new player.
+                updateCareerStats(player);
+                // After update, we should ideally fetch it again or ignore.
+                // Since updateCareerStats saves, it's persisted. We don't add to batch save list.
+            } else {
+                 updateCareerStatsIncrementalInternal(player, careerStats, seasonStats, matchStats);
+                 if (!processedCareerStatsIds.contains(player.getId())) {
+                     careerStatsToSave.add(careerStats);
+                     processedCareerStatsIds.add(player.getId());
+                 }
+                 // Ensure we check milestones on the modified object
+                 checkCareerMilestones(careerStats);
+            }
+
+            // Achievements
+            if (careerStats != null) {
+                player.setCareerStats(careerStats);
+            }
+
+            checkForAchievements(player, seasonStats, matchStats);
+        }
+
+        if (!seasonStatsToSave.isEmpty()) {
+            playerSeasonStatsRepository.saveAll(seasonStatsToSave);
+        }
+        if (!careerStatsToSave.isEmpty()) {
+            playerCareerStatsRepository.saveAll(careerStatsToSave);
+        }
+    }
+
+    private void updateSeasonStatsInternal(PlayerSeasonStats seasonStats, MatchPlayerStats matchStats) {
         // Update match statistics
         seasonStats.setMatchesPlayed(seasonStats.getMatchesPlayed() + 1);
         if (matchStats.isStarted()) {
@@ -136,7 +227,7 @@ public class PlayerHistoryService {
         }
 
         // Update goalkeeper statistics
-        if (player.getRole() == PlayerRole.GOALKEEPER) {
+        if (seasonStats.getPlayer().getRole() == PlayerRole.GOALKEEPER) {
             if (matchStats.getSaves() != null) {
                 seasonStats.setSaves(seasonStats.getSaves() + matchStats.getSaves());
             }
@@ -150,14 +241,6 @@ public class PlayerHistoryService {
 
         // Update rating
         updatePlayerRating(seasonStats, matchStats.getRating());
-
-        playerSeasonStatsRepository.save(seasonStats);
-
-        // Update career stats
-        updateCareerStatsIncremental(player, seasonStats, matchStats);
-
-        // Check for achievements
-        checkForAchievements(player, seasonStats, matchStats);
     }
 
     private void updateCareerStatsIncremental(Player player, PlayerSeasonStats seasonStats, MatchPlayerStats matchStats) {
@@ -169,6 +252,14 @@ public class PlayerHistoryService {
             return;
         }
 
+        updateCareerStatsIncrementalInternal(player, careerStats, seasonStats, matchStats);
+
+        checkCareerMilestones(careerStats);
+
+        playerCareerStatsRepository.save(careerStats);
+    }
+
+    private void updateCareerStatsIncrementalInternal(Player player, PlayerCareerStats careerStats, PlayerSeasonStats seasonStats, MatchPlayerStats matchStats) {
         // Incrementally update career stats
         careerStats.setTotalMatchesPlayed(careerStats.getTotalMatchesPlayed() + 1);
         careerStats.setTotalGoals(careerStats.getTotalGoals() + (matchStats.getGoals() != null ? matchStats.getGoals() : 0));
@@ -192,10 +283,6 @@ public class PlayerHistoryService {
         if (seasonStats.getAverageRating() > careerStats.getHighestSeasonRating()) {
             careerStats.setHighestSeasonRating(seasonStats.getAverageRating());
         }
-
-        checkCareerMilestones(careerStats);
-
-        playerCareerStatsRepository.save(careerStats);
     }
 
     public void updateCareerStats(Player player) {
