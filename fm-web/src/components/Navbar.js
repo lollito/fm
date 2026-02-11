@@ -189,15 +189,30 @@ const Navbar = ({ onToggleMenu }) => {
                             <div className="dropdown-item text-muted">No new notifications</div>
                         ) : (
                             unreadNotifications.map(notif => (
-                                <div key={notif.id} className="dropdown-item notification-item" onClick={() => {
-                                    if (notif.actionUrl) navigate(notif.actionUrl);
-                                }}>
-                                    <div className="notif-content">
+                <div key={notif.id} className="dropdown-item notification-item">
+                    <div
+                        className="notif-content"
+                        role={notif.actionUrl ? "button" : undefined}
+                        tabIndex={notif.actionUrl ? 0 : undefined}
+                        onClick={() => notif.actionUrl && navigate(notif.actionUrl)}
+                        onKeyDown={(e) => {
+                            if (notif.actionUrl && (e.key === 'Enter' || e.key === ' ')) {
+                                e.preventDefault();
+                                navigate(notif.actionUrl);
+                            }
+                        }}
+                        style={{ cursor: notif.actionUrl ? 'pointer' : 'default' }}
+                    >
                                         <div className="notif-title">{notif.title}</div>
                                         <div className="notif-message">{notif.message}</div>
                                         <small className="text-muted">{new Date(notif.createdAt).toLocaleTimeString()}</small>
                                     </div>
-                                    <button className="btn btn-sm btn-link text-muted" onClick={(e) => handleMarkRead(notif.id, e)}>
+                    <button
+                        className="btn btn-sm btn-link text-muted"
+                        onClick={(e) => handleMarkRead(notif.id, e)}
+                        aria-label="Mark as read"
+                        title="Mark as read"
+                    >
                                         <i className="fas fa-check"></i>
                                     </button>
                                 </div>
