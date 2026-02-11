@@ -56,6 +56,61 @@ public class SimulationMatchServiceTest {
     @Mock private AchievementService achievementService;
 
     @Test
+    public void testSimulateMatchesBatch() {
+        // 1. Setup Data
+        Match match1 = new Match();
+        match1.setId(1L);
+        Club homeClub1 = createClub("Home FC 1");
+        Club awayClub1 = createClub("Away FC 1");
+        match1.setHome(homeClub1);
+        match1.setAway(awayClub1);
+        match1.setHomeScore(0);
+        match1.setAwayScore(0);
+
+        Match match2 = new Match();
+        match2.setId(2L);
+        Club homeClub2 = createClub("Home FC 2");
+        Club awayClub2 = createClub("Away FC 2");
+        match2.setHome(homeClub2);
+        match2.setAway(awayClub2);
+        match2.setHomeScore(0);
+        match2.setAwayScore(0);
+
+        List<Match> matches = new ArrayList<>();
+        matches.add(match1);
+        matches.add(match2);
+
+        // Pre-built formations
+        Formation homeFormation1 = createFormation(homeClub1.getTeam().getPlayers());
+        Formation awayFormation1 = createFormation(awayClub1.getTeam().getPlayers());
+        Formation homeFormation2 = createFormation(homeClub2.getTeam().getPlayers());
+        Formation awayFormation2 = createFormation(awayClub2.getTeam().getPlayers());
+
+        // 2. Configure Mocks
+        when(stadiumService.getCapacity(any())).thenReturn(50000);
+
+        // Mock formation creation for all
+        when(formationService.createFormation(anyList(), any())).thenReturn(homeFormation1, awayFormation1, homeFormation2, awayFormation2);
+
+        // Mock getting players by position
+        when(formationService.getDefender(any(Formation.class))).thenAnswer(i -> new ArrayList<>(((Formation)i.getArgument(0)).getPlayers().subList(0, 4)));
+        when(formationService.getMiedfileder(any(Formation.class))).thenAnswer(i -> new ArrayList<>(((Formation)i.getArgument(0)).getPlayers().subList(4, 8)));
+        when(formationService.getOffender(any(Formation.class))).thenAnswer(i -> new ArrayList<>(((Formation)i.getArgument(0)).getPlayers().subList(8, 11)));
+
+        // 3. Execute
+        simulationMatchService.simulate(matches);
+
+        // 4. Verify
+        // Check if batch update was called once with list of all stats
+        verify(playerHistoryService, times(1)).updateMatchStatisticsBatch(anyList());
+        // Verify individual update was NOT called
+        verify(playerHistoryService, times(0)).updateMatchStatistics(any(), any());
+
+        verify(matchRepository).saveAll(matches);
+        verify(rankingService).updateAll(matches);
+    }
+
+    @Test
     public void testSimulateMatch() {
         // 1. Setup Data
         Match match = new Match();
