@@ -64,8 +64,14 @@ const QuestList = ({ limit }) => {
                 className="btn btn-sm btn-success"
                 onClick={() => handleClaim(quest.id)}
                 disabled={claiming === quest.id}
+                aria-label={`Claim reward for ${quest.description}`}
               >
-                {claiming === quest.id ? 'Claiming...' : 'Claim Reward'}
+                {claiming === quest.id ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>Claiming...</span>
+                  </>
+                ) : 'Claim Reward'}
               </button>
             )}
           </div>
@@ -81,6 +87,7 @@ const QuestList = ({ limit }) => {
               aria-valuenow={progress}
               aria-valuemin="0"
               aria-valuemax="100"
+              aria-label={`Progress for ${quest.description}`}
             />
           </div>
         </div>
