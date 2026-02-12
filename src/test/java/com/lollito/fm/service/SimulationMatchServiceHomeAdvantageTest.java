@@ -47,6 +47,7 @@ public class SimulationMatchServiceHomeAdvantageTest {
     @Mock private PlayerHistoryService playerHistoryService;
     @Mock private InjuryService injuryService;
     @Mock private AchievementService achievementService;
+    @Mock private StaffService staffService;
 
     @Test
     public void testHomeAdvantage_FullStadium() {
@@ -77,13 +78,14 @@ public class SimulationMatchServiceHomeAdvantageTest {
 
         // 2. Configure Mocks
         when(stadiumService.getCapacity(any())).thenReturn(capacity);
+        when(staffService.calculateClubStaffBonuses(any(Club.class))).thenReturn(new com.lollito.fm.dto.StaffBonusesDTO());
         when(formationService.createFormation(anyList(), any())).thenReturn(homeFormation).thenReturn(awayFormation);
         when(formationService.getDefender(any(Formation.class))).thenAnswer(i -> new ArrayList<>(((Formation)i.getArgument(0)).getPlayers().subList(0, 4)));
         when(formationService.getMiedfileder(any(Formation.class))).thenAnswer(i -> new ArrayList<>(((Formation)i.getArgument(0)).getPlayers().subList(4, 8)));
         when(formationService.getOffender(any(Formation.class))).thenAnswer(i -> new ArrayList<>(((Formation)i.getArgument(0)).getPlayers().subList(8, 11)));
         when(playerService.getOffenceAverage(anyList())).thenReturn(80);
         when(playerService.getDefenceAverage(anyList())).thenReturn(80);
-        when(injuryService.checkForInjury(any(), anyDouble())).thenReturn(false);
+        when(injuryService.checkForInjury(any(), anyDouble(), anyDouble())).thenReturn(false);
 
         // 3. Control Randomness
         try (MockedStatic<RandomUtils> mockedRandom = mockStatic(RandomUtils.class)) {

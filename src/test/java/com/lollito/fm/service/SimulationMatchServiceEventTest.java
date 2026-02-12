@@ -46,6 +46,7 @@ public class SimulationMatchServiceEventTest {
     @Mock private InjuryService injuryService;
     @Mock private RankingService rankingService;
     @Mock private AchievementService achievementService;
+    @Mock private StaffService staffService;
 
     private Match match;
     private Player playerWithNullCondition;
@@ -79,6 +80,7 @@ public class SimulationMatchServiceEventTest {
 
         // Mocks
         when(stadiumService.getCapacity(any())).thenReturn(10000);
+        when(staffService.calculateClubStaffBonuses(any(Club.class))).thenReturn(new com.lollito.fm.dto.StaffBonusesDTO());
 
         // Mock Formation Service to return valid formations
         when(formationService.createFormation(anyList(), any())).thenAnswer(invocation -> {
