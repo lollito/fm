@@ -51,6 +51,7 @@ public class SimulationMatchService {
 	@Autowired InjuryService injuryService;
 	@Autowired AchievementService achievementService;
 	@Autowired ManagerProgressionService managerProgressionService;
+	@Autowired StaffService staffService;
 	
 	public void simulate(List<Match> matches){
 		List<Player> allPlayersToSave = new ArrayList<>();
@@ -622,17 +623,35 @@ public class SimulationMatchService {
 	        	player.decrementCondition(d);
 	        }
 		}
-		List<Player> players = Stream.concat(homeFormation.getPlayers().stream(), awayFormation.getPlayers().stream())
-                .collect(Collectors.toList());
-		
 		double matchIntensity = 1.0;
-		players.forEach(player -> {
-			if (injuryService.checkForInjury(player, matchIntensity)) {
+
+		Double homeInjuryBonus = 0.0;
+		if (match.getHome() != null) {
+			Double bonus = staffService.calculateClubStaffBonuses(match.getHome()).getInjuryPreventionBonus();
+			if (bonus != null) homeInjuryBonus = bonus;
+		}
+
+		Double awayInjuryBonus = 0.0;
+		if (match.getAway() != null) {
+			Double bonus = staffService.calculateClubStaffBonuses(match.getAway()).getInjuryPreventionBonus();
+			if (bonus != null) awayInjuryBonus = bonus;
+		}
+
+		for (Player player : homeFormation.getPlayers()) {
+			if (injuryService.checkForInjury(player, matchIntensity, homeInjuryBonus)) {
 				Injury injury = injuryService.createInjury(player, InjuryContext.MATCH);
 				int injuryMinute = RandomUtils.randomValue(1, 90);
 				events.add(new EventHistory(String.format(Event.INJURY.getMessage(), player.getSurname(), injury.getDescription()), injuryMinute, Event.INJURY));
 			}
-		});
+		}
+
+		for (Player player : awayFormation.getPlayers()) {
+			if (injuryService.checkForInjury(player, matchIntensity, awayInjuryBonus)) {
+				Injury injury = injuryService.createInjury(player, InjuryContext.MATCH);
+				int injuryMinute = RandomUtils.randomValue(1, 90);
+				events.add(new EventHistory(String.format(Event.INJURY.getMessage(), player.getSurname(), injury.getDescription()), injuryMinute, Event.INJURY));
+			}
+		}
 		events.sort(Comparator.comparingInt(EventHistory::getMinute));
 
 		int homePosessionPerc = (homePosession * 100) / numberOfActions;

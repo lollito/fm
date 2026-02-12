@@ -50,16 +50,6 @@ public class InjuryService {
     private Integer conditionThreshold;
 
     public boolean checkForInjury(Player player, Double matchIntensity) {
-        // Age factor (older players more prone)
-        double ageFactor = player.getAge() > ageThreshold ? 1.5 : 1.0;
-
-        // Condition factor (tired players more prone)
-        double conditionFactor = player.getCondition() < conditionThreshold ? 2.0 : 1.0;
-
-        // Previous injury factor
-        boolean hasHistory = !player.getInjuries().isEmpty();
-        double injuryHistoryFactor = hasHistory ? 1.3 : 1.0;
-
         // Staff bonus
         double injuryReduction = 0.0;
         if (player.getTeam() != null) {
@@ -71,10 +61,23 @@ public class InjuryService {
                 }
             }
         }
+        return checkForInjury(player, matchIntensity, injuryReduction);
+    }
+
+    public boolean checkForInjury(Player player, Double matchIntensity, Double injuryReduction) {
+        // Age factor (older players more prone)
+        double ageFactor = player.getAge() > ageThreshold ? 1.5 : 1.0;
+
+        // Condition factor (tired players more prone)
+        double conditionFactor = player.getCondition() < conditionThreshold ? 2.0 : 1.0;
+
+        // Previous injury factor
+        boolean hasHistory = !player.getInjuries().isEmpty();
+        double injuryHistoryFactor = hasHistory ? 1.3 : 1.0;
 
         double finalProbability = baseProbability * ageFactor *
                                 conditionFactor * injuryHistoryFactor *
-                                matchIntensity * (1.0 - injuryReduction);
+                                matchIntensity * (1.0 - (injuryReduction != null ? injuryReduction : 0.0));
 
         // Use ThreadLocalRandom for correct probability [0.0, 1.0)
         return ThreadLocalRandom.current().nextDouble() < finalProbability;

@@ -245,6 +245,10 @@ public class StaffService {
 
     public StaffBonusesDTO calculateClubStaffBonuses(Long clubId) {
         Club club = clubService.findById(clubId);
+        return calculateClubStaffBonuses(club);
+    }
+
+    public StaffBonusesDTO calculateClubStaffBonuses(Club club) {
         List<Staff> activeStaff = club.getActiveStaff();
 
         double totalMotivationBonus = 0.0;

@@ -1,3 +1,3 @@
-## 2026-02-10 - Incremental Updates for Player Career Stats
-**Learning:** Avoiding full recalculations of aggregated data (like career stats) by using incremental updates saved significant database I/O in the hot path of match simulation.
-**Action:** Look for other places where aggregated data is recalculated from scratch instead of incrementally updated.
+## 2026-02-12 - Mockito Stubbing with Nulls
+**Learning:** When stubbing a method with `anyDouble()`, Mockito expects a non-null Double (or primitive double). If the code under test passes `null` (e.g. from a nullable DTO field), `anyDouble()` matcher fails with a strict stubbing mismatch or argument mismatch error.
+**Action:** Use `any()` or `nullable(Double.class)` when the argument can be null, or better yet, ensure the code under test handles nulls gracefully (e.g. defaulting to 0.0) so tests can use primitive matchers or explicit values. Also, when mocking DTOs that return wrappers (Double), remember default Mockito mocks return null/empty, and default constructors might leave fields as null.
