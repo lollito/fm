@@ -76,7 +76,13 @@ const TrainingPlan = ({ teamId }) => {
         }));
     };
 
-    if (loading) return <div>Loading training plan...</div>;
+    if (loading) return (
+        <div className="d-flex justify-content-center my-5" role="status">
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading training plan...</span>
+            </div>
+        </div>
+    );
     if (!plan) return <div>No plan data available</div>;
 
     return (
@@ -87,14 +93,19 @@ const TrainingPlan = ({ teamId }) => {
                 <h3>Weekly Schedule</h3>
                 {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
                     <div key={day} className="training-day" style={{ marginBottom: '15px' }}>
-                        <label className="day-label" style={{ fontWeight: 'bold', marginRight: '10px' }}>
+                        <label
+                            htmlFor={`training-focus-${day}`}
+                            className="day-label"
+                            style={{ fontWeight: 'bold', marginRight: '10px', display: 'inline-block', width: '100px' }}
+                        >
                             {day.charAt(0).toUpperCase() + day.slice(1)}
                         </label>
                         <select
+                            id={`training-focus-${day}`}
                             value={plan[day + 'Focus'] || ''}
                             onChange={(e) => handleFocusChange(day, e.target.value)}
-                            className="focus-select"
-                            style={{ padding: '5px', marginRight: '10px' }}
+                            className="focus-select form-control"
+                            style={{ marginRight: '10px', display: 'inline-block', width: 'auto' }}
                         >
                             <option value="">Rest Day</option>
                             {trainingFocusOptions.map(option => (
@@ -115,9 +126,10 @@ const TrainingPlan = ({ teamId }) => {
             <div className="training-intensity" style={{ marginTop: '20px' }}>
                 <h3>Training Intensity</h3>
                 {intensityOptions.map(option => (
-                    <div key={option.value} className="intensity-option" style={{ marginBottom: '5px' }}>
-                        <label>
+                    <div key={option.value} className="intensity-option mb-2">
+                        <div className="d-flex align-items-center">
                             <input
+                                id={`intensity-${option.value}`}
                                 type="radio"
                                 name="intensity"
                                 value={option.value}
@@ -126,10 +138,16 @@ const TrainingPlan = ({ teamId }) => {
                                     ...prev,
                                     intensity: e.target.value
                                 }))}
+                                aria-describedby={`desc-intensity-${option.value}`}
+                                className="me-2"
                             />
-                            <span className="intensity-label" style={{ fontWeight: 'bold', margin: '0 5px' }}>{option.label}</span>
-                            <span className="intensity-description" style={{ fontSize: '0.9em', color: '#666' }}>({option.description})</span>
-                        </label>
+                            <label htmlFor={`intensity-${option.value}`} className="fw-bold me-2 mb-0" style={{ cursor: 'pointer' }}>
+                                {option.label}
+                            </label>
+                            <span id={`desc-intensity-${option.value}`} className="text-muted small">
+                                ({option.description})
+                            </span>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -152,10 +170,15 @@ const TrainingPlan = ({ teamId }) => {
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="save-button"
-                    style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                    className="save-button btn btn-primary"
+                    aria-busy={saving}
                 >
-                    {saving ? 'Saving...' : 'Save Training Plan'}
+                    {saving ? (
+                        <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Saving...
+                        </>
+                    ) : 'Save Training Plan'}
                 </button>
             </div>
         </div>
