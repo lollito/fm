@@ -2,6 +2,7 @@ package com.lollito.fm.repository.rest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,4 +34,18 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
 	@Query("SELECT m FROM Match m JOIN FETCH m.home JOIN FETCH m.away WHERE m.round.id = :roundId ORDER BY m.date ASC")
 	List<Match> findByRoundIdWithClubs(@Param("roundId") Long roundId);
+
+	@Query("SELECT m FROM Match m " +
+			"LEFT JOIN FETCH m.home h " +
+			"LEFT JOIN FETCH h.team ht " +
+			"LEFT JOIN FETCH ht.formation " +
+			"LEFT JOIN FETCH h.stadium " +
+			"LEFT JOIN FETCH h.user " +
+			"LEFT JOIN FETCH m.away a " +
+			"LEFT JOIN FETCH a.team at " +
+			"LEFT JOIN FETCH at.formation " +
+			"LEFT JOIN FETCH a.stadium " +
+			"LEFT JOIN FETCH a.user " +
+			"WHERE m.id = :matchId")
+	Optional<Match> findByIdWithSimulationData(@Param("matchId") Long matchId);
 }
