@@ -213,11 +213,11 @@ public class SimulationMatchService {
 		if (coin == 0){
 			homeFormation.setHaveBall(true);
 			events.add(new EventHistory(String.format(Event.HAVE_BALL.getMessage(), match.getHome().getName()) , 0));
-			//logger.info("home have ball");
+			//logger.debug("home have ball");
 		} else {
 			awayFormation.setHaveBall(true);
 			events.add(new EventHistory(String.format(Event.HAVE_BALL.getMessage(), match.getAway().getName()) , 0));
-			//logger.info("away have ball");
+			//logger.debug("away have ball");
 		}
 		
 		PlayerPosition playerPosition = PlayerPosition.MIDFIELD;
@@ -288,7 +288,7 @@ public class SimulationMatchService {
 				if((averageDiff > 0 && RandomUtils.randomPercentage(65 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(45 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
-						logger.info("home ball -> {}", playerPosition.getvalue());
+						logger.debug("home ball -> {}", playerPosition.getvalue());
 					}else {
 							      
 						
@@ -312,14 +312,14 @@ public class SimulationMatchService {
 								stats.addHomeShot();
 								stats.addHomeOnTarget();
 								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
-								logger.info("home gol");
+								logger.debug("home gol");
 							} else {
 								stats.addHomeShot();
 								stats.addHomeOnTarget();
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
 								trackSave(awayFormation.getGoalKeeper(), allPlayerStats);
 								events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
-								logger.info("home corner");
+								logger.debug("home corner");
 							}
 						} else {
 							Integer diff = goalKeeping - scorer.getScoringAverage();
@@ -331,7 +331,7 @@ public class SimulationMatchService {
 								playerPosition = inversePosition.get(playerPosition);
 								stats.addHomeShot();
 								events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute, Event.SHOT_AND_MISSED));
-								logger.info("shot missed");
+								logger.debug("shot missed");
 							} else {
 								homeScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
@@ -343,7 +343,7 @@ public class SimulationMatchService {
 								stats.addHomeShot();
 								stats.addHomeOnTarget();
 								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
-								logger.info("home gol");
+								logger.debug("home gol");
 							}
 						}
 						
@@ -372,7 +372,7 @@ public class SimulationMatchService {
 							}
 							
 						}
-						logger.info("away commits faul {}" , playerPosition);
+						logger.debug("away commits faul {}" , playerPosition);
 						if(playerPosition.getvalue() == PlayerPosition.values().length -1 ) {
 							Player scorer = homePlayers.get(playerPosition).stream().max(Comparator.comparing(Player::getPiecesAverage)).get();
 							trackAction(scorer, allPlayerStats, ActionType.SHOT);
@@ -393,14 +393,14 @@ public class SimulationMatchService {
 									stats.addHomeShot();
 									stats.addHomeOnTarget();
 									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
-									logger.info("home gol free kick");
+									logger.debug("home gol free kick");
 								} else {
 									stats.addHomeShot();
 									stats.addHomeOnTarget();
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
 									trackSave(awayFormation.getGoalKeeper(), allPlayerStats);
 									events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
-									logger.info("home corner");
+									logger.debug("home corner");
 								}
 							} else {
 								Integer diff = goalKeeping - scorer.getScoringAverage();
@@ -411,7 +411,7 @@ public class SimulationMatchService {
 									playerPosition = inversePosition.get(playerPosition);
 									stats.addHomeShot();
 									events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute, Event.SHOT_AND_MISSED));
-									logger.info("shot missed");
+									logger.debug("shot missed");
 								} else {
 									homeScore++;
 									trackAction(scorer, allPlayerStats, ActionType.GOAL);
@@ -423,12 +423,12 @@ public class SimulationMatchService {
 									stats.addHomeShot();
 									stats.addHomeOnTarget();
 									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
-									logger.info("home gol free kick");
+									logger.debug("home gol free kick");
 								}
 							}
 						}
 					} else {
-						logger.info("home lost ball {}" , playerPosition);
+						logger.debug("home lost ball {}" , playerPosition);
 						playerPosition = inversePosition.get(playerPosition);
 						homeFormation.setHaveBall(false);
 						awayFormation.setHaveBall(true);
@@ -464,7 +464,7 @@ public class SimulationMatchService {
 				if((averageDiff > 0 && RandomUtils.randomPercentage(65 + averageDiff + luck)) || (averageDiff <= 0 && RandomUtils.randomPercentage(45 + averageDiff + luck))) {
 					if(playerPosition.getvalue() < PlayerPosition.values().length -1   ){
 						playerPosition = PlayerPosition.valueOf(playerPosition.getvalue() + 1);
-						logger.info("away ball -> {}", playerPosition.getvalue());
+						logger.debug("away ball -> {}", playerPosition.getvalue());
 					}else {
 						Player scorer = RandomUtils.randomValueFromList(awayPlayers.get(playerPosition));
 						trackAction(scorer, allPlayerStats, ActionType.SHOT);
@@ -486,14 +486,14 @@ public class SimulationMatchService {
 								stats.addAwayShot();
 								stats.addAwayOnTarget();
 								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
-								logger.info("away gol");
+								logger.debug("away gol");
 							} else {
 								stats.addAwayShot();
 								stats.addAwayOnTarget();
 								trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
 								trackSave(homeFormation.getGoalKeeper(), allPlayerStats);
 								events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
-								logger.info("home corner");
+								logger.debug("home corner");
 							}
 						} else {
 							Integer diff = goalKeeping - scorer.getScoringAverage();
@@ -505,7 +505,7 @@ public class SimulationMatchService {
 								playerPosition = inversePosition.get(playerPosition);
 								stats.addAwayShot();
 								events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute, Event.SHOT_AND_MISSED));
-								logger.info("shot missed");
+								logger.debug("shot missed");
 							} else {
 								awayScore++;
 								trackAction(scorer, allPlayerStats, ActionType.GOAL);
@@ -517,7 +517,7 @@ public class SimulationMatchService {
 								stats.addAwayShot();
 								stats.addAwayOnTarget();
 								events.add(new EventHistory(String.format(Event.HAVE_SCORED.getMessage(),scorer.getSurname()) , minute, Event.HAVE_SCORED, homeScore, awayScore));
-								logger.info("away gol");
+								logger.debug("away gol");
 							}
 						}
 						
@@ -545,7 +545,7 @@ public class SimulationMatchService {
 								events.add(new EventHistory(String.format(Event.YELLOW_CARD.getMessage(), badPlayer.getName()) , minute, Event.YELLOW_CARD));
 							}
 						}
-						logger.info("home commits faul {}" , playerPosition);
+						logger.debug("home commits faul {}" , playerPosition);
 						if(playerPosition.getvalue() == PlayerPosition.values().length -1 ) {
 							Player scorer = awayPlayers.get(playerPosition).stream().max(Comparator.comparing(Player::getPiecesAverage)).get();
 							trackAction(scorer, allPlayerStats, ActionType.SHOT);
@@ -566,14 +566,14 @@ public class SimulationMatchService {
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
 									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
-									logger.info("away gol free kick");
+									logger.debug("away gol free kick");
 								} else {
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
 									trackAction(scorer, allPlayerStats, ActionType.SHOT_ON_TARGET);
 									trackSave(homeFormation.getGoalKeeper(), allPlayerStats);
 									events.add(new EventHistory(String.format(Event.HAVE_CORNER.getMessage(), match.getHome().getName()) , minute, Event.HAVE_CORNER));
-									logger.info("home corner");
+									logger.debug("home corner");
 								}
 							} else {
 								Integer diff = goalKeeping - scorer.getScoringAverage();
@@ -584,7 +584,7 @@ public class SimulationMatchService {
 									playerPosition = inversePosition.get(playerPosition);
 									stats.addAwayShot();
 									events.add(new EventHistory(String.format(Event.SHOT_AND_MISSED.getMessage(), scorer.getSurname()) , minute, Event.SHOT_AND_MISSED));
-									logger.info("shot missed");
+									logger.debug("shot missed");
 								} else {
 									awayScore++;
 									trackAction(scorer, allPlayerStats, ActionType.GOAL);
@@ -596,12 +596,12 @@ public class SimulationMatchService {
 									stats.addAwayShot();
 									stats.addAwayOnTarget();
 									events.add(new EventHistory(String.format(Event.HAVE_SCORED_FREE_KICK.getMessage(), scorer.getSurname()) , minute, Event.HAVE_SCORED_FREE_KICK, homeScore, awayScore));
-									logger.info("away gol free kick");
+									logger.debug("away gol free kick");
 								}
 							}
 						}
 					} else {
-						logger.info("away lost ball {}" , playerPosition);
+						logger.debug("away lost ball {}" , playerPosition);
 						playerPosition = inversePosition.get(playerPosition);
 						homeFormation.setHaveBall(true);
 						awayFormation.setHaveBall(false);
@@ -658,7 +658,7 @@ public class SimulationMatchService {
 		stats.setHomePossession(homePosessionPerc);
 		stats.setAwayPossession(100 - homePosessionPerc);
 		
-		logger.info("homePosessionPerc {}", homePosessionPerc);
+		logger.debug("homePosessionPerc {}", homePosessionPerc);
 		
 		match.setStats(stats);
 		match.addEvents(events);
@@ -686,7 +686,7 @@ public class SimulationMatchService {
 
 		match.setPlayerStats(new ArrayList<>(allPlayerStats.values()));
 		
-		logger.info("{} vs {}", homeScore, awayScore);
+		logger.debug("{} vs {}", homeScore, awayScore);
 		return new int[]{homeScore, awayScore};
 	}
 
@@ -837,7 +837,7 @@ public class SimulationMatchService {
 				allPlayerStats.put(candidateIn, mpsIn);
 
 				events.add(new EventHistory(String.format(Event.SUBSTITUTION.getMessage(), candidateIn.getSurname(), candidateOut.getSurname()), minute, Event.SUBSTITUTION));
-				logger.info("{} Substitution: {} for {} (Strategy: {})", isHome ? "Home" : "Away", candidateIn.getSurname(), candidateOut.getSurname(), strategy);
+				logger.debug("{} Substitution: {} for {} (Strategy: {})", isHome ? "Home" : "Away", candidateIn.getSurname(), candidateOut.getSurname(), strategy);
 			}
 		}
 	}
