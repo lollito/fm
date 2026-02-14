@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.lollito.fm.model.dto.LiveMatchSummaryDTO;
 import com.lollito.fm.service.LiveMatchService;
@@ -48,12 +49,14 @@ public class LiveMatchController {
     }
 
     @PostMapping("/{id}/finish")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> finishLiveMatch(@PathVariable Long id) {
         liveMatchService.forceFinish(id);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/reset")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> resetLiveMatch(@PathVariable Long id) {
         liveMatchService.reset(id);
         return ResponseEntity.ok().build();

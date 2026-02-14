@@ -7,8 +7,7 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
-//TODO uncomment when import spring-security
-//import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -48,13 +47,12 @@ public class ExceptionTranslator {
         return ex.getErrorVM();
     }
 
-    //TODO uncomment when import spring-security
-//    @ExceptionHandler(AccessDeniedException.class)
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    @ResponseBody
-//    public ErrorVM processAccessDeniedException(AccessDeniedException e) {
-//        return new ErrorVM(ErrorConstants.ERR_ACCESS_DENIED, e.getMessage());
-//    }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorVM processAccessDeniedException(AccessDeniedException e) {
+        return new ErrorVM(ErrorConstants.ERR_ACCESS_DENIED, e.getMessage());
+    }
 
     private ErrorVM processFieldErrors(List<FieldError> fieldErrors) {
         ErrorVM dto = new ErrorVM(ErrorConstants.ERR_VALIDATION);
