@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import jakarta.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +25,18 @@ public class NameService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired NameGenerator nameGenerator;
-	
+
+	private List<String> names;
+	private List<String> surnames;
+	private List<String> countryFileLanes;
+
+	@PostConstruct
+	public void init() {
+		this.names = Collections.unmodifiableList(getStrings("/name/name.txt"));
+		this.surnames = Collections.unmodifiableList(getStrings("/name/surname.txt"));
+		this.countryFileLanes = Collections.unmodifiableList(getStrings("/name/country.txt"));
+	}
+
 	public String generateClubName(){
 		List<String> prefix = Arrays.asList("A.S. ", "F.C. ", "S.S. ", "A.C. ", "", "", "", "", "");
 		
@@ -31,15 +45,15 @@ public class NameService {
 	}
 	
 	public List<String> getNames(){
-		return getStrings("/name/name.txt");
+		return names;
 	}
 	
 	public List<String> getSurnames(){
-		return getStrings("/name/surname.txt");
+		return surnames;
 	}
 	
 	public List<String> getCountryFileLanes(){
-		return getStrings("/name/country.txt");
+		return countryFileLanes;
 	}
 	
 	private List<String> getStrings(String path){
