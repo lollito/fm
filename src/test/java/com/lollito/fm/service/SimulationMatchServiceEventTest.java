@@ -127,7 +127,7 @@ public class SimulationMatchServiceEventTest {
     }
 
     @Test
-    public void testEventPersistenceReference() {
+    public void testEventPersistenceReferenceIsCorrect() {
         // Run simulation
         simulationMatchService.simulate(match);
 
@@ -135,8 +135,7 @@ public class SimulationMatchServiceEventTest {
         List<EventHistory> events = match.getEvents();
         assertFalse(events.isEmpty(), "Events should be generated");
 
-        // Verify the BUG: Check if events have match reference set
-        // Expecting this to FAIL currently if the bug exists
+        // Verify that EventHistory objects have the correct match reference set
         for (EventHistory event : events) {
              assertNotNull(event.getMatch(), "EventHistory.match reference should not be null");
              assertEquals(match, event.getMatch(), "EventHistory.match should point to the match object");
