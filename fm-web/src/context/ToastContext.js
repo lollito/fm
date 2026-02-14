@@ -12,13 +12,7 @@ export const ToastProvider = ({ children }) => {
     const showToast = useCallback((message, type = 'info', duration = 3000) => {
         const id = Date.now() + Math.random();
         setToasts((prevToasts) => [...prevToasts, { id, message, type, duration }]);
-
-        if (duration > 0) {
-            setTimeout(() => {
-                removeToast(id);
-            }, duration);
-        }
-    }, [removeToast]);
+    }, []);
 
     return (
         <ToastContext.Provider value={{ showToast, removeToast, toasts }}>
