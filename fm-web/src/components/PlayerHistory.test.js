@@ -70,4 +70,38 @@ describe('PlayerHistory Component', () => {
              expect(screen.getByText('Player history not found')).toBeInTheDocument();
         });
     });
+
+    test('renders tabs with correct accessibility attributes', async () => {
+        const mockData = {
+            player: { name: 'John', surname: 'Doe' },
+            careerStats: {},
+            seasonStats: [],
+            achievements: [],
+            transferHistory: []
+        };
+        api.getPlayerHistory.mockResolvedValue({ data: mockData });
+
+        render(<PlayerHistory playerId={1} />);
+
+        await waitFor(() => {
+            const tabList = screen.getByRole('tablist');
+            expect(tabList).toBeInTheDocument();
+
+            const tabs = screen.getAllByRole('tab');
+            expect(tabs).toHaveLength(4);
+
+            const overviewTab = screen.getByRole('tab', { name: /Overview/i });
+            expect(overviewTab).toHaveAttribute('aria-selected', 'true');
+            expect(overviewTab).toHaveAttribute('aria-controls', 'overview-panel');
+
+            const seasonsTab = screen.getByRole('tab', { name: /Seasons/i });
+            expect(seasonsTab).toHaveAttribute('aria-selected', 'false');
+            expect(seasonsTab).toHaveAttribute('aria-controls', 'seasons-panel');
+
+            // Verify panel is present and labelled correctly
+            const panel = screen.getByRole('tabpanel');
+            expect(panel).toHaveAttribute('id', 'overview-panel');
+            expect(panel).toHaveAttribute('aria-labelledby', 'overview-tab');
+        });
+    });
 });

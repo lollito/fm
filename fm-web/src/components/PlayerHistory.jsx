@@ -130,12 +130,16 @@ const PlayerHistory = ({ playerId }) => {
                 </div>
             </div>
 
-            <ul className="nav nav-tabs">
+            <ul className="nav nav-tabs" role="tablist">
                 {['overview', 'seasons', 'achievements', 'transfers'].map(tab => (
-                    <li className="nav-item" key={tab}>
+                    <li className="nav-item" role="presentation" key={tab}>
                         <button
                             className={`nav-link ${selectedTab === tab ? 'active' : ''}`}
                             onClick={() => setSelectedTab(tab)}
+                            role="tab"
+                            aria-selected={selectedTab === tab}
+                            aria-controls={`${tab}-panel`}
+                            id={`${tab}-tab`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
                             {tab === 'achievements' && ` (${achievements.length})`}
@@ -146,7 +150,12 @@ const PlayerHistory = ({ playerId }) => {
 
             <div className="tab-content mt-3">
                 {selectedTab === 'overview' && (
-                    <div className="overview-tab">
+                    <div
+                        className="overview-tab"
+                        role="tabpanel"
+                        id="overview-panel"
+                        aria-labelledby="overview-tab"
+                    >
                         <div className="row mb-4">
                             <div className="col-12 col-md-6 mb-4">
                                 <div className="card h-100">
@@ -218,7 +227,12 @@ const PlayerHistory = ({ playerId }) => {
                 )}
 
                 {selectedTab === 'seasons' && (
-                    <div className="seasons-tab card">
+                    <div
+                        className="seasons-tab card"
+                        role="tabpanel"
+                        id="seasons-panel"
+                        aria-labelledby="seasons-tab"
+                    >
                         <div className="card-body p-0">
                             <div className="table-responsive">
                                 <table className="table mb-0">
@@ -258,7 +272,12 @@ const PlayerHistory = ({ playerId }) => {
                 )}
 
                 {selectedTab === 'achievements' && (
-                    <div className="achievements-tab">
+                    <div
+                        className="achievements-tab"
+                        role="tabpanel"
+                        id="achievements-panel"
+                        aria-labelledby="achievements-tab"
+                    >
                         <div className="row">
                             {achievements.map(achievement => (
                                 <div key={achievement.id} className="col-12 col-md-6 col-lg-4 mb-4">
@@ -285,7 +304,12 @@ const PlayerHistory = ({ playerId }) => {
                 )}
 
                 {selectedTab === 'transfers' && (
-                    <div className="transfers-tab">
+                    <div
+                        className="transfers-tab"
+                        role="tabpanel"
+                        id="transfers-panel"
+                        aria-labelledby="transfers-tab"
+                    >
                         <div className="card">
                             <div className="card-body">
                                 {transferHistory.map((transfer, index) => (
