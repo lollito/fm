@@ -56,7 +56,7 @@ public class RankingService {
 
 		Season season = matches.get(0).getRound().getSeason();
 
-		List<Ranking> rankings = rankingLineRepository.findBySeason(season);
+		List<Ranking> rankings = rankingLineRepository.findDistinctBySeasonOrderByPointsDesc(season);
 		Map<Long, Ranking> rankingMap = rankings.stream()
 				.collect(Collectors.toMap(r -> r.getClub().getId(), r -> r));
 
@@ -82,7 +82,8 @@ public class RankingService {
 	public List<Ranking> load(){
 		User user = userService.getLoggedUser();
 		if (user != null && user.getClub() != null) {
-			return user.getClub().getLeague().getCurrentSeason().getRankingLines();
+			Season currentSeason = user.getClub().getLeague().getCurrentSeason();
+			return rankingLineRepository.findDistinctBySeasonOrderByPointsDesc(currentSeason);
 		}
 		return Collections.emptyList();
 	}
