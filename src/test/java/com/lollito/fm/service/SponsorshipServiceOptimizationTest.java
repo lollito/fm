@@ -65,7 +65,7 @@ public class SponsorshipServiceOptimizationTest {
         when(clubService.findById(clubId)).thenReturn(club);
         when(seasonService.getCurrentSeason()).thenReturn(currentSeason);
         when(rankingRepository.findByClubAndSeason(club, currentSeason)).thenReturn(ranking);
-        when(rankingRepository.findBySeason(currentSeason)).thenReturn(allRankings);
+        when(rankingRepository.findDistinctBySeasonOrderByPointsDesc(currentSeason)).thenReturn(allRankings);
         when(sponsorRepository.findAll()).thenReturn(new ArrayList<>()); // Just return empty sponsors
         when(sponsorshipOfferRepository.saveAll(anyList())).thenReturn(new ArrayList<>());
 
@@ -73,7 +73,7 @@ public class SponsorshipServiceOptimizationTest {
         sponsorshipService.generateSponsorshipOffers(clubId);
 
         // Verify
-        verify(rankingRepository).findBySeason(currentSeason);
+        verify(rankingRepository).findDistinctBySeasonOrderByPointsDesc(currentSeason);
         verify(rankingRepository, org.mockito.Mockito.never()).findAll();
     }
 }

@@ -176,7 +176,7 @@ public class SponsorshipService {
         if (ranking == null) return null;
 
         // Calculate position
-        List<Ranking> allRankings = rankingRepository.findBySeason(currentSeason).stream()
+        List<Ranking> allRankings = rankingRepository.findDistinctBySeasonOrderByPointsDesc(currentSeason).stream()
                 .sorted((r1, r2) -> {
                     int p1 = r1.getPoints();
                     int p2 = r2.getPoints();
