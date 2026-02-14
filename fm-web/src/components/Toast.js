@@ -9,9 +9,16 @@ const Toast = ({ id, message, type, duration, onRemove }) => {
                 setIsExiting(true);
             }, duration - 300); // Start exit animation slightly before removal
 
-            return () => clearTimeout(timer);
+            const removeTimer = setTimeout(() => {
+                onRemove(id);
+            }, duration);
+
+            return () => {
+                clearTimeout(timer);
+                clearTimeout(removeTimer);
+            };
         }
-    }, [duration]);
+    }, [duration, id, onRemove]);
 
     const handleRemove = () => {
         setIsExiting(true);
