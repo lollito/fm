@@ -79,7 +79,7 @@ class MatchProcessorTest {
 
     @Test
     void testProcessMatchNotifiesUsers() {
-        when(matchRepository.findById(100L)).thenReturn(Optional.of(match));
+        when(matchRepository.findByIdWithSimulationData(100L)).thenReturn(Optional.of(match));
 
         matchProcessor.processMatch(100L);
 

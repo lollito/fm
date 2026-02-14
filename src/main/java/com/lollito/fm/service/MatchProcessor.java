@@ -61,7 +61,7 @@ public class MatchProcessor {
     @Async
     @Transactional
     public void processMatch(Long matchId) {
-        Match match = matchRepository.findById(matchId).orElse(null);
+        Match match = matchRepository.findByIdWithSimulationData(matchId).orElse(null);
         if (match == null || match.getStatus() != MatchStatus.SCHEDULED) {
             return;
         }
