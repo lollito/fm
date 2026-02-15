@@ -65,27 +65,39 @@ const WatchlistManager = ({ clubId }) => {
 
     const getCategoryIcon = (category) => {
         const icons = {
-            TARGET: '🎯',
-            BACKUP: '🔄',
-            FUTURE: '🌟',
-            COMPARISON: '📊',
-            LOAN_TARGET: '📝'
+            TARGET: { symbol: '🎯', label: 'Target' },
+            BACKUP: { symbol: '🔄', label: 'Backup' },
+            FUTURE: { symbol: '🌟', label: 'Future Prospect' },
+            COMPARISON: { symbol: '📊', label: 'Comparison' },
+            LOAN_TARGET: { symbol: '📝', label: 'Loan Target' }
         };
-        return icons[category] || '👤';
+        const iconData = icons[category] || { symbol: '👤', label: 'Player' };
+
+        return (
+            <span role="img" aria-label={iconData.label}>
+                {iconData.symbol}
+            </span>
+        );
     };
 
     const getNotificationIcon = (type) => {
         const icons = {
-            PERFORMANCE: '⚽',
-            TRANSFER_STATUS: '🔄',
-            INJURY: '🏥',
-            CONTRACT_EXPIRY: '📅',
-            PRICE_CHANGE: '💰',
-            MATCH_PERFORMANCE: '🏆',
-            AVAILABILITY: '✅',
-            COMPETITION: '⚠️'
+            PERFORMANCE: { symbol: '⚽', label: 'Performance' },
+            TRANSFER_STATUS: { symbol: '🔄', label: 'Transfer Status' },
+            INJURY: { symbol: '🏥', label: 'Injury' },
+            CONTRACT_EXPIRY: { symbol: '📅', label: 'Contract Expiry' },
+            PRICE_CHANGE: { symbol: '💰', label: 'Price Change' },
+            MATCH_PERFORMANCE: { symbol: '🏆', label: 'Match Performance' },
+            AVAILABILITY: { symbol: '✅', label: 'Availability' },
+            COMPETITION: { symbol: '⚠️', label: 'Competition' }
         };
-        return icons[type] || '📢';
+        const iconData = icons[type] || { symbol: '📢', label: 'Notification' };
+
+        return (
+            <span role="img" aria-label={iconData.label}>
+                {iconData.symbol}
+            </span>
+        );
     };
 
     const formatValueChange = (addedValue, currentValue) => {
@@ -125,29 +137,53 @@ const WatchlistManager = ({ clubId }) => {
                 </div>
             </div>
 
-            <div className="watchlist-tabs">
-                <button
-                    className={selectedTab === 'players' ? 'active' : ''}
-                    onClick={() => setSelectedTab('players')}
-                >
-                    Players ({watchlist?.totalEntries})
-                </button>
-                <button
-                    className={selectedTab === 'notifications' ? 'active' : ''}
-                    onClick={() => setSelectedTab('notifications')}
-                >
-                    Notifications ({notifications.filter(n => !n.isRead).length})
-                </button>
-                <button
-                    className={selectedTab === 'stats' ? 'active' : ''}
-                    onClick={() => setSelectedTab('stats')}
-                >
-                    Statistics
-                </button>
-            </div>
+            <ul className="nav nav-tabs" role="tablist" aria-label="Watchlist Sections">
+                <li className="nav-item" role="presentation">
+                    <button
+                        role="tab"
+                        aria-selected={selectedTab === 'players'}
+                        aria-controls="players-panel"
+                        id="players-tab"
+                        className={`nav-link ${selectedTab === 'players' ? 'active' : ''}`}
+                        onClick={() => setSelectedTab('players')}
+                    >
+                        Players ({watchlist?.totalEntries})
+                    </button>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <button
+                        role="tab"
+                        aria-selected={selectedTab === 'notifications'}
+                        aria-controls="notifications-panel"
+                        id="notifications-tab"
+                        className={`nav-link ${selectedTab === 'notifications' ? 'active' : ''}`}
+                        onClick={() => setSelectedTab('notifications')}
+                    >
+                        Notifications ({notifications.filter(n => !n.isRead).length})
+                    </button>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <button
+                        role="tab"
+                        aria-selected={selectedTab === 'stats'}
+                        aria-controls="stats-panel"
+                        id="stats-tab"
+                        className={`nav-link ${selectedTab === 'stats' ? 'active' : ''}`}
+                        onClick={() => setSelectedTab('stats')}
+                    >
+                        Statistics
+                    </button>
+                </li>
+            </ul>
 
             {selectedTab === 'players' && (
-                <div className="watchlist-players">
+                <div
+                    className="watchlist-players"
+                    role="tabpanel"
+                    id="players-panel"
+                    aria-labelledby="players-tab"
+                    tabIndex="0"
+                >
                     <div className="players-grid">
                         {watchlist?.entries?.map(entry => {
                             const valueChange = formatValueChange(entry.addedValue, entry.currentValue);
@@ -225,11 +261,11 @@ const WatchlistManager = ({ clubId }) => {
 
                                     <div className="notification-settings">
                                         <div className="notification-toggles">
-                                            {entry.notifyOnPerformance && <span title="Performance">⚽</span>}
-                                            {entry.notifyOnTransferStatus && <span title="Transfer Status">🔄</span>}
-                                            {entry.notifyOnInjury && <span title="Injury">🏥</span>}
-                                            {entry.notifyOnContractExpiry && <span title="Contract">📅</span>}
-                                            {entry.notifyOnPriceChange && <span title="Price">💰</span>}
+                                            {entry.notifyOnPerformance && <span role="img" aria-label="Performance" title="Performance">⚽</span>}
+                                            {entry.notifyOnTransferStatus && <span role="img" aria-label="Transfer Status" title="Transfer Status">🔄</span>}
+                                            {entry.notifyOnInjury && <span role="img" aria-label="Injury" title="Injury">🏥</span>}
+                                            {entry.notifyOnContractExpiry && <span role="img" aria-label="Contract Expiry" title="Contract">📅</span>}
+                                            {entry.notifyOnPriceChange && <span role="img" aria-label="Price Change" title="Price">💰</span>}
                                         </div>
                                         <span className="notification-count">
                                             {entry.totalNotifications} notifications
@@ -246,6 +282,7 @@ const WatchlistManager = ({ clubId }) => {
                                         <button
                                             className="remove-btn"
                                             onClick={() => handleRemovePlayer(entry.id)}
+                                            aria-label={`Remove ${entry.player.name} ${entry.player.surname} from watchlist`}
                                         >
                                             Remove
                                         </button>
@@ -264,7 +301,13 @@ const WatchlistManager = ({ clubId }) => {
             )}
 
             {selectedTab === 'notifications' && (
-                <div className="watchlist-notifications">
+                <div
+                    className="watchlist-notifications"
+                    role="tabpanel"
+                    id="notifications-panel"
+                    aria-labelledby="notifications-tab"
+                    tabIndex="0"
+                >
                     <div className="notifications-list">
                         {notifications.map(notification => (
                             <div
@@ -307,7 +350,13 @@ const WatchlistManager = ({ clubId }) => {
             )}
 
             {selectedTab === 'stats' && (
-                <div className="watchlist-stats">
+                <div
+                    className="watchlist-stats"
+                    role="tabpanel"
+                    id="stats-panel"
+                    aria-labelledby="stats-tab"
+                    tabIndex="0"
+                >
                     <div className="stats-grid">
                         <div className="stat-card">
                             <h3>Overview</h3>

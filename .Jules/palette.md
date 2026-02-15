@@ -13,3 +13,7 @@
 ## 2025-02-19 - Accessible Navigation Patterns
 **Learning:** Icon-only buttons (like hamburger menus or notifications) are common but often completely inaccessible to screen readers if they lack `aria-label`. Interactive elements like user dropdowns implemented with `div`s break keyboard navigation (Tab/Enter) unless explicitly given `role="button"`, `tabIndex="0"`, and key handlers.
 **Action:** Always add `aria-label` to icon buttons. For custom interactive components, ensure they are keyboard accessible or replace them with native `<button>` elements where possible to get accessibility for free.
+
+## 2025-02-20 - Consistent Tab Styling
+**Learning:** The application has predefined `nav-tabs` styles in `theme.css` that provide both visual consistency and expected layout behavior, but some components implemented custom tabs using raw buttons.
+**Action:** Use `ul.nav.nav-tabs` and `.nav-link` classes for all tab interfaces. This aligns them with the design system instantly and supports the standard WAI-ARIA tab pattern structure.
