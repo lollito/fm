@@ -9,9 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.lollito.fm.model.Watchlist;
 import com.lollito.fm.model.WatchlistNotification;
+import com.lollito.fm.model.WatchlistEntry;
 
 @Repository
 public interface WatchlistNotificationRepository extends JpaRepository<WatchlistNotification, Long> {
+
+    boolean existsByWatchlistEntryAndMatchId(WatchlistEntry watchlistEntry, Long matchId);
 
     @Query("SELECT n FROM WatchlistNotification n WHERE n.watchlistEntry.watchlist = :watchlist ORDER BY n.createdDate DESC")
     List<WatchlistNotification> findByWatchlistOrderByCreatedDateDesc(@Param("watchlist") Watchlist watchlist);
