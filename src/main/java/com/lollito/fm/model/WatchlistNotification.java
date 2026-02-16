@@ -48,6 +48,8 @@ public class WatchlistNotification {
     // Context data (JSON)
     private String contextData;
 
+    private Long matchId;
+
     @Enumerated(EnumType.STRING)
     private NotificationSeverity severity; // INFO, WARNING, IMPORTANT, CRITICAL
 }

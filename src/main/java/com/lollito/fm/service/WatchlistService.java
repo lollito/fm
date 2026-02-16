@@ -259,7 +259,7 @@ public class WatchlistService {
                 NotificationSeverity.IMPORTANT : NotificationSeverity.INFO;
 
             createWatchlistNotification(entry, WatchlistNotificationType.PRICE_CHANGE,
-                                      title, message, severity);
+                                      title, message, severity, null);
         }
 
         // Update entry with new value
@@ -305,10 +305,7 @@ public class WatchlistService {
     }
 
     private boolean hasNotifiedAboutMatch(WatchlistEntry entry, Match match) {
-        // Implementation check
-        // e.g. check if any notification of type MATCH_PERFORMANCE exists created after match date
-        // with contextData containing matchId
-        return false; // Placeholder
+        return notificationRepository.existsByWatchlistEntryAndMatchId(entry, match.getId());
     }
 
     /**
@@ -330,7 +327,7 @@ public class WatchlistService {
             NotificationSeverity.IMPORTANT : NotificationSeverity.INFO;
 
         createWatchlistNotification(entry, WatchlistNotificationType.MATCH_PERFORMANCE,
-                                  title, message, severity);
+                                  title, message, severity, match.getId());
     }
 
     /**
@@ -438,7 +435,8 @@ public class WatchlistService {
      */
     private void createWatchlistNotification(WatchlistEntry entry, WatchlistNotificationType type,
                                            String title, String message,
-                                           NotificationSeverity severity) {
+                                           NotificationSeverity severity,
+                                           Long matchId) {
         WatchlistNotification notification = WatchlistNotification.builder()
             .watchlistEntry(entry)
             .type(type)
@@ -449,6 +447,7 @@ public class WatchlistService {
             .isImportant(severity == NotificationSeverity.IMPORTANT ||
                         severity == NotificationSeverity.CRITICAL)
             .severity(severity)
+            .matchId(matchId)
             .build();
 
         notificationRepository.save(notification);
