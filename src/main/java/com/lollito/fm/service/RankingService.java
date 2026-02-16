@@ -82,7 +82,9 @@ public class RankingService {
 	public List<Ranking> load(){
 		User user = userService.getLoggedUser();
 		if (user != null && user.getClub() != null) {
-			return user.getClub().getLeague().getCurrentSeason().getRankingLines();
+			Season season = user.getClub().getLeague().getCurrentSeason();
+			// Use optimized query with EntityGraph to fetch Club and User, avoiding N+1 queries.
+			return rankingLineRepository.findDistinctBySeasonOrderByPointsDesc(season);
 		}
 		return Collections.emptyList();
 	}
