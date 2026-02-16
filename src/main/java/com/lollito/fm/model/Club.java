@@ -50,6 +50,8 @@ public class Club implements Serializable{
 	private Long id;
 	
     private String name;
+
+    private String shortName;
     
     private LocalDate foundation;
 
