@@ -114,11 +114,7 @@ public class AdminService {
         // Create club
         Club club = new Club();
         club.setName(request.getName());
-        // club.setShortName(request.getShortName()); // Club entity might not have shortName, checking model... assumed it has or I check Club.java
-        // Club.java read earlier? I read ClubService.java. Let's assume standard fields.
-        // If compilation fails, I will fix. ClubService uses setName, setFoundation, setLogoURL, setStadium, setFinance, setTeam.
-        // It doesn't seem to have shortName in ClubService.createClub.
-        // I'll check Club.java if needed but I'll proceed.
+        club.setShortName(request.getShortName());
         club.setFoundation(java.time.LocalDate.of(request.getFoundedYear(), 1, 1));
         club.setCity(request.getCity());
 
@@ -186,7 +182,7 @@ public class AdminService {
         String oldValues = convertToJson(club); // Simplified, ideally deep copy or select fields
 
         if (request.getName() != null) club.setName(request.getName());
-        // club.setShortName(request.getShortName()); // Assuming Club has shortName if added, else ignore
+        if (request.getShortName() != null) club.setShortName(request.getShortName());
         if (request.getFoundedYear() != null) club.setFoundation(java.time.LocalDate.of(request.getFoundedYear(), 1, 1));
         if (request.getCity() != null) club.setCity(request.getCity());
 

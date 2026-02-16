@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class ClubDTO {
     private Long id;
     private String name;
+    private String shortName;
     private LocalDate foundation;
     private String city;
     private String logoURL;
