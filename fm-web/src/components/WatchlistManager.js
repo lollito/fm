@@ -103,57 +103,91 @@ const WatchlistManager = ({ clubId }) => {
         };
     };
 
-    if (loading) return <div>Loading watchlist...</div>;
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center p-4">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading watchlist...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="watchlist-manager">
-            <div className="watchlist-header">
+            <div className="watchlist-header mb-4">
                 <h2>Transfer Watchlist</h2>
-                <div className="watchlist-summary">
+                <div className="watchlist-summary d-flex gap-3 text-muted">
                     <div className="summary-stat">
-                        <span>Players:</span>
-                        <span>{watchlist?.totalEntries}/{watchlist?.maxEntries}</span>
+                        <span className="fw-bold">Players:</span> {watchlist?.totalEntries}/{watchlist?.maxEntries}
                     </div>
                     <div className="summary-stat">
-                        <span>Available:</span>
-                        <span>{stats?.availablePlayers}</span>
+                        <span className="fw-bold">Available:</span> {stats?.availablePlayers}
                     </div>
                     <div className="summary-stat">
-                        <span>Total Value:</span>
-                        <span>${stats?.totalValue?.toLocaleString()}</span>
+                        <span className="fw-bold">Total Value:</span> ${stats?.totalValue?.toLocaleString()}
                     </div>
                 </div>
             </div>
 
-            <div className="watchlist-tabs">
-                <button
-                    className={selectedTab === 'players' ? 'active' : ''}
-                    onClick={() => setSelectedTab('players')}
-                >
-                    Players ({watchlist?.totalEntries})
-                </button>
-                <button
-                    className={selectedTab === 'notifications' ? 'active' : ''}
-                    onClick={() => setSelectedTab('notifications')}
-                >
-                    Notifications ({notifications.filter(n => !n.isRead).length})
-                </button>
-                <button
-                    className={selectedTab === 'stats' ? 'active' : ''}
-                    onClick={() => setSelectedTab('stats')}
-                >
-                    Statistics
-                </button>
-            </div>
+            <ul className="nav nav-tabs mb-4" role="tablist">
+                <li className="nav-item" role="presentation">
+                    <button
+                        className={`nav-link ${selectedTab === 'players' ? 'active' : ''}`}
+                        onClick={() => setSelectedTab('players')}
+                        role="tab"
+                        aria-selected={selectedTab === 'players'}
+                        aria-controls="players-panel"
+                        id="players-tab"
+                    >
+                        Players ({watchlist?.totalEntries})
+                    </button>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <button
+                        className={`nav-link ${selectedTab === 'notifications' ? 'active' : ''}`}
+                        onClick={() => setSelectedTab('notifications')}
+                        role="tab"
+                        aria-selected={selectedTab === 'notifications'}
+                        aria-controls="notifications-panel"
+                        id="notifications-tab"
+                    >
+                        Notifications ({notifications.filter(n => !n.isRead).length})
+                    </button>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <button
+                        className={`nav-link ${selectedTab === 'stats' ? 'active' : ''}`}
+                        onClick={() => setSelectedTab('stats')}
+                        role="tab"
+                        aria-selected={selectedTab === 'stats'}
+                        aria-controls="stats-panel"
+                        id="stats-tab"
+                    >
+                        Statistics
+                    </button>
+                </li>
+            </ul>
 
             {selectedTab === 'players' && (
-                <div className="watchlist-players">
-                    <div className="players-grid">
-                        {watchlist?.entries?.map(entry => {
-                            const valueChange = formatValueChange(entry.addedValue, entry.currentValue);
+                <div
+                    className="watchlist-players"
+                    role="tabpanel"
+                    id="players-panel"
+                    aria-labelledby="players-tab"
+                >
+                    {watchlist?.entries?.length === 0 ? (
+                        <div className="text-center p-4 text-muted border rounded bg-light bg-opacity-10">
+                            <h5 className="mt-2">No players in watchlist</h5>
+                            <p>Add players to track their progress and market value.</p>
+                        </div>
+                    ) : (
+                        <div className="players-grid">
+                            {watchlist?.entries?.map(entry => {
+                                const valueChange = formatValueChange(entry.addedValue, entry.currentValue);
 
-                            return (
-                                <div key={entry.id} className="watchlist-player-card">
+                                return (
+                                    <div key={entry.id} className="watchlist-player-card">
                                     <div className="player-header">
                                         <div className="player-name">
                                             <h4>{entry.player.name} {entry.player.surname}</h4>
@@ -259,18 +293,30 @@ const WatchlistManager = ({ clubId }) => {
                                 </div>
                             );
                         })}
-                    </div>
+                        </div>
+                    )}
                 </div>
             )}
 
             {selectedTab === 'notifications' && (
-                <div className="watchlist-notifications">
-                    <div className="notifications-list">
-                        {notifications.map(notification => (
-                            <div
-                                key={notification.id}
-                                className={`notification-item ${!notification.isRead ? 'unread' : ''} ${notification.isImportant ? 'important' : ''}`}
-                            >
+                <div
+                    className="watchlist-notifications"
+                    role="tabpanel"
+                    id="notifications-panel"
+                    aria-labelledby="notifications-tab"
+                >
+                    {notifications.length === 0 ? (
+                        <div className="text-center p-4 text-muted border rounded bg-light bg-opacity-10">
+                            <h5 className="mt-2">No notifications</h5>
+                            <p>You're all caught up!</p>
+                        </div>
+                    ) : (
+                        <div className="notifications-list">
+                            {notifications.map(notification => (
+                                <div
+                                    key={notification.id}
+                                    className={`notification-item ${!notification.isRead ? 'unread' : ''} ${notification.isImportant ? 'important' : ''}`}
+                                >
                                 <div className="notification-icon">
                                     {getNotificationIcon(notification.type)}
                                 </div>
@@ -302,12 +348,18 @@ const WatchlistManager = ({ clubId }) => {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                        </div>
+                    )}
                 </div>
             )}
 
             {selectedTab === 'stats' && (
-                <div className="watchlist-stats">
+                <div
+                    className="watchlist-stats"
+                    role="tabpanel"
+                    id="stats-panel"
+                    aria-labelledby="stats-tab"
+                >
                     <div className="stats-grid">
                         <div className="stat-card">
                             <h3>Overview</h3>
