@@ -17,4 +17,7 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
 	@EntityGraph(attributePaths = {"club"})
 	public java.util.List<Ranking> findBySeason(Season season);
+
+	@EntityGraph(attributePaths = {"club", "club.user"})
+	public java.util.List<Ranking> findDistinctBySeasonOrderByPointsDesc(Season season);
 }
