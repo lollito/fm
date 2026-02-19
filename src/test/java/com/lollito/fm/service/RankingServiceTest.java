@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,12 +19,16 @@ import com.lollito.fm.model.Ranking;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Season;
+import com.lollito.fm.repository.rest.RankingRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class RankingServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private RankingRepository rankingLineRepository;
 
     @InjectMocks
     private RankingService rankingService;
@@ -58,6 +63,8 @@ public class RankingServiceTest {
         user.setClub(club);
 
         when(userService.getLoggedUser()).thenReturn(user);
+        when(rankingLineRepository.findBySeasonOrderByPointsDesc(any(Season.class)))
+                .thenReturn(Collections.singletonList(ranking));
 
         // Execute
         List<Ranking> rankings = rankingService.load();
