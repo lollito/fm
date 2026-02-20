@@ -26,6 +26,11 @@ public class ManagerProgressionService {
 
     @Transactional
     public ManagerProfile getProfile(User user) {
+        // Optimization: Use the ManagerProfile from the User object if available to avoid a database query.
+        // ManagerProfile is loaded eagerly with User (default @OneToOne behavior) and unlockedPerks is also EAGER.
+        if (user.getManagerProfile() != null) {
+            return user.getManagerProfile();
+        }
         return managerProfileRepository.findByUserId(user.getId())
                 .orElseGet(() -> createProfile(user));
     }
@@ -110,6 +115,11 @@ public class ManagerProgressionService {
 
     @Transactional(readOnly = true)
     public boolean hasPerk(User user, ManagerPerk perk) {
+        // Optimization: Use the ManagerProfile from the User object if available to avoid a database query.
+        // ManagerProfile is loaded eagerly with User (default @OneToOne behavior) and unlockedPerks is also EAGER.
+        if (user.getManagerProfile() != null) {
+            return user.getManagerProfile().getUnlockedPerks().contains(perk);
+        }
         return managerProfileRepository.findByUserId(user.getId())
                 .map(profile -> profile.getUnlockedPerks().contains(perk))
                 .orElse(false);
