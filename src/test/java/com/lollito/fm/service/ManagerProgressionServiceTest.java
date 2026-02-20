@@ -208,4 +208,18 @@ public class ManagerProgressionServiceTest {
 
         assertFalse(managerProgressionService.hasPerk(user, ManagerPerk.VIDEO_ANALYST));
     }
+
+    @Test
+    void hasPerk_ShouldUseUserObject_WhenProfileIsPresent() {
+        // Arrange
+        profile.getUnlockedPerks().add(ManagerPerk.VIDEO_ANALYST);
+        user.setManagerProfile(profile);
+
+        // Act
+        boolean result = managerProgressionService.hasPerk(user, ManagerPerk.VIDEO_ANALYST);
+
+        // Assert
+        assertTrue(result);
+        verify(managerProfileRepository, never()).findByUserId(any());
+    }
 }
