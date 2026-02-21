@@ -18,6 +18,7 @@ const Register = () => {
   });
   const [countries, setCountries] = useState([]);
   const [servers, setServers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -51,20 +52,28 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
+    // Simple validation
     if (formData.email !== formData.emailConfirm) {
       showToast('Emails do not match', 'error');
+      setIsLoading(false);
       return;
     }
     if (formData.password !== formData.passwordConfirm) {
       showToast('Passwords do not match', 'error');
+      setIsLoading(false);
       return;
     }
+
     try {
       const response = await api.post('/user/register', formData);
       login(response.data);
       navigate('/');
     } catch (error) {
       showToast('Registration failed', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,8 +84,9 @@ const Register = () => {
           <h2 className="card-title text-center" style={{ textAlign: 'center', color: 'var(--accent-color)' }}>FM Register</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Username</label>
+              <label htmlFor="username">Username</label>
               <input
+                id="username"
                 type="text"
                 name="username"
                 className="form-control"
@@ -84,11 +94,13 @@ const Register = () => {
                 value={formData.username}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="form-group">
-              <label>Email address</label>
+              <label htmlFor="email">Email address</label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 className="form-control"
@@ -96,11 +108,13 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="form-group">
-              <label>Repeat Email address</label>
+              <label htmlFor="emailConfirm">Repeat Email address</label>
               <input
+                id="emailConfirm"
                 type="email"
                 name="emailConfirm"
                 className="form-control"
@@ -108,11 +122,13 @@ const Register = () => {
                 value={formData.emailConfirm}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="form-group">
-              <label>Password</label>
+              <label htmlFor="password">Password</label>
               <input
+                id="password"
                 type="password"
                 name="password"
                 className="form-control"
@@ -120,11 +136,13 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="form-group">
-              <label>Repeat Password</label>
+              <label htmlFor="passwordConfirm">Repeat Password</label>
               <input
+                id="passwordConfirm"
                 type="password"
                 name="passwordConfirm"
                 className="form-control"
@@ -132,16 +150,19 @@ const Register = () => {
                 value={formData.passwordConfirm}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="form-group">
-              <label>Country</label>
+              <label htmlFor="countryId">Country</label>
               <select
+                id="countryId"
                 name="countryId"
                 className="form-control"
                 value={formData.countryId}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               >
                 <option value="">Select Country</option>
                 {countries.map(c => (
@@ -150,13 +171,15 @@ const Register = () => {
               </select>
             </div>
             <div className="form-group">
-                <label>Server</label>
+                <label htmlFor="serverId">Server</label>
                 <select
+                  id="serverId"
                   name="serverId"
                   className="form-control"
                   value={formData.serverId}
                   onChange={handleChange}
                   required
+                  disabled={isLoading}
                 >
                   <option value="">Select Server</option>
                   {servers.map(s => (
@@ -165,8 +188,9 @@ const Register = () => {
                 </select>
               </div>
             <div className="form-group">
-              <label>Club Name</label>
+              <label htmlFor="clubName">Club Name</label>
               <input
+                id="clubName"
                 type="text"
                 name="clubName"
                 className="form-control"
@@ -174,9 +198,23 @@ const Register = () => {
                 value={formData.clubName}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
-            <button className="btn btn-primary" style={{ width: '100%' }} type="submit">Create Account</button>
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%' }}
+              type="submit"
+              disabled={isLoading}
+              aria-busy={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span style={{ marginLeft: '8px' }}>Creating Account...</span>
+                </>
+              ) : 'Create Account'}
+            </button>
           </form>
           <hr style={{ border: '0.5px solid rgba(255,255,255,0.1)', margin: '20px 0' }} />
           <div style={{ textAlign: 'center' }}>
