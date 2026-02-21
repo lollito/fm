@@ -33,4 +33,21 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
 	@Query("SELECT m FROM Match m JOIN FETCH m.home JOIN FETCH m.away WHERE m.round.id = :roundId ORDER BY m.date ASC")
 	List<Match> findByRoundIdWithClubs(@Param("roundId") Long roundId);
+
+	@Query("SELECT m FROM Match m " +
+			"LEFT JOIN FETCH m.home h " +
+			"LEFT JOIN FETCH h.team ht " +
+			"LEFT JOIN FETCH ht.formation " +
+			"LEFT JOIN FETCH h.stadium " +
+			"LEFT JOIN FETCH h.user " +
+			"LEFT JOIN FETCH m.away a " +
+			"LEFT JOIN FETCH a.team at " +
+			"LEFT JOIN FETCH at.formation " +
+			"LEFT JOIN FETCH a.user " +
+			"LEFT JOIN FETCH m.homeFormation " +
+			"LEFT JOIN FETCH m.awayFormation " +
+			"LEFT JOIN FETCH m.round r " +
+			"LEFT JOIN FETCH r.season " +
+			"WHERE m.id = :id")
+	java.util.Optional<Match> findByIdWithSimulationData(@Param("id") Long id);
 }

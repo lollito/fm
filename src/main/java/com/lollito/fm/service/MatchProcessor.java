@@ -61,7 +61,7 @@ public class MatchProcessor {
     @Async
     @Transactional
     public void processMatch(Long matchId) {
-        Match match = matchRepository.findById(matchId).orElse(null);
+        Match match = matchRepository.findByIdWithSimulationData(matchId).orElse(null);
         if (match == null || match.getStatus() != MatchStatus.SCHEDULED) {
             return;
         }
@@ -114,7 +114,7 @@ public class MatchProcessor {
 
     @Transactional
     public void finalizeMatch(Long matchId, LiveMatchSession session) {
-        Match match = matchRepository.findById(matchId).orElseThrow(() -> new RuntimeException("Match not found"));
+        Match match = matchRepository.findByIdWithSimulationData(matchId).orElseThrow(() -> new RuntimeException("Match not found"));
 
         try {
             // Restore final state from session
