@@ -1,10 +1,101 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { getLiveMatch, joinLiveMatch, leaveLiveMatch, API_BASE_URL } from '../services/api';
 import Layout from './Layout';
 import '../styles/LiveMatchViewer.css';
+
+const getEventIcon = (eventType) => {
+    const icons = {
+        GOAL: '⚽',
+        YELLOW_CARD: '🟨',
+        RED_CARD: '🟥',
+        SUBSTITUTION: '🔄',
+        CORNER: '📐',
+        FREE_KICK: '🦶',
+        SAVE: '🥅',
+        SHOT_ON_TARGET: '🎯',
+        SHOT_OFF_TARGET: '❌',
+        FOUL: '⚠️',
+        OFFSIDE: '🚩',
+        INJURY: '🏥',
+        HALF_TIME: '⏸️',
+        FULL_TIME: '⏹️',
+        KICK_OFF: '⚽'
+    };
+    return icons[eventType] || '⚪';
+};
+
+const getEventSeverityClass = (severity) => {
+    return 'event-' + (severity ? severity.toLowerCase() : 'normal');
+};
+
+const formatMatchTime = (minute, additionalTime) => {
+    if (additionalTime > 0) {
+        return minute + '+' + additionalTime + '\'';
+    }
+    return minute + '\'';
+};
+
+const getPhaseDisplay = (phase) => {
+    const phases = {
+        PRE_MATCH: 'Pre-Match',
+        FIRST_HALF: '1st Half',
+        HALF_TIME: 'Half Time',
+        SECOND_HALF: '2nd Half',
+        EXTRA_TIME_FIRST: 'Extra Time 1st',
+        EXTRA_TIME_SECOND: 'Extra Time 2nd',
+        PENALTIES: 'Penalties',
+        FINISHED: 'Full Time'
+    };
+    return phases[phase] || phase;
+};
+
+const getIntensityColor = (intensity) => {
+    const colors = {
+        LOW: '#4caf50',
+        MODERATE: '#ff9800',
+        HIGH: '#f44336',
+        EXTREME: '#9c27b0'
+    };
+    return colors[intensity] || '#666';
+};
+
+const MatchEventItem = React.memo(({ event }) => {
+    return (
+        <div
+            className={'event-item ' + getEventSeverityClass(event.severity) + (event.isKeyEvent ? ' key-event' : '')}
+        >
+            <div className="event-time">
+                {formatMatchTime(event.minute, event.additionalTime)}
+            </div>
+            <div className="event-icon">
+                {getEventIcon(event.eventType)}
+            </div>
+            <div className="event-content">
+                <div className="event-description">
+                    {event.description}
+                </div>
+                {event.detailedDescription && (
+                    <div className="event-details">
+                        {event.detailedDescription}
+                    </div>
+                )}
+                {event.playerName && (
+                    <div className="event-player">
+                        {event.playerName} ({event.teamName})
+                    </div>
+                )}
+            </div>
+            {(event.eventType === 'GOAL' || event.homeScore !== null) && (
+                <div className="event-score">
+                    {event.homeScore} - {event.awayScore}
+                </div>
+            )}
+        </div>
+    );
+});
 
 const LiveMatchViewer = () => {
     const { matchId } = useParams();
@@ -92,61 +183,13 @@ const LiveMatchViewer = () => {
         eventsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const getEventIcon = (eventType) => {
-        const icons = {
-            GOAL: '⚽',
-            YELLOW_CARD: '🟨',
-            RED_CARD: '🟥',
-            SUBSTITUTION: '🔄',
-            CORNER: '📐',
-            FREE_KICK: '🦶',
-            SAVE: '🥅',
-            SHOT_ON_TARGET: '🎯',
-            SHOT_OFF_TARGET: '❌',
-            FOUL: '⚠️',
-            OFFSIDE: '🚩',
-            INJURY: '🏥',
-            HALF_TIME: '⏸️',
-            FULL_TIME: '⏹️',
-            KICK_OFF: '⚽'
+    const stats = useMemo(() => {
+        return {
+            goals: events.filter(e => e.eventType === 'GOAL').length,
+            cards: events.filter(e => e.eventType === 'YELLOW_CARD' || e.eventType === 'RED_CARD').length,
+            subs: events.filter(e => e.eventType === 'SUBSTITUTION').length
         };
-        return icons[eventType] || '⚪';
-    };
-
-    const getEventSeverityClass = (severity) => {
-        return 'event-' + (severity ? severity.toLowerCase() : 'normal');
-    };
-
-    const formatMatchTime = (minute, additionalTime) => {
-        if (additionalTime > 0) {
-            return minute + '+' + additionalTime + '\'';
-        }
-        return minute + '\'';
-    };
-
-    const getPhaseDisplay = (phase) => {
-        const phases = {
-            PRE_MATCH: 'Pre-Match',
-            FIRST_HALF: '1st Half',
-            HALF_TIME: 'Half Time',
-            SECOND_HALF: '2nd Half',
-            EXTRA_TIME_FIRST: 'Extra Time 1st',
-            EXTRA_TIME_SECOND: 'Extra Time 2nd',
-            PENALTIES: 'Penalties',
-            FINISHED: 'Full Time'
-        };
-        return phases[phase] || phase;
-    };
-
-    const getIntensityColor = (intensity) => {
-        const colors = {
-            LOW: '#4caf50',
-            MODERATE: '#ff9800',
-            HIGH: '#f44336',
-            EXTREME: '#9c27b0'
-        };
-        return colors[intensity] || '#666';
-    };
+    }, [events]);
 
     if (loading) return <Layout><div className="live-match-loading">Loading live match...</div></Layout>;
     if (!matchSession) return <Layout><div className="live-match-error">Match not found</div></Layout>;
@@ -204,37 +247,7 @@ const LiveMatchViewer = () => {
 
                 <div className="events-timeline">
                     {events.map(event => (
-                        <div
-                            key={event.id}
-                            className={'event-item ' + getEventSeverityClass(event.severity) + (event.isKeyEvent ? ' key-event' : '')}
-                        >
-                            <div className="event-time">
-                                {formatMatchTime(event.minute, event.additionalTime)}
-                            </div>
-                            <div className="event-icon">
-                                {getEventIcon(event.eventType)}
-                            </div>
-                            <div className="event-content">
-                                <div className="event-description">
-                                    {event.description}
-                                </div>
-                                {event.detailedDescription && (
-                                    <div className="event-details">
-                                        {event.detailedDescription}
-                                    </div>
-                                )}
-                                {event.playerName && (
-                                    <div className="event-player">
-                                        {event.playerName} ({event.teamName})
-                                    </div>
-                                )}
-                            </div>
-                            {(event.eventType === 'GOAL' || event.homeScore !== null) && (
-                                <div className="event-score">
-                                    {event.homeScore} - {event.awayScore}
-                                </div>
-                            )}
-                        </div>
+                        <MatchEventItem key={event.id} event={event} />
                     ))}
                     <div ref={eventsEndRef} />
                 </div>
@@ -243,15 +256,15 @@ const LiveMatchViewer = () => {
             <div className="match-stats-summary">
                 <div className="stat-item">
                     <span>Goals:</span>
-                    <span>{events.filter(e => e.eventType === 'GOAL').length}</span>
+                    <span>{stats.goals}</span>
                 </div>
                 <div className="stat-item">
                     <span>Cards:</span>
-                    <span>{events.filter(e => e.eventType === 'YELLOW_CARD' || e.eventType === 'RED_CARD').length}</span>
+                    <span>{stats.cards}</span>
                 </div>
                 <div className="stat-item">
                     <span>Substitutions:</span>
-                    <span>{events.filter(e => e.eventType === 'SUBSTITUTION').length}</span>
+                    <span>{stats.subs}</span>
                 </div>
             </div>
         </div>
