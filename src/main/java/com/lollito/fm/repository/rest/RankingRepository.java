@@ -1,5 +1,7 @@
 package com.lollito.fm.repository.rest;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +18,8 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
 	public Ranking findFirstByClubAndSeason(Club club, Season season);
 
 	@EntityGraph(attributePaths = {"club"})
-	public java.util.List<Ranking> findBySeason(Season season);
+	public List<Ranking> findBySeason(Season season);
+
+	@EntityGraph(attributePaths = {"club", "club.user"})
+	public List<Ranking> findBySeasonOrderByPointsDesc(Season season);
 }
