@@ -23,6 +23,10 @@ import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.RankingRepository;
 import com.lollito.fm.repository.rest.RoundRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
+import com.lollito.fm.repository.rest.UserRepository;
+import com.lollito.fm.repository.rest.LeagueRepository;
+import com.lollito.fm.model.User;
+import com.lollito.fm.model.League;
 
 @SpringBootTest
 @Transactional
@@ -37,6 +41,79 @@ public class RankingServicePerformanceTest {
 	@Autowired SeasonRepository seasonRepository;
 	@Autowired MatchRepository matchRepository;
 	@Autowired RoundRepository roundRepository;
+	@Autowired UserRepository userRepository;
+	@Autowired LeagueRepository leagueRepository;
+
+	@Test
+	public void testLoad() {
+		// Create User if not exists
+		User user = userRepository.findByUsername("lollito").orElse(null);
+		if (user == null) {
+			user = new User();
+			user.setUsername("lollito");
+			user.setEmail("lollito@example.com");
+			user = userRepository.save(user);
+		}
+
+		// Create League
+		League league = new League();
+		league.setName("Test League");
+		league = leagueRepository.save(league);
+
+		// Create Season
+		Season season = new Season();
+		season.setName("2024");
+		season.setCurrent(true);
+		season.setLeague(league);
+		season = seasonRepository.save(season);
+
+		// Update League with Season (inverse side)
+		league.setCurrentSeason(season);
+		leagueRepository.save(league);
+
+		// Create Club for User
+		Club club = new Club();
+		club.setName("User Club");
+		club.setLeague(league);
+		club.setUser(user);
+		club = clubRepository.save(club);
+
+		// Update User with Club
+		user.setClub(club);
+		userRepository.save(user);
+
+		// Create Rankings
+		for (int i = 0; i < 5; i++) {
+			Club c = new Club();
+			c.setName("Club " + i);
+			c = clubRepository.save(c);
+
+			Ranking ranking = new Ranking();
+			ranking.setClub(c);
+			ranking.setSeason(season);
+			ranking.setPoints(i * 10); // 0, 10, 20, 30, 40
+			rankingRepository.save(ranking);
+		}
+
+		// Add user's club to ranking
+		Ranking userRanking = new Ranking();
+		userRanking.setClub(club);
+		userRanking.setSeason(season);
+		userRanking.setPoints(25);
+		rankingRepository.save(userRanking);
+
+		// Test load
+		List<Ranking> rankings = rankingService.load();
+
+		Assertions.assertNotNull(rankings);
+		Assertions.assertEquals(6, rankings.size());
+
+		// Verify Order (Points Descending)
+		Assertions.assertEquals(40, rankings.get(0).getPoints());
+		Assertions.assertEquals(30, rankings.get(1).getPoints());
+		Assertions.assertEquals(25, rankings.get(2).getPoints()); // User club
+		Assertions.assertEquals(20, rankings.get(3).getPoints());
+	}
 
 	@Test
 	public void testUpdateLoop() {

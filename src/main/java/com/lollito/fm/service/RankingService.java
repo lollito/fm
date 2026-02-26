@@ -82,7 +82,7 @@ public class RankingService {
 	public List<Ranking> load(){
 		User user = userService.getLoggedUser();
 		if (user != null && user.getClub() != null) {
-			return user.getClub().getLeague().getCurrentSeason().getRankingLines();
+			return rankingLineRepository.findBySeasonOrderByPointsDesc(user.getClub().getLeague().getCurrentSeason());
 		}
 		return Collections.emptyList();
 	}
