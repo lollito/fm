@@ -2,6 +2,7 @@ package com.lollito.fm.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
@@ -18,11 +19,15 @@ import com.lollito.fm.model.Match;
 import com.lollito.fm.model.Ranking;
 import com.lollito.fm.model.Round;
 import com.lollito.fm.model.Season;
+import com.lollito.fm.model.User;
+import com.lollito.fm.model.League;
 import com.lollito.fm.repository.rest.ClubRepository;
 import com.lollito.fm.repository.rest.MatchRepository;
 import com.lollito.fm.repository.rest.RankingRepository;
 import com.lollito.fm.repository.rest.RoundRepository;
 import com.lollito.fm.repository.rest.SeasonRepository;
+import com.lollito.fm.repository.rest.UserRepository;
+import com.lollito.fm.repository.rest.LeagueRepository;
 
 @SpringBootTest
 @Transactional
@@ -37,6 +42,8 @@ public class RankingServicePerformanceTest {
 	@Autowired SeasonRepository seasonRepository;
 	@Autowired MatchRepository matchRepository;
 	@Autowired RoundRepository roundRepository;
+	@Autowired UserRepository userRepository;
+	@Autowired LeagueRepository leagueRepository;
 
 	@Test
 	public void testUpdateLoop() {
@@ -154,5 +161,86 @@ public class RankingServicePerformanceTest {
 		Assertions.assertEquals(1, awayRanking.getLost());
 		Assertions.assertEquals(0, awayRanking.getPoints());
 		Assertions.assertEquals(1, awayRanking.getGoalAgainst());
+	}
+
+	@Test
+	public void testLoadPerformance() {
+		// Setup League and Season
+		League league = new League();
+		league.setName("Test League");
+		league = leagueRepository.save(league);
+
+		Season season = new Season();
+		season.setName("Test Season");
+		season.setLeague(league);
+		season = seasonRepository.save(season);
+		league.setCurrentSeason(season);
+		league = leagueRepository.save(league);
+
+		// Handle existing user
+		String username = "lollito";
+		Optional<User> existingUser = userRepository.findByUsername(username);
+		User user;
+		if (existingUser.isPresent()) {
+			user = existingUser.get();
+			// Ensure clean state for test
+			user.setClub(null);
+		} else {
+			user = new User();
+			user.setUsername(username);
+			user.setActive(true);
+		}
+
+		Club userClub = new Club();
+		userClub.setName("User Club");
+		userClub.setLeague(league);
+		userClub = clubRepository.save(userClub);
+
+		user.setClub(userClub);
+		user = userRepository.save(user);
+
+		// Setup other Clubs and Rankings
+		List<Club> clubs = new ArrayList<>();
+		clubs.add(userClub);
+
+		// Add user club ranking
+		Ranking userClubRanking = new Ranking();
+		userClubRanking.setClub(userClub);
+		userClubRanking.setSeason(season);
+		userClubRanking.setPoints(10);
+		rankingRepository.save(userClubRanking);
+		season.addRankingLine(userClubRanking);
+
+		// Add 19 other clubs
+		for (int i = 0; i < 19; i++) {
+			Club club = new Club();
+			club.setName("Club " + i);
+			club.setLeague(league);
+			club = clubRepository.save(club);
+			clubs.add(club);
+
+			Ranking ranking = new Ranking();
+			ranking.setClub(club);
+			ranking.setSeason(season);
+			ranking.setPoints(i); // Vary points
+			rankingRepository.save(ranking);
+			season.addRankingLine(ranking);
+		}
+
+		season = seasonRepository.save(season);
+
+		// Measure
+		long start = System.nanoTime();
+
+		List<Ranking> rankings = rankingService.load();
+
+		long end = System.nanoTime();
+		long duration = (end - start) / 1_000_000; // ms
+
+		logger.info("testLoadPerformance duration: {} ms", duration);
+
+		// Verify
+		Assertions.assertNotNull(rankings);
+		Assertions.assertEquals(20, rankings.size());
 	}
 }

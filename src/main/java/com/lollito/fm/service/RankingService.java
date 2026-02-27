@@ -1,5 +1,6 @@
 package com.lollito.fm.service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import com.lollito.fm.model.Ranking;
 import com.lollito.fm.model.Season;
 import com.lollito.fm.model.User;
 import com.lollito.fm.repository.rest.RankingRepository;
-import java.util.Collections;
 
 @Service
 public class RankingService {
@@ -82,7 +82,8 @@ public class RankingService {
 	public List<Ranking> load(){
 		User user = userService.getLoggedUser();
 		if (user != null && user.getClub() != null) {
-			return user.getClub().getLeague().getCurrentSeason().getRankingLines();
+			Season currentSeason = user.getClub().getLeague().getCurrentSeason();
+			return rankingLineRepository.findBySeasonOrderByPointsDesc(currentSeason);
 		}
 		return Collections.emptyList();
 	}
