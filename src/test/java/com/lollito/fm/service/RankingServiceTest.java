@@ -1,8 +1,10 @@
 package com.lollito.fm.service;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,12 +20,16 @@ import com.lollito.fm.model.Ranking;
 import com.lollito.fm.model.User;
 import com.lollito.fm.model.League;
 import com.lollito.fm.model.Season;
+import com.lollito.fm.repository.rest.RankingRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class RankingServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private RankingRepository rankingLineRepository;
 
     @InjectMocks
     private RankingService rankingService;
@@ -52,12 +58,13 @@ public class RankingServiceTest {
         Season season = new Season();
         Ranking ranking = new Ranking();
 
-        season.setRankingLines(Collections.singletonList(ranking));
+        // We don't rely on getting rankings from season anymore, but season MUST be present
         league.setCurrentSeason(season);
         club.setLeague(league);
         user.setClub(club);
 
         when(userService.getLoggedUser()).thenReturn(user);
+        when(rankingLineRepository.findBySeasonOrderByPointsDesc(season)).thenReturn(Collections.singletonList(ranking));
 
         // Execute
         List<Ranking> rankings = rankingService.load();
@@ -65,5 +72,6 @@ public class RankingServiceTest {
         // Verify
         assertNotNull(rankings);
         assertEquals(1, rankings.size());
+        verify(rankingLineRepository).findBySeasonOrderByPointsDesc(season);
     }
 }
